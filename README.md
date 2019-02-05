@@ -8,6 +8,8 @@ You can install GitLab Community Edition for testing purposes.
 
 First, install **Docker**.
 
+Second, create a docker volume for persistent data : `docker volume create vol-gitlab`.
+
 Then, you can simply run :
 
 ```
@@ -15,6 +17,7 @@ docker run --detach \
 	--hostname gitlab.example.com \
 	--publish 443:443 --publish 80:80 --publish 22:22 \
 	--name gitlab \
+	--mount source=vol-gitlab,target=/app \
 	--restart always \
 	--volume /srv/gitlab/config:/etc/gitlab \
 	--volume /srv/gitlab/logs:/var/log/gitlab \
@@ -22,6 +25,6 @@ docker run --detach \
 	gitlab/gitlab-ce:latest
 ```
 
-Or, for Windows PowerShell : `docker run --detach --hostname gitlab.example.com --publish 443:443 --publish 80:80 --publish 22:22 --name gitlab --restart always --volume /srv/gitlab/config:/etc/gitlab --volume /srv/gitlab/logs:/var/log/gitlab --volume /srv/gitlab/data:/var/opt/gitlab gitlab/gitlab-ce:latest`
+Or, for Windows PowerShell : `docker run --detach --hostname gitlab.example.com --publish 443:443 --publish 80:80 --publish 22:22 --name gitlab --mount source=vol-gitlab,target=/app --restart always --volume /srv/gitlab/config:/etc/gitlab --volume /srv/gitlab/logs:/var/log/gitlab --volume /srv/gitlab/data:/var/opt/gitlab gitlab/gitlab-ce:latest`
 
 > **Note :** do not use Windows PowerShell ISE
