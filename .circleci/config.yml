@@ -1,26 +1,45 @@
-version: 2 # use CircleCI 2.0
-jobs: # a collection of steps
-  build: # runs not using Workflows must have a `build` job as entry point
-    working_directory: ~/mern-starter # directory where steps will run
-    docker: # run the steps with Docker
-      - image: circleci/node:4.8.2 # ...with this image as the primary container; this is where all `steps` will run
-      - image: mongo:3.4.4 # and this image as the secondary service container
-    steps: # a collection of executable commands
+version: 2
+jobs:
+  install-dependencies:
+    docker:
+      - image: circleci/node:8
+    steps:
       - checkout
-
       - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}.
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - run: npm install
+        keys:
+          - dependencies-{{ checksum "package.json" }}
+          - dependencies-
       - run:
-          name: Run tests
-          command: npm test
+        name: Download dependencies
+        command: npm install --quiet
       - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+        paths: [node_modules]
+        key: dependencies-{{ checksum "package.json" }}
       - persist_to_workspace:
-          root: ~/repo
-          paths: .
+        root: ./
+        paths: [node_modules]
+  build:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - setup_remote_docker
+      - checkout
+      - attach_workspace:
+        at: ./
+      #- run:
+      #  name: Generate static site
+      #  command: npm start sed clean:dist filerev-all
+      # See https://circleci.com/docs/2.0/building-docker-images/#mounting-folders
+      - run:
+        name: run ci tests
+        command: npm run ci
+      - persist_to_workspace:
+        root: ./
+        paths: [dist]
+workflows:
+  version: 2
+  build:
+    jobs:
+      - install-dependencies
+      - build:
+          requires: [install-dependencies]
