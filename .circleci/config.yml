@@ -18,7 +18,6 @@ jobs:
       - persist_to_workspace:
           root: ./
           paths: [node_modules]
-
   build:
     docker:
       - image: circleci/node:8
@@ -30,9 +29,6 @@ jobs:
       - run:
           name: npm run ci tests
           command: npm run ci
-      - persist_to_workspace:
-          root: ./
-          paths: [dist]
 workflows:
   version: 2
   dependencies-and-deploy:
