@@ -3,15 +3,16 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
-import { HttpService } from '@nestjs/common';
+import { HttpService, HttpModule } from '@nestjs/common';
 
 describe('AppController', () => {
   let app: TestingModule;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
+      imports: [HttpModule],
       controllers: [AppController],
-      providers: [AppService, GitlabService, GithubService, HttpService],
+      providers: [AppService, GitlabService, GithubService],
     }).compile();
   });
 
@@ -30,7 +31,16 @@ describe('AppController', () => {
         .spyOn(gitlabService, 'updateCommitStatus')
         .mockImplementation(() => 'OK');
 
-      appController.processWebhook({}, { webhook: {} });
+      appController.processWebhook(
+        {
+          headers: {
+            'x-gitlab-event': 'commit',
+          },
+        },
+        {
+          commits: [{ message: 'message', id: '1' }],
+        },
+      );
       expect(gitlabService.updateCommitStatus).toBeCalled();
     });
   });

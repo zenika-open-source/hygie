@@ -1,4 +1,4 @@
-import { GitEventEnum, GitTypeEnum } from './git.enum';
+import { GitEventEnum, GitTypeEnum } from './utils.enum';
 import { WebhookDto } from './webhook.dto';
 
 export class Webhook {

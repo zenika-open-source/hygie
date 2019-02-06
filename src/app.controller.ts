@@ -1,11 +1,10 @@
 import { Get, Controller, Body, Post, HttpService, Req } from '@nestjs/common';
 import { AppService } from './app.service';
-import { WebhookDto } from './webhook/webhook.dto';
 import {
   GitTypeEnum,
   CommitStatusEnum,
   convertCommitStatus,
-} from './webhook/git.enum';
+} from './webhook/utils.enum';
 import { GithubService } from './github/github.service';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GitServiceInterface } from './interfaces/git.service.interface';
@@ -25,7 +24,10 @@ export class AppController {
   }
 
   @Post('/webhook')
-  processWebhook(@Req() request, @Body() webhookDto: WebhookDto): string {
+  processWebhook(
+    @Req() request,
+    @Body() webhookDto: GithubPushEvent | GitlabPushEvent,
+  ): string {
     let whichGit: GitTypeEnum = GitTypeEnum.Undefined;
     let gitService: GitServiceInterface;
 
@@ -42,9 +44,9 @@ export class AppController {
     }
 
     // tslint:disable-next-line:no-string-literal
-    const commitMessage = webhookDto['commits'][0]['message'];
+    const commitMessage = webhookDto.commits[0].message;
     // tslint:disable-next-line:no-string-literal
-    const commitSha = webhookDto['commits'][0]['id'];
+    const commitSha = webhookDto.commits[0].id;
 
     const commitRegExp = RegExp(/(feat|fix|docs)\(?[a-z]*\)?:\s.*/);
 

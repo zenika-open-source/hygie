@@ -1,4 +1,4 @@
-import { CommitStatusEnum } from './git.enum';
+import { CommitStatusEnum } from './utils.enum';
 
 export class CommitStatusInfos {
   commitStatus: CommitStatusEnum;
