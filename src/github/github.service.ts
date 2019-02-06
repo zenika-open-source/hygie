@@ -14,7 +14,7 @@ export class GithubService implements GitServiceInterface {
     // Config URL for GitHub
     const configGitHub = {
       headers: {
-        Authorization: 'token ff81566cf8a4fd9975fa6f7a2bafcd277b73a06c',
+        Authorization: 'token e85f4d3666f17cafe25d08694d690080f5555c4e',
       },
     };
 
@@ -27,6 +27,13 @@ export class GithubService implements GitServiceInterface {
       target_url: commitStatusInfos.targetUrl,
       description: commitStatusInfos.descriptionMessage,
     };
+
+    // tslint:disable-next-line:no-console
+    console.log(
+      `https://api.github.com/repos/${
+        commitStatusInfos.repositoryFullName
+      }/statuses/${commitStatusInfos.commitSha}`,
+    );
 
     return this.httpService
       .post(

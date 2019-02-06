@@ -4,11 +4,15 @@ import {
   GitTypeEnum,
   CommitStatusEnum,
   convertCommitStatus,
+  isGitlabPushEvent,
+  isGithubPushEvent,
 } from './webhook/utils.enum';
 import { GithubService } from './github/github.service';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GitServiceInterface } from './interfaces/git.service.interface';
 import { CommitStatusInfos } from './webhook/commitStatusInfos';
+import { GithubPushEvent } from './github/githubPushEvent';
+import { GitlabPushEvent } from './gitlab/gitlabPushEvent';
 
 @Controller()
 export class AppController {
@@ -58,17 +62,18 @@ export class AppController {
     commitStatusInfos.commitStatus = commitStatus;
     commitStatusInfos.commitSha = commitSha;
     commitStatusInfos.descriptionMessage = 'my message';
-    switch (whichGit) {
-      case GitTypeEnum.Github:
-        commitStatusInfos.repositoryFullName =
-          // tslint:disable-next-line:no-string-literal
-          webhookDto['repository']['full_name'];
-        break;
-      case GitTypeEnum.Gitlab:
-        commitStatusInfos.projectId =
-          // tslint:disable-next-line:no-string-literal
-          webhookDto['project_id'];
-        break;
+
+    if (isGitlabPushEvent(webhookDto)) {
+      commitStatusInfos.projectId = webhookDto.project_id.toString();
+      // tslint:disable-next-line:no-console
+      console.log('commitStatusInfos.projectId' + commitStatusInfos.projectId);
+    } else if (isGithubPushEvent(webhookDto)) {
+      commitStatusInfos.repositoryFullName = webhookDto.repository.full_name;
+      // tslint:disable-next-line:no-console
+      console.log(
+        'commitStatusInfos.repositoryFullName' +
+          commitStatusInfos.repositoryFullName,
+      );
     }
     gitService.updateCommitStatus(commitStatusInfos);
 

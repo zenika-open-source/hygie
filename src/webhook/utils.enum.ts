@@ -1,3 +1,6 @@
+import { GitlabPushEvent } from 'src/gitlab/gitlabPushEvent';
+import { GithubPushEvent } from 'src/github/githubPushEvent';
+
 export enum GitTypeEnum {
   Undefined = 0,
   Github = 1,
@@ -31,4 +34,16 @@ export function convertCommitStatus(
   };
 
   return GitCommitStatus[gitType][commitStatus];
+}
+
+export function isGitlabPushEvent(
+  git: GitlabPushEvent | GithubPushEvent,
+): git is GitlabPushEvent {
+  return (git as GitlabPushEvent).project_id !== undefined;
+}
+
+export function isGithubPushEvent(
+  git: GitlabPushEvent | GithubPushEvent,
+): git is GithubPushEvent {
+  return (git as GithubPushEvent).repository.full_name !== undefined;
 }

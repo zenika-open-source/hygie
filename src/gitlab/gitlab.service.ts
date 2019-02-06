@@ -32,6 +32,13 @@ export class GitlabService implements GitServiceInterface {
     // Data for GitLab
     const dataGitLab = {};
 
+    // tslint:disable-next-line:no-console
+    console.log(
+      `http://localhost/api/v4/projects/${
+        commitStatusInfos.projectId
+      }/statuses/${commitStatusInfos.commitSha}`,
+    );
+
     return this.httpService
       .post(
         `http://localhost/api/v4/projects/${
