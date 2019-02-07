@@ -2,7 +2,6 @@ import { Injectable, HttpService } from '@nestjs/common';
 import { GitServiceInterface } from '../interfaces/git.service.interface';
 import { convertCommitStatus, GitTypeEnum } from '../webhook/utils.enum';
 import { CommitStatusInfos } from '../webhook/commitStatusInfos';
-import { MyLogger } from 'src/my-logger/my-logger.service';
 
 @Injectable()
 export class GitlabService implements GitServiceInterface {
@@ -26,11 +25,6 @@ export class GitlabService implements GitServiceInterface {
 
     // Data for GitLab
     const dataGitLab = {};
-    MyLogger.log(
-      `https://gitlab.com/api/v4/projects/${
-        commitStatusInfos.projectId
-      }/statuses/${commitStatusInfos.commitSha}`,
-    );
 
     return this.httpService
       .post(
