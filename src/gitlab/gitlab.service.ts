@@ -42,8 +42,6 @@ export class GitlabService implements GitServiceInterface {
       )
       .toPromise()
       .then(response => {
-        MyLogger.log(response.data);
-
         return true;
       });
   }

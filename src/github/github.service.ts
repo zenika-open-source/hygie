@@ -14,7 +14,7 @@ export class GithubService implements GitServiceInterface {
     // Config URL for GitHub
     const configGitHub = {
       headers: {
-        Authorization: 'token d9f08c2f30a86243d73b0f5e030accd77ad717f9',
+        Authorization: 'token f5469af02a4c40d3163d3bdca2798227fd6254f3',
       },
     };
 
@@ -44,8 +44,6 @@ export class GithubService implements GitServiceInterface {
       )
       .toPromise()
       .then(response => {
-        MyLogger.log(response.data);
-
         return true;
       });
   }
