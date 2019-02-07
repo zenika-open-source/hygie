@@ -1,5 +1,6 @@
 import { GitlabPushEvent } from 'src/gitlab/gitlabPushEvent';
 import { GithubPushEvent } from 'src/github/githubPushEvent';
+import { GithubBranchEvent } from 'src/github/githubBranchEvent';
 
 export enum GitTypeEnum {
   Undefined = 0,
@@ -14,7 +15,7 @@ export enum CommitStatusEnum {
 
 export enum GitEventEnum {
   Push = 1,
-  Tag = 2,
+  NewBranch = 2,
 }
 
 export function convertCommitStatus(
@@ -37,13 +38,22 @@ export function convertCommitStatus(
 }
 
 export function isGitlabPushEvent(
-  git: GitlabPushEvent | GithubPushEvent,
+  git: GitlabPushEvent | GithubPushEvent | GithubBranchEvent,
 ): git is GitlabPushEvent {
   return (git as GitlabPushEvent).project_id !== undefined;
 }
 
 export function isGithubPushEvent(
-  git: GitlabPushEvent | GithubPushEvent,
+  git: GitlabPushEvent | GithubPushEvent | GithubBranchEvent,
 ): git is GithubPushEvent {
-  return (git as GithubPushEvent).repository.full_name !== undefined;
+  return (
+    (git as GithubPushEvent).repository.full_name !== undefined &&
+    (git as GithubBranchEvent).ref_type === undefined
+  );
+}
+
+export function isGithubBranchEvent(
+  git: GitlabPushEvent | GithubPushEvent | GithubBranchEvent,
+): git is GithubBranchEvent {
+  return (git as GithubBranchEvent).ref_type !== undefined;
 }

@@ -1,18 +1,12 @@
-import { Get, Controller, Body, Post, HttpService, Req } from '@nestjs/common';
+import { Get, Controller, Body, Post, Req } from '@nestjs/common';
 import { AppService } from './app.service';
-import {
-  GitTypeEnum,
-  CommitStatusEnum,
-  isGitlabPushEvent,
-  isGithubPushEvent,
-} from './webhook/utils.enum';
+import { CommitStatusEnum, GitEventEnum } from './webhook/utils.enum';
 import { GithubService } from './github/github.service';
 import { GitlabService } from './gitlab/gitlab.service';
-import { GitServiceInterface } from './interfaces/git.service.interface';
-import { CommitStatusInfos } from './webhook/commitStatusInfos';
-import { GithubPushEvent } from './github/githubPushEvent';
-import { GitlabPushEvent } from './gitlab/gitlabPushEvent';
 import { Webhook } from './webhook/webhook';
+import { logger } from './logger/logger.service';
+import { GithubEvent } from './github/githubEvent';
+import { GitlabEvent } from './gitlab/gitlabEvent';
 
 @Controller()
 export class AppController {
@@ -30,7 +24,7 @@ export class AppController {
   @Post('/webhook')
   processWebhook(
     @Req() request,
-    @Body() webhookDto: GithubPushEvent | GitlabPushEvent,
+    @Body() webhookDto: GithubEvent | GitlabEvent,
   ): string {
     const webhook: Webhook = new Webhook(
       this.gitlabService,
@@ -40,16 +34,22 @@ export class AppController {
     // this webhook object now contains all data we need
     webhook.gitToWebhook(webhookDto);
 
-    // 1st rule
-    const commitMessage = webhook.commits[0].message;
-    const commitRegExp = RegExp(/(feat|fix|docs)\(?[a-z]*\)?:\s.*/);
-    const commitStatus = commitRegExp.test(commitMessage)
-      ? CommitStatusEnum.Success
-      : CommitStatusEnum.Failure;
+    if (webhook.gitEvent === GitEventEnum.Push) {
+      const commitMessage = webhook.commits[0].message;
+      const commitRegExp = RegExp(/(feat|fix|docs)\(?[a-z]*\)?:\s.*/);
+      const commitStatus = commitRegExp.test(commitMessage)
+        ? CommitStatusEnum.Success
+        : CommitStatusEnum.Failure;
 
-    webhook.gitService.updateCommitStatus(
-      webhook.gitCommitStatusInfos(commitStatus),
-    );
+      webhook.gitService.updateCommitStatus(
+        webhook.gitCommitStatusInfos(commitStatus),
+      );
+    } else if (webhook.gitEvent === GitEventEnum.NewBranch) {
+      const branchName = webhook.branchName;
+      const branchRegExp = RegExp(/(features|fix)\/.*/);
+      const branchNameAuthorized = branchRegExp.test(branchName) ? true : false;
+      logger.info('branchNameAuthorized :' + branchNameAuthorized);
+    }
 
     return 'ok';
   }

@@ -11,7 +11,7 @@ export class GithubService implements GitServiceInterface {
     // Config URL for GitHub
     const configGitHub = {
       headers: {
-        Authorization: 'token f5469af02a4c40d3163d3bdca2798227fd6254f3',
+        Authorization: 'token 47974f658ae030fc6e813d03c769e73cd77816b1',
       },
     };
 

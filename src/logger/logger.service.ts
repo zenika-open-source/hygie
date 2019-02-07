@@ -1,5 +1,9 @@
 import { createLogger, format, transports } from 'winston';
 
+/**
+ * To log anything, just import 'logger' from './logger/logger.servie'
+ *  and then use : logger.info(), logger.error(), etc
+ */
 export const logger = createLogger({
   level: 'debug',
   format: format.combine(

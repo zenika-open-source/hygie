@@ -4,12 +4,14 @@ import {
   isGithubPushEvent,
   GitEventEnum,
   CommitStatusEnum,
+  isGithubBranchEvent,
 } from './utils.enum';
 import { GitlabService } from 'src/gitlab/gitlab.service';
 import { GithubService } from 'src/github/github.service';
-import { GitlabPushEvent } from 'src/gitlab/gitlabPushEvent';
-import { GithubPushEvent } from 'src/github/githubPushEvent';
 import { CommitStatusInfos } from './commitStatusInfos';
+import { logger } from 'src/logger/logger.service';
+import { GitlabEvent } from 'src/gitlab/gitlabEvent';
+import { GithubEvent } from 'src/github/githubEvent';
 
 export class WebhookCommit {
   message: string;
@@ -18,18 +20,18 @@ export class WebhookCommit {
 
 // tslint:disable-next-line:max-classes-per-file
 export class WebhookRepository {
-  // tslint:disable-next-line:variable-name
-  full_name: string;
+  fullName: string;
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class Webhook {
   gitType: GitTypeEnum;
+  gitEvent: GitEventEnum;
   gitService: GitlabService | GithubService;
   commits: WebhookCommit[];
-  // tslint:disable-next-line:variable-name
-  project_id: number;
+  projectId: number;
   repository: WebhookRepository;
+  branchName: string;
 
   constructor(
     private readonly gitlabService: GitlabService,
@@ -40,19 +42,32 @@ export class Webhook {
     this.commits.push(new WebhookCommit());
   }
 
-  gitToWebhook(git: GitlabPushEvent | GithubPushEvent): void {
-    if (isGitlabPushEvent(git)) {
-      this.gitType = GitTypeEnum.Gitlab;
-      this.project_id = git.project_id;
-      this.gitService = this.gitlabService;
-    } else if (isGithubPushEvent(git)) {
-      this.gitType = GitTypeEnum.Github;
-      this.gitService = this.githubService;
-      this.repository.full_name = git.repository.full_name;
-    }
+  gitToWebhook(git: GitlabEvent | GithubEvent): void {
+    // First, check Event
 
-    this.commits[0].id = git.commits[0].id;
-    this.commits[0].message = git.commits[0].message;
+    if (isGitlabPushEvent(git)) {
+      logger.info('gitlab push');
+      this.gitType = GitTypeEnum.Gitlab;
+      this.gitEvent = GitEventEnum.Push;
+      this.projectId = git.project_id;
+      this.gitService = this.gitlabService;
+      this.commits[0].id = git.commits[0].id;
+      this.commits[0].message = git.commits[0].message;
+    } else if (isGithubPushEvent(git)) {
+      logger.info('github push');
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.Push;
+      this.gitService = this.githubService;
+      this.repository.fullName = git.repository.full_name;
+      this.commits[0].id = git.commits[0].id;
+      this.commits[0].message = git.commits[0].message;
+    } else if (isGithubBranchEvent(git)) {
+      logger.info('github branch');
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.NewBranch;
+      this.branchName = git.ref;
+      logger.info('branchName:' + this.branchName);
+    }
   }
 
   gitCommitStatusInfos(commitStatus: CommitStatusEnum): CommitStatusInfos {
@@ -62,9 +77,9 @@ export class Webhook {
     commitStatusInfos.descriptionMessage = 'my message';
 
     if (this.gitType === GitTypeEnum.Gitlab) {
-      commitStatusInfos.projectId = this.project_id.toString();
+      commitStatusInfos.projectId = this.projectId.toString();
     } else if (this.gitType === GitTypeEnum.Github) {
-      commitStatusInfos.repositoryFullName = this.repository.full_name;
+      commitStatusInfos.repositoryFullName = this.repository.fullName;
     }
 
     return commitStatusInfos;
