@@ -2,19 +2,19 @@ import { Injectable, HttpService } from '@nestjs/common';
 import { GitServiceInterface } from '../interfaces/git.service.interface';
 import { GitTypeEnum, convertCommitStatus } from '../webhook/utils.enum';
 import { CommitStatusInfos } from '../webhook/commitStatusInfos';
+import { MyLogger } from 'src/my-logger/my-logger.service';
 
 @Injectable()
 export class GithubService implements GitServiceInterface {
   constructor(private readonly httpService: HttpService) {}
 
   updateCommitStatus(commitStatusInfos: CommitStatusInfos): Promise<boolean> {
-    // tslint:disable-next-line:no-console
-    console.log('updateStatus form GithubService');
+    MyLogger.log('updateStatus form GithubService');
 
     // Config URL for GitHub
     const configGitHub = {
       headers: {
-        Authorization: 'token e85f4d3666f17cafe25d08694d690080f5555c4e',
+        Authorization: 'token d9f08c2f30a86243d73b0f5e030accd77ad717f9',
       },
     };
 
@@ -28,8 +28,7 @@ export class GithubService implements GitServiceInterface {
       description: commitStatusInfos.descriptionMessage,
     };
 
-    // tslint:disable-next-line:no-console
-    console.log(
+    MyLogger.log(
       `https://api.github.com/repos/${
         commitStatusInfos.repositoryFullName
       }/statuses/${commitStatusInfos.commitSha}`,
@@ -45,8 +44,7 @@ export class GithubService implements GitServiceInterface {
       )
       .toPromise()
       .then(response => {
-        // tslint:disable-next-line:no-console
-        console.log(response.data);
+        MyLogger.log(response.data);
 
         return true;
       });

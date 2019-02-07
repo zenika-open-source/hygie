@@ -3,7 +3,6 @@ import { AppService } from './app.service';
 import {
   GitTypeEnum,
   CommitStatusEnum,
-  convertCommitStatus,
   isGitlabPushEvent,
   isGithubPushEvent,
 } from './webhook/utils.enum';
@@ -65,15 +64,8 @@ export class AppController {
 
     if (isGitlabPushEvent(webhookDto)) {
       commitStatusInfos.projectId = webhookDto.project_id.toString();
-      // tslint:disable-next-line:no-console
-      console.log('commitStatusInfos.projectId' + commitStatusInfos.projectId);
     } else if (isGithubPushEvent(webhookDto)) {
       commitStatusInfos.repositoryFullName = webhookDto.repository.full_name;
-      // tslint:disable-next-line:no-console
-      console.log(
-        'commitStatusInfos.repositoryFullName' +
-          commitStatusInfos.repositoryFullName,
-      );
     }
     gitService.updateCommitStatus(commitStatusInfos);
 
