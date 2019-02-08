@@ -1,25 +1,19 @@
-import { Get, Controller, Body, Post } from '@nestjs/common';
-import { AppService } from './app.service';
-import { CommitStatusEnum, GitEventEnum } from './webhook/utils.enum';
+import { Controller, Body, Post } from '@nestjs/common';
+import { CommitStatusEnum } from './webhook/utils.enum';
 import { GithubService } from './github/github.service';
 import { GitlabService } from './gitlab/gitlab.service';
 import { Webhook } from './webhook/webhook';
 import { logger } from './logger/logger.service';
 import { GithubEvent } from './github/githubEvent';
 import { GitlabEvent } from './gitlab/gitlabEvent';
+import { Rule, getRules, callFunction } from './rules/rules';
 
 @Controller()
 export class AppController {
   constructor(
-    private readonly appService: AppService,
     private readonly gitlabService: GitlabService,
     private readonly githubService: GithubService,
   ) {}
-
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
 
   @Post('/webhook')
   processWebhook(@Body() webhookDto: GithubEvent | GitlabEvent): string {
@@ -28,25 +22,53 @@ export class AppController {
       this.githubService,
     );
 
+    logger.info('\n\n========== webhook received ==========\n');
     // this webhook object now contains all data we need
     webhook.gitToWebhook(webhookDto);
 
-    if (webhook.gitEvent === GitEventEnum.Push) {
-      const commitMessage = webhook.commits[0].message;
-      const commitRegExp = RegExp(/(feat|fix|docs)\(?[a-z]*\)?:\s.*/);
-      const commitStatus = commitRegExp.test(commitMessage)
-        ? CommitStatusEnum.Success
-        : CommitStatusEnum.Failure;
+    // getting rules
+    const rules: Rule[] = getRules();
 
-      webhook.gitService.updateCommitStatus(
-        webhook.gitCommitStatusInfos(commitStatus),
-      );
-    } else if (webhook.gitEvent === GitEventEnum.NewBranch) {
-      const branchName = webhook.branchName;
-      const branchRegExp = RegExp(/(features|fix)\/.*/);
-      const branchNameAuthorized = branchRegExp.test(branchName) ? true : false;
-      logger.info('branchNameAuthorized :' + branchNameAuthorized);
-    }
+    // testing each rule
+    let ruleSuccessed: boolean = false;
+
+    rules.forEach(rule => {
+      ruleSuccessed = false;
+      logger.info('== ' + rule.name + ' ==');
+      if (rule.event === webhook.gitEvent) {
+        logger.info('> Rule match event type');
+
+        if (rule.field === 'commit.message') {
+          const commitMessage = webhook.getCommitMessage();
+          const commitRegExp = RegExp(rule.regexp);
+          ruleSuccessed = commitRegExp.test(commitMessage);
+          const commitStatus = ruleSuccessed
+            ? CommitStatusEnum.Success
+            : CommitStatusEnum.Failure;
+          logger.info('> ' + commitStatus.toString());
+          webhook.gitService.updateCommitStatus(
+            webhook.gitCommitStatusInfos(commitStatus),
+          );
+        } else if (rule.field === 'branch.name') {
+          const branchName = webhook.getBranchName();
+          const branchRegExp = RegExp(rule.regexp);
+          ruleSuccessed = branchRegExp.test(branchName) ? true : false;
+          logger.info('> branchNameAuthorized :' + ruleSuccessed);
+        }
+
+        if (ruleSuccessed) {
+          rule.onSuccess.forEach(success => {
+            callFunction(success.callback, success.args);
+          });
+        } else {
+          rule.onError.forEach(error => {
+            callFunction(error.callback, error.args);
+          });
+        }
+      } else {
+        logger.info('> Rule does not match event type');
+      }
+    });
 
     return 'ok';
   }

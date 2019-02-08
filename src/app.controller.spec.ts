@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
 import { HttpModule } from '@nestjs/common';
@@ -16,7 +15,7 @@ describe('AppController', () => {
     app = await Test.createTestingModule({
       imports: [HttpModule],
       controllers: [AppController],
-      providers: [AppService, GitlabService, GithubService],
+      providers: [GitlabService, GithubService],
     }).compile();
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
@@ -33,12 +32,6 @@ describe('AppController', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  describe('getHello', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
-    });
   });
 
   describe('webhook', () => {

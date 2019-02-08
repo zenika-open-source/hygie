@@ -10,7 +10,6 @@ import {
 import { GitlabService } from 'src/gitlab/gitlab.service';
 import { GithubService } from 'src/github/github.service';
 import { CommitStatusInfos } from './commitStatusInfos';
-import { logger } from './../logger/logger.service';
 import { GitlabEvent } from 'src/gitlab/gitlabEvent';
 import { GithubEvent } from 'src/github/githubEvent';
 
@@ -43,9 +42,16 @@ export class Webhook {
     this.commits.push(new WebhookCommit());
   }
 
+  getCommitMessage(): string {
+    return this.commits[0].message;
+  }
+
+  getBranchName(): string {
+    return this.branchName;
+  }
+
   gitToWebhook(git: GitlabEvent | GithubEvent): void {
     if (isGitlabPushEvent(git)) {
-      // logger.info('gitlab push');
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.Push;
       this.projectId = git.project_id;
@@ -53,13 +59,10 @@ export class Webhook {
       this.commits[0].id = git.commits[0].id;
       this.commits[0].message = git.commits[0].message;
     } else if (isGitlabBranchEvent(git)) {
-      logger.info('gitlab branch');
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewBranch;
       this.branchName = git.ref.substring(11);
-      logger.info('branchName:' + this.branchName);
     } else if (isGithubPushEvent(git)) {
-      logger.info('github push');
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.Push;
       this.gitService = this.githubService;
@@ -67,11 +70,9 @@ export class Webhook {
       this.commits[0].id = git.commits[0].id;
       this.commits[0].message = git.commits[0].message;
     } else if (isGithubBranchEvent(git)) {
-      logger.info('github branch');
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewBranch;
       this.branchName = git.ref;
-      logger.info('branchName:' + this.branchName);
     }
   }
 

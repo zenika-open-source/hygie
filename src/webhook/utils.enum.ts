@@ -3,19 +3,19 @@ import { GithubPushEvent } from 'src/github/githubPushEvent';
 import { GithubBranchEvent } from 'src/github/githubBranchEvent';
 
 export enum GitTypeEnum {
-  Undefined = 0,
-  Github = 1,
-  Gitlab = 2,
+  Undefined = 'Undefined',
+  Github = 'Github',
+  Gitlab = 'Gitlab',
 }
 
 export enum CommitStatusEnum {
-  Success = 1,
-  Failure = 2,
+  Success = 'Success',
+  Failure = 'Failure',
 }
 
 export enum GitEventEnum {
-  Push = 1,
-  NewBranch = 2,
+  Push = 'Push',
+  NewBranch = 'NewBranch',
 }
 
 export function convertCommitStatus(
