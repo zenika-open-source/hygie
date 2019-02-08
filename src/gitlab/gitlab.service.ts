@@ -2,16 +2,20 @@ import { Injectable, HttpService } from '@nestjs/common';
 import { GitServiceInterface } from '../interfaces/git.service.interface';
 import { convertCommitStatus, GitTypeEnum } from '../webhook/utils.enum';
 import { CommitStatusInfos } from '../webhook/commitStatusInfos';
+import { logger } from 'src/logger/logger.service';
 
 @Injectable()
 export class GitlabService implements GitServiceInterface {
   constructor(private readonly httpService: HttpService) {}
 
   updateCommitStatus(commitStatusInfos: CommitStatusInfos): Promise<boolean> {
+    require('dotenv').config({ path: 'config.env' });
+    const token = process.env.GITLAB_TOKEN;
+
     // Config URL for GitLab
     const configGitLab = {
       headers: {
-        'PRIVATE-TOKEN': '6NkGhjrFRyoCh4Dx7RMJ',
+        'PRIVATE-TOKEN': token,
       },
       params: {
         state: convertCommitStatus(

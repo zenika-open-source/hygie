@@ -8,10 +8,13 @@ export class GithubService implements GitServiceInterface {
   constructor(private readonly httpService: HttpService) {}
 
   updateCommitStatus(commitStatusInfos: CommitStatusInfos): Promise<boolean> {
+    require('dotenv').config({ path: 'config.env' });
+    const token = process.env.GITHUB_TOKEN;
+
     // Config URL for GitHub
     const configGitHub = {
       headers: {
-        Authorization: 'token 47974f658ae030fc6e813d03c769e73cd77816b1',
+        Authorization: 'token ' + token,
       },
     };
 
