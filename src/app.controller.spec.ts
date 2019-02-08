@@ -46,6 +46,8 @@ describe('AppController', () => {
       appController.processWebhook({
         commits: [{ message: 'message', id: '1' }],
         project_id: 1,
+        ref: 'ref/header/master',
+        before: 'f8e6eb8d6a9e8f07fd66df108e78eae7225bd7c2',
       });
       expect(gitlabService.updateCommitStatus).toBeCalled();
     });
