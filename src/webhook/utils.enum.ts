@@ -40,7 +40,11 @@ export function convertCommitStatus(
 export function isGitlabPushEvent(
   git: GitlabPushEvent | GithubPushEvent | GithubBranchEvent,
 ): git is GitlabPushEvent {
-  return (git as GitlabPushEvent).project_id !== undefined;
+  return (
+    (git as GitlabPushEvent).project_id !== undefined &&
+    (git as GitlabPushEvent).before !==
+      '0000000000000000000000000000000000000000'
+  );
 }
 
 export function isGithubPushEvent(
@@ -59,4 +63,14 @@ export function isGithubBranchEvent(
   git: GitlabPushEvent | GithubPushEvent | GithubBranchEvent,
 ): git is GithubBranchEvent {
   return (git as GithubBranchEvent).ref_type !== undefined;
+}
+
+export function isGitlabBranchEvent(
+  git: GitlabPushEvent | GithubPushEvent | GithubBranchEvent,
+): git is GitlabPushEvent {
+  return (
+    (git as GitlabPushEvent).project_id !== undefined &&
+    (git as GitlabPushEvent).before ===
+      '0000000000000000000000000000000000000000'
+  );
 }

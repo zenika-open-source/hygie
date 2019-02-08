@@ -6,4 +6,6 @@ export class GitlabPushEvent {
   commits: GitlabCommit[];
   // tslint:disable-next-line:variable-name
   project_id: number;
+  before: string;
+  ref: string;
 }

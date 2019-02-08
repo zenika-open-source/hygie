@@ -5,6 +5,7 @@ import {
   GitEventEnum,
   CommitStatusEnum,
   isGithubBranchEvent,
+  isGitlabBranchEvent,
 } from './utils.enum';
 import { GitlabService } from 'src/gitlab/gitlab.service';
 import { GithubService } from 'src/github/github.service';
@@ -51,6 +52,12 @@ export class Webhook {
       this.gitService = this.gitlabService;
       this.commits[0].id = git.commits[0].id;
       this.commits[0].message = git.commits[0].message;
+    } else if (isGitlabBranchEvent(git)) {
+      logger.info('gitlab branch');
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.NewBranch;
+      this.branchName = git.ref.substring(11);
+      logger.info('branchName:' + this.branchName);
     } else if (isGithubPushEvent(git)) {
       logger.info('github push');
       this.gitType = GitTypeEnum.Github;
@@ -60,11 +67,11 @@ export class Webhook {
       this.commits[0].id = git.commits[0].id;
       this.commits[0].message = git.commits[0].message;
     } else if (isGithubBranchEvent(git)) {
-      // logger.info('github branch');
+      logger.info('github branch');
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewBranch;
       this.branchName = git.ref;
-      // logger.info('branchName:' + this.branchName);
+      logger.info('branchName:' + this.branchName);
     }
   }
 
