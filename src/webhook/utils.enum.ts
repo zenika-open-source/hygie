@@ -46,10 +46,13 @@ export function isGitlabPushEvent(
 export function isGithubPushEvent(
   git: GitlabPushEvent | GithubPushEvent | GithubBranchEvent,
 ): git is GithubPushEvent {
-  return (
-    (git as GithubPushEvent).repository.full_name !== undefined &&
-    (git as GithubBranchEvent).ref_type === undefined
-  );
+  if ((git as GithubPushEvent).repository !== undefined) {
+    return (
+      (git as GithubPushEvent).repository.full_name !== undefined &&
+      (git as GithubBranchEvent).ref_type === undefined
+    );
+  }
+  return false;
 }
 
 export function isGithubBranchEvent(

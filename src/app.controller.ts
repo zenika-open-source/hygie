@@ -1,4 +1,4 @@
-import { Get, Controller, Body, Post, Req } from '@nestjs/common';
+import { Get, Controller, Body, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CommitStatusEnum, GitEventEnum } from './webhook/utils.enum';
 import { GithubService } from './github/github.service';
@@ -22,10 +22,7 @@ export class AppController {
   }
 
   @Post('/webhook')
-  processWebhook(
-    @Req() request,
-    @Body() webhookDto: GithubEvent | GitlabEvent,
-  ): string {
+  processWebhook(@Body() webhookDto: GithubEvent | GitlabEvent): string {
     const webhook: Webhook = new Webhook(
       this.gitlabService,
       this.githubService,
