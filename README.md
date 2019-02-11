@@ -43,7 +43,6 @@ Example:
     - Push
   options:
     regexp: (feat|fix|docs)\(?[a-z]*\)?:\s.*
-    toto: coucou
   onSuccess:
     - callback: logger.info
       args:
