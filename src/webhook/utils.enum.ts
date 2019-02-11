@@ -53,6 +53,7 @@ export function isGithubPushEvent(
   if ((git as GithubPushEvent).repository !== undefined) {
     return (
       (git as GithubPushEvent).repository.full_name !== undefined &&
+      (git as GithubPushEvent).commits !== undefined &&
       (git as GithubBranchEvent).ref_type === undefined
     );
   }

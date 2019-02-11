@@ -59,3 +59,6 @@ config.env
 
 # next.js build output
 .next
+
+dist/*
+.vscode/launch.json
