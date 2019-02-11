@@ -16,7 +16,7 @@ export function getRules(webhook: Webhook): Rule[] {
       rule = new BranchNameRule(webhook);
     }
     rule.name = r.name;
-    rule.enable = r.enable;
+    rule.enabled = r.enabled;
     rule.events = r.events;
     rule.options = r.options;
     rule.onSuccess = r.onSuccess;

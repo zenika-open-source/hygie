@@ -38,7 +38,7 @@ Example:
 
 ```yml
 - name: commitMessage
-  enable: true
+  enabled: true
   events:
     - Push
   options:

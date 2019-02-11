@@ -1,7 +1,7 @@
 --- # Rules config file
 rules:
   - name: commitMessage
-    enable: true
+    enabled: true
     events:
       - Push
     options:
@@ -26,7 +26,7 @@ rules:
           - 'commit will fail'
 
   - name: branchName
-    enable: true
+    enabled: true
     events:
       - NewBranch
     options:

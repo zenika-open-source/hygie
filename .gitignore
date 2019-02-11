@@ -61,4 +61,4 @@ config.env
 .next
 
 dist/*
-.vscode/launch.json
+.vscode/*

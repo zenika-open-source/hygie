@@ -20,7 +20,7 @@ export function callFunction(callback: string, ...args: any[]) {
 
 export abstract class Rule {
   name: string;
-  enable: boolean;
+  enabled: boolean;
   events: GitEventEnum[];
   onSuccess: OnSuccessError[];
   onError: OnSuccessError[];
@@ -35,7 +35,7 @@ export abstract class Rule {
   displayRule(): void {
     logger.info('Display rule');
     logger.info('name:' + this.name);
-    logger.info('enable:' + this.enable);
+    logger.info('enable:' + this.enabled);
     logger.info('events:' + this.events);
     logger.info('onSuccess:' + this.onSuccess);
     logger.info('onError:' + this.onError);
@@ -49,7 +49,7 @@ export abstract class Rule {
         events = true;
       }
     });
-    return this.enable && events;
+    return this.enabled && events;
   }
 
   excecuteValidationFunctions(ruleSuccessed: boolean): boolean {
