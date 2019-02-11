@@ -1,8 +1,38 @@
 version: 2
 jobs:
-  build:
+  install-dependencies:
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: circleci/node:8
     steps:
       - checkout
-      - run: echo "A first hello"
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}
+            - dependencies-
+      - run:
+          name: Download dependencies
+          command: npm install --quiet
+      - save_cache:
+          paths: [node_modules]
+          key: dependencies-{{ checksum "package.json" }}
+      - persist_to_workspace:
+          root: ./
+          paths: [node_modules]
+  build:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - setup_remote_docker
+      - checkout
+      - attach_workspace:
+          at: ./
+      - run:
+          name: npm run ci tests
+          command: npm run ci
+workflows:
+  version: 2
+  dependencies-and-deploy:
+    jobs:
+      - install-dependencies
+      - build:
+          requires: [install-dependencies]
