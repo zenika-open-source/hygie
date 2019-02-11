@@ -6,16 +6,18 @@ import { logger } from 'src/logger/logger.service';
 
 @Injectable()
 export class GitlabService implements GitServiceInterface {
-  constructor(private readonly httpService: HttpService) {}
+  token: string;
 
-  updateCommitStatus(commitStatusInfos: CommitStatusInfos): Promise<boolean> {
+  constructor(private readonly httpService: HttpService) {
     require('dotenv').config({ path: 'config.env' });
-    const token = process.env.GITLAB_TOKEN;
+    this.token = process.env.GITLAB_TOKEN;
+  }
 
+  updateCommitStatus(commitStatusInfos: CommitStatusInfos): void {
     // Config URL for GitLab
     const configGitLab = {
       headers: {
-        'PRIVATE-TOKEN': token,
+        'PRIVATE-TOKEN': this.token,
       },
       params: {
         state: convertCommitStatus(
@@ -30,7 +32,7 @@ export class GitlabService implements GitServiceInterface {
     // Data for GitLab
     const dataGitLab = {};
 
-    return this.httpService
+    this.httpService
       .post(
         `https://gitlab.com/api/v4/projects/${
           commitStatusInfos.projectId
@@ -40,7 +42,7 @@ export class GitlabService implements GitServiceInterface {
       )
       .toPromise()
       .then(response => {
-        return true;
+        logger.info(JSON.stringify(response.data, null, 4));
       });
   }
 }

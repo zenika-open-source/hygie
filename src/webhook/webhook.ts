@@ -13,6 +13,7 @@ import { CommitStatusInfos } from './commitStatusInfos';
 import { GitlabEvent } from 'src/gitlab/gitlabEvent';
 import { GithubEvent } from 'src/github/githubEvent';
 
+// tslint:disable-next-line:max-classes-per-file
 export class WebhookCommit {
   message: string;
   id: string;

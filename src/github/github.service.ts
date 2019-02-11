@@ -6,16 +6,18 @@ import { logger } from 'src/logger/logger.service';
 
 @Injectable()
 export class GithubService implements GitServiceInterface {
-  constructor(private readonly httpService: HttpService) {}
+  token: string;
 
-  updateCommitStatus(commitStatusInfos: CommitStatusInfos): Promise<boolean> {
+  constructor(private readonly httpService: HttpService) {
     require('dotenv').config({ path: 'config.env' });
-    const token = process.env.GITHUB_TOKEN;
+    this.token = process.env.GITHUB_TOKEN;
+  }
 
+  updateCommitStatus(commitStatusInfos: CommitStatusInfos): void {
     // Config URL for GitHub
     const configGitHub = {
       headers: {
-        Authorization: 'token ' + token,
+        Authorization: 'token ' + this.token,
       },
     };
 
@@ -29,7 +31,7 @@ export class GithubService implements GitServiceInterface {
       description: commitStatusInfos.descriptionMessage,
     };
 
-    return this.httpService
+    this.httpService
       .post(
         `https://api.github.com/repos/${
           commitStatusInfos.repositoryFullName
@@ -39,7 +41,7 @@ export class GithubService implements GitServiceInterface {
       )
       .toPromise()
       .then(response => {
-        return true;
+        logger.info(JSON.stringify(response.data, null, 4));
       });
   }
 }

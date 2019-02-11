@@ -1,9 +1,12 @@
 --- # Rules config file
 rules:
-  - name: Check last commit message on push
-    event: Push
-    field: commit.message
-    regexp: (feat|fix|docs)\(?[a-z]*\)?:\s.*
+  - name: commitMessage
+    enable: true
+    events:
+      - Push
+    options:
+      regexp: (feat|fix|docs)\(?[a-z]*\)?:\s.*
+      toto: coucou
     onSuccess:
       - callback: logger.info
         args:
@@ -23,10 +26,12 @@ rules:
           - 'another action is being executed'
           - 'commit will fail'
 
-  - name: Check branch name
-    event: NewBranch
-    field: branch.name
-    regexp: (features|fix)\/.*
+  - name: branchName
+    enable: true
+    events:
+      - NewBranch
+    options:
+      regexp: (features|fix)\/.*
     onSuccess:
       - callback: logger.info
         args:
