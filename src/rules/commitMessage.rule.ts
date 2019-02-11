@@ -1,6 +1,6 @@
 import { Rule } from './rule.class';
-import { CommitStatusEnum } from 'src/webhook/utils.enum';
-import { logger } from 'src/logger/logger.service';
+import { logger } from '../logger/logger.service';
+import { CommitStatusEnum } from '../webhook/utils.enum';
 
 interface CommitMessageOptions {
   regexp: string;

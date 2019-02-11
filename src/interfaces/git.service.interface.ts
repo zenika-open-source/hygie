@@ -1,4 +1,4 @@
-import { CommitStatusInfos } from 'src/webhook/commitStatusInfos';
+import { CommitStatusInfos } from '../webhook/commitStatusInfos';
 
 export interface GitServiceInterface {
   updateCommitStatus(commitStatusInfos: CommitStatusInfos): void;

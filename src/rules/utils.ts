@@ -1,4 +1,4 @@
-import { Webhook } from 'src/webhook/webhook';
+import { Webhook } from '../webhook/webhook';
 import { Rule } from './rule.class';
 import { readFileSync } from 'fs';
 import { safeLoad } from 'js-yaml';
@@ -6,7 +6,7 @@ import { CommitMessageRule } from './commitMessage.rule';
 import { BranchNameRule } from './branchName.rule';
 
 export function getRules(webhook: Webhook): Rule[] {
-  const config = safeLoad(readFileSync('src/rules/rules.yml', 'utf-8'));
+  const config = safeLoad(readFileSync('../rules/rules.yml', 'utf-8'));
   const rules: Rule[] = new Array();
   config.rules.forEach(r => {
     let rule: Rule;

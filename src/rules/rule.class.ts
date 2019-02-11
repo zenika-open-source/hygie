@@ -1,6 +1,6 @@
-import { Webhook } from 'src/webhook/webhook';
-import { logger } from 'src/logger/logger.service';
-import { GitEventEnum } from 'src/webhook/utils.enum';
+import { Webhook } from '../webhook/webhook';
+import { GitEventEnum } from '../webhook/utils.enum';
+import { logger } from '../logger/logger.service';
 
 export interface OnSuccessError {
   callback: string;

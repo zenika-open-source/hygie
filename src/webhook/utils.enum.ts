@@ -1,6 +1,6 @@
-import { GitlabPushEvent } from 'src/gitlab/gitlabPushEvent';
-import { GithubPushEvent } from 'src/github/githubPushEvent';
-import { GithubBranchEvent } from 'src/github/githubBranchEvent';
+import { GitlabPushEvent } from '../gitlab/gitlabPushEvent';
+import { GithubPushEvent } from '../github/githubPushEvent';
+import { GithubBranchEvent } from '../github/githubBranchEvent';
 
 export enum GitTypeEnum {
   Undefined = 'Undefined',

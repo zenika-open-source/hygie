@@ -7,11 +7,11 @@ import {
   isGithubBranchEvent,
   isGitlabBranchEvent,
 } from './utils.enum';
-import { GitlabService } from 'src/gitlab/gitlab.service';
-import { GithubService } from 'src/github/github.service';
+import { GitlabService } from '../gitlab/gitlab.service';
+import { GithubService } from '../github/github.service';
 import { CommitStatusInfos } from './commitStatusInfos';
-import { GitlabEvent } from 'src/gitlab/gitlabEvent';
-import { GithubEvent } from 'src/github/githubEvent';
+import { GitlabEvent } from '../gitlab/gitlabEvent';
+import { GithubEvent } from '../github/githubEvent';
 
 // tslint:disable-next-line:max-classes-per-file
 export class WebhookCommit {
