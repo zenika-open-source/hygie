@@ -35,7 +35,7 @@ export abstract class Rule {
   displayRule(): void {
     logger.info('Display rule');
     logger.info('name:' + this.name);
-    logger.info('enable:' + this.enabled);
+    logger.info('enabled:' + this.enabled);
     logger.info('events:' + this.events);
     logger.info('onSuccess:' + this.onSuccess);
     logger.info('onError:' + this.onError);
