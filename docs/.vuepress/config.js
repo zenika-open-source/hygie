@@ -20,13 +20,13 @@ module.exports = {
       {
         title: 'Guide',
         collapsable: false,
-        children: ['/guide/', '/guide/gettingStarted.md'],
+        children: ['/guide/gettingStarted.md'],
       },
       {
-        title: 'Customisable Rules',
+        title: 'Rules',
         collapsable: false,
         children: [
-          '/rules/',
+          '/rules/customisableRules.md',
           '/rules/branchName.md',
           '/rules/commitMessage.md',
         ],

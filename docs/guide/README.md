@@ -1,5 +1,3 @@
 # Guide
 
-## blabla
-
-blablabla
+- [Getting Started](gettingStarted.md)

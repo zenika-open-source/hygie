@@ -9,7 +9,7 @@ import { logger } from './logger/logger.service';
 export class AppController {
   @Get('/')
   test(): string {
-    return 'Nice test.';
+    return 'Welcome, <b>Git Webhooks</b> is running!';
   }
 
   @Post('/webhook')

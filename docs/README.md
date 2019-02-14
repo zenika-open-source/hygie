@@ -1,8 +1,9 @@
 # Git Webhooks
 
-## Presentation
+## Motivation
 
-Le but est de proposer une solution facile à utiliser et à installer, mettant à disposition une API REST permettant d'intéragir sur des évenements d'un repository GIT.
-Cette API mettra à disposition un ensemble de règles/actions aux utilisateurs permettant d'automatiser le cycle de vie du projet.
+**_Git Webhooks_** is an easy-to-use Open-Source REST API allowing you to interact with GIT events.
 
-Quelques keywords pour décrire le projet : NestJS, Docker, Webhooks, FaaS, Github Actions, CI, Firebase, Open-source, Intéractions avec d'autres produits (Slack, Travis, ...)...
+This [NestJs](https://docs.nestjs.com/) API expose a set of customizable Rules to automate your project's life cycle.
+
+Keywords : [#NestJs](), [#NodeJs](), [#TypeScript](), [#Docker](), [#Webhooks](), [#FaaS](), [#Github](), [#GitLab](), [#CI](), [#Open-Source]()...
