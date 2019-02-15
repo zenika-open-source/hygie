@@ -41,3 +41,17 @@ rules:
         args:
           type: warn
           message: 'pattern does not match, branch name must begin with : "features|fix"!'
+  - name: oneCommitPerPR
+    enabled: true
+    events:
+      - Push
+    onSuccess:
+      - callback: LoggerRunnable
+        args:
+          type: info
+          message: 'there is only on commit in this PR/MR/Push, ok'
+    onError:
+      - callback: LoggerRunnable
+        args:
+          type: warn
+          message: 'more than one commit! An email will be sent to the maintainer.'

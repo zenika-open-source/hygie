@@ -4,6 +4,7 @@ import { readFileSync } from 'fs';
 import { safeLoad } from 'js-yaml';
 import { CommitMessageRule } from './commitMessage.rule';
 import { BranchNameRule } from './branchName.rule';
+import { OneCommitPerPR } from './oneCommitPerPR';
 
 export function getRules(webhook: Webhook): Rule[] {
   const config = safeLoad(readFileSync('src/rules/rules.yml', 'utf-8'));
@@ -14,6 +15,8 @@ export function getRules(webhook: Webhook): Rule[] {
       rule = new CommitMessageRule(webhook);
     } else if (r.name === 'branchName') {
       rule = new BranchNameRule(webhook);
+    } else if (r.name === 'oneCommitPerPR') {
+      rule = new OneCommitPerPR(webhook);
     }
     rule.name = r.name;
     rule.enabled = r.enabled;
