@@ -1,6 +1,6 @@
 {
-  "name": "git-webhook-api",
-  "version": "1.0.0",
+  "name": "@dxdeveloperexperience/git-webhooks",
+  "version": "0.0.0",
   "description": "Git Webhook API Project",
   "license": "MIT",
   "scripts": {
