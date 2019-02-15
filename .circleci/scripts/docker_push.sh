@@ -6,6 +6,6 @@ docker build -t my-webhook:$VERSION ../../.
 echo "> login"
 docker login -u $DOCKER_USER -p $DOCKER_PASS
 echo "> tag"
-docker tag my-webhook:$VERSION bastienterrier/git-webhooks:$VERSION # CHANGE LOCATION
+docker tag my-webhook:$VERSION dxdeveloperexperience/git-webhooks:$VERSION
 echo "> push"
-docker push bastienterrier/git-webhooks:$VERSION # CHANGE LOCATION
+docker push dxdeveloperexperience/git-webhooks:$VERSION

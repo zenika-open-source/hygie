@@ -38,7 +38,7 @@ jobs:
           at: ./
       - add_ssh_keys:
           fingerprints:
-            - 'e9:f2:ef:eb:84:32:e1:2c:db:01:51:47:10:bb:85:83' # TO CHANGE!
+            - '06:fa:21:e0:f0:79:14:03:85:08:b9:48:a3:ef:c6:8c'
       - setup_remote_docker
       - run:
           name: chmod +x scripts
@@ -53,8 +53,8 @@ workflows:
       - install-dependencies
       - build:
           requires: [install-dependencies]
-      #- deploy:
-      #    requires: [build]
-      #    filters:
-      #      branches:
-      #        only: master
+      - deploy:
+          requires: [build]
+          filters:
+            branches:
+              only: master
