@@ -1,4 +1,4 @@
-import { Controller, Body, Post, UseInterceptors } from '@nestjs/common';
+import { Controller, Body, Post, UseInterceptors, Get } from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { Rule } from './rules/rule.class';
 import { getRules } from './rules/utils';
@@ -7,6 +7,11 @@ import { logger } from './logger/logger.service';
 
 @Controller()
 export class AppController {
+  @Get('/')
+  test(): string {
+    return 'Welcome, <b>Git Webhooks</b> is running!';
+  }
+
   @Post('/webhook')
   @UseInterceptors(WebhookInterceptor)
   processWebhook(@Body() webhook: Webhook): string {

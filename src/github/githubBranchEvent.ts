@@ -1,5 +1,4 @@
-export class GithubBranchEvent {
-  // tslint:disable-next-line:variable-name
+export interface GithubBranchEvent {
   ref_type: string;
   ref: string;
 }

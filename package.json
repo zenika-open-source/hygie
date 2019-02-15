@@ -1,7 +1,7 @@
 {
-  "name": "nest-typescript-starter",
+  "name": "git-webhook-api",
   "version": "1.0.0",
-  "description": "Nest TypeScript starter repository",
+  "description": "Git Webhook API Project",
   "license": "MIT",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -18,7 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "ci": "npm-run-all prettier-test lint test"
+    "ci": "npm-run-all prettier-test lint test",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
   },
   "dependencies": {
     "@nestjs/common": "5.4.0",
@@ -29,6 +31,7 @@
     "class-transformer": "0.2.0",
     "dotenv": "6.2.0",
     "fs": "0.0.1-security",
+    "github-release-notes": "0.17.0",
     "js-yaml": "3.12.1",
     "reflect-metadata": "0.1.12",
     "rimraf": "2.6.3",
@@ -50,7 +53,8 @@
     "ts-node": "7.0.1",
     "tsconfig-paths": "3.7.0",
     "tslint": "5.12.1",
-    "typescript": "3.2.4"
+    "typescript": "3.2.4",
+    "vuepress": "0.14.8"
   },
   "jest": {
     "moduleFileExtensions": [

@@ -5,7 +5,7 @@ export interface GithubCommit {
 export interface GithubRepository {
   full_name: string;
 }
-export class GithubPushEvent {
+export interface GithubPushEvent {
   commits: GithubCommit[];
   repository: GithubRepository;
 }
