@@ -2,7 +2,6 @@ import { Injectable, HttpService } from '@nestjs/common';
 import { GitServiceInterface } from '../interfaces/git.service.interface';
 import { GitTypeEnum, convertCommitStatus } from '../webhook/utils.enum';
 import { CommitStatusInfos } from '../webhook/commitStatusInfos';
-import { logger } from '../logger/logger.service';
 
 @Injectable()
 export class GithubService implements GitServiceInterface {

@@ -31,6 +31,6 @@ export class CommitMessageRule extends Rule {
       );
     });
 
-    return this.excecuteValidationFunctions(allRegExpSuccessed);
+    return allRegExpSuccessed;
   }
 }

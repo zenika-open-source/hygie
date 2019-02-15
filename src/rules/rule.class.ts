@@ -1,22 +1,10 @@
 import { Webhook } from '../webhook/webhook';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { logger } from '../logger/logger.service';
-import { RunnableInterface } from '../interfaces/runnable.interface';
-import { LoggerRunnable } from './logger.runnable';
 
 export interface OnSuccessError {
   callback: string;
   args: any[];
-}
-
-export function getRunnable(name: string): RunnableInterface {
-  let runnable: RunnableInterface;
-  switch (name) {
-    case 'LoggerRunnable':
-      runnable = new LoggerRunnable();
-      break;
-  }
-  return runnable;
 }
 
 export abstract class Rule {
@@ -51,23 +39,6 @@ export abstract class Rule {
       }
     });
     return this.enabled && events;
-  }
-
-  excecuteValidationFunctions(ruleSuccessed: boolean): boolean {
-    let runnable: RunnableInterface;
-    if (ruleSuccessed) {
-      this.onSuccess.forEach(success => {
-        runnable = getRunnable(success.callback);
-        runnable.run(success.args);
-      });
-      return true;
-    } else {
-      this.onError.forEach(error => {
-        runnable = getRunnable(error.callback);
-        runnable.run(error.args);
-      });
-      return false;
-    }
   }
 
   abstract validate(): boolean;

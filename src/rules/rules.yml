@@ -54,4 +54,16 @@ rules:
       - callback: LoggerRunnable
         args:
           type: warn
-          message: 'more than one commit! An email will be sent to the maintainer.'
+          message: 'more than one commit! A notification will be sent to the maintainer.'
+      - callback : WebhookRunnable
+        args:
+          url: 'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8'
+          data: {
+            user: 'bastien terrier',
+            content: 'More than one commmit !!'
+          }
+          config: {
+            headers: {
+              Authorization: 'token oebfobeofzef'
+            }
+          }

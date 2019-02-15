@@ -12,6 +12,6 @@ export class BranchNameRule extends Rule {
     const branchRegExp = RegExp(this.options.regexp);
     const ruleSuccessed: boolean = branchRegExp.test(branchName);
 
-    return this.excecuteValidationFunctions(ruleSuccessed);
+    return ruleSuccessed;
   }
 }
