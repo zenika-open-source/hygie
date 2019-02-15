@@ -1,6 +1,6 @@
 import { Rule } from './rule.class';
-import { logger } from '../logger/logger.service';
 import { CommitStatusEnum } from '../webhook/utils.enum';
+import { WebhookCommit } from '../webhook/webhook';
 
 interface CommitMessageOptions {
   regexp: string;
@@ -10,21 +10,27 @@ export class CommitMessageRule extends Rule {
   options: CommitMessageOptions;
 
   validate(): boolean {
-    const commitMessage = this.webhook.getCommitMessage();
+    const commits: WebhookCommit[] = this.webhook.getAllCommits();
     const commitRegExp = RegExp(this.options.regexp);
 
-    logger.info('commitMessage:' + commitMessage);
-    logger.info('commitRegExp:' + this.options.regexp);
+    let allRegExpSuccessed: boolean = true;
+    let regexpSuccessed: boolean = false;
+    let commitStatus: CommitStatusEnum;
+    commits.forEach(c => {
+      regexpSuccessed = commitRegExp.test(c.message);
 
-    const ruleSuccessed: boolean = commitRegExp.test(commitMessage);
-    const commitStatus = ruleSuccessed
-      ? CommitStatusEnum.Success
-      : CommitStatusEnum.Failure;
+      if (regexpSuccessed) {
+        commitStatus = CommitStatusEnum.Success;
+      } else {
+        commitStatus = CommitStatusEnum.Failure;
+        allRegExpSuccessed = false;
+      }
 
-    this.webhook.gitService.updateCommitStatus(
-      this.webhook.gitCommitStatusInfos(commitStatus),
-    );
+      this.webhook.gitService.updateCommitStatus(
+        this.webhook.gitCommitStatusInfos(commitStatus, c.id),
+      );
+    });
 
-    return this.excecuteValidationFunctions(ruleSuccessed);
+    return this.excecuteValidationFunctions(allRegExpSuccessed);
   }
 }

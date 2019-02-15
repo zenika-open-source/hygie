@@ -15,8 +15,13 @@ import { GithubEvent } from '../github/githubEvent';
 
 // tslint:disable-next-line:max-classes-per-file
 export class WebhookCommit {
-  message: string;
   id: string;
+  message: string;
+
+  constructor(id: string, message: string) {
+    this.id = id;
+    this.message = message;
+  }
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -40,11 +45,14 @@ export class Webhook {
   ) {
     this.repository = new WebhookRepository();
     this.commits = new Array<WebhookCommit>();
-    this.commits.push(new WebhookCommit());
   }
 
-  getCommitMessage(): string {
-    return this.commits[0].message;
+  getAllCommits(): WebhookCommit[] {
+    const commits: WebhookCommit[] = new Array();
+    this.commits.forEach(c => {
+      commits.push(c);
+    });
+    return commits;
   }
 
   getBranchName(): string {
@@ -57,8 +65,10 @@ export class Webhook {
       this.gitEvent = GitEventEnum.Push;
       this.projectId = git.project_id;
       this.gitService = this.gitlabService;
-      this.commits[0].id = git.commits[0].id;
-      this.commits[0].message = git.commits[0].message;
+      git.commits.forEach(c => {
+        const commit = new WebhookCommit(c.id, c.message);
+        this.commits.push(commit);
+      });
     } else if (isGitlabBranchEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewBranch;
@@ -68,8 +78,10 @@ export class Webhook {
       this.gitEvent = GitEventEnum.Push;
       this.gitService = this.githubService;
       this.repository.fullName = git.repository.full_name;
-      this.commits[0].id = git.commits[0].id;
-      this.commits[0].message = git.commits[0].message;
+      git.commits.forEach(c => {
+        const commit = new WebhookCommit(c.id, c.message);
+        this.commits.push(commit);
+      });
     } else if (isGithubBranchEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewBranch;
@@ -77,11 +89,13 @@ export class Webhook {
     }
   }
 
-  gitCommitStatusInfos(commitStatus: CommitStatusEnum): CommitStatusInfos {
+  gitCommitStatusInfos(
+    commitStatus: CommitStatusEnum,
+    commitId: string,
+  ): CommitStatusInfos {
     const commitStatusInfos = new CommitStatusInfos();
     commitStatusInfos.commitStatus = commitStatus;
-    commitStatusInfos.commitSha = this.commits[0].id;
-    commitStatusInfos.descriptionMessage = 'my message';
+    commitStatusInfos.commitSha = commitId;
 
     if (this.gitType === GitTypeEnum.Gitlab) {
       commitStatusInfos.projectId = this.projectId.toString();

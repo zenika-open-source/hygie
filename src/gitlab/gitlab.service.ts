@@ -40,9 +40,6 @@ export class GitlabService implements GitServiceInterface {
         dataGitLab,
         configGitLab,
       )
-      .toPromise()
-      .then(response => {
-        logger.info(JSON.stringify(response.data, null, 4));
-      });
+      .subscribe();
   }
 }

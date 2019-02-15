@@ -39,9 +39,6 @@ export class GithubService implements GitServiceInterface {
         dataGitHub,
         configGitHub,
       )
-      .toPromise()
-      .then(response => {
-        logger.info(JSON.stringify(response.data, null, 4));
-      });
+      .subscribe();
   }
 }
