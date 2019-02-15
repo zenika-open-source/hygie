@@ -1,21 +1,22 @@
 import { Webhook } from '../webhook/webhook';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { logger } from '../logger/logger.service';
+import { RunnableInterface } from '../interfaces/runnable.interface';
+import { LoggerRunnable } from './logger.runnable';
 
 export interface OnSuccessError {
   callback: string;
   args: any[];
 }
 
-export function callFunction(callback: string, ...args: any[]) {
-  switch (callback) {
-    case 'logger.info':
-      logger.info(args);
-      break;
-    case 'logger.warn':
-      logger.warn(args);
+export function getRunnable(name: string): RunnableInterface {
+  let runnable: RunnableInterface;
+  switch (name) {
+    case 'LoggerRunnable':
+      runnable = new LoggerRunnable();
       break;
   }
+  return runnable;
 }
 
 export abstract class Rule {
@@ -53,14 +54,17 @@ export abstract class Rule {
   }
 
   excecuteValidationFunctions(ruleSuccessed: boolean): boolean {
+    let runnable: RunnableInterface;
     if (ruleSuccessed) {
       this.onSuccess.forEach(success => {
-        callFunction(success.callback, success.args);
+        runnable = getRunnable(success.callback);
+        runnable.run(success.args);
       });
       return true;
     } else {
       this.onError.forEach(error => {
-        callFunction(error.callback, error.args);
+        runnable = getRunnable(error.callback);
+        runnable.run(error.args);
       });
       return false;
     }

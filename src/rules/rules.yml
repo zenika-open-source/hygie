@@ -7,23 +7,23 @@ rules:
     options:
       regexp: (feat|fix|docs)\(?[a-z]*\)?:\s.*
     onSuccess:
-      - callback: logger.info
+      - callback: LoggerRunnable
         args:
-          - 'pattern match'
-          - 'good game'
-      - callback: logger.info
+          type: info
+          message: 'pattern match'
+      - callback: LoggerRunnable
         args:
-          - 'another action is being executed'
-          - 'commit will successed'
+          type: info
+          message: 'commit will successed'
     onError:
-      - callback: logger.warn
+      - callback: LoggerRunnable
         args:
-          - 'pattern does not match'
-          - 'commit name must begin with : "feat|fix|docs"!'
-      - callback: logger.warn
+          type: warn
+          message: 'pattern does not match, commit name must begin with : "feat|fix|docs"!'
+      - callback: LoggerRunnable
         args:
-          - 'another action is being executed'
-          - 'commit will fail'
+          type: warn
+          message: 'commit will fail'
 
   - name: branchName
     enabled: true
@@ -32,16 +32,12 @@ rules:
     options:
       regexp: (features|fix)\/.*
     onSuccess:
-      - callback: logger.info
+      - callback: LoggerRunnable
         args:
-          - 'pattern match'
-          - 'good game'
+          type: info
+          message: 'pattern match'
     onError:
-      - callback: logger.warn
+      - callback: LoggerRunnable
         args:
-          - 'pattern does not match'
-          - 'branch name must begin with : "features|fix"!'
-      - callback: logger.warn
-        args:
-          - 'another action is being executed'
-          - 'branch will be deleted'
+          type: warn
+          message: 'pattern does not match, branch name must begin with : "features|fix"!'
