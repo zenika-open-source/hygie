@@ -1,4 +1,5 @@
 module.exports = {
+  base: '/git-webhooks/',
   title: 'Git Webhooks',
   description:
     "API REST permettant d'intéragir sur des évenements d'un repository GIT. Cette API mettra à disposition un ensemble de règles/actions aux utilisateurs permettant d'automatiser le cycle de vie du projet",
