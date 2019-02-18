@@ -6,6 +6,8 @@ import { HttpModule } from '@nestjs/common';
 import { GitServiceInterface } from './interfaces/git.service.interface';
 import { Webhook } from './webhook/webhook';
 import { GitEventEnum, GitTypeEnum } from './webhook/utils.enum';
+import { RulesModule } from './rules/rules.module';
+import { WebhookRunnable } from './runnables/webhook.runnable';
 
 describe('AppController', () => {
   let app: TestingModule;
@@ -18,9 +20,9 @@ describe('AppController', () => {
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [HttpModule, RulesModule],
       controllers: [AppController],
-      providers: [GitlabService, GithubService],
+      providers: [GithubService, GitlabService, WebhookRunnable],
     }).compile();
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
