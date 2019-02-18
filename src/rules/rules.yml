@@ -5,7 +5,7 @@ rules:
     events:
       - Push
     options:
-      regexp: (feat|fix|docs)\(?[a-z]*\)?:\s.*
+      regexp: '(feat|fix|docs)(\([a-z]+\))?:\s[^(]*(\(#[1-9][0-9]*(, #[1-9][0-9]*)*\))?$'
     onSuccess:
       - callback: LoggerRunnable
         args:
