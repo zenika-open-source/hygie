@@ -1,5 +1,5 @@
 import { Injectable, HttpService } from '@nestjs/common';
-import { RunnableInterface } from '../interfaces/runnable.interface';
+import { RunnableInterface } from './runnable.interface';
 import { LoggerRunnable } from './logger.runnable';
 import { Rule } from '../rules/rule.class';
 import { WebhookRunnable } from './webhook.runnable';

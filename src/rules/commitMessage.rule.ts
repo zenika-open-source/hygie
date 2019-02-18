@@ -1,7 +1,6 @@
 import { Rule } from './rule.class';
 import { CommitStatusEnum } from '../webhook/utils.enum';
 import { WebhookCommit } from '../webhook/webhook';
-import { logger } from '../logger/logger.service';
 
 interface CommitMessageOptions {
   regexp: string;
@@ -20,10 +19,6 @@ export class CommitMessageRule extends Rule {
     commits.forEach(c => {
       regexpSuccessed = commitRegExp.test(c.message);
 
-      /*logger.info(
-        c.message.replace(commitRegExp, 'Object: $1\nScope: $2\nIssue: $3'),
-      );*/
-
       if (regexpSuccessed) {
         commitStatus = CommitStatusEnum.Success;
       } else {
@@ -32,7 +27,8 @@ export class CommitMessageRule extends Rule {
       }
 
       this.webhook.gitService.updateCommitStatus(
-        this.webhook.gitCommitStatusInfos(commitStatus, c.id),
+        this.webhook.getGitApiInfos(),
+        this.webhook.getGitCommitStatusInfos(commitStatus, c.id),
       );
     });
 

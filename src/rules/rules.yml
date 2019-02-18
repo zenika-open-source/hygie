@@ -24,7 +24,6 @@ rules:
         args:
           type: warn
           message: 'commit will fail'
-
   - name: branchName
     enabled: true
     events:

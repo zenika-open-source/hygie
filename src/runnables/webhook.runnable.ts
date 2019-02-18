@@ -1,4 +1,4 @@
-import { RunnableInterface } from '../interfaces/runnable.interface';
+import { RunnableInterface } from './runnable.interface';
 import { HttpService, Injectable } from '@nestjs/common';
 
 interface WebhookArgs {

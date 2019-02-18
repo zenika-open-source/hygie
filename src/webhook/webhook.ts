@@ -9,9 +9,10 @@ import {
 } from './utils.enum';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
-import { CommitStatusInfos } from './commitStatusInfos';
 import { GitlabEvent } from '../gitlab/gitlabEvent';
 import { GithubEvent } from '../github/githubEvent';
+import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
+import { GitApiInfos } from '../git/gitApiInfos';
 
 // tslint:disable-next-line:max-classes-per-file
 export class WebhookCommit {
@@ -89,20 +90,25 @@ export class Webhook {
     }
   }
 
-  gitCommitStatusInfos(
+  getGitCommitStatusInfos(
     commitStatus: CommitStatusEnum,
     commitId: string,
-  ): CommitStatusInfos {
-    const commitStatusInfos = new CommitStatusInfos();
+  ): GitCommitStatusInfos {
+    const commitStatusInfos = new GitCommitStatusInfos();
     commitStatusInfos.commitStatus = commitStatus;
     commitStatusInfos.commitSha = commitId;
 
-    if (this.gitType === GitTypeEnum.Gitlab) {
-      commitStatusInfos.projectId = this.projectId.toString();
-    } else if (this.gitType === GitTypeEnum.Github) {
-      commitStatusInfos.repositoryFullName = this.repository.fullName;
-    }
-
     return commitStatusInfos;
+  }
+
+  getGitApiInfos(): GitApiInfos {
+    const gitApiInfos: GitApiInfos = new GitApiInfos();
+
+    if (this.gitType === GitTypeEnum.Gitlab) {
+      gitApiInfos.projectId = this.projectId.toString();
+    } else if (this.gitType === GitTypeEnum.Github) {
+      gitApiInfos.repositoryFullName = this.repository.fullName;
+    }
+    return gitApiInfos;
   }
 }

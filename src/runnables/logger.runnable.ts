@@ -1,4 +1,4 @@
-import { RunnableInterface } from '../interfaces/runnable.interface';
+import { RunnableInterface } from './runnable.interface';
 import { logger } from '../logger/logger.service';
 
 interface LoggerArgs {

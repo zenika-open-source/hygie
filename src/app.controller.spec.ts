@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
 import { HttpModule } from '@nestjs/common';
-import { GitServiceInterface } from './interfaces/git.service.interface';
 import { Webhook } from './webhook/webhook';
 import { GitEventEnum, GitTypeEnum } from './webhook/utils.enum';
 import { RulesModule } from './rules/rules.module';
