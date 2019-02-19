@@ -6,6 +6,7 @@ interface BranchNameOptions {
 }
 
 export class BranchNameRule extends Rule {
+  name = 'branchName';
   options: BranchNameOptions;
 
   validate(): RuleResult {

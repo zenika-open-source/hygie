@@ -2,7 +2,7 @@
 
 ## Goal
 
-This rule's aim is to check if the new commit has a correct name, according to a regular expression. If the name match the `regexp`, the commit will success (`success` status), otherwise it will faild (`error` status).
+This rule's aim is to check if the new commit has a correct name, according to a regular expression. If the name match the `regexp`, the commit will success (`success` status), otherwise it will fail (`error` status).
 
 According to this status, the `onSuccess` or `onError` callbacks will be called.
 

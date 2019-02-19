@@ -57,14 +57,53 @@ docker run --name webhook-container -d -p 3000:3000 my-webhook:latest
 If you just want to test our project, without cloning it, you can run a container with one of the existing versions in [DockerHub]().
 
 ```
-docker run --name webhook-container -d -p 3000:3000 REPO/my-webhook:VERSION
+
 ```
 
----
+## Github/Gitlab configuration
 
-Once the application is running, you can configure the webhook attachs to your git repository with the url : `http://localhost:3000/webhook`.
+### Add a webhook
+
+Once the application is running, you can configure the webhook attachs to your git repository with the url : `http://localhost:3000/webhook`. You can select only the events you want to receive, or select all of them.
 
 > You can use [ngrok](https://ngrok.com/) to convert localhost url to public url.
+
+#### Github
+
+You can add as many webhooks as you want. Just go to your repository settings: `https://github.com/:owner/:repo/settings/hooks`, add click the `Add webhook` button.
+
+Now you can configure the `Payload URL`, select the `send me everything` option and save this configuration.
+
+#### Gitlab
+
+Go to your repository integrations settings: `https://gitlab.com/:owner/:repo/settings/integrations`, configure the webhook URL and select all the events you want to intercept. Finally, save it via the `Add webhook` button.
+
+### Add token access
+
+This project allow you to interact with Github and Gitlab repositories. You can update commit status, add comments on issues or Pull Request/ Merge Request, etc.
+
+In order to do it, you have to get a _token_ of the repo you interact with.
+
+#### Github
+
+Navigate to [https://github.com/settings/tokens](https://github.com/settings/tokens) to generate a new token. You just need to fill the `token description` field and give it the `repo` scope.
+
+#### Gitlab
+
+Go to [https://gitlab.com/profile/personal_access_tokens](https://gitlab.com/profile/personal_access_tokens) and fill the `name` field with the name of your token, choose an expiration date and give it the `api` scope.
+
+Once you get your token, create a `config.env` file at your root's project and add the following lines:
+
+```
+GITHUB_TOKEN=your_github_token
+GITLAB_TOKEN=your_gitlab_token
+GITHUB_API=https://api.github.com
+GITLAB_API=https://gitlab.com/api/v4
+```
+
+If your project is hosted on an official github or gitlab repository, you can leave the GITHUB_API and GITLAB_API as default. But, if you are using another host, you have to adapt the URL API.
+
+## Testing the project
 
 ### GitLab local instance
 

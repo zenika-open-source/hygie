@@ -9,6 +9,7 @@ import { GitIssueInfos } from '../git/gitIssueInfos';
 @Injectable()
 export class GithubService implements GitServiceInterface {
   token: string;
+  urlApi: string;
 
   configGitHub: object;
 
@@ -20,6 +21,7 @@ export class GithubService implements GitServiceInterface {
         Authorization: 'token ' + this.token,
       },
     };
+    this.urlApi = process.env.GITHUB_API;
   }
 
   updateCommitStatus(
@@ -37,9 +39,9 @@ export class GithubService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `https://api.github.com/repos/${
-          gitApiInfos.repositoryFullName
-        }/statuses/${gitCommitStatusInfos.commitSha}`,
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/statuses/${
+          gitCommitStatusInfos.commitSha
+        }`,
         dataGitHub,
         this.configGitHub,
       )
@@ -56,9 +58,9 @@ export class GithubService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `https://api.github.com/repos/${
-          gitApiInfos.repositoryFullName
-        }/issues/${gitIssueInfos.number}/comments`,
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues/${
+          gitIssueInfos.number
+        }/comments`,
         dataGitHub,
         this.configGitHub,
       )

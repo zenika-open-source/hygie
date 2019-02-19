@@ -1,7 +1,7 @@
 {
   "name": "@dxdeveloperexperience/git-webhooks",
   "version": "0.0.0",
-  "description": "Git Webhook API Project",
+  "description": "Git Webhooks is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJs API expose a set of customizable Rules to automate your project's life cycle.",
   "license": "MIT",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -73,5 +73,14 @@
     },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "keywords": [
+    "webhook",
+    "github",
+    "gitlab",
+    "git",
+    "CI",
+    "opensource",
+    "FaaS"
+  ]
 }

@@ -6,6 +6,7 @@ interface IssueNameOptions {
 }
 
 export class IssueTitleRule extends Rule {
+  name = 'issueTitle';
   options: IssueNameOptions;
 
   validate(): RuleResult {

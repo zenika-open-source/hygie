@@ -15,6 +15,7 @@ export class CommitMatches {
 
 // tslint:disable-next-line:max-classes-per-file
 export class CommitMessageRule extends Rule {
+  name = 'commitMessage';
   options: CommitMessageOptions;
 
   validate(): RuleResult {

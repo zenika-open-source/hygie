@@ -9,10 +9,12 @@ import { GitIssueInfos } from '../git/gitIssueInfos';
 @Injectable()
 export class GitlabService implements GitServiceInterface {
   token: string;
+  urlApi: string;
 
   constructor(private readonly httpService: HttpService) {
     require('dotenv').config({ path: 'config.env' });
     this.token = process.env.GITLAB_TOKEN;
+    this.urlApi = process.env.GITLAB_API;
   }
 
   updateCommitStatus(
@@ -39,7 +41,7 @@ export class GitlabService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `https://gitlab.com/api/v4/projects/${gitApiInfos.projectId}/statuses/${
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/statuses/${
           gitCommitStatusInfos.commitSha
         }`,
         dataGitLab,
@@ -67,7 +69,7 @@ export class GitlabService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `https://gitlab.com/api/v4/projects/${gitApiInfos.projectId}/issues/${
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/issues/${
           gitIssueInfos.number
         }/notes`,
         dataGitLab,
