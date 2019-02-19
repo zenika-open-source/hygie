@@ -1,4 +1,5 @@
 import { Rule } from './rule.class';
+import { RuleResult } from './ruleResult';
 
 interface BranchNameOptions {
   regexp: string;
@@ -7,11 +8,12 @@ interface BranchNameOptions {
 export class BranchNameRule extends Rule {
   options: BranchNameOptions;
 
-  validate(): boolean {
+  validate(): RuleResult {
+    const ruleResult: RuleResult = new RuleResult();
     const branchName = this.webhook.getBranchName();
     const branchRegExp = RegExp(this.options.regexp);
-    const ruleSuccessed: boolean = branchRegExp.test(branchName);
+    ruleResult.validated = branchRegExp.test(branchName);
 
-    return ruleSuccessed;
+    return ruleResult;
   }
 }

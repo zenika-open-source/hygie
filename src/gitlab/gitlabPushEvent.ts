@@ -4,7 +4,6 @@ export interface GitlabCommit {
 }
 export interface GitlabPushEvent {
   commits: GitlabCommit[];
-  // tslint:disable-next-line:variable-name
   project_id: number;
   before: string;
   ref: string;

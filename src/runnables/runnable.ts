@@ -3,6 +3,7 @@ import { RunnableInterface } from './runnable.interface';
 import { LoggerRunnable } from './logger.runnable';
 import { Rule } from '../rules/rule.class';
 import { WebhookRunnable } from './webhook.runnable';
+import { RuleResult } from '../rules/ruleResult';
 
 @Injectable()
 export class Runnable {
@@ -21,18 +22,18 @@ export class Runnable {
     return runnable;
   }
 
-  executeRunnableFunctions(ruleSuccessed: boolean, rule: Rule): boolean {
+  executeRunnableFunctions(ruleResult: RuleResult, rule: Rule): boolean {
     let runnable: RunnableInterface;
-    if (ruleSuccessed) {
+    if (ruleResult.validated) {
       rule.onSuccess.forEach(success => {
         runnable = this.getRunnable(success.callback);
-        runnable.run(success.args);
+        runnable.run(ruleResult, success.args);
       });
       return true;
     } else {
       rule.onError.forEach(error => {
         runnable = this.getRunnable(error.callback);
-        runnable.run(error.args);
+        runnable.run(ruleResult, error.args);
       });
       return false;
     }

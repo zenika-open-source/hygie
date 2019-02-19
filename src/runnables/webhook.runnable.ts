@@ -1,5 +1,7 @@
 import { RunnableInterface } from './runnable.interface';
 import { HttpService, Injectable } from '@nestjs/common';
+import { RuleResult } from '../rules/ruleResult';
+import { render } from 'mustache';
 
 interface WebhookArgs {
   url: string;
@@ -13,7 +15,13 @@ export class WebhookRunnable implements RunnableInterface {
 
   name: string = 'WebhookRunnable';
 
-  run(args: WebhookArgs): void {
-    this.httpService.post(args.url, args.data, args.config).subscribe();
+  run(ruleResult: RuleResult, args: WebhookArgs): void {
+    this.httpService
+      .post(
+        render(args.url, ruleResult),
+        render(JSON.stringify(args.data), ruleResult),
+        render(JSON.stringify(args.config), ruleResult),
+      )
+      .subscribe();
   }
 }

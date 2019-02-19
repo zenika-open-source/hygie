@@ -9,14 +9,16 @@ export class AppController {
   constructor(private readonly rulesService: RulesService) {}
 
   @Get('/')
-  test(): string {
+  welcome(): string {
     return '<p>Welcome, <b>Git Webhooks</b> is running!</p>';
   }
 
   @Post('/webhook')
   @UseInterceptors(WebhookInterceptor)
   processWebhook(@Body() webhook: Webhook): string {
-    logger.info('\n\n=== processWebhook ===\n');
+    logger.info(
+      `\n\n=== processWebhook - ${webhook.gitType} - ${webhook.gitEvent} ===\n`,
+    );
 
     this.rulesService.testRules(webhook);
 

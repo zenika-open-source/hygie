@@ -10,20 +10,35 @@ rules:
       - callback: LoggerRunnable
         args:
           type: info
-          message: 'pattern match'
+          message: 'pattern match: 
+            {{#data}}{{sha}} =
+            Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
+            {{/data}}'
       - callback: LoggerRunnable
         args:
           type: info
-          message: 'commit will successed'
+          message: 'data will be sent to webhook...'
+      - callback : WebhookRunnable
+        args:
+          url: 'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8'
+          data: {
+            user: 'bastien terrier',
+            content: '{{#data}}{{sha}} =
+            Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
+            {{/data}}'
+          }
+          config: {
+
+          }
     onError:
       - callback: LoggerRunnable
         args:
           type: warn
-          message: 'pattern does not match, commit name must begin with : "feat|fix|docs"!'
-      - callback: LoggerRunnable
-        args:
-          type: warn
-          message: 'commit will fail'
+          message: 'pattern does not match, commit name must begin with : "feat|fix|docs"! Check your commit message:
+            {{#data}}
+              > {{message}} (#{{sha}})
+            {{/data}}
+          '
   - name: branchName
     enabled: true
     events:
@@ -66,3 +81,19 @@ rules:
               Authorization: 'token oebfobeofzef'
             }
           }
+  - name: issueTitle
+    enabled: true
+    events:
+      - NewIssue
+    options:
+      regexp: (add|fix)\s.*
+    onSuccess:
+      - callback: LoggerRunnable
+        args:
+          type: info
+          message: 'correct issue title'
+    onError:
+      - callback: LoggerRunnable
+        args:
+          type: warn
+          message: 'pattern does not match, issue title must begin with : "add|fix"!'          

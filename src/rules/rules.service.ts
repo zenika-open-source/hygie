@@ -3,6 +3,7 @@ import { Rule } from './rule.class';
 import { getRules } from './utils';
 import { Runnable } from '../runnables/runnable';
 import { Webhook } from '../webhook/webhook';
+import { RuleResult } from './ruleResult';
 
 @Injectable()
 export class RulesService {
@@ -22,9 +23,9 @@ export class RulesService {
     try {
       rules.forEach(r => {
         if (r.isEnabled()) {
-          const isValidated: boolean = r.validate();
-          runnable.executeRunnableFunctions(isValidated, r);
-          if (!isValidated) {
+          const ruleResult: RuleResult = r.validate();
+          runnable.executeRunnableFunctions(ruleResult, r);
+          if (!ruleResult.validated) {
             throw BreakException;
           }
         }

@@ -1,3 +1,3 @@
 export { CommitMessageRule } from './commitMessage.rule';
-export { OneCommitPerPR } from './oneCommitPerPR';
+export { OneCommitPerPRRule as OneCommitPerPR } from './oneCommitPerPR.rule';
 export { BranchNameRule } from './branchName.rule';

@@ -1,4 +1,6 @@
+import { RuleResult } from '../rules/ruleResult';
+
 export interface RunnableInterface {
   name: string;
-  run(...args: any[]): void;
+  run(ruleResult: RuleResult, ...args: any[]): void;
 }

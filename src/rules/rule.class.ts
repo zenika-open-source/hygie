@@ -1,6 +1,7 @@
 import { Webhook } from '../webhook/webhook';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { logger } from '../logger/logger.service';
+import { RuleResult } from './ruleResult';
 
 export interface OnSuccessError {
   callback: string;
@@ -41,5 +42,5 @@ export abstract class Rule {
     return this.enabled && events;
   }
 
-  abstract validate(): boolean;
+  abstract validate(): RuleResult;
 }

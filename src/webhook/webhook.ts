@@ -6,6 +6,8 @@ import {
   CommitStatusEnum,
   isGithubBranchEvent,
   isGitlabBranchEvent,
+  isGithubIssueEvent,
+  isGitlabIssueEvent,
 } from './utils.enum';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
@@ -13,6 +15,11 @@ import { GitlabEvent } from '../gitlab/gitlabEvent';
 import { GithubEvent } from '../github/githubEvent';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
+
+export class WebhookIssue {
+  number: number;
+  title: string;
+}
 
 // tslint:disable-next-line:max-classes-per-file
 export class WebhookCommit {
@@ -39,6 +46,7 @@ export class Webhook {
   projectId: number;
   repository: WebhookRepository;
   branchName: string;
+  issue: WebhookIssue;
 
   constructor(
     private readonly gitlabService: GitlabService,
@@ -46,6 +54,7 @@ export class Webhook {
   ) {
     this.repository = new WebhookRepository();
     this.commits = new Array<WebhookCommit>();
+    this.issue = new WebhookIssue();
   }
 
   getAllCommits(): WebhookCommit[] {
@@ -58,6 +67,10 @@ export class Webhook {
 
   getBranchName(): string {
     return this.branchName;
+  }
+
+  getIssueTitle(): string {
+    return this.issue.title;
   }
 
   gitToWebhook(git: GitlabEvent | GithubEvent): void {
@@ -73,6 +86,7 @@ export class Webhook {
     } else if (isGitlabBranchEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewBranch;
+      this.gitService = this.gitlabService;
       this.branchName = git.ref.substring(11);
     } else if (isGithubPushEvent(git)) {
       this.gitType = GitTypeEnum.Github;
@@ -86,7 +100,20 @@ export class Webhook {
     } else if (isGithubBranchEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewBranch;
+      this.gitService = this.githubService;
       this.branchName = git.ref;
+    } else if (isGithubIssueEvent(git)) {
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.NewIssue;
+      this.gitService = this.githubService;
+      this.issue.number = git.issue.number;
+      this.issue.title = git.issue.title;
+    } else if (isGitlabIssueEvent(git)) {
+      this.gitType = GitTypeEnum.Gitlab;
+      this.gitEvent = GitEventEnum.NewIssue;
+      this.gitService = this.gitlabService;
+      this.issue.number = git.object_attributes.iid;
+      this.issue.title = git.object_attributes.title;
     }
   }
 
