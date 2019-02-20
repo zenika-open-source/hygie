@@ -1,5 +1,6 @@
 import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
+import { logger } from '../logger/logger.service';
 
 interface IssueNameOptions {
   regexp: string;
@@ -16,6 +17,7 @@ export class IssueTitleRule extends Rule {
     ruleResult.validated = issueRegExp.test(issueTitle);
 
     ruleResult.data = {
+      git: this.webhook.getGitType(),
       issueNumber: this.webhook.getIssueNumber(),
       gitApiInfos: this.webhook.getGitApiInfos(),
     };

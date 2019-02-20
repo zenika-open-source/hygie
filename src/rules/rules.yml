@@ -91,6 +91,10 @@ rules:
           type: info
           message: 'correct issue title'
     onError:
+      - callback: LoggerRunnable
+        args:
+          type: warn
+          message: 'incorrect issue title'
       - callback: CommentIssueRunnable
         args:
           comment: 'ping @bastienterrier'         

@@ -1,7 +1,7 @@
 import { Module, HttpModule } from '@nestjs/common';
 import { WebhookRunnable } from './webhook.runnable';
 import { CommentIssueRunnable } from './commentIssue.runnable';
-import { GitModule } from 'src/git.module';
+import { GitModule } from 'src/git/git.module';
 
 @Module({
   imports: [HttpModule, GitModule],
