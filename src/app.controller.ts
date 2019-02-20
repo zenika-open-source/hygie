@@ -17,7 +17,9 @@ export class AppController {
   @UseInterceptors(WebhookInterceptor)
   processWebhook(@Body() webhook: Webhook): string {
     logger.info(
-      `\n\n=== processWebhook - ${webhook.gitType} - ${webhook.gitEvent} ===\n`,
+      `\n\n=== processWebhook - ${webhook.getGitType()} - ${
+        webhook.gitEvent
+      } ===\n`,
     );
 
     this.rulesService.testRules(webhook);

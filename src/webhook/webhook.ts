@@ -15,6 +15,7 @@ import { GitlabEvent } from '../gitlab/gitlabEvent';
 import { GithubEvent } from '../github/githubEvent';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
+import { logger } from '../logger/logger.service';
 
 export class WebhookIssue {
   number: number;
@@ -73,6 +74,14 @@ export class Webhook {
     return this.issue.title;
   }
 
+  getIssueNumber(): number {
+    return this.issue.number;
+  }
+
+  getGitType(): GitTypeEnum {
+    return this.gitType;
+  }
+
   gitToWebhook(git: GitlabEvent | GithubEvent): void {
     if (isGitlabPushEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
@@ -108,12 +117,14 @@ export class Webhook {
       this.gitService = this.githubService;
       this.issue.number = git.issue.number;
       this.issue.title = git.issue.title;
+      this.repository.fullName = git.repository.full_name;
     } else if (isGitlabIssueEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewIssue;
       this.gitService = this.gitlabService;
       this.issue.number = git.object_attributes.iid;
       this.issue.title = git.object_attributes.title;
+      this.projectId = git.object_attributes.project_id;
     }
   }
 
@@ -136,6 +147,7 @@ export class Webhook {
     } else if (this.gitType === GitTypeEnum.Github) {
       gitApiInfos.repositoryFullName = this.repository.fullName;
     }
+
     return gitApiInfos;
   }
 }

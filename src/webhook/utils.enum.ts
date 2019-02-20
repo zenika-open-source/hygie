@@ -48,7 +48,8 @@ export function isGitlabPushEvent(
   return (
     (git as GitlabPushEvent).project_id !== undefined &&
     (git as GitlabPushEvent).before !==
-      '0000000000000000000000000000000000000000'
+      '0000000000000000000000000000000000000000' &&
+    (git as GitlabPushEvent).object_kind === 'push'
   );
 }
 
@@ -84,7 +85,10 @@ export function isGitlabBranchEvent(
 export function isGithubIssueEvent(
   git: GitlabEvent | GithubEvent,
 ): git is GithubIssueEvent {
-  return (git as GithubIssueEvent).issue !== undefined;
+  return (
+    (git as GithubIssueEvent).issue !== undefined &&
+    (git as GithubIssueEvent).action === 'opened'
+  );
 }
 
 export function isGitlabIssueEvent(

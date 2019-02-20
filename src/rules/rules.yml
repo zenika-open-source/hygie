@@ -27,9 +27,7 @@ rules:
             Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
             {{/data}}'
           }
-          config: {
-
-          }
+          config: {}
     onError:
       - callback: LoggerRunnable
         args:
@@ -96,4 +94,7 @@ rules:
       - callback: LoggerRunnable
         args:
           type: warn
-          message: 'pattern does not match, issue title must begin with : "add|fix"!'          
+          message: 'incorrect issue title'
+      - callback: CommentIssueRunnable
+        args:
+          comment: 'ping @bastienterrier'         

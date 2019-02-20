@@ -7,6 +7,7 @@ import { Webhook } from './webhook/webhook';
 import { GitEventEnum, GitTypeEnum } from './webhook/utils.enum';
 import { RulesModule } from './rules/rules.module';
 import { WebhookRunnable } from './runnables/webhook.runnable';
+import { CommentIssueRunnable } from './runnables/commentIssue.runnable';
 
 describe('AppController', () => {
   let app: TestingModule;
@@ -21,7 +22,12 @@ describe('AppController', () => {
     app = await Test.createTestingModule({
       imports: [HttpModule, RulesModule],
       controllers: [AppController],
-      providers: [GithubService, GitlabService, WebhookRunnable],
+      providers: [
+        GithubService,
+        GitlabService,
+        WebhookRunnable,
+        CommentIssueRunnable,
+      ],
     }).compile();
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);

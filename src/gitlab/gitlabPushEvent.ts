@@ -7,4 +7,5 @@ export interface GitlabPushEvent {
   project_id: number;
   before: string;
   ref: string;
+  object_kind: string;
 }

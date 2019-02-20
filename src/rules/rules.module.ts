@@ -1,7 +1,8 @@
 import { Module, HttpModule, HttpService } from '@nestjs/common';
 import { Rule } from './rule.class';
-import { AppController } from '../app.controller';
 import { RulesService } from './rules.service';
+import { GithubService } from '../github/github.service';
+import { GitlabService } from '../gitlab/gitlab.service';
 
 // tslint:disable-next-line:no-var-requires
 const RulesValues = Object.values(require('./index.ts')).map(
@@ -18,11 +19,18 @@ const RulesProviders = RulesValues.map(rule => ({
   providers: [
     {
       provide: RulesService,
-      useFactory(httpService, ...rules) {
-        return new RulesService(httpService, rules);
+      useFactory(githubService, gitlabService, httpService, ...rules) {
+        return new RulesService(
+          httpService,
+          githubService,
+          gitlabService,
+          rules,
+        );
       },
-      inject: [HttpService, ...RulesValues],
+      inject: [GithubService, GitlabService, HttpService, ...RulesValues],
     },
+    GithubService,
+    GitlabService,
     ...RulesProviders,
   ],
 })
