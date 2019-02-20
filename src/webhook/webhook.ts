@@ -148,9 +148,6 @@ export class Webhook {
       gitApiInfos.repositoryFullName = this.repository.fullName;
     }
 
-    logger.info('dans getGitApiInfo');
-    // tslint:disable-next-line:no-console
-    console.log(gitApiInfos);
     return gitApiInfos;
   }
 }

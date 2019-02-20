@@ -21,18 +21,10 @@ export class CommentIssueRunnable implements RunnableInterface {
     private readonly gitlabService: GitlabService,
   ) {}
   run(ruleResult: RuleResult, args: CommentIssueArgs): void {
-    logger.info('Run from CommentIssueRunnable');
     const data = ruleResult.data as any;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     gitIssueInfos.number = data.issueNumber;
     gitIssueInfos.comment = args.comment;
-
-    // tslint:disable-next-line:no-console
-    console.log(data.gitApiInfos);
-    // tslint:disable-next-line:no-console
-    console.log(gitIssueInfos);
-    // tslint:disable-next-line:no-console
-    console.log(data.git);
 
     if (data.git === GitTypeEnum.Github) {
       this.githubService.addIssueComment(data.gitApiInfos, gitIssueInfos);

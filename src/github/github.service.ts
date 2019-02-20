@@ -56,12 +56,6 @@ export class GithubService implements GitServiceInterface {
       body: gitIssueInfos.comment,
     };
 
-    logger.info(
-      `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues/${
-        gitIssueInfos.number
-      }/comments`,
-    );
-
     this.httpService
       .post(
         `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues/${
@@ -70,8 +64,6 @@ export class GithubService implements GitServiceInterface {
         dataGitHub,
         this.configGitHub,
       )
-      .toPromise()
-      // tslint:disable-next-line:no-console
-      .then(response => console.log(response));
+      .subscribe();
   }
 }
