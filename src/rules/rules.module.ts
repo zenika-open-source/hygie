@@ -14,7 +14,7 @@ const RulesProviders = RulesValues.map(rule => ({
 }));
 
 @Module({
-  imports: [HttpModule, GithubService, GitlabService],
+  imports: [HttpModule],
   exports: [RulesService],
   providers: [
     {
@@ -29,6 +29,8 @@ const RulesProviders = RulesValues.map(rule => ({
       },
       inject: [GithubService, GitlabService, HttpService, ...RulesValues],
     },
+    GithubService,
+    GitlabService,
     ...RulesProviders,
   ],
 })
