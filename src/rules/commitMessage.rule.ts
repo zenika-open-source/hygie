@@ -24,12 +24,13 @@ export class CommitMessageRule extends Rule {
     const commitRegExp = RegExp(this.options.regexp);
 
     const commitsMatches: CommitMatches[] = new Array();
-    const commitMatches: CommitMatches = new CommitMatches();
+    let commitMatches: CommitMatches;
 
     let allRegExpSuccessed: boolean = true;
     let regexpSuccessed: boolean = false;
     let commitStatus: CommitStatusEnum;
     commits.forEach(c => {
+      commitMatches = new CommitMatches();
       regexpSuccessed = commitRegExp.test(c.message);
 
       if (regexpSuccessed) {

@@ -2,12 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
-import { HttpModule } from '@nestjs/common';
+import { HttpModule, HttpService } from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { GitEventEnum, GitTypeEnum } from './webhook/utils.enum';
 import { RulesModule } from './rules/rules.module';
-import { WebhookRunnable } from './runnables/webhook.runnable';
-import { CommentIssueRunnable } from './runnables/commentIssue.runnable';
+import {
+  MockGitlabService,
+  MockGithubService,
+  MockHttpService,
+} from './__mocks__/mocks';
 
 describe('AppController', () => {
   let app: TestingModule;
@@ -20,30 +23,21 @@ describe('AppController', () => {
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
-      imports: [HttpModule, RulesModule],
+      imports: [RulesModule],
       controllers: [AppController],
       providers: [
-        GithubService,
-        GitlabService,
-        WebhookRunnable,
-        CommentIssueRunnable,
+        { provide: HttpService, useClass: MockHttpService },
+        { provide: GitlabService, useClass: MockGitlabService },
+        { provide: GithubService, useClass: MockGithubService },
       ],
     }).compile();
+
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
-    jest
-      .spyOn(githubService, 'updateCommitStatus')
-      .mockImplementation(() => 'OK');
-
-    jest
-      .spyOn(gitlabService, 'updateCommitStatus')
-      .mockImplementation(() => 'OK');
-
-    jest.spyOn(githubService, 'addIssueComment').mockImplementation(() => 'OK');
-
-    jest.spyOn(gitlabService, 'addIssueComment').mockImplementation(() => 'OK');
-
     appController = app.get<AppController>(AppController);
+
+    githubService.updateCommitStatus = jest.fn();
+    gitlabService.updateCommitStatus = jest.fn();
 
     // gitlabPushWebhook initialisation
     gitlabPushWebhook = new Webhook(gitlabService, githubService);

@@ -1,13 +1,11 @@
 import { RunnableInterface } from './runnable.interface';
-import { logger } from '../logger/logger.service';
 import { RuleResult } from '../rules/ruleResult';
-import { render } from 'mustache';
-import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Injectable } from '@nestjs/common';
+import { logger } from '../logger/logger.service';
 
 interface CommentIssueArgs {
   comment: string;
