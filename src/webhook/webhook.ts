@@ -73,6 +73,10 @@ export class Webhook {
     return this.issue.title;
   }
 
+  getIssueNumber(): number {
+    return this.issue.number;
+  }
+
   gitToWebhook(git: GitlabEvent | GithubEvent): void {
     if (isGitlabPushEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;

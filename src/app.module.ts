@@ -4,10 +4,16 @@ import { GithubService } from './github/github.service';
 import { GitlabService } from './gitlab/gitlab.service';
 import { WebhookRunnable } from './runnables/webhook.runnable';
 import { RulesModule } from './rules/rules.module';
+import { CommentIssueRunnable } from './runnables/commentIssue.runnable';
 
 @Module({
   imports: [HttpModule, RulesModule],
   controllers: [AppController],
-  providers: [GithubService, GitlabService, WebhookRunnable],
+  providers: [
+    CommentIssueRunnable,
+    GithubService,
+    GitlabService,
+    WebhookRunnable,
+  ],
 })
 export class AppModule {}

@@ -4,22 +4,27 @@ import { getRules } from './utils';
 import { Runnable } from '../runnables/runnable';
 import { Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
+import { GithubService } from '../github/github.service';
+import { GitlabService } from '../gitlab/gitlab.service';
 
 @Injectable()
 export class RulesService {
   constructor(
     private readonly httpService: HttpService,
+    private readonly githubService: GithubService,
+    private readonly gitlabService: GitlabService,
     private readonly rulesClasses: Rule[],
   ) {}
-  getHello(): string {
-    return 'Hello World!';
-  }
 
   testRules(webhook: Webhook): void {
     const rules: Rule[] = getRules(webhook);
     const BreakException = {};
 
-    const runnable: Runnable = new Runnable(this.httpService);
+    const runnable: Runnable = new Runnable(
+      this.httpService,
+      this.githubService,
+      this.gitlabService,
+    );
     try {
       rules.forEach(r => {
         if (r.isEnabled()) {

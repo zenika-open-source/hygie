@@ -15,6 +15,10 @@ export class IssueTitleRule extends Rule {
     const issueRegExp = RegExp(this.options.regexp);
     ruleResult.validated = issueRegExp.test(issueTitle);
 
+    ruleResult.data = {
+      issueNumber: this.webhook.getIssueNumber(),
+      gitApiInfos: this.webhook.getGitApiInfos(),
+    };
     return ruleResult;
   }
 }

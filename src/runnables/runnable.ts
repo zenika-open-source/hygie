@@ -4,10 +4,17 @@ import { LoggerRunnable } from './logger.runnable';
 import { Rule } from '../rules/rule.class';
 import { WebhookRunnable } from './webhook.runnable';
 import { RuleResult } from '../rules/ruleResult';
+import { CommentIssueRunnable } from './commentIssue.runnable';
+import { GithubService } from '../github/github.service';
+import { GitlabService } from '../gitlab/gitlab.service';
 
 @Injectable()
 export class Runnable {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly githubService: GithubService,
+    private readonly gitlabService: GitlabService,
+  ) {}
 
   getRunnable(name: string): RunnableInterface {
     let runnable: RunnableInterface;
@@ -17,6 +24,12 @@ export class Runnable {
         break;
       case 'WebhookRunnable':
         runnable = new WebhookRunnable(this.httpService);
+        break;
+      case 'CommentIssueRunnable':
+        runnable = new CommentIssueRunnable(
+          this.githubService,
+          this.gitlabService,
+        );
         break;
     }
     return runnable;
