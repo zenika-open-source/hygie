@@ -15,7 +15,6 @@ import { GitlabEvent } from '../gitlab/gitlabEvent';
 import { GithubEvent } from '../github/githubEvent';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { logger } from '../logger/logger.service';
 
 export class WebhookIssue {
   number: number;
