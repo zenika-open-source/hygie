@@ -13,6 +13,8 @@ import {
 } from '../__mocks__/mocks';
 import { CommitMessageRule } from './commitMessage.rule';
 import { GitEventEnum, GitTypeEnum } from '../webhook/utils.enum';
+import { IssueTitleRule } from './issueTitle.rule';
+import { OneCommitPerPRRule } from './oneCommitPerPR.rule';
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -36,6 +38,7 @@ describe('RulesService', () => {
     jest.clearAllMocks();
   });
 
+  // BrancheName Rule
   describe('branchName Rule', () => {
     it('should return true', () => {
       const webhook = new Webhook(gitlabService, githubService);
@@ -65,6 +68,7 @@ describe('RulesService', () => {
     });
   });
 
+  // CommitMessage Rule
   describe('commitMessage Rule', () => {
     it('should return true + an array of sha, matches and message ', () => {
       const webhook = new Webhook(gitlabService, githubService);
@@ -121,7 +125,6 @@ describe('RulesService', () => {
       ); // JSON.stringify needed : https://github.com/facebook/jest/issues/5998
     });
   });
-
   describe('commitMessage Rule', () => {
     it('should return false + an array of sha, matches and message ', () => {
       const webhook = new Webhook(gitlabService, githubService);
@@ -156,6 +159,106 @@ describe('RulesService', () => {
 
       const result: RuleResult = commitMessage.validate();
       expect(result.validated).toBe(false);
+    });
+  });
+
+  // IssueTitle Rule
+  describe('issueTitle Rule', () => {
+    it('should return true + an object with git, issueNumber and gitApiInfos', () => {
+      const webhook = new Webhook(gitlabService, githubService);
+      webhook.gitType = GitTypeEnum.Github;
+      webhook.issue.number = 22;
+      webhook.issue.title = 'add rules documentation';
+      webhook.repository = {
+        fullName: 'bastienterrier/test_webhook',
+      };
+
+      const issueTitle = new IssueTitleRule(webhook);
+      issueTitle.options = {
+        regexp: '(add|fix)\\s.*',
+      };
+
+      jest.spyOn(issueTitle, 'validate');
+
+      const result: RuleResult = issueTitle.validate();
+      const expectedResult = {
+        git: 'Github',
+        gitApiInfos: {
+          repositoryFullName: 'bastienterrier/test_webhook',
+        },
+        issueNumber: 22,
+      };
+      expect(result.validated).toBe(true);
+      expect(result.data).toEqual(expectedResult);
+    });
+  });
+  describe('issueTitle Rule', () => {
+    it('should return false + an object with git, issueNumber and gitApiInfos', () => {
+      const webhook = new Webhook(gitlabService, githubService);
+      webhook.gitType = GitTypeEnum.Gitlab;
+      webhook.issue.number = 42;
+      webhook.issue.title = 'update rules documentation';
+      webhook.projectId = 7657;
+
+      const issueTitle = new IssueTitleRule(webhook);
+      issueTitle.options = {
+        regexp: '(add|fix)\\s.*',
+      };
+
+      jest.spyOn(issueTitle, 'validate');
+
+      const result: RuleResult = issueTitle.validate();
+      const expectedResult = {
+        git: 'Gitlab',
+        gitApiInfos: {
+          projectId: '7657',
+        },
+        issueNumber: 42,
+      };
+      expect(result.validated).toBe(false);
+      expect(result.data).toEqual(expectedResult);
+    });
+  });
+
+  // OneCommitPerPR Rule
+  describe('oneCommitPerPR Rule', () => {
+    it('should return false', () => {
+      const webhook = new Webhook(gitlabService, githubService);
+      webhook.commits = [
+        {
+          message: 'fix: readme (#12)',
+          id: '1',
+        },
+        {
+          message: 'feat(test): tdd (#34)',
+          id: '2',
+        },
+        {
+          message: 'docs: gh-pages',
+          id: '3',
+        },
+      ];
+      const oneCommitPerPR = new OneCommitPerPRRule(webhook);
+      jest.spyOn(oneCommitPerPR, 'validate');
+
+      const result: RuleResult = oneCommitPerPR.validate();
+      expect(result.validated).toBe(false);
+    });
+  });
+  describe('oneCommitPerPR Rule', () => {
+    it('should return true', () => {
+      const webhook = new Webhook(gitlabService, githubService);
+      webhook.commits = [
+        {
+          message: 'fix: readme (#12)',
+          id: '1',
+        },
+      ];
+      const oneCommitPerPR = new OneCommitPerPRRule(webhook);
+      jest.spyOn(oneCommitPerPR, 'validate');
+
+      const result: RuleResult = oneCommitPerPR.validate();
+      expect(result.validated).toBe(true);
     });
   });
 });
