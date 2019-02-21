@@ -64,7 +64,7 @@ If you just want to test our project, without cloning it, you can run a containe
 
 ### Add a webhook
 
-Once the application is running, you can configure the webhook attachs to your git repository with the url : `http://localhost:3000/webhook`. You can select only the events you want to receive, or select all of them.
+Once the API is running, you can configure create a webhook to your git repository with the url : `http://<url of your server>/webhook`. You can also select the events you want to receive, or select all of them.
 
 > You can use [ngrok](https://ngrok.com/) to convert localhost url to public url.
 
@@ -80,7 +80,7 @@ Go to your repository integrations settings: `https://gitlab.com/:owner/:repo/se
 
 ### Add token access
 
-This project allow you to interact with Github and Gitlab repositories. You can update commit status, add comments on issues or Pull Request/ Merge Request, etc.
+This project allows you to interact with Github and Gitlab repositories. You can update commit status, add comments on issues or Pull Request/ Merge Request, etc.
 
 In order to do it, you have to get a _token_ of the repo you interact with.
 

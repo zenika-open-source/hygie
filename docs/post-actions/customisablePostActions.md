@@ -12,10 +12,10 @@ You can:
 
 ## How does it work?
 
-In your `rules.yml` config file, you can add `callback` functions that will be called if the rule success or fails.
+In your `rules.yml` config file, you can add `callback` functions that will be called if the rule succeeds or not.
 
-These `callback`s are `Runnable` classes, that implement the `RunnableInterface`.
-The `Runnable` will execute the `run()` method with `RuleResult` and `args` as arguments.
+These `callback`s are `Runnable` classes, that implementing the `RunnableInterface` interface.
+The `Runnable` interface will have a `run()` method with `RuleResult` and `args` as arguments.
 
 [`RuleResult`](../rules/customisableRules.html#validate-method) is an object containing the result of the rule, and `args` is a custom object, with as many properties as you want.
 

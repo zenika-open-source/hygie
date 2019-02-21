@@ -2,11 +2,11 @@
 
 The `CommentIssueRunnable` Post-Action write a comment on a specific issue.
 
-> It should only get called as `callback` in the `IssueTitleRule`, or in custom rule that return similar `RuleResult`.
+> It should only get called as `callback` in the `IssueTitleRule`, or in a custom rule that return a similar `RuleResult` object.
 
 ## Usage
 
-This Post-Action only need a string message. It's a string that can contain _mustache_ templating.
+This Post-Action only needs a string message. This string can contain _mustache_ templating.
 
 To use the `CommentIssueRunnable`, add the `callback` on your `rules.yml` config file.
 

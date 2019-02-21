@@ -2,7 +2,7 @@ module.exports = {
   base: '/git-webhooks/',
   title: 'Git Webhooks',
   description:
-    "Git Webhooks is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJs API expose a set of customizable Rules to automate your project's life cycle.",
+    "Git Webhooks is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJS API expose a set of customizable rules to automate your project's life cycle.",
   themeConfig: {
     repo: 'DX-DeveloperExperience/git-webhooks',
     docsRepo: 'DX-DeveloperExperience/git-webhooks',
