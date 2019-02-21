@@ -14,6 +14,9 @@ export class BranchNameRule extends Rule {
     const branchName = this.webhook.getBranchName();
     const branchRegExp = RegExp(this.options.regexp);
     ruleResult.validated = branchRegExp.test(branchName);
+    ruleResult.data = {
+      branch: branchName,
+    };
 
     return ruleResult;
   }

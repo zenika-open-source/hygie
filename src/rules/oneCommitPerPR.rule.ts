@@ -7,6 +7,9 @@ export class OneCommitPerPRRule extends Rule {
     const ruleResult: RuleResult = new RuleResult();
     ruleResult.validated =
       this.webhook.getAllCommits().length === 1 ? true : false;
+    ruleResult.data = {
+      commits: this.webhook.getAllCommits(),
+    };
     return ruleResult;
   }
 }

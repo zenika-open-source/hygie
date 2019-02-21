@@ -1,11 +1,14 @@
 import { Injectable, HttpService } from '@nestjs/common';
 import { Rule } from './rule.class';
-import { getRules } from './utils';
 import { Runnable } from '../runnables/runnable';
 import { Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
+import { safeLoad } from 'js-yaml';
+import { readFileSync } from 'fs';
+import { CommitMessageRule, BranchNameRule, OneCommitPerPRRule } from '.';
+import { IssueTitleRule } from './issueTitle.rule';
 
 @Injectable()
 export class RulesService {
@@ -16,8 +19,34 @@ export class RulesService {
     private readonly rulesClasses: Rule[],
   ) {}
 
+  getRules(webhook: Webhook): Rule[] {
+    const config = safeLoad(readFileSync('src/rules/rules.yml', 'utf-8'));
+    const rules: Rule[] = new Array();
+    config.rules.forEach(r => {
+      let rule: Rule;
+      if (r.name === 'commitMessage') {
+        rule = new CommitMessageRule(webhook);
+      } else if (r.name === 'branchName') {
+        rule = new BranchNameRule(webhook);
+      } else if (r.name === 'oneCommitPerPR') {
+        rule = new OneCommitPerPRRule(webhook);
+      } else if (r.name === 'issueTitle') {
+        rule = new IssueTitleRule(webhook);
+      }
+      rule.name = r.name;
+      rule.enabled = r.enabled;
+      rule.events = r.events;
+      rule.options = r.options;
+      rule.onSuccess = r.onSuccess;
+      rule.onError = r.onError;
+
+      rules.push(rule);
+    });
+    return rules;
+  }
+
   testRules(webhook: Webhook): void {
-    const rules: Rule[] = getRules(webhook);
+    const rules: Rule[] = this.getRules(webhook);
     const BreakException = {};
 
     const runnable: Runnable = new Runnable(

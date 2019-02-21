@@ -12,11 +12,12 @@ export class IssueTitleRule extends Rule {
 
   validate(): RuleResult {
     const ruleResult: RuleResult = new RuleResult();
-    const issueTitle = this.webhook.getIssueTitle();
+    const titleIssue = this.webhook.getIssueTitle();
     const issueRegExp = RegExp(this.options.regexp);
-    ruleResult.validated = issueRegExp.test(issueTitle);
+    ruleResult.validated = issueRegExp.test(titleIssue);
 
     ruleResult.data = {
+      issueTitle: titleIssue,
       git: this.webhook.getGitType(),
       issueNumber: this.webhook.getIssueNumber(),
       gitApiInfos: this.webhook.getGitApiInfos(),

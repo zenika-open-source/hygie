@@ -51,6 +51,9 @@ describe('RulesService', () => {
 
       const result: RuleResult = branchName.validate();
       expect(result.validated).toBe(true);
+      expect(result.data).toEqual({
+        branch: 'features/tdd',
+      });
     });
   });
   describe('branchName Rule', () => {
@@ -65,6 +68,9 @@ describe('RulesService', () => {
 
       const result: RuleResult = branchName.validate();
       expect(result.validated).toBe(false);
+      expect(result.data).toEqual({
+        branch: 'testing/tdd',
+      });
     });
   });
 
@@ -164,7 +170,7 @@ describe('RulesService', () => {
 
   // IssueTitle Rule
   describe('issueTitle Rule', () => {
-    it('should return true + an object with git, issueNumber and gitApiInfos', () => {
+    it('should return true + an object with issueTitle, git, issueNumber and gitApiInfos', () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.gitType = GitTypeEnum.Github;
       webhook.issue.number = 22;
@@ -182,6 +188,7 @@ describe('RulesService', () => {
 
       const result: RuleResult = issueTitle.validate();
       const expectedResult = {
+        issueTitle: 'add rules documentation',
         git: 'Github',
         gitApiInfos: {
           repositoryFullName: 'bastienterrier/test_webhook',
@@ -193,7 +200,7 @@ describe('RulesService', () => {
     });
   });
   describe('issueTitle Rule', () => {
-    it('should return false + an object with git, issueNumber and gitApiInfos', () => {
+    it('should return false + an object with issueTitle, git, issueNumber and gitApiInfos', () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.gitType = GitTypeEnum.Gitlab;
       webhook.issue.number = 42;
@@ -209,6 +216,7 @@ describe('RulesService', () => {
 
       const result: RuleResult = issueTitle.validate();
       const expectedResult = {
+        issueTitle: 'update rules documentation',
         git: 'Gitlab',
         gitApiInfos: {
           projectId: '7657',
@@ -243,6 +251,7 @@ describe('RulesService', () => {
 
       const result: RuleResult = oneCommitPerPR.validate();
       expect(result.validated).toBe(false);
+      expect((result.data as any).commits).toEqual(webhook.commits);
     });
   });
   describe('oneCommitPerPR Rule', () => {
@@ -259,6 +268,7 @@ describe('RulesService', () => {
 
       const result: RuleResult = oneCommitPerPR.validate();
       expect(result.validated).toBe(true);
+      expect((result.data as any).commits).toEqual(webhook.commits);
     });
   });
 });

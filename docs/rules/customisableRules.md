@@ -11,13 +11,13 @@ The `rules.yml` file contains all the rules you've configured.
 
 Each rule must respect the following structure :
 
-```yml
+```yaml
 - name: commitMessage
   enabled: true
   events:
     - Push
   options:
-    regexp: '(feat|fix|docs)(\([a-z]+\))?:\s[^(]*(\(#[1-9][0-9]*(, #[1-9][0-9]*)*\))?$'
+    regexp: '(feat|fix|docs)(\([a-z]+\))?:\s[^(]*(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
   onSuccess:
     - callback: LoggerRunnable
       args:
@@ -93,44 +93,68 @@ You can have a look at the `CommitMessageRule.ts` class located in `src/rules`.
 Each Rule, should have a `validate()` method as follows:
 
 ```typescript
-validate(): RuleResult {
-  const ruleResult: RuleResult = new RuleResult();
+export class MyCustomRule extends Rule {
+  name = 'customRule';
+  // ...
 
-  /**
-   * Your process
-   *
-   * You can call gitApi via `this.webhook.gitService`
-   **/
+  validate(): RuleResult {
+    const ruleResult: RuleResult = new RuleResult();
 
-  // Optional
-  // If you want to export data for callbacks, accessible with {{data}}
-  ruleResult.data = {
-    myData: 'this is some data',
-    myArray: [
-      {
-        key: 'val1',
-      },
-      {
-        key: 'val2',
-      },
-    ],
-  };
-  ruleResult.validated = true|false;
-  return ruleResult;
+    /**
+     * Your process
+     *
+     * You can call gitApi via `this.webhook.gitService`
+     **/
+
+    // Optional
+    // If you want to export data for callbacks, accessible with {{data}}
+    ruleResult.data = {
+      myData: 'this is some data',
+      myArray: ['val1', 'val2', 'val3'],
+    };
+    ruleResult.validated = true | false;
+    return ruleResult;
+  }
 }
+```
+
+This method return a `RuleResult` object, containing the `validated` boolean attribute and a `data` object. You can custom this last property, and then, use it in your `callback`s.
+
+#### `rules.yml` sample file
+
+```yaml
+  - name: customRule
+    enabled: true
+    events:
+      - Push
+    options:
+    onSuccess:
+      - callback: LoggerRunnable
+        args:
+          type: info
+          message: 'MyData is: {{data.myData}}
+          All values in myArray are:
+          {{#data.myArray}}
+            .
+          {{/data.myArray}}'
+    onError:
+      - callback: LoggerRunnable
+        args:
+          type: warn
+          message: error!
 ```
 
 ### Declare your new rule
 
-When you create a new rule, you need to extends to `getRules()` function, located in `/src/rules/utils.ts` and add the following statement :
+When you create a new rule, you need to extends the `getRules()` method, located in `/src/rules/rules.service.ts` and add the following statement :
 
 ```typescript
 export function getRules(webhook: Webhook): Rule[] {
 
   // ...
 
-  else if (r.name === 'myRule') {
-    rule = new MyRule(webhook);
+  else if (r.name === 'customRule') {
+    rule = new MyCustomRule(webhook);
   }
 
   // ...

@@ -32,6 +32,7 @@ module.exports = {
           '/rules/branchName.md',
           '/rules/commitMessage.md',
           '/rules/issueTitle.md',
+          '/rules/oneCommitPerPR.md',
         ],
       },
       {
@@ -41,6 +42,7 @@ module.exports = {
           '/post-actions/customisablePostActions.md',
           '/post-actions/loggerRunnable.md',
           '/post-actions/webhookRunnable.md',
+          '/post-actions/commentIssueRunnable.md',
         ],
       },
     ],

@@ -47,7 +47,7 @@ rules:
       - callback: LoggerRunnable
         args:
           type: info
-          message: 'pattern match'
+          message: '{{data.branch}} is a good name!'
     onError:
       - callback: LoggerRunnable
         args:
@@ -72,11 +72,15 @@ rules:
           url: 'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8'
           data: {
             user: 'bastien terrier',
-            content: 'More than one commmit !!'
+            content: 'More than one commmit !',
+            commits: '{{#data.commits}}
+              {{message}} (#{{id}})
+            {{/data.commits}}
+            ',
           }
           config: {
             headers: {
-              Authorization: 'token oebfobeofzef'
+              Authorization: 'token 1234567890abcdef'
             }
           }
   - name: issueTitle
@@ -89,12 +93,12 @@ rules:
       - callback: LoggerRunnable
         args:
           type: info
-          message: 'correct issue title'
+          message: '{{data.issueTitle}} is correct issue title'
     onError:
       - callback: LoggerRunnable
         args:
           type: warn
-          message: 'incorrect issue title'
+          message: '{{data.issueTitle}} is not a correct issue title'
       - callback: CommentIssueRunnable
         args:
           comment: 'ping @bastienterrier'         

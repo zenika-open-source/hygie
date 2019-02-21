@@ -101,7 +101,7 @@ GITHUB_API=https://api.github.com
 GITLAB_API=https://gitlab.com/api/v4
 ```
 
-If your project is hosted on an official github or gitlab repository, you can leave the GITHUB_API and GITLAB_API as default. But, if you are using another host, you have to adapt the URL API.
+If your project is hosted on an official github or gitlab repository, you can leave the GITHUB_API and GITLAB_API as default. But, if you are using another host, you have to adapt the API URL.
 
 ## Testing the project
 
