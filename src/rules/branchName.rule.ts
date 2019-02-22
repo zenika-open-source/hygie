@@ -1,17 +1,23 @@
 import { Rule } from './rule.class';
+import { RuleResult } from './ruleResult';
 
 interface BranchNameOptions {
   regexp: string;
 }
 
 export class BranchNameRule extends Rule {
+  name = 'branchName';
   options: BranchNameOptions;
 
-  validate(): boolean {
+  validate(): RuleResult {
+    const ruleResult: RuleResult = new RuleResult();
     const branchName = this.webhook.getBranchName();
     const branchRegExp = RegExp(this.options.regexp);
-    const ruleSuccessed: boolean = branchRegExp.test(branchName);
+    ruleResult.validated = branchRegExp.test(branchName);
+    ruleResult.data = {
+      branch: branchName,
+    };
 
-    return this.excecuteValidationFunctions(ruleSuccessed);
+    return ruleResult;
   }
 }

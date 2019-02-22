@@ -2,10 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
-import { HttpModule } from '@nestjs/common';
-import { GitServiceInterface } from './interfaces/git.service.interface';
+import { HttpModule, HttpService } from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { GitEventEnum, GitTypeEnum } from './webhook/utils.enum';
+import { RulesModule } from './rules/rules.module';
+import {
+  MockGitlabService,
+  MockGithubService,
+  MockHttpService,
+} from './__mocks__/mocks';
 
 describe('AppController', () => {
   let app: TestingModule;
@@ -18,21 +23,21 @@ describe('AppController', () => {
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [RulesModule],
       controllers: [AppController],
-      providers: [GitlabService, GithubService],
+      providers: [
+        { provide: HttpService, useClass: MockHttpService },
+        { provide: GitlabService, useClass: MockGitlabService },
+        { provide: GithubService, useClass: MockGithubService },
+      ],
     }).compile();
+
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
-    jest
-      .spyOn(githubService, 'updateCommitStatus')
-      .mockImplementation(() => 'OK');
-
-    jest
-      .spyOn(gitlabService, 'updateCommitStatus')
-      .mockImplementation(() => 'OK');
-
     appController = app.get<AppController>(AppController);
+
+    githubService.updateCommitStatus = jest.fn();
+    gitlabService.updateCommitStatus = jest.fn();
 
     // gitlabPushWebhook initialisation
     gitlabPushWebhook = new Webhook(gitlabService, githubService);
@@ -91,7 +96,7 @@ describe('AppController', () => {
   });
 
   describe('webhook', () => {
-    it('should call the Gitlab service', () => {
+    it('should call the updateCommitStatus Gitlab service', () => {
       appController.processWebhook(gitlabPushWebhook);
       expect(gitlabService.updateCommitStatus).toBeCalled();
       expect(githubService.updateCommitStatus).not.toBeCalled();
@@ -99,7 +104,7 @@ describe('AppController', () => {
   });
 
   describe('webhook', () => {
-    it('should call the Github service', () => {
+    it('should call the updateCommitStatus Github service', () => {
       appController.processWebhook(githubPushWebhook);
       expect(githubService.updateCommitStatus).toBeCalled();
       expect(gitlabService.updateCommitStatus).not.toBeCalled();
@@ -107,7 +112,7 @@ describe('AppController', () => {
   });
 
   describe('webhook', () => {
-    it('should not call the Github nor Gitlab services', () => {
+    it('should not call the updateCommitStatus Github nor updateCommitStatus Gitlab services', () => {
       appController.processWebhook(githubBranchWebhook);
       expect(githubService.updateCommitStatus).not.toBeCalled();
       expect(gitlabService.updateCommitStatus).not.toBeCalled();

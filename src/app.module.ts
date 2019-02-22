@@ -1,11 +1,11 @@
 import { Module, HttpModule } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { GithubService } from './github/github.service';
-import { GitlabService } from './gitlab/gitlab.service';
+import { RulesModule } from './rules/rules.module';
+import { RunnableModule } from './runnables/runnable.module';
+import { GitModule } from './git/git.module';
 
 @Module({
-  imports: [HttpModule],
+  imports: [HttpModule, RulesModule, RunnableModule, GitModule],
   controllers: [AppController],
-  providers: [GithubService, GitlabService],
 })
 export class AppModule {}

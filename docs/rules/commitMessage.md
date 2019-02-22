@@ -2,37 +2,58 @@
 
 ## Goal
 
-This rule's aim is to check if the new commit has a correct name, according to a regular expression. If the name match the `regexp`, the commit will success (`success` status), otherwise it will faild (`error` status).
+This rule's aim is to check if the new commit has a correct name, according to a regular expression. If the name match the `regexp`, the commit will success (`success` status), otherwise it will fail (`error` status).
 
-According to this status, the `onSuccess` or `onError` callbacks will be called.
+## Return value
 
-### YAML file
+The `CommitMessageRule` `validate()` method return the following `RuleResult` object:
 
-```yml
-- name: commitMessage
-  enabled: true
-  events:
-    - Push
-  options:
-    regexp: (feat|fix|docs)\(?[a-z]*\)?:\s.*
-  onSuccess:
-    - callback: logger.info
-      args:
-        - 'pattern match'
-        - 'good game'
-    - callback: logger.info
-      args:
-        - 'another action is being executed'
-        - 'commit will successed'
-  onError:
-    - callback: logger.warn
-      args:
-        - 'pattern does not match'
-        - 'commit name must begin with : "feat|fix|docs"!'
-    - callback: logger.warn
-      args:
-        - 'another action is being executed'
-        - 'commit will fail'
+```typescript
+{
+  validated: boolean;
+  data:
+  [
+    {
+      sha: string;
+      message: string;
+      matches: string[];
+    },
+    ...
+  ]
+}
+```
+
+You can use it in your `callback`s `args` (see the [templating section](customisableRules.html#templating-with-mustache)).
+
+## Usage
+
+```yaml
+  - name: commitMessage
+    enabled: true
+    events:
+      - Push
+    options:
+      regexp: '(feat|fix|docs)(\([a-z]+\))?:\s[^(]*(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
+    onSuccess:
+      - callback : WebhookRunnable
+        args:
+          url: 'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8'
+          data: {
+            user: 'bastien terrier',
+            content: '{{#data}}{{sha}} =
+            Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
+            {{/data}}'
+          }
+          config: {}
+    onError:
+      - callback: LoggerRunnable
+        args:
+          type: warn
+          message: 'pattern does not match, commit name must begin with : "feat|fix|docs"! Check your commit message:
+            {{#data}}
+              > {{message}} (#{{sha}})
+            {{/data}}
+          '
 ```
 
 ## Customisation

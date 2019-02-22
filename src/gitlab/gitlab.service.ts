@@ -1,19 +1,26 @@
 import { Injectable, HttpService } from '@nestjs/common';
-import { GitServiceInterface } from '../interfaces/git.service.interface';
+import { GitServiceInterface } from '../git/git.service.interface';
 import { convertCommitStatus, GitTypeEnum } from '../webhook/utils.enum';
-import { CommitStatusInfos } from '../webhook/commitStatusInfos';
+import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { logger } from '../logger/logger.service';
+import { GitApiInfos } from '../git/gitApiInfos';
+import { GitIssueInfos } from '../git/gitIssueInfos';
 
 @Injectable()
 export class GitlabService implements GitServiceInterface {
   token: string;
+  urlApi: string;
 
   constructor(private readonly httpService: HttpService) {
     require('dotenv').config({ path: 'config.env' });
     this.token = process.env.GITLAB_TOKEN;
+    this.urlApi = process.env.GITLAB_API;
   }
 
-  updateCommitStatus(commitStatusInfos: CommitStatusInfos): void {
+  updateCommitStatus(
+    gitApiInfos: GitApiInfos,
+    gitCommitStatusInfos: GitCommitStatusInfos,
+  ): void {
     // Config URL for GitLab
     const configGitLab = {
       headers: {
@@ -22,10 +29,10 @@ export class GitlabService implements GitServiceInterface {
       params: {
         state: convertCommitStatus(
           GitTypeEnum.Gitlab,
-          commitStatusInfos.commitStatus,
+          gitCommitStatusInfos.commitStatus,
         ),
-        target_url: commitStatusInfos.targetUrl,
-        description: commitStatusInfos.descriptionMessage,
+        target_url: gitCommitStatusInfos.targetUrl,
+        description: gitCommitStatusInfos.descriptionMessage,
       },
     };
 
@@ -34,15 +41,40 @@ export class GitlabService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `https://gitlab.com/api/v4/projects/${
-          commitStatusInfos.projectId
-        }/statuses/${commitStatusInfos.commitSha}`,
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/statuses/${
+          gitCommitStatusInfos.commitSha
+        }`,
         dataGitLab,
         configGitLab,
       )
-      .toPromise()
-      .then(response => {
-        logger.info(JSON.stringify(response.data, null, 4));
-      });
+      .subscribe();
+  }
+
+  addIssueComment(
+    gitApiInfos: GitApiInfos,
+    gitIssueInfos: GitIssueInfos,
+  ): void {
+    // Config URL for GitLab
+    const configGitLab = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {
+        body: gitIssueInfos.comment,
+      },
+    };
+
+    // Data for GitLab
+    const dataGitLab = {};
+
+    this.httpService
+      .post(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/issues/${
+          gitIssueInfos.number
+        }/notes`,
+        dataGitLab,
+        configGitLab,
+      )
+      .subscribe();
   }
 }

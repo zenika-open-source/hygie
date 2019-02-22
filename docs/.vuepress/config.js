@@ -2,12 +2,12 @@ module.exports = {
   base: '/git-webhooks/',
   title: 'Git Webhooks',
   description:
-    "API REST permettant d'intéragir sur des évenements d'un repository GIT. Cette API mettra à disposition un ensemble de règles/actions aux utilisateurs permettant d'automatiser le cycle de vie du projet",
+    "Git Webhooks is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJS API expose a set of customizable rules to automate your project's life cycle.",
   themeConfig: {
     repo: 'DX-DeveloperExperience/git-webhooks',
     docsRepo: 'DX-DeveloperExperience/git-webhooks',
     docsDir: 'docs',
-    docsBranch: 'master',
+    docsBranch: 'develop',
     editLinks: true,
     editLinkText: 'Help us improve this page!',
     sidebarDepth: 2,
@@ -15,6 +15,7 @@ module.exports = {
       { text: 'Home', link: '/' },
       { text: 'Guide', link: '/guide/' },
       { text: 'Rules', link: '/rules/' },
+      { text: 'Post-Actions', link: '/post-actions/' },
     ],
     sidebar: [
       '/',
@@ -30,6 +31,18 @@ module.exports = {
           '/rules/customisableRules.md',
           '/rules/branchName.md',
           '/rules/commitMessage.md',
+          '/rules/issueTitle.md',
+          '/rules/oneCommitPerPR.md',
+        ],
+      },
+      {
+        title: 'Post-Actions',
+        collapsable: false,
+        children: [
+          '/post-actions/customisablePostActions.md',
+          '/post-actions/loggerRunnable.md',
+          '/post-actions/webhookRunnable.md',
+          '/post-actions/commentIssueRunnable.md',
         ],
       },
     ],
