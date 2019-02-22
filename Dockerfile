@@ -2,10 +2,9 @@ FROM node:10.15.1-alpine as node
 RUN mkdir -p /src/app
 WORKDIR /src/app
 COPY package.json /src/app/package.json
-COPY config.env /src/app/config.env
 RUN npm install
+RUN touch config.env
 COPY . /src/app
-RUN ls /src/app
 RUN npm run build
 
 FROM node:10.15.1-alpine
