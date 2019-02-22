@@ -92,6 +92,8 @@ Navigate to [https://github.com/settings/tokens](https://github.com/settings/tok
 
 Go to [https://gitlab.com/profile/personal_access_tokens](https://gitlab.com/profile/personal_access_tokens) and fill the `name` field with the name of your token, choose an expiration date and give it the `api` scope.
 
+### Create the `config.env` file
+
 Once you get your token, create a `config.env` file at your root's project and add the following lines:
 
 ```
