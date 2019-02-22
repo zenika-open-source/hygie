@@ -3,7 +3,9 @@ RUN mkdir -p /src/app
 WORKDIR /src/app
 COPY package.json /src/app/package.json
 RUN npm install
+RUN ls
 COPY . /src/app
+RUN ls /src/app
 RUN npm run build
 
 FROM node:10.15.1-alpine
