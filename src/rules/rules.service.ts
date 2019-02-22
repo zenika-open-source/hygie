@@ -20,7 +20,10 @@ export class RulesService {
   ) {}
 
   getRules(webhook: Webhook): Rule[] {
-    const config = safeLoad(readFileSync('src/rules/rules.yml', 'utf-8'));
+    const path = require('path');
+    const config = safeLoad(
+      readFileSync(path.resolve(__dirname, 'rules.yml'), 'utf-8'),
+    );
     const rules: Rule[] = new Array();
     config.rules.forEach(r => {
       let rule: Rule;
