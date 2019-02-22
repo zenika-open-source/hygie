@@ -57,7 +57,7 @@ docker run --name webhook-container -d -p 3000:3000 my-webhook:latest
 If you just want to test our project, without cloning it, you can run a container with one of the existing versions in [DockerHub]().
 
 ```
-
+docker run --name webhook-container -d -p 3000:3000 dxdeveloperexperience/git-webhooks:TAG
 ```
 
 ## Github/Gitlab configuration
