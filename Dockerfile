@@ -2,8 +2,8 @@ FROM node:10.15.1-alpine as node
 RUN mkdir -p /src/app
 WORKDIR /src/app
 COPY package.json /src/app/package.json
+COPY config.env /src/app/config.env
 RUN npm install
-RUN ls
 COPY . /src/app
 RUN ls /src/app
 RUN npm run build
