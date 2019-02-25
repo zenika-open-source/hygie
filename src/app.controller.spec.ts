@@ -58,6 +58,8 @@ describe('AppController', () => {
     gitlabPushWebhook.projectId = 1;
     gitlabPushWebhook.repository = {
       fullName: 'bastienterrier/test_webhook',
+      name: 'test_webhook',
+      description: 'amazing project',
     };
 
     // githubPushWebhook initialisation
@@ -75,6 +77,8 @@ describe('AppController', () => {
     githubPushWebhook.projectId = 1;
     githubPushWebhook.repository = {
       fullName: 'bastienterrier/test_webhook',
+      name: 'test_webhook',
+      description: 'amazing project',
     };
 
     // githubBranchWebhook initialisation
@@ -92,6 +96,8 @@ describe('AppController', () => {
     githubBranchWebhook.projectId = 1;
     githubBranchWebhook.repository = {
       fullName: 'bastienterrier/test_webhook',
+      name: 'test_webhook',
+      description: 'amazing project',
     };
   });
 
