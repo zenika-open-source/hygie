@@ -8,6 +8,7 @@ import {
   isGitlabBranchEvent,
   isGithubIssueEvent,
   isGitlabIssueEvent,
+  isGithubNewRepoEvent,
 } from './utils.enum';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
@@ -15,6 +16,7 @@ import { GitlabEvent } from '../gitlab/gitlabEvent';
 import { GithubEvent } from '../github/githubEvent';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
+import { logger } from '../logger/logger.service';
 
 export class WebhookIssue {
   number: number;
@@ -35,6 +37,8 @@ export class WebhookCommit {
 // tslint:disable-next-line:max-classes-per-file
 export class WebhookRepository {
   fullName: string;
+  name: string;
+  description: string;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -131,6 +135,13 @@ export class Webhook {
       this.issue.number = git.object_attributes.iid;
       this.issue.title = git.object_attributes.title;
       this.projectId = git.object_attributes.project_id;
+    } else if (isGithubNewRepoEvent(git)) {
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.NewRepo;
+      this.gitService = this.githubService;
+      this.repository.fullName = git.repository.full_name;
+      this.repository.name = git.repository.name;
+      this.repository.description = git.repository.description;
     }
   }
 

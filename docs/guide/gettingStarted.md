@@ -72,7 +72,12 @@ Once the API is running, you can configure create a webhook to your git reposito
 
 You can add as many webhooks as you want. Just go to your repository settings: `https://github.com/:owner/:repo/settings/hooks`, add click the `Add webhook` button.
 
-Now you can configure the `Payload URL`, select the `send me everything` option and save this configuration.
+Now you can :
+
+- configure the `Payload URL`,
+- check if `Content type` is set to `application/json`,
+- select the `send me everything` option,
+- save this configuration.
 
 #### Gitlab
 

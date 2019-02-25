@@ -1,10 +1,5 @@
-export interface GithubIssue {
-  number: number;
-  title: string;
-}
-export interface GithubRepository {
-  full_name: string;
-}
+import { GithubRepository, GithubIssue } from './github.interface';
+
 export interface GithubIssueEvent {
   action: string;
   issue: GithubIssue;

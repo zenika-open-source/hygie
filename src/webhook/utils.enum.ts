@@ -5,6 +5,7 @@ import { GitlabEvent } from '../gitlab/gitlabEvent';
 import { GithubEvent } from '../github/githubEvent';
 import { GithubIssueEvent } from '../github/githubIssueEvent';
 import { GitlabIssueEvent } from '../gitlab/gitlabIssueEvent';
+import { GithubNewRepoEvent } from '../github/githubNewRepoEvent';
 
 export enum GitTypeEnum {
   Undefined = 'Undefined',
@@ -22,6 +23,7 @@ export enum GitEventEnum {
   Push = 'Push',
   NewBranch = 'NewBranch',
   NewIssue = 'NewIssue',
+  NewRepo = 'NewRepo',
 }
 
 export function convertCommitStatus(
@@ -96,4 +98,15 @@ export function isGitlabIssueEvent(
   git: GitlabEvent | GithubEvent,
 ): git is GitlabIssueEvent {
   return (git as GitlabIssueEvent).object_kind === 'issue';
+}
+
+export function isGithubNewRepoEvent(
+  git: GitlabEvent | GithubEvent,
+): git is GithubNewRepoEvent {
+  return (
+    (git as GithubNewRepoEvent).repository !== undefined &&
+    (git as GithubNewRepoEvent).sender !== undefined &&
+    (git as GithubNewRepoEvent).action === 'created' &&
+    (git as GithubIssueEvent).issue === undefined
+  );
 }
