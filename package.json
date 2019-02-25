@@ -20,11 +20,11 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "ci": "npm-run-all prettier-test lint test",
     "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "docs:build": "vuepress build docs",
+    "coveralls:test": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run ci",
       "pre-push": "npm run ci"
     }
   },
@@ -51,7 +51,8 @@
     "@types/js-yaml": "3.12.0",
     "@types/node": "11.9.4",
     "@types/supertest": "2.0.7",
-    "husky": "^1.3.1",
+    "coveralls": "3.0.0",
+    "husky": "1.3.1",
     "jest": "24.1.0",
     "nodemon": "1.18.10",
     "npm-run-all": "4.1.5",
