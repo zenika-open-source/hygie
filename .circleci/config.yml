@@ -30,6 +30,10 @@ jobs:
           name: npm run ci tests
           command: npm run ci
       - run:
+          name: create .coveralls.yml
+          command: |
+            echo 'repo_token: $COVERALLS_TOKEN' > ./.coveralls.yml
+      - run:
           name: coveralls test
           command: npm run coveralls:test && (cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js)
   deploy:
