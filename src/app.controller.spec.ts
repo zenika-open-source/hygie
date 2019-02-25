@@ -21,6 +21,10 @@ describe('AppController', () => {
   let githubPushWebhook: Webhook;
   let githubBranchWebhook: Webhook;
 
+  const res = {
+    status: () => ({ send: () => this }),
+  };
+
   beforeAll(async () => {
     app = await Test.createTestingModule({
       imports: [RulesModule],
@@ -97,7 +101,7 @@ describe('AppController', () => {
 
   describe('webhook', () => {
     it('should call the updateCommitStatus Gitlab service', () => {
-      appController.processWebhook(gitlabPushWebhook);
+      appController.processWebhook(gitlabPushWebhook, res);
       expect(gitlabService.updateCommitStatus).toBeCalled();
       expect(githubService.updateCommitStatus).not.toBeCalled();
     });
@@ -105,7 +109,7 @@ describe('AppController', () => {
 
   describe('webhook', () => {
     it('should call the updateCommitStatus Github service', () => {
-      appController.processWebhook(githubPushWebhook);
+      appController.processWebhook(githubPushWebhook, res);
       expect(githubService.updateCommitStatus).toBeCalled();
       expect(gitlabService.updateCommitStatus).not.toBeCalled();
     });
@@ -113,7 +117,7 @@ describe('AppController', () => {
 
   describe('webhook', () => {
     it('should not call the updateCommitStatus Github nor updateCommitStatus Gitlab services', () => {
-      appController.processWebhook(githubBranchWebhook);
+      appController.processWebhook(githubBranchWebhook, res);
       expect(githubService.updateCommitStatus).not.toBeCalled();
       expect(gitlabService.updateCommitStatus).not.toBeCalled();
     });
