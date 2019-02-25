@@ -31,7 +31,7 @@ jobs:
           command: npm run ci
       - run:
           name: coveralls test
-          command: npm run coveralls:test && (cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js)
+          command: npm run test:cov && (cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js)
   deploy:
     docker:
       - image: circleci/node:8
