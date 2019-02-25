@@ -14,3 +14,7 @@ export interface GithubCommit {
 export interface GithubSender {
   login: string;
 }
+export interface GithubPullRequest {
+  state: string;
+  title: string;
+}

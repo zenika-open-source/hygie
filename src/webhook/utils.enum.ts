@@ -6,6 +6,8 @@ import { GithubEvent } from '../github/githubEvent';
 import { GithubIssueEvent } from '../github/githubIssueEvent';
 import { GitlabIssueEvent } from '../gitlab/gitlabIssueEvent';
 import { GithubNewRepoEvent } from '../github/githubNewRepoEvent';
+import { GithubNewPREvent } from '../github/githubNewPREvent';
+import { GitlabNewPREvent } from '../gitlab/gitlabNewPREvent';
 
 export enum GitTypeEnum {
   Undefined = 'Undefined',
@@ -24,6 +26,7 @@ export enum GitEventEnum {
   NewBranch = 'NewBranch',
   NewIssue = 'NewIssue',
   NewRepo = 'NewRepo',
+  NewPR = 'NewPR',
 }
 
 export function convertCommitStatus(
@@ -108,5 +111,26 @@ export function isGithubNewRepoEvent(
     (git as GithubNewRepoEvent).sender !== undefined &&
     (git as GithubNewRepoEvent).action === 'created' &&
     (git as GithubIssueEvent).issue === undefined
+  );
+}
+
+export function isGithubNewPREvent(
+  git: GitlabEvent | GithubEvent,
+): git is GithubNewPREvent {
+  return (
+    (git as GithubNewPREvent).pull_request !== undefined &&
+    ((git as GithubNewPREvent).action === 'synchronised' ||
+      (git as GithubNewPREvent).action === 'opened') &&
+    (git as GithubNewPREvent).number !== undefined
+  );
+}
+
+export function isGitlabNewPREvent(
+  git: GitlabEvent | GithubEvent,
+): git is GitlabNewPREvent {
+  return (
+    (git as GitlabNewPREvent).object_kind === 'merge_request' &&
+    (git as GitlabNewPREvent).object_attributes !== undefined &&
+    (git as GitlabNewPREvent).object_attributes.action === 'open'
   );
 }

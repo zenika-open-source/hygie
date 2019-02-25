@@ -9,6 +9,8 @@ import {
   isGithubIssueEvent,
   isGitlabIssueEvent,
   isGithubNewRepoEvent,
+  isGithubNewPREvent,
+  isGitlabNewPREvent,
 } from './utils.enum';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
@@ -16,14 +18,12 @@ import { GitlabEvent } from '../gitlab/gitlabEvent';
 import { GithubEvent } from '../github/githubEvent';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { logger } from '../logger/logger.service';
 
 export class WebhookIssue {
   number: number;
   title: string;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class WebhookCommit {
   id: string;
   message: string;
@@ -34,14 +34,16 @@ export class WebhookCommit {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class WebhookRepository {
   fullName: string;
   name: string;
   description: string;
 }
 
-// tslint:disable-next-line:max-classes-per-file
+export class WebhookPR {
+  title: string;
+}
+
 export class Webhook {
   gitType: GitTypeEnum;
   gitEvent: GitEventEnum;
@@ -51,6 +53,7 @@ export class Webhook {
   repository: WebhookRepository;
   branchName: string;
   issue: WebhookIssue;
+  pullRequest: WebhookPR;
 
   constructor(
     private readonly gitlabService: GitlabService,
@@ -59,6 +62,7 @@ export class Webhook {
     this.repository = new WebhookRepository();
     this.commits = new Array<WebhookCommit>();
     this.issue = new WebhookIssue();
+    this.pullRequest = new WebhookPR();
   }
 
   getAllCommits(): WebhookCommit[] {
@@ -142,6 +146,16 @@ export class Webhook {
       this.repository.fullName = git.repository.full_name;
       this.repository.name = git.repository.name;
       this.repository.description = git.repository.description;
+    } else if (isGithubNewPREvent(git)) {
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.NewPR;
+      this.gitService = this.githubService;
+      this.pullRequest.title = git.pull_request.title;
+    } else if (isGitlabNewPREvent(git)) {
+      this.gitType = GitTypeEnum.Gitlab;
+      this.gitEvent = GitEventEnum.NewPR;
+      this.gitService = this.gitlabService;
+      this.projectId = git.repository.id;
     }
   }
 
