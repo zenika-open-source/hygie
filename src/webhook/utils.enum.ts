@@ -18,6 +18,7 @@ export enum CommitStatusEnum {
 }
 
 export enum GitEventEnum {
+  Undefined = 'Undefined',
   Push = 'Push',
   NewBranch = 'NewBranch',
   NewIssue = 'NewIssue',

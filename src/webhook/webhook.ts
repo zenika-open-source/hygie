@@ -81,7 +81,14 @@ export class Webhook {
     return this.gitType;
   }
 
+  getGitEvent(): GitEventEnum {
+    return this.gitEvent;
+  }
+
   gitToWebhook(git: GitlabEvent | GithubEvent): void {
+    this.gitEvent = GitEventEnum.Undefined;
+    this.gitType = GitTypeEnum.Undefined;
+
     if (isGitlabPushEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.Push;

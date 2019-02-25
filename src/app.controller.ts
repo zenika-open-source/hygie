@@ -1,8 +1,17 @@
-import { Controller, Body, Post, UseInterceptors, Get } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Post,
+  UseInterceptors,
+  Get,
+  Res,
+  HttpStatus,
+} from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { WebhookInterceptor } from './webhook/webhook.interceptor';
 import { logger } from './logger/logger.service';
 import { RulesService } from './rules/rules.service';
+import { GitTypeEnum, GitEventEnum } from './webhook/utils.enum';
 
 @Controller()
 export class AppController {
@@ -15,15 +24,19 @@ export class AppController {
 
   @Post('/webhook')
   @UseInterceptors(WebhookInterceptor)
-  processWebhook(@Body() webhook: Webhook): string {
-    logger.info(
-      `\n\n=== processWebhook - ${webhook.getGitType()} - ${
-        webhook.gitEvent
-      } ===\n`,
-    );
+  processWebhook(@Body() webhook: Webhook, @Res() response): void {
+    if (
+      webhook.getGitType() === GitTypeEnum.Undefined ||
+      webhook.getGitEvent() === GitEventEnum.Undefined
+    ) {
+      response.status(HttpStatus.PRECONDITION_FAILED).send();
+    } else {
+      logger.info(
+        `\n\n=== processWebhook - ${webhook.getGitType()} - ${webhook.getGitEvent()} ===\n`,
+      );
 
-    this.rulesService.testRules(webhook);
-
-    return 'ok';
+      this.rulesService.testRules(webhook);
+      response.status(HttpStatus.ACCEPTED).send();
+    }
   }
 }
