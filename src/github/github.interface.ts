@@ -17,4 +17,5 @@ export interface GithubSender {
 export interface GithubPullRequest {
   state: string;
   title: string;
+  body: string;
 }

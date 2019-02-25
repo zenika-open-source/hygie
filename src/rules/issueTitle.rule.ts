@@ -1,14 +1,13 @@
 import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
-import { logger } from '../logger/logger.service';
 
-interface IssueNameOptions {
+interface IssueTitleOptions {
   regexp: string;
 }
 
 export class IssueTitleRule extends Rule {
   name = 'issueTitle';
-  options: IssueNameOptions;
+  options: IssueTitleOptions;
 
   validate(): RuleResult {
     const ruleResult: RuleResult = new RuleResult();

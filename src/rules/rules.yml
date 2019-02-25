@@ -93,7 +93,7 @@ rules:
       - callback: LoggerRunnable
         args:
           type: info
-          message: '{{data.issueTitle}} is correct issue title'
+          message: '{{data.issueTitle}} is a correct issue title'
     onError:
       - callback: LoggerRunnable
         args:
@@ -101,4 +101,22 @@ rules:
           message: '{{data.issueTitle}} is not a correct issue title'
       - callback: CommentIssueRunnable
         args:
-          comment: 'ping @bastienterrier'         
+          comment: 'ping @bastienterrier'   
+  - name: pullRequestTitle
+    enabled: true
+    events:
+      - NewPR
+    options:
+      regexp: (WIP|PR)\s.*
+    onSuccess:
+      - callback: LoggerRunnable
+        args:
+          type: info
+          message: '{{data.pullRequestTitle}} is a correct pull request title : {{data.pullRequestDescription}} (#{{data.pullRequestNumber}})'
+    onError:
+      - callback: LoggerRunnable
+        args:
+          type: warn
+          message: '{{data.pullRequestTitle}} is not a correct pull request title : {{data.pullRequestDescription}} (#{{data.pullRequestNumber}})'
+          
+          

@@ -42,6 +42,8 @@ export class WebhookRepository {
 
 export class WebhookPR {
   title: string;
+  description: string;
+  number: number;
 }
 
 export class Webhook {
@@ -71,6 +73,18 @@ export class Webhook {
       commits.push(c);
     });
     return commits;
+  }
+
+  getPullRequestNumber(): number {
+    return this.pullRequest.number;
+  }
+
+  getPullRequestDescription(): string {
+    return this.pullRequest.description;
+  }
+
+  getPullRequestTitle(): string {
+    return this.pullRequest.title;
   }
 
   getBranchName(): string {
@@ -151,11 +165,17 @@ export class Webhook {
       this.gitEvent = GitEventEnum.NewPR;
       this.gitService = this.githubService;
       this.pullRequest.title = git.pull_request.title;
+      this.pullRequest.description = git.pull_request.body;
+      this.pullRequest.number = git.number;
+      this.repository.fullName = git.repository.full_name;
     } else if (isGitlabNewPREvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewPR;
       this.gitService = this.gitlabService;
-      this.projectId = git.repository.id;
+      this.projectId = git.project.id;
+      this.pullRequest.title = git.object_attributes.title;
+      this.pullRequest.description = git.object_attributes.description;
+      this.pullRequest.number = git.object_attributes.iid;
     }
   }
 

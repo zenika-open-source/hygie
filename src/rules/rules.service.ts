@@ -9,6 +9,7 @@ import { safeLoad } from 'js-yaml';
 import { readFileSync } from 'fs';
 import { CommitMessageRule, BranchNameRule, OneCommitPerPRRule } from '.';
 import { IssueTitleRule } from './issueTitle.rule';
+import { PullRequestTitleRule } from './pullRequestTitle.rule';
 
 @Injectable()
 export class RulesService {
@@ -35,6 +36,8 @@ export class RulesService {
         rule = new OneCommitPerPRRule(webhook);
       } else if (r.name === 'issueTitle') {
         rule = new IssueTitleRule(webhook);
+      } else if (r.name === 'pullRequestTitle') {
+        rule = new PullRequestTitleRule(webhook);
       }
       rule.name = r.name;
       rule.enabled = r.enabled;

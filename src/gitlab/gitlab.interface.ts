@@ -10,7 +10,8 @@ export interface GitlabCommit {
 export interface GitlabPR {
   action: string;
   title: string;
-  iid: string;
+  iid: number;
+  description: string;
 }
 export interface GitlabProject {
   id: number;
