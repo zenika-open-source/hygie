@@ -84,6 +84,8 @@ describe('RulesService', () => {
       webhook.projectId = 1;
       webhook.repository = {
         fullName: 'bastienterrier/test_webhook',
+        name: 'test_webhook',
+        description: 'amazing project',
       };
       webhook.commits = [
         {
@@ -140,6 +142,8 @@ describe('RulesService', () => {
       webhook.projectId = 1;
       webhook.repository = {
         fullName: 'bastienterrier/test_webhook',
+        name: 'test_webhook',
+        description: 'amazing project',
       };
       webhook.commits = [
         {
@@ -177,6 +181,8 @@ describe('RulesService', () => {
       webhook.issue.title = 'add rules documentation';
       webhook.repository = {
         fullName: 'bastienterrier/test_webhook',
+        name: 'test_webhook',
+        description: 'amazing project',
       };
 
       const issueTitle = new IssueTitleRule(webhook);
