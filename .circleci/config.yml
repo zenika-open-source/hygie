@@ -31,7 +31,10 @@ jobs:
           command: npm run ci
       - run:
           name: coveralls test
-          command: npm run test:cov && (cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js)
+          command: |
+            echo 'repo_token: ${COVERALLS_TOKEN}' >> .coveralls.yml
+            cat .coveralls.yml
+            npm run test:cov && (cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js)
   deploy:
     docker:
       - image: circleci/node:8
