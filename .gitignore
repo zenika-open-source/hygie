@@ -62,6 +62,3 @@ config.env
 
 dist/*
 .vscode/*
-
-# coveralls token
-.coveralls.yml
