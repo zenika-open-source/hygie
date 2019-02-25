@@ -32,7 +32,7 @@ jobs:
       - run:
           name: coveralls test
           command: |
-            echo 'repo_token: ${COVERALLS_TOKEN}' >> .coveralls.yml
+            echo 'repo_token $COVERALLS_TOKEN' > .coveralls.yml
             cat .coveralls.yml
             npm run test:cov && (cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js)
   deploy:
