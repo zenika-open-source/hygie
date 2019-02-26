@@ -10,10 +10,10 @@ rules:
       - callback: LoggerRunnable
         args:
           type: info
-          message: 'pattern match: 
-            {{#data}}{{sha}} =
+          message: 'pattern match: branch: {{data.branch}}
+            {{#data.commits}}{{sha}} =
             Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
-            {{/data}}'
+            {{/data.commits}}'
       - callback: LoggerRunnable
         args:
           type: info
@@ -23,9 +23,9 @@ rules:
           url: 'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8'
           data: {
             user: 'bastien terrier',
-            content: '{{#data}}{{sha}} =
+            content: '{{#data.commits}}{{sha}} =
             Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
-            {{/data}}'
+            {{/data.commits}}'
           }
           config: {}
     onError:
@@ -33,8 +33,8 @@ rules:
         args:
           type: warn
           message: 'pattern does not match, commit name must begin with : "feat|fix|docs"! Check your commit message:
-            {{#data}}
-              > {{message}} (#{{sha}})
+            {{#data.commits}}
+              > {{message.commits}} (#{{sha}})
             {{/data}}
           '
   - name: branchName
@@ -42,17 +42,23 @@ rules:
     events:
       - NewBranch
     options:
-      regexp: (features|fix)\/.*
+      regexp: (feature|fix)\/.*
     onSuccess:
       - callback: LoggerRunnable
         args:
           type: info
           message: '{{data.branch}} is a good name!'
+      - callback: CreatePullRequestRunnable
+        args:
+          title: 'WIP: {{data.branchSplit.1}}'
+          source: '{{data.branch}}'
+          target: master
+          description: 'this is the description'
     onError:
       - callback: LoggerRunnable
         args:
           type: warn
-          message: 'pattern does not match, branch name must begin with : "features|fix"!'
+          message: 'pattern does not match, branch name must begin with : "feature|fix"!'
   - name: oneCommitPerPR
     enabled: true
     events:
@@ -112,7 +118,7 @@ rules:
     events:
       - NewPR
     options:
-      regexp: (WIP|PR)\s.*
+      regexp: (WIP|FIX):\s.*
     onSuccess:
       - callback: LoggerRunnable
         args:

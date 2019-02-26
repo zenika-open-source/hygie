@@ -120,11 +120,13 @@ export class Webhook {
         const commit = new WebhookCommit(c.id, c.message);
         this.commits.push(commit);
       });
+      this.branchName = git.ref.split('/')[1];
     } else if (isGitlabBranchEvent(git)) {
-      this.gitType = GitTypeEnum.Github;
+      this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewBranch;
       this.gitService = this.gitlabService;
       this.branchName = git.ref.substring(11);
+      this.projectId = git.project_id;
     } else if (isGithubPushEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.Push;
@@ -134,6 +136,7 @@ export class Webhook {
         const commit = new WebhookCommit(c.id, c.message);
         this.commits.push(commit);
       });
+      this.branchName = git.ref.substring(11);
     } else if (isGithubBranchEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewBranch;

@@ -1,7 +1,7 @@
 import { GitCommitStatusInfos } from './gitCommitStatusInfos';
 import { GitApiInfos } from './gitApiInfos';
 import { GitIssueInfos } from './gitIssueInfos';
-import { GitPRInfos } from './gitPRInfos';
+import { GitCommentPRInfos, GitCreatePRInfos } from './gitPRInfos';
 
 export interface GitServiceInterface {
   updateCommitStatus(
@@ -11,5 +11,13 @@ export interface GitServiceInterface {
 
   addIssueComment(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void;
 
-  addPRComment(gitApiInfos: GitApiInfos, gitPRInfos: GitPRInfos): void;
+  addPRComment(
+    gitApiInfos: GitApiInfos,
+    gitCommentPRInfos: GitCommentPRInfos,
+  ): void;
+
+  createPullRequest(
+    gitApiInfos: GitApiInfos,
+    gitCreatePRInfos: GitCreatePRInfos,
+  ): void;
 }

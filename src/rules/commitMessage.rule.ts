@@ -52,7 +52,10 @@ export class CommitMessageRule extends Rule {
     });
 
     ruleResult.validated = allRegExpSuccessed;
-    ruleResult.data = commitsMatches;
+    ruleResult.data = {
+      branch: this.webhook.getBranchName(),
+      commits: commitsMatches,
+    };
     return ruleResult;
   }
 }

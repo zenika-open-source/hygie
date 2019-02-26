@@ -16,6 +16,9 @@ export class BranchNameRule extends Rule {
     ruleResult.validated = branchRegExp.test(branchName);
     ruleResult.data = {
       branch: branchName,
+      branchSplit: branchName.split('/'),
+      git: this.webhook.getGitType(),
+      gitApiInfos: this.webhook.getGitApiInfos(),
     };
 
     return ruleResult;

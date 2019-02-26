@@ -3,9 +3,8 @@ import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { Webhook } from '../webhook/webhook';
 import { RuleResult } from '../rules/ruleResult';
-import { RulesService } from './rules.service';
 import { BranchNameRule } from './branchName.rule';
-import { HttpService, HttpModule } from '@nestjs/common';
+import { HttpService } from '@nestjs/common';
 import {
   MockHttpService,
   MockGitlabService,
@@ -51,9 +50,8 @@ describe('RulesService', () => {
 
       const result: RuleResult = branchName.validate();
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual({
-        branch: 'features/tdd',
-      });
+      expect((result.data as any).branch).toEqual('features/tdd');
+      expect((result.data as any).branchSplit).toEqual(['features', 'tdd']);
     });
   });
   describe('branchName Rule', () => {
@@ -68,9 +66,8 @@ describe('RulesService', () => {
 
       const result: RuleResult = branchName.validate();
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual({
-        branch: 'testing/tdd',
-      });
+      expect((result.data as any).branch).toEqual('testing/tdd');
+      expect((result.data as any).branchSplit).toEqual(['testing', 'tdd']);
     });
   });
 
@@ -82,6 +79,7 @@ describe('RulesService', () => {
       webhook.gitService = githubService;
       webhook.gitType = GitTypeEnum.Github;
       webhook.projectId = 1;
+      webhook.branchName = 'test_webhook';
       webhook.repository = {
         fullName: 'bastienterrier/test_webhook',
         name: 'test_webhook',
@@ -110,23 +108,26 @@ describe('RulesService', () => {
       jest.spyOn(commitMessage, 'validate');
 
       const result: RuleResult = commitMessage.validate();
-      const expectedResult = [
-        {
-          sha: '1',
-          message: 'fix: readme (#12)',
-          matches: ['fix: readme (#12)', 'fix', undefined, '(#12)'],
-        },
-        {
-          sha: '2',
-          message: 'feat(test): tdd (#34)',
-          matches: ['feat(test): tdd (#34)', 'feat', '(test)', '(#34)'],
-        },
-        {
-          sha: '3',
-          message: 'docs: gh-pages',
-          matches: ['docs: gh-pages', 'docs', undefined, undefined],
-        },
-      ];
+      const expectedResult = {
+        branch: 'test_webhook',
+        commits: [
+          {
+            sha: '1',
+            message: 'fix: readme (#12)',
+            matches: ['fix: readme (#12)', 'fix', undefined, '(#12)'],
+          },
+          {
+            sha: '2',
+            message: 'feat(test): tdd (#34)',
+            matches: ['feat(test): tdd (#34)', 'feat', '(test)', '(#34)'],
+          },
+          {
+            sha: '3',
+            message: 'docs: gh-pages',
+            matches: ['docs: gh-pages', 'docs', undefined, undefined],
+          },
+        ],
+      };
       expect(result.validated).toBe(true);
       expect(JSON.stringify(result.data)).toEqual(
         JSON.stringify(expectedResult),
@@ -140,6 +141,7 @@ describe('RulesService', () => {
       webhook.gitService = githubService;
       webhook.gitType = GitTypeEnum.Github;
       webhook.projectId = 1;
+      webhook.branchName = 'test_webhook';
       webhook.repository = {
         fullName: 'bastienterrier/test_webhook',
         name: 'test_webhook',
