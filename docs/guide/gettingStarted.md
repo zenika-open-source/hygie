@@ -110,6 +110,16 @@ GITLAB_API=https://gitlab.com/api/v4
 
 If your project is hosted on an official github or gitlab repository, you can leave the GITHUB_API and GITLAB_API as default. But, if you are using another host, you have to adapt the API URL.
 
+## Google API
+
+The `SendEmailRunnable` makes use of Google API to send mails.
+
+If you want to use it, you need to create the `crendentials.json` file as describe [in the offical documentation](https://developers.google.com/gmail/api/quickstart/nodejs).
+
+You just have to follow `Step 1` to get your credentials.
+
+> Warn: the chosen account will be the sender (email `from` field) of all emails sended through the `SendEmailRunnable`.
+
 ## Testing the project
 
 ### GitLab local instance

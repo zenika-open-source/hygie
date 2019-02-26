@@ -124,7 +124,7 @@ export class SendEmailRunnable implements RunnableInterface {
   run(ruleResult: RuleResult, args: SendEmailArgs): void {
     readFile('credentials.json', (err, content) => {
       if (err) {
-        return logger.warn('Error loading client secret file:', err);
+        return logger.warn('Error loading credentials.json:', err);
       }
       // Authorize a client with credentials, then call the Gmail API.
       this.authorize(

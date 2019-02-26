@@ -4,9 +4,7 @@ import { checkNeededFiles } from './check/utils';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  if (
-    checkNeededFiles(['config.env', 'src/rules/rules.yml', 'credentials.json'])
-  ) {
+  if (checkNeededFiles(['config.env', 'src/rules/rules.yml'])) {
     await app.listen(3000);
   }
 }
