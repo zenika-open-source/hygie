@@ -94,6 +94,11 @@ rules:
         args:
           type: info
           message: '{{data.issueTitle}} is a correct issue title'
+      - callback: SendEmailRunnable
+        args:
+          to: bastien.terrier@gmail.com
+          subject: 'New issue (#{{data.issueNumber}}) '
+          message: '<b>{{data.issueTitle}}</b> has been created!'
     onError:
       - callback: LoggerRunnable
         args:

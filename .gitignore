@@ -65,3 +65,7 @@ dist/*
 
 # coveralls token
 .coveralls.yml
+
+# google api
+credentials.json
+token.json

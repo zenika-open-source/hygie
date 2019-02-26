@@ -8,6 +8,7 @@ import { CommentIssueRunnable } from './commentIssue.runnable';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { CommentPullRequestRunnable } from './commentPullRequest.runnable';
+import { SendEmailRunnable } from './sendEmail.runnable';
 
 @Injectable()
 export class Runnable {
@@ -37,6 +38,9 @@ export class Runnable {
           this.githubService,
           this.gitlabService,
         );
+        break;
+      case 'SendEmailRunnable':
+        runnable = new SendEmailRunnable();
         break;
     }
     return runnable;
