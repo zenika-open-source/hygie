@@ -5,28 +5,29 @@ import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Injectable } from '@nestjs/common';
+import { GitPRInfos } from '../git/gitPRInfos';
 
-interface CommentIssueArgs {
+interface CommentPRArgs {
   comment: string;
 }
 
 @Injectable()
-export class CommentIssueRunnable implements RunnableInterface {
-  name: string = 'CommentIssueRunnable';
+export class CommentPullRequestRunnable implements RunnableInterface {
+  name: string = 'CommentPullRequestRunnable';
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
   ) {}
-  run(ruleResult: RuleResult, args: CommentIssueArgs): void {
+  run(ruleResult: RuleResult, args: CommentPRArgs): void {
     const data = ruleResult.data as any;
-    const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
-    gitIssueInfos.number = data.issueNumber;
-    gitIssueInfos.comment = args.comment;
+    const gitPRInfos: GitPRInfos = new GitPRInfos();
+    gitPRInfos.number = data.pullRequestNumber;
+    gitPRInfos.comment = args.comment;
 
     if (data.git === GitTypeEnum.Github) {
-      this.githubService.addIssueComment(data.gitApiInfos, gitIssueInfos);
+      this.githubService.addPRComment(data.gitApiInfos, gitPRInfos);
     } else if (data.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.addIssueComment(data.gitApiInfos, gitIssueInfos);
+      this.gitlabService.addPRComment(data.gitApiInfos, gitPRInfos);
     }
   }
 }

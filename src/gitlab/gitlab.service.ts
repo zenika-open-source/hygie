@@ -5,6 +5,7 @@ import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { logger } from '../logger/logger.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
+import { GitPRInfos } from '../git/gitPRInfos';
 
 @Injectable()
 export class GitlabService implements GitServiceInterface {
@@ -71,6 +72,31 @@ export class GitlabService implements GitServiceInterface {
       .post(
         `${this.urlApi}/projects/${gitApiInfos.projectId}/issues/${
           gitIssueInfos.number
+        }/notes`,
+        dataGitLab,
+        configGitLab,
+      )
+      .subscribe();
+  }
+
+  addPRComment(gitApiInfos: GitApiInfos, gitPRInfos: GitPRInfos): void {
+    // Config URL for GitLab
+    const configGitLab = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {
+        body: gitPRInfos.comment,
+      },
+    };
+
+    // Data for GitLab
+    const dataGitLab = {};
+
+    this.httpService
+      .post(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests/${
+          gitPRInfos.number
         }/notes`,
         dataGitLab,
         configGitLab,

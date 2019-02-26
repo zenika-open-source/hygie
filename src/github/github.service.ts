@@ -3,8 +3,8 @@ import { GitServiceInterface } from '../git/git.service.interface';
 import { GitTypeEnum, convertCommitStatus } from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { logger } from '../logger/logger.service';
 import { GitIssueInfos } from '../git/gitIssueInfos';
+import { GitPRInfos } from '../git/gitPRInfos';
 
 @Injectable()
 export class GithubService implements GitServiceInterface {
@@ -65,5 +65,13 @@ export class GithubService implements GitServiceInterface {
         this.configGitHub,
       )
       .subscribe();
+  }
+
+  // Github PR is based on Issue
+  addPRComment(gitApiInfos: GitApiInfos, gitPRInfos: GitPRInfos): void {
+    const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
+    gitIssueInfos.number = gitPRInfos.number;
+    gitIssueInfos.comment = gitPRInfos.comment;
+    this.addIssueComment(gitApiInfos, gitIssueInfos);
   }
 }

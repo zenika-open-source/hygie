@@ -1,6 +1,5 @@
 import { Injectable, NestInterceptor, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { logger } from '../logger/logger.service';
 import { GithubEvent } from '../github/githubEvent';
 import { GitlabEvent } from '../gitlab/gitlabEvent';
 import { Webhook } from './webhook';

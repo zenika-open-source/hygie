@@ -118,5 +118,7 @@ rules:
         args:
           type: warn
           message: '{{data.pullRequestTitle}} is not a correct pull request title : {{data.pullRequestDescription}} (#{{data.pullRequestNumber}})'
-          
+      - callback: CommentPullRequestRunnable
+        args:
+          comment: 'ping @bastienterrier'   
           
