@@ -69,3 +69,6 @@ dist/*
 # google api
 credentials.json
 token.json
+
+# vuepress
+docs/.vuepress/dist/*
