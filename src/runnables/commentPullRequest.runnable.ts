@@ -7,6 +7,7 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { Injectable } from '@nestjs/common';
 import { GitCommentPRInfos } from '../git/gitPRInfos';
 import { CallbackType } from './runnable';
+import { GitApiInfos } from '../git/gitApiInfos';
 
 interface CommentPRArgs {
   comment: string;
@@ -28,11 +29,12 @@ export class CommentPullRequestRunnable implements RunnableInterface {
     const gitPRInfos: GitCommentPRInfos = new GitCommentPRInfos();
     gitPRInfos.number = data.pullRequestNumber;
     gitPRInfos.comment = args.comment;
+    const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
-    if (data.git === GitTypeEnum.Github) {
-      this.githubService.addPRComment(data.gitApiInfos, gitPRInfos);
-    } else if (data.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.addPRComment(data.gitApiInfos, gitPRInfos);
+    if (gitApiInfos.git === GitTypeEnum.Github) {
+      this.githubService.addPRComment(gitApiInfos, gitPRInfos);
+    } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
+      this.gitlabService.addPRComment(gitApiInfos, gitPRInfos);
     }
   }
 }

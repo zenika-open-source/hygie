@@ -56,12 +56,11 @@ describe('RunnableService', () => {
     // ruleResult initialisation
     const myGitApiInfos = new GitApiInfos();
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    ruleResult = new RuleResult();
+    myGitApiInfos.git = GitTypeEnum.Undefined;
+    ruleResult = new RuleResult(myGitApiInfos);
     ruleResult.validated = true;
     ruleResult.data = {
-      git: GitTypeEnum.Undefined,
       issueNumber: 22,
-      gitApiInfos: myGitApiInfos,
     };
   });
 
@@ -79,7 +78,7 @@ describe('RunnableService', () => {
 
   describe('commentIssue Runnable', () => {
     it('should call the addIssueComment Github service', () => {
-      (ruleResult.data as any).git = GitTypeEnum.Github;
+      ruleResult.gitApiInfos.git = GitTypeEnum.Github;
       runnableService.executeRunnableFunctions(ruleResult, issueTitleRule);
       expect(githubService.addIssueComment).toBeCalled();
       expect(gitlabService.addIssueComment).not.toBeCalled();
@@ -88,7 +87,7 @@ describe('RunnableService', () => {
 
   describe('commentIssue Runnable', () => {
     it('should call the addIssueComment Gitlab service', () => {
-      (ruleResult.data as any).git = GitTypeEnum.Gitlab;
+      ruleResult.gitApiInfos.git = GitTypeEnum.Gitlab;
       runnableService.executeRunnableFunctions(ruleResult, issueTitleRule);
       expect(githubService.addIssueComment).not.toBeCalled();
       expect(gitlabService.addIssueComment).toBeCalled();

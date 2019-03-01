@@ -18,15 +18,15 @@ export class BranchNameRule extends Rule {
   }
 
   validate(): RuleResult {
-    const ruleResult: RuleResult = new RuleResult();
+    const ruleResult: RuleResult = new RuleResult(
+      this.webhook.getGitApiInfos(),
+    );
     const branchName = this.webhook.getBranchName();
     const branchRegExp = RegExp(this.options.regexp);
     ruleResult.validated = branchRegExp.test(branchName);
     ruleResult.data = {
       branch: branchName,
       branchSplit: branchName.split('/'),
-      git: this.webhook.getGitType(),
-      gitApiInfos: this.webhook.getGitApiInfos(),
     };
 
     return ruleResult;

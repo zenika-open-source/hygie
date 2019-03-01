@@ -197,14 +197,14 @@ describe('RulesService', () => {
       const result: RuleResult = issueTitle.validate();
       const expectedResult = {
         issueTitle: 'add rules documentation',
-        git: 'Github',
-        gitApiInfos: {
-          repositoryFullName: 'bastienterrier/test_webhook',
-        },
         issueNumber: 22,
       };
       expect(result.validated).toBe(true);
       expect(result.data).toEqual(expectedResult);
+      expect(result.gitApiInfos).toEqual({
+        git: 'Github',
+        repositoryFullName: 'bastienterrier/test_webhook',
+      });
     });
   });
   describe('issueTitle Rule', () => {
@@ -225,14 +225,14 @@ describe('RulesService', () => {
       const result: RuleResult = issueTitle.validate();
       const expectedResult = {
         issueTitle: 'update rules documentation',
-        git: 'Gitlab',
-        gitApiInfos: {
-          projectId: '7657',
-        },
         issueNumber: 42,
       };
       expect(result.validated).toBe(false);
       expect(result.data).toEqual(expectedResult);
+      expect(result.gitApiInfos).toEqual({
+        git: 'Gitlab',
+        projectId: '7657',
+      });
     });
   });
 
@@ -240,6 +240,7 @@ describe('RulesService', () => {
   describe('oneCommitPerPR Rule', () => {
     it('should return false', () => {
       const webhook = new Webhook(gitlabService, githubService);
+      webhook.branchName = 'test_webhook';
       webhook.commits = [
         {
           message: 'fix: readme (#12)',
@@ -260,11 +261,13 @@ describe('RulesService', () => {
       const result: RuleResult = oneCommitPerPR.validate();
       expect(result.validated).toBe(false);
       expect((result.data as any).commits).toEqual(webhook.commits);
+      expect((result.data as any).branch).toEqual(webhook.branchName);
     });
   });
   describe('oneCommitPerPR Rule', () => {
     it('should return true', () => {
       const webhook = new Webhook(gitlabService, githubService);
+      webhook.branchName = 'test_webhook';
       webhook.commits = [
         {
           message: 'fix: readme (#12)',
@@ -277,6 +280,7 @@ describe('RulesService', () => {
       const result: RuleResult = oneCommitPerPR.validate();
       expect(result.validated).toBe(true);
       expect((result.data as any).commits).toEqual(webhook.commits);
+      expect((result.data as any).branch).toEqual(webhook.branchName);
     });
   });
 });

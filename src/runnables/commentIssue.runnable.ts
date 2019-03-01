@@ -6,6 +6,7 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Injectable } from '@nestjs/common';
 import { CallbackType } from './runnable';
+import { GitApiInfos } from '../git/gitApiInfos';
 
 interface CommentIssueArgs {
   comment: string;
@@ -27,11 +28,12 @@ export class CommentIssueRunnable implements RunnableInterface {
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     gitIssueInfos.number = data.issueNumber;
     gitIssueInfos.comment = args.comment;
+    const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
-    if (data.git === GitTypeEnum.Github) {
-      this.githubService.addIssueComment(data.gitApiInfos, gitIssueInfos);
-    } else if (data.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.addIssueComment(data.gitApiInfos, gitIssueInfos);
+    if (gitApiInfos.git === GitTypeEnum.Github) {
+      this.githubService.addIssueComment(gitApiInfos, gitIssueInfos);
+    } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
+      this.gitlabService.addIssueComment(gitApiInfos, gitIssueInfos);
     }
   }
 }

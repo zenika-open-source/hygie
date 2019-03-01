@@ -24,7 +24,9 @@ export class CommitMessageRule extends Rule {
   }
 
   validate(): RuleResult {
-    const ruleResult: RuleResult = new RuleResult();
+    const ruleResult: RuleResult = new RuleResult(
+      this.webhook.getGitApiInfos(),
+    );
     const commits: WebhookCommit[] = this.webhook.getAllCommits();
     const commitRegExp = RegExp(this.options.regexp);
 

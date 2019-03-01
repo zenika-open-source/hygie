@@ -13,10 +13,13 @@ export class OneCommitPerPRRule extends Rule {
   }
 
   validate(): RuleResult {
-    const ruleResult: RuleResult = new RuleResult();
+    const ruleResult: RuleResult = new RuleResult(
+      this.webhook.getGitApiInfos(),
+    );
     ruleResult.validated =
       this.webhook.getAllCommits().length === 1 ? true : false;
     ruleResult.data = {
+      branch: this.webhook.getBranchName(),
       commits: this.webhook.getAllCommits(),
     };
     return ruleResult;

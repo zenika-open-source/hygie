@@ -195,6 +195,7 @@ export class Webhook {
 
   getGitApiInfos(): GitApiInfos {
     const gitApiInfos: GitApiInfos = new GitApiInfos();
+    gitApiInfos.git = this.gitType;
 
     if (this.gitType === GitTypeEnum.Gitlab) {
       gitApiInfos.projectId = this.projectId.toString();

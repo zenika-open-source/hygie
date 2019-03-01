@@ -18,7 +18,9 @@ export class PullRequestTitleRule extends Rule {
   }
 
   validate(): RuleResult {
-    const ruleResult: RuleResult = new RuleResult();
+    const ruleResult: RuleResult = new RuleResult(
+      this.webhook.getGitApiInfos(),
+    );
     const titlePullRequest = this.webhook.getPullRequestTitle();
     const pullRequestRegExp = RegExp(this.options.regexp);
     ruleResult.validated = pullRequestRegExp.test(titlePullRequest);
@@ -27,8 +29,6 @@ export class PullRequestTitleRule extends Rule {
       pullRequestTitle: titlePullRequest,
       pullRequestNumber: this.webhook.getPullRequestNumber(),
       pullRequestDescription: this.webhook.getPullRequestDescription(),
-      git: this.webhook.getGitType(),
-      gitApiInfos: this.webhook.getGitApiInfos(),
     };
     return ruleResult;
   }
