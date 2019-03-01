@@ -53,9 +53,15 @@ workflows:
   version: 2
   dependencies-and-deploy:
     jobs:
-      - install-dependencies
+      - install-dependencies:
+          filters:
+            branches:
+              ignore: gh-pages
       - build:
           requires: [install-dependencies]
+          filters:
+            branches:
+              ignore: gh-pages
       - deploy:
           requires: [build]
           filters:

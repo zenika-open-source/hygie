@@ -11,15 +11,13 @@ chmod +x ./node_modules/vuepress/bin/vuepress.js
 echo "> ./node_modules/vuepress/bin/vuepress.js build docs"
 ./node_modules/vuepress/bin/vuepress.js build docs
 
+echo "> creating .circleci/config.yml file"
+mkdir docs/.vuepress/dist/.circleci
+cp .circleci/config.yml docs/.vuepress/dist/.circleci/config.yml
+
 echo "> cd docs/.vuepress/dist"
-# navigate into the build output directory
 cd docs/.vuepress/dist
 
-echo "> creating .circleci/config.yml file"
-mkdir .circleci
-cd .circleci
-touch config.yml
-cd ..
 
 git init
 git add -A
