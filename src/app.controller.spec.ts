@@ -21,6 +21,10 @@ describe('AppController', () => {
   let githubPushWebhook: Webhook;
   let githubBranchWebhook: Webhook;
 
+  const res = {
+    status: () => ({ send: () => this }),
+  };
+
   beforeAll(async () => {
     app = await Test.createTestingModule({
       imports: [RulesModule],
@@ -54,6 +58,8 @@ describe('AppController', () => {
     gitlabPushWebhook.projectId = 1;
     gitlabPushWebhook.repository = {
       fullName: 'bastienterrier/test_webhook',
+      name: 'test_webhook',
+      description: 'amazing project',
     };
 
     // githubPushWebhook initialisation
@@ -71,6 +77,8 @@ describe('AppController', () => {
     githubPushWebhook.projectId = 1;
     githubPushWebhook.repository = {
       fullName: 'bastienterrier/test_webhook',
+      name: 'test_webhook',
+      description: 'amazing project',
     };
 
     // githubBranchWebhook initialisation
@@ -88,6 +96,8 @@ describe('AppController', () => {
     githubBranchWebhook.projectId = 1;
     githubBranchWebhook.repository = {
       fullName: 'bastienterrier/test_webhook',
+      name: 'test_webhook',
+      description: 'amazing project',
     };
   });
 
@@ -97,7 +107,7 @@ describe('AppController', () => {
 
   describe('webhook', () => {
     it('should call the updateCommitStatus Gitlab service', () => {
-      appController.processWebhook(gitlabPushWebhook);
+      appController.processWebhook(gitlabPushWebhook, res);
       expect(gitlabService.updateCommitStatus).toBeCalled();
       expect(githubService.updateCommitStatus).not.toBeCalled();
     });
@@ -105,7 +115,7 @@ describe('AppController', () => {
 
   describe('webhook', () => {
     it('should call the updateCommitStatus Github service', () => {
-      appController.processWebhook(githubPushWebhook);
+      appController.processWebhook(githubPushWebhook, res);
       expect(githubService.updateCommitStatus).toBeCalled();
       expect(gitlabService.updateCommitStatus).not.toBeCalled();
     });
@@ -113,7 +123,7 @@ describe('AppController', () => {
 
   describe('webhook', () => {
     it('should not call the updateCommitStatus Github nor updateCommitStatus Gitlab services', () => {
-      appController.processWebhook(githubBranchWebhook);
+      appController.processWebhook(githubBranchWebhook, res);
       expect(githubService.updateCommitStatus).not.toBeCalled();
       expect(gitlabService.updateCommitStatus).not.toBeCalled();
     });

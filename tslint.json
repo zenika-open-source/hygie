@@ -12,7 +12,10 @@
     "member-ordering": [false],
     "interface-name": [false],
     "arrow-parens": false,
-    "object-literal-sort-keys": false
+    "object-literal-sort-keys": false,
+    "no-var-requires": false,
+    "import-blacklist": [true, [".*\\.ts$", ".*\\.js$"]],
+    "max-classes-per-file": false
   },
   "rulesDirectory": []
 }

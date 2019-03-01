@@ -1,8 +1,4 @@
-export interface GitlabIssue {
-  iid: number;
-  title: string;
-  project_id: number;
-}
+import { GitlabIssue } from './gitlab.interface';
 
 export interface GitlabIssueEvent {
   object_kind: string;

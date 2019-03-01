@@ -29,6 +29,9 @@ jobs:
       - run:
           name: npm run ci tests
           command: npm run ci
+      - run:
+          name: coveralls test
+          command: npm run test:cov && (cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js)
   deploy:
     docker:
       - image: circleci/node:8
@@ -38,7 +41,7 @@ jobs:
           at: ./
       - add_ssh_keys:
           fingerprints:
-            - '06:fa:21:e0:f0:79:14:03:85:08:b9:48:a3:ef:c6:8c'
+            - "06:fa:21:e0:f0:79:14:03:85:08:b9:48:a3:ef:c6:8c"
       - setup_remote_docker
       - run:
           name: chmod +x scripts

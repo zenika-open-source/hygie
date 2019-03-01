@@ -1,11 +1,7 @@
-export interface GithubCommit {
-  message: string;
-  id: string;
-}
-export interface GithubRepository {
-  full_name: string;
-}
+import { GithubCommit, GithubRepository } from './github.interface';
+
 export interface GithubPushEvent {
   commits: GithubCommit[];
   repository: GithubRepository;
+  ref: string;
 }

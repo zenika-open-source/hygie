@@ -62,3 +62,13 @@ config.env
 
 dist/*
 .vscode/*
+
+# coveralls token
+.coveralls.yml
+
+# google api
+credentials.json
+token.json
+
+# vuepress
+docs/.vuepress/dist/*

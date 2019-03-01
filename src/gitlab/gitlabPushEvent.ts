@@ -1,7 +1,5 @@
-export interface GitlabCommit {
-  message: string;
-  id: string;
-}
+import { GitlabCommit } from './gitlab.interface';
+
 export interface GitlabPushEvent {
   commits: GitlabCommit[];
   project_id: number;

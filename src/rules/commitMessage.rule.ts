@@ -13,7 +13,6 @@ export class CommitMatches {
   matches: string[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class CommitMessageRule extends Rule {
   name = 'commitMessage';
   options: CommitMessageOptions;
@@ -53,7 +52,10 @@ export class CommitMessageRule extends Rule {
     });
 
     ruleResult.validated = allRegExpSuccessed;
-    ruleResult.data = commitsMatches;
+    ruleResult.data = {
+      branch: this.webhook.getBranchName(),
+      commits: commitsMatches,
+    };
     return ruleResult;
   }
 }

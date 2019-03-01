@@ -72,7 +72,12 @@ Once the API is running, you can configure create a webhook to your git reposito
 
 You can add as many webhooks as you want. Just go to your repository settings: `https://github.com/:owner/:repo/settings/hooks`, add click the `Add webhook` button.
 
-Now you can configure the `Payload URL`, select the `send me everything` option and save this configuration.
+Now you can :
+
+- configure the `Payload URL`,
+- check if `Content type` is set to `application/json`,
+- select the `send me everything` option,
+- save this configuration.
 
 #### Gitlab
 
@@ -92,6 +97,8 @@ Navigate to [https://github.com/settings/tokens](https://github.com/settings/tok
 
 Go to [https://gitlab.com/profile/personal_access_tokens](https://gitlab.com/profile/personal_access_tokens) and fill the `name` field with the name of your token, choose an expiration date and give it the `api` scope.
 
+### Create the `config.env` file
+
 Once you get your token, create a `config.env` file at your root's project and add the following lines:
 
 ```
@@ -102,6 +109,16 @@ GITLAB_API=https://gitlab.com/api/v4
 ```
 
 If your project is hosted on an official github or gitlab repository, you can leave the GITHUB_API and GITLAB_API as default. But, if you are using another host, you have to adapt the API URL.
+
+## Google API
+
+The `SendEmailRunnable` makes use of Google API to send mails.
+
+If you want to use it, you need to create the `crendentials.json` file as describe [in the offical documentation](https://developers.google.com/gmail/api/quickstart/nodejs).
+
+You just have to follow `Step 1` to get your credentials.
+
+> Warn: the chosen account will be the sender (email `from` field) of all emails sended through the `SendEmailRunnable`.
 
 ## Testing the project
 

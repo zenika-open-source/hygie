@@ -7,6 +7,9 @@ import { RuleResult } from '../rules/ruleResult';
 import { CommentIssueRunnable } from './commentIssue.runnable';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
+import { CommentPullRequestRunnable } from './commentPullRequest.runnable';
+import { SendEmailRunnable } from './sendEmail.runnable';
+import { CreatePullRequestRunnable } from './createPullRequest.runnable';
 
 @Injectable()
 export class Runnable {
@@ -30,6 +33,21 @@ export class Runnable {
           this.githubService,
           this.gitlabService,
         );
+        break;
+      case 'CommentPullRequestRunnable':
+        runnable = new CommentPullRequestRunnable(
+          this.githubService,
+          this.gitlabService,
+        );
+        break;
+      case 'CreatePullRequestRunnable':
+        runnable = new CreatePullRequestRunnable(
+          this.githubService,
+          this.gitlabService,
+        );
+        break;
+      case 'SendEmailRunnable':
+        runnable = new SendEmailRunnable();
         break;
     }
     return runnable;

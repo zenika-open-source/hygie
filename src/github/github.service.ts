@@ -3,8 +3,8 @@ import { GitServiceInterface } from '../git/git.service.interface';
 import { GitTypeEnum, convertCommitStatus } from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { logger } from '../logger/logger.service';
 import { GitIssueInfos } from '../git/gitIssueInfos';
+import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
 
 @Injectable()
 export class GithubService implements GitServiceInterface {
@@ -61,6 +61,37 @@ export class GithubService implements GitServiceInterface {
         `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues/${
           gitIssueInfos.number
         }/comments`,
+        dataGitHub,
+        this.configGitHub,
+      )
+      .subscribe();
+  }
+
+  // Github PR is based on Issue
+  addPRComment(
+    gitApiInfos: GitApiInfos,
+    gitCommentPRInfos: GitCommentPRInfos,
+  ): void {
+    const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
+    gitIssueInfos.number = gitCommentPRInfos.number;
+    gitIssueInfos.comment = gitCommentPRInfos.comment;
+    this.addIssueComment(gitApiInfos, gitIssueInfos);
+  }
+
+  createPullRequest(
+    gitApiInfos: GitApiInfos,
+    gitCreatePRInfos: GitCreatePRInfos,
+  ): void {
+    const dataGitHub = {
+      title: gitCreatePRInfos.title,
+      body: gitCreatePRInfos.description,
+      head: gitCreatePRInfos.source,
+      base: gitCreatePRInfos.target,
+    };
+
+    this.httpService
+      .post(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls`,
         dataGitHub,
         this.configGitHub,
       )

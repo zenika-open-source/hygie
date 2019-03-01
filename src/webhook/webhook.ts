@@ -8,6 +8,9 @@ import {
   isGitlabBranchEvent,
   isGithubIssueEvent,
   isGitlabIssueEvent,
+  isGithubNewRepoEvent,
+  isGithubNewPREvent,
+  isGitlabNewPREvent,
 } from './utils.enum';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
@@ -21,7 +24,6 @@ export class WebhookIssue {
   title: string;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class WebhookCommit {
   id: string;
   message: string;
@@ -32,12 +34,18 @@ export class WebhookCommit {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class WebhookRepository {
   fullName: string;
+  name: string;
+  description: string;
 }
 
-// tslint:disable-next-line:max-classes-per-file
+export class WebhookPR {
+  title: string;
+  description: string;
+  number: number;
+}
+
 export class Webhook {
   gitType: GitTypeEnum;
   gitEvent: GitEventEnum;
@@ -47,6 +55,7 @@ export class Webhook {
   repository: WebhookRepository;
   branchName: string;
   issue: WebhookIssue;
+  pullRequest: WebhookPR;
 
   constructor(
     private readonly gitlabService: GitlabService,
@@ -55,6 +64,7 @@ export class Webhook {
     this.repository = new WebhookRepository();
     this.commits = new Array<WebhookCommit>();
     this.issue = new WebhookIssue();
+    this.pullRequest = new WebhookPR();
   }
 
   getAllCommits(): WebhookCommit[] {
@@ -63,6 +73,18 @@ export class Webhook {
       commits.push(c);
     });
     return commits;
+  }
+
+  getPullRequestNumber(): number {
+    return this.pullRequest.number;
+  }
+
+  getPullRequestDescription(): string {
+    return this.pullRequest.description;
+  }
+
+  getPullRequestTitle(): string {
+    return this.pullRequest.title;
   }
 
   getBranchName(): string {
@@ -81,7 +103,14 @@ export class Webhook {
     return this.gitType;
   }
 
+  getGitEvent(): GitEventEnum {
+    return this.gitEvent;
+  }
+
   gitToWebhook(git: GitlabEvent | GithubEvent): void {
+    this.gitEvent = GitEventEnum.Undefined;
+    this.gitType = GitTypeEnum.Undefined;
+
     if (isGitlabPushEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.Push;
@@ -91,11 +120,13 @@ export class Webhook {
         const commit = new WebhookCommit(c.id, c.message);
         this.commits.push(commit);
       });
+      this.branchName = git.ref.split('/')[1];
     } else if (isGitlabBranchEvent(git)) {
-      this.gitType = GitTypeEnum.Github;
+      this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewBranch;
       this.gitService = this.gitlabService;
       this.branchName = git.ref.substring(11);
+      this.projectId = git.project_id;
     } else if (isGithubPushEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.Push;
@@ -105,6 +136,7 @@ export class Webhook {
         const commit = new WebhookCommit(c.id, c.message);
         this.commits.push(commit);
       });
+      this.branchName = git.ref.substring(11);
     } else if (isGithubBranchEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewBranch;
@@ -124,6 +156,29 @@ export class Webhook {
       this.issue.number = git.object_attributes.iid;
       this.issue.title = git.object_attributes.title;
       this.projectId = git.object_attributes.project_id;
+    } else if (isGithubNewRepoEvent(git)) {
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.NewRepo;
+      this.gitService = this.githubService;
+      this.repository.fullName = git.repository.full_name;
+      this.repository.name = git.repository.name;
+      this.repository.description = git.repository.description;
+    } else if (isGithubNewPREvent(git)) {
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.NewPR;
+      this.gitService = this.githubService;
+      this.pullRequest.title = git.pull_request.title;
+      this.pullRequest.description = git.pull_request.body;
+      this.pullRequest.number = git.number;
+      this.repository.fullName = git.repository.full_name;
+    } else if (isGitlabNewPREvent(git)) {
+      this.gitType = GitTypeEnum.Gitlab;
+      this.gitEvent = GitEventEnum.NewPR;
+      this.gitService = this.gitlabService;
+      this.projectId = git.project.id;
+      this.pullRequest.title = git.object_attributes.title;
+      this.pullRequest.description = git.object_attributes.description;
+      this.pullRequest.number = git.object_attributes.iid;
     }
   }
 

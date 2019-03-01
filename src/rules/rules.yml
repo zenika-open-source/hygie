@@ -10,10 +10,10 @@ rules:
       - callback: LoggerRunnable
         args:
           type: info
-          message: 'pattern match: 
-            {{#data}}{{sha}} =
+          message: 'pattern match: branch: {{data.branch}}
+            {{#data.commits}}{{sha}} =
             Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
-            {{/data}}'
+            {{/data.commits}}'
       - callback: LoggerRunnable
         args:
           type: info
@@ -23,9 +23,9 @@ rules:
           url: 'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8'
           data: {
             user: 'bastien terrier',
-            content: '{{#data}}{{sha}} =
+            content: '{{#data.commits}}{{sha}} =
             Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
-            {{/data}}'
+            {{/data.commits}}'
           }
           config: {}
     onError:
@@ -33,26 +33,32 @@ rules:
         args:
           type: warn
           message: 'pattern does not match, commit name must begin with : "feat|fix|docs"! Check your commit message:
-            {{#data}}
-              > {{message}} (#{{sha}})
-            {{/data}}
+            {{#data.commits}}
+              > {{message.commits}} (#{{sha}})
+            {{/data.commits}}
           '
   - name: branchName
     enabled: true
     events:
       - NewBranch
     options:
-      regexp: (features|fix)\/.*
+      regexp: (feature|fix)\/.*
     onSuccess:
       - callback: LoggerRunnable
         args:
           type: info
           message: '{{data.branch}} is a good name!'
+      - callback: CreatePullRequestRunnable
+        args:
+          title: 'WIP: {{data.branchSplit.1}}'
+          source: '{{data.branch}}'
+          target: master
+          description: 'this is the description'
     onError:
       - callback: LoggerRunnable
         args:
           type: warn
-          message: 'pattern does not match, branch name must begin with : "features|fix"!'
+          message: 'pattern does not match, branch name must begin with : "feature|fix"!'
   - name: oneCommitPerPR
     enabled: true
     events:
@@ -93,7 +99,12 @@ rules:
       - callback: LoggerRunnable
         args:
           type: info
-          message: '{{data.issueTitle}} is correct issue title'
+          message: '{{data.issueTitle}} is a correct issue title'
+      - callback: SendEmailRunnable
+        args:
+          to: bastien.terrier@gmail.com
+          subject: 'New issue (#{{data.issueNumber}}) '
+          message: '<b>{{data.issueTitle}}</b> has been created!'
     onError:
       - callback: LoggerRunnable
         args:
@@ -101,4 +112,24 @@ rules:
           message: '{{data.issueTitle}} is not a correct issue title'
       - callback: CommentIssueRunnable
         args:
-          comment: 'ping @bastienterrier'         
+          comment: 'ping @bastienterrier'   
+  - name: pullRequestTitle
+    enabled: true
+    events:
+      - NewPR
+    options:
+      regexp: (WIP|FIX):\s.*
+    onSuccess:
+      - callback: LoggerRunnable
+        args:
+          type: info
+          message: '{{data.pullRequestTitle}} is a correct pull request title : {{data.pullRequestDescription}} (#{{data.pullRequestNumber}})'
+    onError:
+      - callback: LoggerRunnable
+        args:
+          type: warn
+          message: '{{data.pullRequestTitle}} is not a correct pull request title : {{data.pullRequestDescription}} (#{{data.pullRequestNumber}})'
+      - callback: CommentPullRequestRunnable
+        args:
+          comment: 'ping @bastienterrier'   
+          

@@ -4,7 +4,6 @@ import { RulesService } from './rules.service';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 
-// tslint:disable-next-line:no-var-requires
 const RulesValues = Object.values(require('./index')).map(rule => rule as Rule);
 const RulesProviders = RulesValues.map(rule => ({
   provide: rule,
