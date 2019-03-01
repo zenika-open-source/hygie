@@ -40,8 +40,13 @@ export class RulesService {
         rule = new PullRequestTitleRule(webhook);
       }
       rule.name = r.name;
-      rule.enabled = r.enabled;
-      rule.events = r.events;
+
+      if (typeof r.enabled !== 'undefined') {
+        rule.enabled = r.enabled;
+      }
+      if (typeof r.events !== 'undefined') {
+        rule.events = r.events;
+      }
       rule.options = r.options;
       rule.onSuccess = r.onSuccess;
       rule.onError = r.onError;

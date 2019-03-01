@@ -6,6 +6,7 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Injectable } from '@nestjs/common';
 import { GitCommentPRInfos } from '../git/gitPRInfos';
+import { CallbackType } from './runnable';
 
 interface CommentPRArgs {
   comment: string;
@@ -18,7 +19,11 @@ export class CommentPullRequestRunnable implements RunnableInterface {
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
   ) {}
-  run(ruleResult: RuleResult, args: CommentPRArgs): void {
+  run(
+    callbackType: CallbackType,
+    ruleResult: RuleResult,
+    args: CommentPRArgs,
+  ): void {
     const data = ruleResult.data as any;
     const gitPRInfos: GitCommentPRInfos = new GitCommentPRInfos();
     gitPRInfos.number = data.pullRequestNumber;

@@ -1,6 +1,6 @@
 import { Rule } from './rule.class';
-import { CommitStatusEnum } from '../webhook/utils.enum';
-import { WebhookCommit } from '../webhook/webhook';
+import { CommitStatusEnum, GitEventEnum } from '../webhook/utils.enum';
+import { WebhookCommit, Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
 
 interface CommitMessageOptions {
@@ -16,6 +16,12 @@ export class CommitMatches {
 export class CommitMessageRule extends Rule {
   name = 'commitMessage';
   options: CommitMessageOptions;
+
+  constructor(webhook: Webhook) {
+    super(webhook);
+    this.events = new Array();
+    this.events.push(GitEventEnum.Push);
+  }
 
   validate(): RuleResult {
     const ruleResult: RuleResult = new RuleResult();

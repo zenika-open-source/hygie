@@ -11,6 +11,11 @@ import { CommentPullRequestRunnable } from './commentPullRequest.runnable';
 import { SendEmailRunnable } from './sendEmail.runnable';
 import { CreatePullRequestRunnable } from './createPullRequest.runnable';
 
+export enum CallbackType {
+  Success = 'Success',
+  Error = 'Error',
+}
+
 @Injectable()
 export class Runnable {
   constructor(
@@ -58,13 +63,13 @@ export class Runnable {
     if (ruleResult.validated) {
       rule.onSuccess.forEach(success => {
         runnable = this.getRunnable(success.callback);
-        runnable.run(ruleResult, success.args);
+        runnable.run(CallbackType.Success, ruleResult, success.args);
       });
       return true;
     } else {
       rule.onError.forEach(error => {
         runnable = this.getRunnable(error.callback);
-        runnable.run(ruleResult, error.args);
+        runnable.run(CallbackType.Error, ruleResult, error.args);
       });
       return false;
     }

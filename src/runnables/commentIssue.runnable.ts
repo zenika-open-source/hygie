@@ -5,6 +5,7 @@ import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Injectable } from '@nestjs/common';
+import { CallbackType } from './runnable';
 
 interface CommentIssueArgs {
   comment: string;
@@ -17,7 +18,11 @@ export class CommentIssueRunnable implements RunnableInterface {
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
   ) {}
-  run(ruleResult: RuleResult, args: CommentIssueArgs): void {
+  run(
+    callbackType: CallbackType,
+    ruleResult: RuleResult,
+    args: CommentIssueArgs,
+  ): void {
     const data = ruleResult.data as any;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     gitIssueInfos.number = data.issueNumber;

@@ -1,22 +1,17 @@
 --- # Rules config file
 rules:
   - name: commitMessage
-    enabled: true
-    events:
-      - Push
     options:
       regexp: '(feat|fix|docs)(\([a-z]+\))?:\s[^(]*(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
     onSuccess:
       - callback: LoggerRunnable
         args:
-          type: info
           message: 'pattern match: branch: {{data.branch}}
             {{#data.commits}}{{sha}} =
             Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
             {{/data.commits}}'
       - callback: LoggerRunnable
         args:
-          type: info
           message: 'data will be sent to webhook...'
       - callback : WebhookRunnable
         args:
@@ -31,47 +26,34 @@ rules:
     onError:
       - callback: LoggerRunnable
         args:
-          type: warn
           message: 'pattern does not match, commit name must begin with : "feat|fix|docs"! Check your commit message:
             {{#data.commits}}
               > {{message.commits}} (#{{sha}})
             {{/data.commits}}
           '
   - name: branchName
-    enabled: true
-    events:
-      - NewBranch
     options:
       regexp: (feature|fix)\/.*
     onSuccess:
       - callback: LoggerRunnable
         args:
-          type: info
           message: '{{data.branch}} is a good name!'
       - callback: CreatePullRequestRunnable
         args:
           title: 'WIP: {{data.branchSplit.1}}'
-          source: '{{data.branch}}'
-          target: master
           description: 'this is the description'
     onError:
       - callback: LoggerRunnable
         args:
-          type: warn
           message: 'pattern does not match, branch name must begin with : "feature|fix"!'
   - name: oneCommitPerPR
-    enabled: true
-    events:
-      - Push
     onSuccess:
       - callback: LoggerRunnable
         args:
-          type: info
           message: 'there is only on commit in this PR/MR/Push, ok'
     onError:
       - callback: LoggerRunnable
         args:
-          type: warn
           message: 'more than one commit! A notification will be sent to the maintainer.'
       - callback : WebhookRunnable
         args:
@@ -90,15 +72,11 @@ rules:
             }
           }
   - name: issueTitle
-    enabled: true
-    events:
-      - NewIssue
     options:
       regexp: (add|fix)\s.*
     onSuccess:
       - callback: LoggerRunnable
         args:
-          type: info
           message: '{{data.issueTitle}} is a correct issue title'
       - callback: SendEmailRunnable
         args:
@@ -108,28 +86,21 @@ rules:
     onError:
       - callback: LoggerRunnable
         args:
-          type: warn
           message: '{{data.issueTitle}} is not a correct issue title'
       - callback: CommentIssueRunnable
         args:
           comment: 'ping @bastienterrier'   
   - name: pullRequestTitle
-    enabled: true
-    events:
-      - NewPR
     options:
       regexp: (WIP|FIX):\s.*
     onSuccess:
       - callback: LoggerRunnable
         args:
-          type: info
           message: '{{data.pullRequestTitle}} is a correct pull request title : {{data.pullRequestDescription}} (#{{data.pullRequestNumber}})'
     onError:
       - callback: LoggerRunnable
         args:
-          type: warn
           message: '{{data.pullRequestTitle}} is not a correct pull request title : {{data.pullRequestDescription}} (#{{data.pullRequestNumber}})'
       - callback: CommentPullRequestRunnable
         args:
-          comment: 'ping @bastienterrier'   
-          
+          comment: 'ping @bastienterrier'

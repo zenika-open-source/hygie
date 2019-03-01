@@ -20,6 +20,7 @@ export abstract class Rule {
 
   constructor(webhook: Webhook) {
     this.webhook = webhook;
+    this.enabled = true;
   }
 
   displayRule(): void {
