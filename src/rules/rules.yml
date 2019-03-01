@@ -35,7 +35,7 @@ rules:
           message: 'pattern does not match, commit name must begin with : "feat|fix|docs"! Check your commit message:
             {{#data.commits}}
               > {{message.commits}} (#{{sha}})
-            {{/data}}
+            {{/data.commits}}
           '
   - name: branchName
     enabled: true
