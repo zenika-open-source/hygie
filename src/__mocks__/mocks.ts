@@ -14,3 +14,8 @@ export class MockGithubService {
   addPRComment: jest.Mock = jest.fn().mockName('addPRCommentGithub');
   createPullRequest: jest.Mock = jest.fn().mockName('createPullRequestGithub');
 }
+
+export class MockLoggerService {
+  info: jest.Mock = jest.fn().mockName('logger.info');
+  warn: jest.Mock = jest.fn().mockName('logger.warn');
+}
