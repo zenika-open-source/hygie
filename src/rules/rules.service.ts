@@ -56,9 +56,10 @@ export class RulesService {
     return rules;
   }
 
-  testRules(webhook: Webhook): void {
+  testRules(webhook: Webhook): RuleResult[] {
     const rules: Rule[] = this.getRules(webhook);
     const BreakException = {};
+    const results: RuleResult[] = new Array();
 
     const runnable: Runnable = new Runnable(
       this.httpService,
@@ -69,6 +70,7 @@ export class RulesService {
       rules.forEach(r => {
         if (r.isEnabled()) {
           const ruleResult: RuleResult = r.validate();
+          results.push(ruleResult);
           runnable.executeRunnableFunctions(ruleResult, r);
           if (!ruleResult.validated) {
             throw BreakException;
@@ -80,5 +82,7 @@ export class RulesService {
         throw e;
       }
     }
+
+    return results;
   }
 }
