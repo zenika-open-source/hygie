@@ -13,7 +13,7 @@ import {
   MockGitlabService,
   MockGithubService,
 } from '../__mocks__/mocks';
-import { PullRequestTitleRule } from '../rules';
+import { PullRequestTitleRule, BranchNameRule } from '../rules';
 
 describe('RunnableService', () => {
   let app: TestingModule;
@@ -28,6 +28,9 @@ describe('RunnableService', () => {
 
   let pullRequestTitle: PullRequestTitleRule;
   let ruleResultPullRequestTitle: RuleResult;
+
+  let branchName: BranchNameRule;
+  let ruleResultBranchName: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -54,13 +57,13 @@ describe('RunnableService', () => {
     issueTitleRule.onSuccess = [
       {
         callback: 'CommentIssueRunnable',
-        args: [{ comment: 'ping @bastienterrier' }],
+        args: { comment: 'ping @bastienterrier' },
       },
     ];
     issueTitleRule.onError = [
       {
         callback: 'CommentIssueRunnable',
-        args: [{ comment: 'ping @bastienterrier' }],
+        args: { comment: 'ping @bastienterrier' },
       },
     ];
     // ruleResultIssueTitle initialisation
@@ -81,13 +84,13 @@ describe('RunnableService', () => {
     pullRequestTitle.onSuccess = [
       {
         callback: 'CommentPullRequestRunnable',
-        args: [{ comment: 'ping @bastienterrier' }],
+        args: { comment: 'ping @bastienterrier' },
       },
     ];
     pullRequestTitle.onError = [
       {
         callback: 'CommentPullRequestRunnable',
-        args: [{ comment: 'ping @bastienterrier' }],
+        args: { comment: 'ping @bastienterrier' },
       },
     ];
     // ruleResultPullRequestTitle initialisation
@@ -97,6 +100,38 @@ describe('RunnableService', () => {
       pullRequestTitle: 'WIP: webhook',
       pullRequestNumber: 22,
       pullRequestDescription: 'my desc',
+    };
+
+    /**
+     *
+     */
+
+    // branchNameRule initialisation
+    branchName = new BranchNameRule(new Webhook(gitlabService, githubService));
+    branchName.onSuccess = [
+      {
+        callback: 'CreatePullRequestRunnable',
+        args: {
+          title: 'WIP: {{data.branchSplit.1}}',
+          description: 'this is the description',
+        },
+      },
+    ];
+    branchName.onError = [
+      {
+        callback: 'CreatePullRequestRunnable',
+        args: {
+          title: 'WIP: {{data.branchSplit.1}}',
+          description: 'this is the description',
+        },
+      },
+    ];
+    // ruleResultBranchName initialisation
+    ruleResultBranchName = new RuleResult(myGitApiInfos);
+    ruleResultBranchName.validated = true;
+    ruleResultBranchName.data = {
+      branch: 'feature/webhook',
+      branchSplit: ['feature', 'webhook'],
     };
   });
 
@@ -170,6 +205,41 @@ describe('RunnableService', () => {
       );
       expect(githubService.addPRComment).not.toBeCalled();
       expect(gitlabService.addPRComment).toBeCalled();
+    });
+  });
+
+  // CreatePullRequest Runnable
+  describe('createPullRequest Runnable', () => {
+    it('should not call the createPullRequest Github nor Gitlab service', () => {
+      ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Undefined;
+      runnableService.executeRunnableFunctions(
+        ruleResultBranchName,
+        branchName,
+      );
+      expect(githubService.createPullRequest).not.toBeCalled();
+      expect(gitlabService.createPullRequest).not.toBeCalled();
+    });
+  });
+  describe('createPullRequest Runnable', () => {
+    it('should call the createPullRequest Github service', () => {
+      ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Github;
+      runnableService.executeRunnableFunctions(
+        ruleResultBranchName,
+        branchName,
+      );
+      expect(githubService.createPullRequest).toBeCalled();
+      expect(gitlabService.createPullRequest).not.toBeCalled();
+    });
+  });
+  describe('createPullRequest Runnable', () => {
+    it('should call the createPullRequest Gitlab service', () => {
+      ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Gitlab;
+      runnableService.executeRunnableFunctions(
+        ruleResultBranchName,
+        branchName,
+      );
+      expect(githubService.createPullRequest).not.toBeCalled();
+      expect(gitlabService.createPullRequest).toBeCalled();
     });
   });
 });
