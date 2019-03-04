@@ -13,14 +13,21 @@ import {
   MockGitlabService,
   MockGithubService,
 } from '../__mocks__/mocks';
+import { PullRequestTitleRule } from '../rules';
 
 describe('RunnableService', () => {
   let app: TestingModule;
+
   let githubService: GithubService;
   let gitlabService: GitlabService;
+
   let runnableService: Runnable;
+
   let issueTitleRule: IssueTitleRule;
-  let ruleResult: RuleResult;
+  let ruleResultIssueTitle: RuleResult;
+
+  let pullRequestTitle: PullRequestTitleRule;
+  let ruleResultPullRequestTitle: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -35,6 +42,10 @@ describe('RunnableService', () => {
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
     runnableService = app.get(Runnable);
+
+    const myGitApiInfos = new GitApiInfos();
+    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
+    myGitApiInfos.git = GitTypeEnum.Undefined;
 
     // issueTitleRule initialisation
     issueTitleRule = new IssueTitleRule(
@@ -52,15 +63,40 @@ describe('RunnableService', () => {
         args: [{ comment: 'ping @bastienterrier' }],
       },
     ];
-
-    // ruleResult initialisation
-    const myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
-    ruleResult = new RuleResult(myGitApiInfos);
-    ruleResult.validated = true;
-    ruleResult.data = {
+    // ruleResultIssueTitle initialisation
+    ruleResultIssueTitle = new RuleResult(myGitApiInfos);
+    ruleResultIssueTitle.validated = true;
+    ruleResultIssueTitle.data = {
       issueNumber: 22,
+    };
+
+    /**
+     *
+     */
+
+    // pullRequestTitleRule initialisation
+    pullRequestTitle = new PullRequestTitleRule(
+      new Webhook(gitlabService, githubService),
+    );
+    pullRequestTitle.onSuccess = [
+      {
+        callback: 'CommentPullRequestRunnable',
+        args: [{ comment: 'ping @bastienterrier' }],
+      },
+    ];
+    pullRequestTitle.onError = [
+      {
+        callback: 'CommentPullRequestRunnable',
+        args: [{ comment: 'ping @bastienterrier' }],
+      },
+    ];
+    // ruleResultPullRequestTitle initialisation
+    ruleResultPullRequestTitle = new RuleResult(myGitApiInfos);
+    ruleResultPullRequestTitle.validated = true;
+    ruleResultPullRequestTitle.data = {
+      pullRequestTitle: 'WIP: webhook',
+      pullRequestNumber: 22,
+      pullRequestDescription: 'my desc',
     };
   });
 
@@ -68,29 +104,72 @@ describe('RunnableService', () => {
     jest.clearAllMocks();
   });
 
+  // CommentIssue Runnable
   describe('commentIssue Runnable', () => {
     it('should not call the addIssueComment Github nor Gitlab service', () => {
-      runnableService.executeRunnableFunctions(ruleResult, issueTitleRule);
+      runnableService.executeRunnableFunctions(
+        ruleResultIssueTitle,
+        issueTitleRule,
+      );
       expect(githubService.addIssueComment).not.toBeCalled();
       expect(gitlabService.addIssueComment).not.toBeCalled();
     });
   });
-
   describe('commentIssue Runnable', () => {
     it('should call the addIssueComment Github service', () => {
-      ruleResult.gitApiInfos.git = GitTypeEnum.Github;
-      runnableService.executeRunnableFunctions(ruleResult, issueTitleRule);
+      ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Github;
+      runnableService.executeRunnableFunctions(
+        ruleResultIssueTitle,
+        issueTitleRule,
+      );
       expect(githubService.addIssueComment).toBeCalled();
       expect(gitlabService.addIssueComment).not.toBeCalled();
     });
   });
-
   describe('commentIssue Runnable', () => {
     it('should call the addIssueComment Gitlab service', () => {
-      ruleResult.gitApiInfos.git = GitTypeEnum.Gitlab;
-      runnableService.executeRunnableFunctions(ruleResult, issueTitleRule);
+      ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
+      runnableService.executeRunnableFunctions(
+        ruleResultIssueTitle,
+        issueTitleRule,
+      );
       expect(githubService.addIssueComment).not.toBeCalled();
       expect(gitlabService.addIssueComment).toBeCalled();
+    });
+  });
+
+  // CommentPullRequest Runnable
+  describe('commentPullRequest Runnable', () => {
+    it('should not call the addPRComment Github nor Gitlab service', () => {
+      ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Undefined;
+      runnableService.executeRunnableFunctions(
+        ruleResultPullRequestTitle,
+        pullRequestTitle,
+      );
+      expect(githubService.addPRComment).not.toBeCalled();
+      expect(gitlabService.addPRComment).not.toBeCalled();
+    });
+  });
+  describe('commentPullRequest Runnable', () => {
+    it('should call the addPRComment Githubservice', () => {
+      ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Github;
+      runnableService.executeRunnableFunctions(
+        ruleResultPullRequestTitle,
+        pullRequestTitle,
+      );
+      expect(githubService.addPRComment).toBeCalled();
+      expect(gitlabService.addPRComment).not.toBeCalled();
+    });
+  });
+  describe('commentPullRequest Runnable', () => {
+    it('should call the addPRComment Gitlab service', () => {
+      ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
+      runnableService.executeRunnableFunctions(
+        ruleResultPullRequestTitle,
+        pullRequestTitle,
+      );
+      expect(githubService.addPRComment).not.toBeCalled();
+      expect(gitlabService.addPRComment).toBeCalled();
     });
   });
 });
