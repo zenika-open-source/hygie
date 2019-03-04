@@ -6,12 +6,15 @@ import {
   Get,
   Res,
   HttpStatus,
+  UseFilters,
 } from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { WebhookInterceptor } from './webhook/webhook.interceptor';
 import { logger } from './logger/logger.service';
 import { RulesService } from './rules/rules.service';
 import { GitTypeEnum, GitEventEnum } from './webhook/utils.enum';
+import { AllExceptionsFilter } from './exceptions/allExceptionFilter';
+import { PreconditionException } from './exceptions/precondition.exception';
 
 @Controller()
 export class AppController {
@@ -24,19 +27,20 @@ export class AppController {
 
   @Post('/webhook')
   @UseInterceptors(WebhookInterceptor)
+  @UseFilters(AllExceptionsFilter)
   processWebhook(@Body() webhook: Webhook, @Res() response): void {
     if (
       webhook.getGitType() === GitTypeEnum.Undefined ||
       webhook.getGitEvent() === GitEventEnum.Undefined
     ) {
-      response.status(HttpStatus.PRECONDITION_FAILED).send();
+      throw new PreconditionException();
     } else {
       logger.info(
         `\n\n=== processWebhook - ${webhook.getGitType()} - ${webhook.getGitEvent()} ===\n`,
       );
 
-      this.rulesService.testRules(webhook);
-      response.status(HttpStatus.ACCEPTED).send();
+      const result = this.rulesService.testRules(webhook);
+      response.status(HttpStatus.ACCEPTED).send(result);
     }
   }
 }
