@@ -10,9 +10,6 @@ rules:
             {{#data.commits}}{{sha}} =
             Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
             {{/data.commits}}'
-      - callback: LoggerRunnable
-        args:
-          message: 'data will be sent to webhook...'
       - callback : WebhookRunnable
         args:
           url: 'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8'
@@ -22,7 +19,6 @@ rules:
             Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
             {{/data.commits}}'
           }
-          config: {}
     onError:
       - callback: LoggerRunnable
         args:

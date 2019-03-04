@@ -3,11 +3,12 @@ import { HttpService, Injectable } from '@nestjs/common';
 import { RuleResult } from '../rules/ruleResult';
 import { render } from 'mustache';
 import { CallbackType } from './runnable';
+import { getObjectValue } from '../utils/convert.utils';
 
 interface WebhookArgs {
   url: string;
   data: object;
-  config?: object;
+  config: object;
 }
 
 @Injectable()
@@ -25,7 +26,7 @@ export class WebhookRunnable implements RunnableInterface {
       .post(
         render(args.url, ruleResult),
         render(JSON.stringify(args.data), ruleResult),
-        render(JSON.stringify(args.config), ruleResult),
+        render(JSON.stringify(getObjectValue(args.config)), ruleResult),
       )
       .subscribe();
   }
