@@ -2,7 +2,9 @@
 
 The `CommentIssueRunnable` Post-Action write a comment on a specific issue.
 
-> It should only get called as `callback` in the `IssueTitleRule`, or in a custom rule that return a similar `RuleResult` object.
+::: warning
+It should only get called as `callback` in the `IssueTitleRule`, or in a custom rule that return a similar `RuleResult` object.
+:::
 
 ## Usage
 

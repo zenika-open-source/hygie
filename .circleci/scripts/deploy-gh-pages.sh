@@ -6,11 +6,11 @@ VERSION=$1
 cd ../..
 
 echo "> chmod +x"
-chmod +x ./node_modules/vuepress/bin/vuepress.js
+chmod +x ./node_modules/.bin/vuepress
 chmod +x ./node_modules/typedoc/bin/typedoc
 
-echo "> ./node_modules/vuepress/bin/vuepress.js build docs"
-./node_modules/vuepress/bin/vuepress.js build docs
+echo "> ./node_modules/.bin/vuepress build docs"
+./node_modules/.bin/vuepress build docs
 
 echo "> ./node_modules/typedoc/bin/typedoc --out tsdoc src"
 ./node_modules/typedoc/bin/typedoc src

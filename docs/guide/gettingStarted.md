@@ -44,7 +44,9 @@ Then run :
 docker build -t my-webhook .
 ```
 
-> This will execute the `Dockerfile` config file.
+::: tip
+This will execute the `Dockerfile` config file.
+:::
 
 Then, you can simply run a container :
 
@@ -66,7 +68,9 @@ docker run --name webhook-container -d -p 3000:3000 dxdeveloperexperience/git-we
 
 Once the API is running, you can configure create a webhook to your git repository with the url : `http://<url of your server>/webhook`. You can also select the events you want to receive, or select all of them.
 
-> You can use [ngrok](https://ngrok.com/) to convert localhost url to public url.
+::: tip
+You can use [ngrok](https://ngrok.com/) to convert localhost url to public url.
+:::
 
 #### Github
 
@@ -118,7 +122,9 @@ If you want to use it, you need to create the `crendentials.json` file as descri
 
 You just have to follow `Step 1` to get your credentials.
 
-> Warn: the chosen account will be the sender (email `from` field) of all emails sended through the `SendEmailRunnable`.
+::: warning
+The chosen account will be the sender (email `from` field) of all emails sended through the `SendEmailRunnable`.
+:::
 
 ## Testing the project
 
@@ -147,4 +153,6 @@ docker run --detach \
 
 Or, for Windows PowerShell : `docker run --detach --hostname gitlab.example.com --publish 443:443 --publish 80:80 --publish 22:22 --name gitlab --mount source=vol-gitlab,target=/app --restart always --volume /srv/gitlab/config:/etc/gitlab --volume /srv/gitlab/logs:/var/log/gitlab --volume /srv/gitlab/data:/var/opt/gitlab gitlab/gitlab-ce:latest`
 
-> **Warning :** do not use Windows PowerShell ISE
+::: warning
+Do not use Windows PowerShell ISE
+:::
