@@ -7,9 +7,16 @@ cd ../..
 
 echo "> chmod +x"
 chmod +x ./node_modules/vuepress/bin/vuepress.js
+chmod +x ./node_modules/typedoc/bin/typedoc
 
 echo "> ./node_modules/vuepress/bin/vuepress.js build docs"
 ./node_modules/vuepress/bin/vuepress.js build docs
+
+echo "> ./node_modules/typedoc/bin/typedoc --out tsdoc src"
+./node_modules/typedoc/bin/typedoc src
+
+echo "> mv tsdoc docs/.vuepress/dist"
+mv tsdoc docs/.vuepress/dist
 
 echo "> creating .circleci/config.yml file"
 mkdir docs/.vuepress/dist/.circleci
