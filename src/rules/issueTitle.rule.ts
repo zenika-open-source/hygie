@@ -10,24 +10,17 @@ interface IssueTitleOptions {
 export class IssueTitleRule extends Rule {
   name = 'issueTitle';
   options: IssueTitleOptions;
+  events = [GitEventEnum.NewIssue];
 
-  constructor(webhook: Webhook) {
-    super(webhook);
-    this.events = new Array();
-    this.events.push(GitEventEnum.NewIssue);
-  }
-
-  validate(): RuleResult {
-    const ruleResult: RuleResult = new RuleResult(
-      this.webhook.getGitApiInfos(),
-    );
-    const titleIssue = this.webhook.getIssueTitle();
-    const issueRegExp = RegExp(this.options.regexp);
+  validate(webhook, ruleConfig): RuleResult {
+    const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+    const titleIssue = webhook.getIssueTitle();
+    const issueRegExp = RegExp(ruleConfig.options.regexp);
     ruleResult.validated = issueRegExp.test(titleIssue);
 
     ruleResult.data = {
       issueTitle: titleIssue,
-      issueNumber: this.webhook.getIssueNumber(),
+      issueNumber: webhook.getIssueNumber(),
     };
     return ruleResult;
   }

@@ -1,6 +1,6 @@
 import { Injectable, HttpService } from '@nestjs/common';
 import { Rule } from './rule.class';
-import { Runnable } from '../runnables/runnable';
+import { RunnableService } from '../runnables/runnable';
 import { Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
 import { GithubService } from '../github/github.service';
@@ -14,64 +14,38 @@ import { PullRequestTitleRule } from './pullRequestTitle.rule';
 @Injectable()
 export class RulesService {
   constructor(
+    private readonly runnableService: RunnableService,
     private readonly httpService: HttpService,
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
-    private readonly rulesClasses: Rule[],
+    private readonly rulesClasses: Rule[] = [],
   ) {}
 
-  getRules(webhook: Webhook): Rule[] {
+  getRulesConfiguration() {
     const path = require('path');
     const config = safeLoad(
       readFileSync(path.resolve(__dirname, 'rules.yml'), 'utf-8'),
     );
-    const rules: Rule[] = new Array();
-    config.rules.forEach(r => {
-      let rule: Rule;
-      if (r.name === 'commitMessage') {
-        rule = new CommitMessageRule(webhook);
-      } else if (r.name === 'branchName') {
-        rule = new BranchNameRule(webhook);
-      } else if (r.name === 'oneCommitPerPR') {
-        rule = new OneCommitPerPRRule(webhook);
-      } else if (r.name === 'issueTitle') {
-        rule = new IssueTitleRule(webhook);
-      } else if (r.name === 'pullRequestTitle') {
-        rule = new PullRequestTitleRule(webhook);
-      }
-      rule.name = r.name;
+    return config.rules;
+  }
 
-      if (typeof r.enabled !== 'undefined') {
-        rule.enabled = r.enabled;
-      }
-      if (typeof r.events !== 'undefined') {
-        rule.events = r.events;
-      }
-      rule.options = r.options;
-      rule.onSuccess = r.onSuccess;
-      rule.onError = r.onError;
-
-      rules.push(rule);
-    });
-    return rules;
+  getRule(ruleConfig): Rule {
+    return this.rulesClasses.find(r => r.name === ruleConfig.name);
   }
 
   testRules(webhook: Webhook): RuleResult[] {
-    const rules: Rule[] = this.getRules(webhook);
+    const rules: Rule[] = this.getRulesConfiguration();
     const BreakException = {};
     const results: RuleResult[] = new Array();
 
-    const runnable: Runnable = new Runnable(
-      this.httpService,
-      this.githubService,
-      this.gitlabService,
-    );
     try {
-      rules.forEach(r => {
-        if (r.isEnabled()) {
-          const ruleResult: RuleResult = r.validate();
+      rules.forEach(ruleConfig => {
+        const r = this.getRule(ruleConfig);
+        if (r.isEnabled(webhook, ruleConfig)) {
+          const ruleResult: RuleResult = r.validate(webhook, ruleConfig);
           results.push(ruleResult);
-          runnable.executeRunnableFunctions(ruleResult, r);
+
+          this.runnableService.executeRunnableFunctions(ruleResult, ruleConfig);
           if (!ruleResult.validated) {
             throw BreakException;
           }

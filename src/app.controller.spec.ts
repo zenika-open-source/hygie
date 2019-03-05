@@ -11,6 +11,7 @@ import {
   MockGithubService,
   MockHttpService,
 } from './__mocks__/mocks';
+import { RunnableModule } from './runnables/runnable.module';
 
 describe('AppController', () => {
   let app: TestingModule;
@@ -27,7 +28,7 @@ describe('AppController', () => {
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
-      imports: [RulesModule],
+      imports: [RulesModule, RunnableModule],
       controllers: [AppController],
       providers: [
         { provide: HttpService, useClass: MockHttpService },

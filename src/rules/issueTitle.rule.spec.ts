@@ -47,14 +47,14 @@ describe('RulesService', () => {
         description: 'amazing project',
       };
 
-      const issueTitle = new IssueTitleRule(webhook);
+      const issueTitle = new IssueTitleRule();
       issueTitle.options = {
         regexp: '(add|fix)\\s.*',
       };
 
       jest.spyOn(issueTitle, 'validate');
 
-      const result: RuleResult = issueTitle.validate();
+      const result: RuleResult = issueTitle.validate(webhook, issueTitle);
       const expectedResult = {
         issueTitle: 'add rules documentation',
         issueNumber: 22,
@@ -75,14 +75,14 @@ describe('RulesService', () => {
       webhook.issue.title = 'update rules documentation';
       webhook.projectId = 7657;
 
-      const issueTitle = new IssueTitleRule(webhook);
+      const issueTitle = new IssueTitleRule();
       issueTitle.options = {
         regexp: '(add|fix)\\s.*',
       };
 
       jest.spyOn(issueTitle, 'validate');
 
-      const result: RuleResult = issueTitle.validate();
+      const result: RuleResult = issueTitle.validate(webhook, issueTitle);
       const expectedResult = {
         issueTitle: 'update rules documentation',
         issueNumber: 42,

@@ -17,7 +17,7 @@ export enum CallbackType {
 }
 
 @Injectable()
-export class Runnable {
+export class RunnableService {
   constructor(
     private readonly httpService: HttpService,
     private readonly githubService: GithubService,

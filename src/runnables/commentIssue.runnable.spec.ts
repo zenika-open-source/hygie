@@ -4,7 +4,7 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { Webhook } from '../webhook/webhook';
 import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { Runnable } from './runnable';
+import { RunnableService } from './runnable';
 import { IssueTitleRule } from '../rules/issueTitle.rule';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
@@ -20,7 +20,7 @@ describe('RunnableService', () => {
   let githubService: GithubService;
   let gitlabService: GitlabService;
 
-  let runnableService: Runnable;
+  let runnableService: RunnableService;
 
   let issueTitleRule: IssueTitleRule;
   let ruleResultIssueTitle: RuleResult;
@@ -28,7 +28,7 @@ describe('RunnableService', () => {
   beforeAll(async () => {
     app = await Test.createTestingModule({
       providers: [
-        Runnable,
+        RunnableService,
         { provide: HttpService, useClass: MockHttpService },
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
@@ -37,16 +37,14 @@ describe('RunnableService', () => {
 
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
-    runnableService = app.get(Runnable);
+    runnableService = app.get(RunnableService);
 
     const myGitApiInfos = new GitApiInfos();
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
     // issueTitleRule initialisation
-    issueTitleRule = new IssueTitleRule(
-      new Webhook(gitlabService, githubService),
-    );
+    issueTitleRule = new IssueTitleRule();
     issueTitleRule.onSuccess = [
       {
         callback: 'CommentIssueRunnable',
