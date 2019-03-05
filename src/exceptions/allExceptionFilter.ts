@@ -1,5 +1,9 @@
 import { ExceptionFilter, Catch } from '@nestjs/common';
 
+/**
+ * Handle all ExceptionFilter
+ * Return `statusCode`, `timestamp` and `path` as `http response`
+ */
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception, host) {
