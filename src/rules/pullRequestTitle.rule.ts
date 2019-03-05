@@ -10,25 +10,18 @@ interface PullRequestTitleOptions {
 export class PullRequestTitleRule extends Rule {
   name = 'pullRequestTitle';
   options: PullRequestTitleOptions;
+  events = [GitEventEnum.NewPR];
 
-  constructor(webhook: Webhook) {
-    super(webhook);
-    this.events = new Array();
-    this.events.push(GitEventEnum.NewPR);
-  }
-
-  validate(): RuleResult {
-    const ruleResult: RuleResult = new RuleResult(
-      this.webhook.getGitApiInfos(),
-    );
-    const titlePullRequest = this.webhook.getPullRequestTitle();
-    const pullRequestRegExp = RegExp(this.options.regexp);
+  validate(webhook, ruleConfig): RuleResult {
+    const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+    const titlePullRequest = webhook.getPullRequestTitle();
+    const pullRequestRegExp = RegExp(ruleConfig.options.regexp);
     ruleResult.validated = pullRequestRegExp.test(titlePullRequest);
 
     ruleResult.data = {
       pullRequestTitle: titlePullRequest,
-      pullRequestNumber: this.webhook.getPullRequestNumber(),
-      pullRequestDescription: this.webhook.getPullRequestDescription(),
+      pullRequestNumber: webhook.getPullRequestNumber(),
+      pullRequestDescription: webhook.getPullRequestDescription(),
     };
     return ruleResult;
   }

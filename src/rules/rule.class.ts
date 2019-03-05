@@ -16,10 +16,7 @@ export abstract class Rule {
   onError: OnSuccessError[];
   options: object;
 
-  webhook: Webhook;
-
-  constructor(webhook: Webhook) {
-    this.webhook = webhook;
+  constructor() {
     this.enabled = true;
   }
 
@@ -33,15 +30,17 @@ export abstract class Rule {
     logger.info('options:' + this.options);
   }
 
-  isEnabled() {
-    let events: boolean = false;
-    this.events.forEach(e => {
-      if (e === this.webhook.gitEvent) {
-        events = true;
+  isEnabled(webhook: Webhook, ruleConfig) {
+    const events = ruleConfig.events || this.events;
+    const enabled = ruleConfig.enable === undefined ? true : ruleConfig.enabled;
+    let eventEnabled: boolean = false;
+    events.forEach(e => {
+      if (e === webhook.gitEvent) {
+        eventEnabled = true;
       }
     });
-    return this.enabled && events;
+    return enabled && eventEnabled;
   }
 
-  abstract validate(): RuleResult;
+  abstract validate(webhook: Webhook, ruleConfig): RuleResult;
 }

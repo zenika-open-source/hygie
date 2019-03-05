@@ -62,7 +62,7 @@ describe('RulesService', () => {
           id: '3',
         },
       ];
-      const commitMessage = new CommitMessageRule(webhook);
+      const commitMessage = new CommitMessageRule();
       commitMessage.options = {
         regexp:
           '(feat|fix|docs)(\\([a-z]+\\))?:\\s[^(]*(\\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\\))?$',
@@ -70,7 +70,7 @@ describe('RulesService', () => {
 
       jest.spyOn(commitMessage, 'validate');
 
-      const result: RuleResult = commitMessage.validate();
+      const result: RuleResult = commitMessage.validate(webhook, commitMessage);
       const expectedResult = {
         branch: 'test_webhook',
         commits: [
@@ -124,7 +124,7 @@ describe('RulesService', () => {
           id: '3',
         },
       ];
-      const commitMessage = new CommitMessageRule(webhook);
+      const commitMessage = new CommitMessageRule();
       commitMessage.options = {
         regexp:
           '(feat|fix|docs)(\\([a-z]+\\))?:\\s[^(]*(\\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\\))?$',
@@ -132,7 +132,7 @@ describe('RulesService', () => {
 
       jest.spyOn(commitMessage, 'validate');
 
-      const result: RuleResult = commitMessage.validate();
+      const result: RuleResult = commitMessage.validate(webhook, commitMessage);
       expect(result.validated).toBe(false);
     });
   });

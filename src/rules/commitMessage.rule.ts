@@ -17,18 +17,12 @@ export class CommitMessageRule extends Rule {
   name = 'commitMessage';
   options: CommitMessageOptions;
 
-  constructor(webhook: Webhook) {
-    super(webhook);
-    this.events = new Array();
-    this.events.push(GitEventEnum.Push);
-  }
+  events = [GitEventEnum.Push];
 
-  validate(): RuleResult {
-    const ruleResult: RuleResult = new RuleResult(
-      this.webhook.getGitApiInfos(),
-    );
-    const commits: WebhookCommit[] = this.webhook.getAllCommits();
-    const commitRegExp = RegExp(this.options.regexp);
+  validate(webhook: Webhook, ruleConfig): RuleResult {
+    const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+    const commits: WebhookCommit[] = webhook.getAllCommits();
+    const commitRegExp = RegExp(ruleConfig.options.regexp);
 
     const commitsMatches: CommitMatches[] = new Array();
     let commitMatches: CommitMatches;
@@ -53,15 +47,15 @@ export class CommitMessageRule extends Rule {
 
       commitsMatches.push(commitMatches);
 
-      this.webhook.gitService.updateCommitStatus(
-        this.webhook.getGitApiInfos(),
-        this.webhook.getGitCommitStatusInfos(commitStatus, c.id),
+      webhook.gitService.updateCommitStatus(
+        webhook.getGitApiInfos(),
+        webhook.getGitCommitStatusInfos(commitStatus, c.id),
       );
     });
 
     ruleResult.validated = allRegExpSuccessed;
     ruleResult.data = {
-      branch: this.webhook.getBranchName(),
+      branch: webhook.getBranchName(),
       commits: commitsMatches,
     };
     return ruleResult;

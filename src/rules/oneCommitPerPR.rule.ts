@@ -5,22 +5,14 @@ import { GitEventEnum } from '../webhook/utils.enum';
 
 export class OneCommitPerPRRule extends Rule {
   name = 'oneCommitPerPR';
+  events = [GitEventEnum.Push];
 
-  constructor(webhook: Webhook) {
-    super(webhook);
-    this.events = new Array();
-    this.events.push(GitEventEnum.Push);
-  }
-
-  validate(): RuleResult {
-    const ruleResult: RuleResult = new RuleResult(
-      this.webhook.getGitApiInfos(),
-    );
-    ruleResult.validated =
-      this.webhook.getAllCommits().length === 1 ? true : false;
+  validate(webhook, ruleConfig): RuleResult {
+    const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+    ruleResult.validated = webhook.getAllCommits().length === 1 ? true : false;
     ruleResult.data = {
-      branch: this.webhook.getBranchName(),
-      commits: this.webhook.getAllCommits(),
+      branch: webhook.getBranchName(),
+      commits: webhook.getAllCommits(),
     };
     return ruleResult;
   }

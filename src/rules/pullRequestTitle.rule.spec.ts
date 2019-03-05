@@ -44,13 +44,16 @@ describe('RulesService', () => {
         number: 22,
       };
 
-      const pullRequestTitle = new PullRequestTitleRule(webhook);
+      const pullRequestTitle = new PullRequestTitleRule();
       pullRequestTitle.options = {
         regexp: '(WIP|FIX):\\s.*',
       };
       jest.spyOn(pullRequestTitle, 'validate');
 
-      const result: RuleResult = pullRequestTitle.validate();
+      const result: RuleResult = pullRequestTitle.validate(
+        webhook,
+        pullRequestTitle,
+      );
       expect(result.validated).toBe(false);
       expect(result.data).toEqual({
         pullRequestTitle: webhook.pullRequest.title,
@@ -69,13 +72,16 @@ describe('RulesService', () => {
         number: 22,
       };
 
-      const pullRequestTitle = new PullRequestTitleRule(webhook);
+      const pullRequestTitle = new PullRequestTitleRule();
       pullRequestTitle.options = {
         regexp: '(WIP|FIX):\\s.*',
       };
       jest.spyOn(pullRequestTitle, 'validate');
 
-      const result: RuleResult = pullRequestTitle.validate();
+      const result: RuleResult = pullRequestTitle.validate(
+        webhook,
+        pullRequestTitle,
+      );
       expect(result.validated).toBe(true);
       expect(result.data).toEqual({
         pullRequestTitle: webhook.pullRequest.title,

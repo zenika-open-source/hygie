@@ -10,19 +10,12 @@ interface BranchNameOptions {
 export class BranchNameRule extends Rule {
   name = 'branchName';
   options: BranchNameOptions;
+  events = [GitEventEnum.NewBranch];
 
-  constructor(webhook: Webhook) {
-    super(webhook);
-    this.events = new Array();
-    this.events.push(GitEventEnum.NewBranch);
-  }
-
-  validate(): RuleResult {
-    const ruleResult: RuleResult = new RuleResult(
-      this.webhook.getGitApiInfos(),
-    );
-    const branchName = this.webhook.getBranchName();
-    const branchRegExp = RegExp(this.options.regexp);
+  validate(webhook, ruleConfig): RuleResult {
+    const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+    const branchName = webhook.getBranchName();
+    const branchRegExp = RegExp(ruleConfig.options.regexp);
     ruleResult.validated = branchRegExp.test(branchName);
     ruleResult.data = {
       branch: branchName,
