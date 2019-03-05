@@ -1,5 +1,8 @@
 import { GitlabIssue } from './gitlab.interface';
 
+/**
+ * GitlabIssueEvent dto
+ */
 export interface GitlabIssueEvent {
   object_kind: string;
   event_type: string;

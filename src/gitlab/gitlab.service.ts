@@ -6,6 +6,9 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
 
+/**
+ * Implement `GitServiceInterface` to interact this a Gitlab repository
+ */
 @Injectable()
 export class GitlabService implements GitServiceInterface {
   token: string;
