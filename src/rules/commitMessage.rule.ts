@@ -14,6 +14,10 @@ export class CommitMatches {
   matches: string[];
 }
 
+/**
+ * `CommitMessageRule` check all commits title according to a regular expression
+ * @return return a `RuleResult` object
+ */
 @Injectable()
 export class CommitMessageRule extends Rule {
   name = 'commitMessage';

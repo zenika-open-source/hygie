@@ -7,6 +7,10 @@ interface PullRequestTitleOptions {
   regexp: string;
 }
 
+/**
+ * `PullRequestTitleRule` check the PR/MR's title according to a regular expression
+ * @return return a `RuleResult` object
+ */
 @Injectable()
 export class PullRequestTitleRule extends Rule {
   name = 'pullRequestTitle';

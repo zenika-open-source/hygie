@@ -1,24 +1,16 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Rule } from './rule.class';
 import { RunnableService } from '../runnables/runnable';
 import { Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
-import { GithubService } from '../github/github.service';
-import { GitlabService } from '../gitlab/gitlab.service';
 import { safeLoad } from 'js-yaml';
 import { readFileSync } from 'fs';
-import { CommitMessageRule, BranchNameRule, OneCommitPerPRRule } from '.';
-import { IssueTitleRule } from './issueTitle.rule';
-import { PullRequestTitleRule } from './pullRequestTitle.rule';
 import { RulesOptions } from './rules.options';
 
 @Injectable()
 export class RulesService {
   constructor(
     private readonly runnableService: RunnableService,
-    private readonly httpService: HttpService,
-    private readonly githubService: GithubService,
-    private readonly gitlabService: GitlabService,
     private readonly rulesClasses: Rule[] = [],
   ) {}
 

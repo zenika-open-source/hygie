@@ -7,6 +7,10 @@ interface BranchNameOptions {
   regexp: string;
 }
 
+/**
+ * `BranchNameRule` check the branch's name according to a regular expression
+ * @return return a `RuleResult` object
+ */
 @Injectable()
 export class BranchNameRule extends Rule {
   name = 'branchName';

@@ -7,6 +7,10 @@ interface IssueTitleOptions {
   regexp: string;
 }
 
+/**
+ * `IssueTitleRule` check the issue's title according to a regular expression
+ * @return return a `RuleResult` object
+ */
 @Injectable()
 export class IssueTitleRule extends Rule {
   name = 'issueTitle';

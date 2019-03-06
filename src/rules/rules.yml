@@ -14,7 +14,7 @@ rules:
             {{/data.commits}}'
       - callback : WebhookRunnable
         args:
-          url: 'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8'
+          url: 'https://webho.site'
           data: {
             user: 'bastien terrier',
             content: '{{#data.commits}}{{sha}} =

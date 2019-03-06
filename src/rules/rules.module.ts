@@ -18,31 +18,11 @@ const RulesProviders = RulesValues.map(rule => ({
   providers: [
     {
       provide: RulesService,
-      useFactory(
-        runnableService,
-        githubService,
-        gitlabService,
-        httpService,
-        ...rules
-      ) {
-        return new RulesService(
-          runnableService,
-          httpService,
-          githubService,
-          gitlabService,
-          rules,
-        );
+      useFactory(runnableService, ...rules) {
+        return new RulesService(runnableService, rules);
       },
-      inject: [
-        RunnableService,
-        GithubService,
-        GitlabService,
-        HttpService,
-        ...RulesValues,
-      ],
+      inject: [RunnableService, ...RulesValues],
     },
-    GithubService,
-    GitlabService,
     ...RulesProviders,
   ],
 })
