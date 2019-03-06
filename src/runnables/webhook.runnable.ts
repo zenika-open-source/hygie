@@ -4,6 +4,7 @@ import { RuleResult } from '../rules/ruleResult';
 import { render } from 'mustache';
 import { CallbackType } from './runnable';
 import { getObjectValue } from '../utils/convert.utils';
+import { logger } from '../logger/logger.service';
 
 interface WebhookArgs {
   url: string;
@@ -28,6 +29,6 @@ export class WebhookRunnable implements RunnableInterface {
         render(JSON.stringify(args.data), ruleResult),
         render(JSON.stringify(getObjectValue(args.config)), ruleResult),
       )
-      .subscribe();
+      .subscribe(null, err => logger.error(err));
   }
 }
