@@ -1,12 +1,13 @@
 import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
-import { Webhook } from '../webhook/webhook';
 import { GitEventEnum } from '../webhook/utils.enum';
+import { Injectable } from '@nestjs/common';
 
 interface IssueTitleOptions {
   regexp: string;
 }
 
+@Injectable()
 export class IssueTitleRule extends Rule {
   name = 'issueTitle';
   options: IssueTitleOptions;

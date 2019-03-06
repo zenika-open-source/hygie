@@ -1,5 +1,10 @@
-// Elle ne servira à rien, lorsque nos runnable pour beneficier de l'injection de deps
-export class MockHttpService {}
+import { of } from 'rxjs';
+
+export class MockHttpService {
+  get: jest.Mock = jest.fn(() => {
+    return of([]);
+  });
+}
 
 export class MockGitlabService {
   updateCommitStatus: jest.Mock = jest.fn();

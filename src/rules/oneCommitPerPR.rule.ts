@@ -1,8 +1,9 @@
 import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
-import { Webhook } from '../webhook/webhook';
 import { GitEventEnum } from '../webhook/utils.enum';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class OneCommitPerPRRule extends Rule {
   name = 'oneCommitPerPR';
   events = [GitEventEnum.Push];
