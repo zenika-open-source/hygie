@@ -1,4 +1,6 @@
 --- # Rules config file
+options:
+  executeAllRules: true
 rules:
   - name: commitMessage
     options:

@@ -10,6 +10,7 @@ import { readFileSync } from 'fs';
 import { CommitMessageRule, BranchNameRule, OneCommitPerPRRule } from '.';
 import { IssueTitleRule } from './issueTitle.rule';
 import { PullRequestTitleRule } from './pullRequestTitle.rule';
+import { RulesOptions } from './rules.options';
 
 @Injectable()
 export class RulesService {
@@ -21,12 +22,20 @@ export class RulesService {
     private readonly rulesClasses: Rule[] = [],
   ) {}
 
-  getRulesConfiguration() {
+  getRulesConfiguration(): Rule[] {
     const path = require('path');
     const config = safeLoad(
       readFileSync(path.resolve(__dirname, 'rules.yml'), 'utf-8'),
     );
     return config.rules;
+  }
+
+  getRulesOptions(): RulesOptions {
+    const path = require('path');
+    const config = safeLoad(
+      readFileSync(path.resolve(__dirname, 'rules.yml'), 'utf-8'),
+    );
+    return config.options;
   }
 
   getRule(ruleConfig): Rule {
@@ -35,6 +44,7 @@ export class RulesService {
 
   testRules(webhook: Webhook): RuleResult[] {
     const rules: Rule[] = this.getRulesConfiguration();
+    const rulesOptions: RulesOptions = this.getRulesOptions();
     const BreakException = {};
     const results: RuleResult[] = new Array();
 
@@ -46,7 +56,7 @@ export class RulesService {
           results.push(ruleResult);
 
           this.runnableService.executeRunnableFunctions(ruleResult, ruleConfig);
-          if (!ruleResult.validated) {
+          if (!rulesOptions.executeAllRules && !ruleResult.validated) {
             throw BreakException;
           }
         }
