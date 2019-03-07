@@ -10,6 +10,7 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { CommentPullRequestRunnable } from './commentPullRequest.runnable';
 import { SendEmailRunnable } from './sendEmail.runnable';
 import { CreatePullRequestRunnable } from './createPullRequest.runnable';
+import { Group } from '../rules/group.class';
 
 export enum CallbackType {
   Success = 'Success',
@@ -58,16 +59,19 @@ export class RunnableService {
     return runnable;
   }
 
-  executeRunnableFunctions(ruleResult: RuleResult, rule: Rule): boolean {
+  executeRunnableFunctions(
+    ruleResult: RuleResult,
+    ruleOrGroup: Rule | Group,
+  ): boolean {
     let runnable: RunnableInterface;
     if (ruleResult.validated) {
-      rule.onSuccess.forEach(success => {
+      ruleOrGroup.onSuccess.forEach(success => {
         runnable = this.getRunnable(success.callback);
         runnable.run(CallbackType.Success, ruleResult, success.args);
       });
       return true;
     } else {
-      rule.onError.forEach(error => {
+      ruleOrGroup.onError.forEach(error => {
         runnable = this.getRunnable(error.callback);
         runnable.run(CallbackType.Error, ruleResult, error.args);
       });
