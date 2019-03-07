@@ -55,7 +55,10 @@ describe('RulesService', () => {
       const oneCommitPerPR = new OneCommitPerPRRule();
       jest.spyOn(oneCommitPerPR, 'validate');
 
-      const result: RuleResult = oneCommitPerPR.validate(webhook, {});
+      const result: RuleResult = oneCommitPerPR.validate(
+        webhook,
+        oneCommitPerPR,
+      );
       expect(result.validated).toBe(false);
       expect((result.data as any).commits).toEqual(webhook.commits);
       expect((result.data as any).branch).toEqual(webhook.branchName);
@@ -74,7 +77,10 @@ describe('RulesService', () => {
       const oneCommitPerPR = new OneCommitPerPRRule();
       jest.spyOn(oneCommitPerPR, 'validate');
 
-      const result: RuleResult = oneCommitPerPR.validate(webhook, {});
+      const result: RuleResult = oneCommitPerPR.validate(
+        webhook,
+        oneCommitPerPR,
+      );
       expect(result.validated).toBe(true);
       expect((result.data as any).commits).toEqual(webhook.commits);
       expect((result.data as any).branch).toEqual(webhook.branchName);

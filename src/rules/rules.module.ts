@@ -1,8 +1,6 @@
 import { Module, HttpModule, HttpService } from '@nestjs/common';
 import { Rule } from './rule.class';
 import { RulesService } from './rules.service';
-import { GithubService } from '../github/github.service';
-import { GitlabService } from '../gitlab/gitlab.service';
 import { RunnableService } from '../runnables/runnable';
 import { RunnableModule } from '../runnables/runnable.module';
 

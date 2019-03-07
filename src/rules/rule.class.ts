@@ -58,5 +58,5 @@ export abstract class Rule {
    * @param webhook
    * @param ruleConfig
    */
-  abstract validate(webhook: Webhook, ruleConfig): RuleResult;
+  abstract validate(webhook: Webhook, ruleConfig: Rule): RuleResult;
 }

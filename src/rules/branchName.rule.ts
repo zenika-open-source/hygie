@@ -2,6 +2,7 @@ import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Injectable } from '@nestjs/common';
+import { Webhook } from '../webhook/webhook';
 
 interface BranchNameOptions {
   regexp: string;
@@ -17,7 +18,7 @@ export class BranchNameRule extends Rule {
   options: BranchNameOptions;
   events = [GitEventEnum.NewBranch];
 
-  validate(webhook, ruleConfig): RuleResult {
+  validate(webhook: Webhook, ruleConfig: BranchNameRule): RuleResult {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const branchName = webhook.getBranchName();
     const branchRegExp = RegExp(ruleConfig.options.regexp);

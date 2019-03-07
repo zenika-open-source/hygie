@@ -25,7 +25,7 @@ export class CommitMessageRule extends Rule {
 
   events = [GitEventEnum.Push];
 
-  validate(webhook: Webhook, ruleConfig): RuleResult {
+  validate(webhook: Webhook, ruleConfig: CommitMessageRule): RuleResult {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const commits: WebhookCommit[] = webhook.getAllCommits();
     const commitRegExp = RegExp(ruleConfig.options.regexp);

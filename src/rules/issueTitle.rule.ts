@@ -2,6 +2,7 @@ import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Injectable } from '@nestjs/common';
+import { Webhook } from '../webhook/webhook';
 
 interface IssueTitleOptions {
   regexp: string;
@@ -17,7 +18,7 @@ export class IssueTitleRule extends Rule {
   options: IssueTitleOptions;
   events = [GitEventEnum.NewIssue];
 
-  validate(webhook, ruleConfig): RuleResult {
+  validate(webhook: Webhook, ruleConfig: IssueTitleRule): RuleResult {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const titleIssue = webhook.getIssueTitle();
     const issueRegExp = RegExp(ruleConfig.options.regexp);
