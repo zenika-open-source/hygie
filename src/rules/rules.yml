@@ -1,6 +1,7 @@
 --- # Rules config file
 options:
-  executeAllRules: true
+  executeAllRules: false
+  enableGroups: false
 rules:
   - name: commitMessage
     options:
@@ -29,6 +30,13 @@ rules:
               > {{message.commits}} (#{{sha}})
             {{/data.commits}}
           '
+    onBoth:
+      - callback: UpdateCommitStatusRunnable
+        args:
+          successTargetUrl: 'http://www.google.com'
+          failTargetUrl: 'http://moogle.com/'
+          successDescriptionMessage: 'good commit status!'
+          failDescriptionMessage: 'NOOOT good...'
   - name: branchName
     options:
       regexp: (feature|fix)\/.*

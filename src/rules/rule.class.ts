@@ -17,6 +17,7 @@ export abstract class Rule {
   events: GitEventEnum[];
   onSuccess: OnSuccessError[];
   onError: OnSuccessError[];
+  onBoth: OnSuccessError[];
   options: object;
 
   constructor() {

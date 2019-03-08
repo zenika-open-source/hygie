@@ -1,5 +1,5 @@
 import { Rule } from './rule.class';
-import { CommitStatusEnum, GitEventEnum } from '../webhook/utils.enum';
+import { GitEventEnum, CommitStatusEnum } from '../webhook/utils.enum';
 import { WebhookCommit, Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
 import { Injectable } from '@nestjs/common';
@@ -12,6 +12,8 @@ export class CommitMatches {
   sha: string;
   message: string;
   matches: string[];
+  status: CommitStatusEnum;
+  success: boolean;
 }
 
 /**
@@ -35,16 +37,18 @@ export class CommitMessageRule extends Rule {
 
     let allRegExpSuccessed: boolean = true;
     let regexpSuccessed: boolean = false;
-    let commitStatus: CommitStatusEnum;
+
     commits.forEach(c => {
       commitMatches = new CommitMatches();
       regexpSuccessed = commitRegExp.test(c.message);
 
       if (regexpSuccessed) {
-        commitStatus = CommitStatusEnum.Success;
+        commitMatches.status = CommitStatusEnum.Success;
+        commitMatches.success = true;
       } else {
-        commitStatus = CommitStatusEnum.Failure;
+        commitMatches.status = CommitStatusEnum.Failure;
         allRegExpSuccessed = false;
+        commitMatches.success = false;
       }
 
       commitMatches.sha = c.id;
@@ -52,11 +56,6 @@ export class CommitMessageRule extends Rule {
       commitMatches.matches = c.message.match(commitRegExp);
 
       commitsMatches.push(commitMatches);
-
-      webhook.gitService.updateCommitStatus(
-        webhook.getGitApiInfos(),
-        webhook.getGitCommitStatusInfos(commitStatus, c.id),
-      );
     });
 
     ruleResult.validated = allRegExpSuccessed;

@@ -6,6 +6,7 @@ export class Group {
   rules: Rule[];
   onSuccess: OnSuccessError[];
   onError: OnSuccessError[];
+  onBoth: OnSuccessError[];
 
   displayInformations(): void {
     logger.info(`== ${this.groupName} ==`);
