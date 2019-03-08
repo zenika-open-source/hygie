@@ -5,23 +5,28 @@ import { RuleResult } from './ruleResult';
 
 export interface OnSuccessError {
   callback: string;
-  args: any[];
+  args: any;
 }
 
+/**
+ * Provide methods that must be implement by all future rules
+ */
 export abstract class Rule {
   name: string;
   enabled: boolean;
   events: GitEventEnum[];
   onSuccess: OnSuccessError[];
   onError: OnSuccessError[];
+  onBoth: OnSuccessError[];
   options: object;
 
-  webhook: Webhook;
-
-  constructor(webhook: Webhook) {
-    this.webhook = webhook;
+  constructor() {
+    this.enabled = true;
   }
 
+  /**
+   * Display each rule's properties
+   */
   displayRule(): void {
     logger.info('Display rule');
     logger.info('name:' + this.name);
@@ -32,15 +37,27 @@ export abstract class Rule {
     logger.info('options:' + this.options);
   }
 
-  isEnabled() {
-    let events: boolean = false;
-    this.events.forEach(e => {
-      if (e === this.webhook.gitEvent) {
-        events = true;
+  /**
+   * Check if the rule can be apply to the received `webhook`, according to the `ruleConfig`
+   * @param webhook
+   * @param ruleConfig
+   */
+  isEnabled(webhook: Webhook, ruleConfig) {
+    const events = ruleConfig.events || this.events;
+    const enabled = ruleConfig.enable === undefined ? true : ruleConfig.enabled;
+    let eventEnabled: boolean = false;
+    events.forEach(e => {
+      if (e === webhook.gitEvent) {
+        eventEnabled = true;
       }
     });
-    return this.enabled && events;
+    return enabled && eventEnabled;
   }
 
-  abstract validate(): RuleResult;
+  /**
+   * Abstract method that must be implemented by all rules. Contains all the business logic of the rule
+   * @param webhook
+   * @param ruleConfig
+   */
+  abstract validate(webhook: Webhook, ruleConfig: Rule): RuleResult;
 }

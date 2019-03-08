@@ -62,7 +62,9 @@ The following properties are all needed :
 - `options`: this object regroup all metadata you need to fill your needs. You can add any attribute you want (string, boolean, array, object...), it will be accessible in the `validate()` method.
 - `onSuccess`(`onError`): this object is an array of **post-actions** (or callback functions) which will be called if the rule success (fails). The `callback` must be a [Runnable class](../post-actions/). It takes an `args` object as arguments. As the `options`, you can create as many argument as you want.
 
-**Information:** These `callback`s are called sequentially and do not return value (`void` type).
+::: warning
+These `callback`s are called sequentially and do not return value (`void` type).
+:::
 
 ### Templating with _mustache_
 
@@ -162,4 +164,6 @@ export function getRules(webhook: Webhook): Rule[] {
 }
 ```
 
-> This should be fix quickly, but you actually need to do it.
+::: tip
+This should be fix quickly, but you actually need to do it.
+:::

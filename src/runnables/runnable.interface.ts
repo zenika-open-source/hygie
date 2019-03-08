@@ -1,6 +1,7 @@
 import { RuleResult } from '../rules/ruleResult';
+import { CallbackType } from './runnable';
 
 export interface RunnableInterface {
   name: string;
-  run(ruleResult: RuleResult, ...args: any[]): void;
+  run(callbackType: CallbackType, ruleResult: RuleResult, ...args: any[]): void;
 }

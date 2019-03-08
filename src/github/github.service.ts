@@ -5,7 +5,11 @@ import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
+import { logger } from '../logger/logger.service';
 
+/**
+ * Implement `GitServiceInterface` to interact this a Github repository
+ */
 @Injectable()
 export class GithubService implements GitServiceInterface {
   token: string;
@@ -45,7 +49,7 @@ export class GithubService implements GitServiceInterface {
         dataGitHub,
         this.configGitHub,
       )
-      .subscribe();
+      .subscribe(null, err => logger.error(err));
   }
 
   addIssueComment(
@@ -64,7 +68,7 @@ export class GithubService implements GitServiceInterface {
         dataGitHub,
         this.configGitHub,
       )
-      .subscribe();
+      .subscribe(null, err => logger.error(err));
   }
 
   // Github PR is based on Issue
@@ -95,6 +99,6 @@ export class GithubService implements GitServiceInterface {
         dataGitHub,
         this.configGitHub,
       )
-      .subscribe();
+      .subscribe(null, err => logger.error(err));
   }
 }

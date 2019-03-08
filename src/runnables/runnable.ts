@@ -10,9 +10,17 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { CommentPullRequestRunnable } from './commentPullRequest.runnable';
 import { SendEmailRunnable } from './sendEmail.runnable';
 import { CreatePullRequestRunnable } from './createPullRequest.runnable';
+import { Group } from '../rules/group.class';
+import { UpdateCommitStatusRunnable } from './updateCommitStatus.runnable';
+
+export enum CallbackType {
+  Success = 'Success',
+  Error = 'Error',
+  Both = 'Both',
+}
 
 @Injectable()
-export class Runnable {
+export class RunnableService {
   constructor(
     private readonly httpService: HttpService,
     private readonly githubService: GithubService,
@@ -49,24 +57,46 @@ export class Runnable {
       case 'SendEmailRunnable':
         runnable = new SendEmailRunnable();
         break;
+      case 'UpdateCommitStatusRunnable':
+        runnable = new UpdateCommitStatusRunnable(
+          this.githubService,
+          this.gitlabService,
+        );
+        break;
     }
     return runnable;
   }
 
-  executeRunnableFunctions(ruleResult: RuleResult, rule: Rule): boolean {
+  executeRunnableFunctions(
+    ruleResult: RuleResult,
+    ruleOrGroup: Rule | Group,
+  ): boolean {
     let runnable: RunnableInterface;
-    if (ruleResult.validated) {
-      rule.onSuccess.forEach(success => {
+
+    if (typeof ruleOrGroup.onBoth !== 'undefined') {
+      ruleOrGroup.onBoth.forEach(both => {
+        runnable = this.getRunnable(both.callback);
+        runnable.run(CallbackType.Both, ruleResult, both.args);
+      });
+    }
+
+    if (ruleResult.validated && typeof ruleOrGroup.onSuccess !== 'undefined') {
+      ruleOrGroup.onSuccess.forEach(success => {
         runnable = this.getRunnable(success.callback);
-        runnable.run(ruleResult, success.args);
+        runnable.run(CallbackType.Success, ruleResult, success.args);
       });
       return true;
-    } else {
-      rule.onError.forEach(error => {
+    } else if (
+      !ruleResult.validated &&
+      typeof ruleOrGroup.onError !== 'undefined'
+    ) {
+      ruleOrGroup.onError.forEach(error => {
         runnable = this.getRunnable(error.callback);
-        runnable.run(ruleResult, error.args);
+        runnable.run(CallbackType.Error, ruleResult, error.args);
       });
       return false;
     }
+
+    return false;
   }
 }

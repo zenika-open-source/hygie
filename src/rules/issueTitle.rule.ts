@@ -1,25 +1,32 @@
 import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
+import { GitEventEnum } from '../webhook/utils.enum';
+import { Injectable } from '@nestjs/common';
+import { Webhook } from '../webhook/webhook';
 
 interface IssueTitleOptions {
   regexp: string;
 }
 
+/**
+ * `IssueTitleRule` check the issue's title according to a regular expression
+ * @return return a `RuleResult` object
+ */
+@Injectable()
 export class IssueTitleRule extends Rule {
   name = 'issueTitle';
   options: IssueTitleOptions;
+  events = [GitEventEnum.NewIssue];
 
-  validate(): RuleResult {
-    const ruleResult: RuleResult = new RuleResult();
-    const titleIssue = this.webhook.getIssueTitle();
-    const issueRegExp = RegExp(this.options.regexp);
+  validate(webhook: Webhook, ruleConfig: IssueTitleRule): RuleResult {
+    const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+    const titleIssue = webhook.getIssueTitle();
+    const issueRegExp = RegExp(ruleConfig.options.regexp);
     ruleResult.validated = issueRegExp.test(titleIssue);
 
     ruleResult.data = {
       issueTitle: titleIssue,
-      git: this.webhook.getGitType(),
-      issueNumber: this.webhook.getIssueNumber(),
-      gitApiInfos: this.webhook.getGitApiInfos(),
+      issueNumber: webhook.getIssueNumber(),
     };
     return ruleResult;
   }

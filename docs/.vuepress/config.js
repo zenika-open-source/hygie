@@ -16,6 +16,10 @@ module.exports = {
       { text: 'Guide', link: '/guide/' },
       { text: 'Rules', link: '/rules/' },
       { text: 'Post-Actions', link: '/post-actions/' },
+      {
+        text: 'Doc',
+        link: 'https://dx-developerexperience.github.io/git-webhooks/tsdoc/',
+      },
     ],
     sidebar: [
       '/',

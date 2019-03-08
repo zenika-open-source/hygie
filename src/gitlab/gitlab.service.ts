@@ -5,7 +5,11 @@ import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
+import { logger } from '../logger/logger.service';
 
+/**
+ * Implement `GitServiceInterface` to interact this a Gitlab repository
+ */
 @Injectable()
 export class GitlabService implements GitServiceInterface {
   token: string;
@@ -47,7 +51,7 @@ export class GitlabService implements GitServiceInterface {
         dataGitLab,
         configGitLab,
       )
-      .subscribe();
+      .subscribe(null, err => logger.error(err));
   }
 
   addIssueComment(
@@ -75,7 +79,7 @@ export class GitlabService implements GitServiceInterface {
         dataGitLab,
         configGitLab,
       )
-      .subscribe();
+      .subscribe(null, err => logger.error(err));
   }
 
   addPRComment(
@@ -103,7 +107,7 @@ export class GitlabService implements GitServiceInterface {
         dataGitLab,
         configGitLab,
       )
-      .subscribe();
+      .subscribe(null, err => logger.error(err));
   }
 
   createPullRequest(
@@ -132,6 +136,6 @@ export class GitlabService implements GitServiceInterface {
         dataGitLab,
         configGitLab,
       )
-      .subscribe();
+      .subscribe(null, err => logger.error(err));
   }
 }

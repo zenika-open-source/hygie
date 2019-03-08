@@ -1,79 +1,114 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Rule } from './rule.class';
-import { Runnable } from '../runnables/runnable';
+import { RunnableService } from '../runnables/runnable';
 import { Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
-import { GithubService } from '../github/github.service';
-import { GitlabService } from '../gitlab/gitlab.service';
 import { safeLoad } from 'js-yaml';
 import { readFileSync } from 'fs';
-import { CommitMessageRule, BranchNameRule, OneCommitPerPRRule } from '.';
-import { IssueTitleRule } from './issueTitle.rule';
-import { PullRequestTitleRule } from './pullRequestTitle.rule';
+import { RulesOptions } from './rules.options';
+import { Group } from './group.class';
+import { logger } from '../logger/logger.service';
 
 @Injectable()
 export class RulesService {
   constructor(
-    private readonly httpService: HttpService,
-    private readonly githubService: GithubService,
-    private readonly gitlabService: GitlabService,
-    private readonly rulesClasses: Rule[],
+    private readonly runnableService: RunnableService,
+    private readonly rulesClasses: Rule[] = [],
   ) {}
 
-  getRules(webhook: Webhook): Rule[] {
+  getConfiguration(): any {
     const path = require('path');
-    const config = safeLoad(
+    return safeLoad(
       readFileSync(path.resolve(__dirname, 'rules.yml'), 'utf-8'),
     );
-    const rules: Rule[] = new Array();
-    config.rules.forEach(r => {
-      let rule: Rule;
-      if (r.name === 'commitMessage') {
-        rule = new CommitMessageRule(webhook);
-      } else if (r.name === 'branchName') {
-        rule = new BranchNameRule(webhook);
-      } else if (r.name === 'oneCommitPerPR') {
-        rule = new OneCommitPerPRRule(webhook);
-      } else if (r.name === 'issueTitle') {
-        rule = new IssueTitleRule(webhook);
-      } else if (r.name === 'pullRequestTitle') {
-        rule = new PullRequestTitleRule(webhook);
-      }
-      rule.name = r.name;
-      rule.enabled = r.enabled;
-      rule.events = r.events;
-      rule.options = r.options;
-      rule.onSuccess = r.onSuccess;
-      rule.onError = r.onError;
-
-      rules.push(rule);
-    });
-    return rules;
   }
 
-  testRules(webhook: Webhook): void {
-    const rules: Rule[] = this.getRules(webhook);
-    const BreakException = {};
+  getRulesConfiguration(): Rule[] {
+    return this.getConfiguration().rules || [];
+  }
 
-    const runnable: Runnable = new Runnable(
-      this.httpService,
-      this.githubService,
-      this.gitlabService,
-    );
-    try {
-      rules.forEach(r => {
-        if (r.isEnabled()) {
-          const ruleResult: RuleResult = r.validate();
-          runnable.executeRunnableFunctions(ruleResult, r);
-          if (!ruleResult.validated) {
-            throw BreakException;
+  getGroupsConfiguration(): Group[] {
+    const groupsConfig = this.getConfiguration().groups || [];
+
+    return groupsConfig.map(g => {
+      const group = new Group();
+      group.groupName = g.groupName;
+      group.onError = g.onError;
+      group.onSuccess = g.onSuccess;
+      group.rules = g.rules;
+      return group;
+    });
+  }
+
+  getRulesOptions(): RulesOptions {
+    return new RulesOptions(this.getConfiguration().options);
+  }
+
+  getRule(ruleConfig): Rule {
+    return this.rulesClasses.find(r => r.name === ruleConfig.name);
+  }
+
+  testRules(webhook: Webhook): RuleResult[] {
+    const rules: Rule[] = this.getRulesConfiguration();
+    const groups: Group[] = this.getGroupsConfiguration();
+    const rulesOptions: RulesOptions = this.getRulesOptions();
+
+    // tslint:disable-next-line:no-console
+    console.log(JSON.stringify(rulesOptions, null, 4));
+
+    const BreakException = {};
+    const results: RuleResult[] = new Array();
+
+    // Individual rules
+    if (rulesOptions.enableRules) {
+      try {
+        logger.info('### TRY RULES ###');
+        rules.forEach(ruleConfig => {
+          const r = this.getRule(ruleConfig);
+          if (r.isEnabled(webhook, ruleConfig)) {
+            const ruleResult: RuleResult = r.validate(webhook, ruleConfig);
+            results.push(ruleResult);
+
+            this.runnableService.executeRunnableFunctions(
+              ruleResult,
+              ruleConfig,
+            );
+            if (!rulesOptions.executeAllRules && !ruleResult.validated) {
+              throw BreakException;
+            }
           }
-        }
-      });
-    } catch (e) {
-      if (e !== BreakException) {
-        throw e;
+        });
+      } catch (e) {
+        // tslint:disable-next-line:no-console
+        console.error(e);
       }
     }
+
+    // Grouped rules
+    if (rulesOptions.enableGroups) {
+      try {
+        logger.info('### TRY GROUPS ###');
+        groups.forEach(g => {
+          g.displayInformations();
+          g.rules.forEach(ruleConfig => {
+            const r = this.getRule(ruleConfig);
+            if (r.isEnabled(webhook, ruleConfig)) {
+              const ruleResult: RuleResult = r.validate(webhook, ruleConfig);
+              results.push(ruleResult);
+
+              this.runnableService.executeRunnableFunctions(ruleResult, g);
+              if (!rulesOptions.executeAllRules && !ruleResult.validated) {
+                throw BreakException;
+              }
+            }
+          });
+        });
+      } catch (e) {
+        // tslint:disable-next-line:no-console
+        console.error(e);
+      }
+    }
+
+    return results;
   }
 }

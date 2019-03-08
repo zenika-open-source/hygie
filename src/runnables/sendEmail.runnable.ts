@@ -5,6 +5,7 @@ import { readFile, writeFile } from 'fs';
 import { createInterface } from 'readline';
 import { google } from 'googleapis';
 import { logger } from '../logger/logger.service';
+import { CallbackType } from './runnable';
 
 function makeBody(to: string, subject: string, message: string): string {
   const str = [
@@ -121,7 +122,11 @@ export class SendEmailRunnable implements RunnableInterface {
     });
   }
 
-  run(ruleResult: RuleResult, args: SendEmailArgs): void {
+  run(
+    callbackType: CallbackType,
+    ruleResult: RuleResult,
+    args: SendEmailArgs,
+  ): void {
     readFile('credentials.json', (err, content) => {
       if (err) {
         return logger.warn('Error loading credentials.json:', err);

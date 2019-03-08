@@ -11,5 +11,10 @@
     "baseUrl": "./",
     "lib": ["dom", "es2017"]
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "typedocOptions": {
+    "mode": "file",
+    "out": "tsdoc",
+    "exclude": "**/__mocks__/*.ts"
+  }
 }
