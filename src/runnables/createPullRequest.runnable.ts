@@ -18,7 +18,7 @@ interface CreatePullRequestArgs {
 
 @Injectable()
 export class CreatePullRequestRunnable implements RunnableInterface {
-  name: string = 'CreatePullRequestRunnable';
+  name = 'CreatePullRequestRunnable';
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,

@@ -34,7 +34,7 @@ interface SendEmailArgs {
   message: string;
 }
 export class SendEmailRunnable implements RunnableInterface {
-  name: string = 'SendEmailRunnable';
+  name = 'SendEmailRunnable';
 
   // If modifying these scopes, delete token.json.
   SCOPES = [

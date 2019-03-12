@@ -16,7 +16,7 @@ interface WebhookArgs {
 export class WebhookRunnable implements RunnableInterface {
   constructor(private readonly httpService: HttpService) {}
 
-  name: string = 'WebhookRunnable';
+  name = 'WebhookRunnable';
 
   run(
     callbackType: CallbackType,

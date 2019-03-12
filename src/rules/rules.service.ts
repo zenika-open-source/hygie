@@ -53,9 +53,6 @@ export class RulesService {
     const groups: Group[] = this.getGroupsConfiguration();
     const rulesOptions: RulesOptions = this.getRulesOptions();
 
-    // tslint:disable-next-line:no-console
-    console.log(JSON.stringify(rulesOptions, null, 4));
-
     const BreakException = {};
     const results: RuleResult[] = new Array();
 
@@ -79,8 +76,7 @@ export class RulesService {
           }
         });
       } catch (e) {
-        // tslint:disable-next-line:no-console
-        console.error(e);
+        logger.error(e);
       }
     }
 

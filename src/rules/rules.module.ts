@@ -1,10 +1,12 @@
-import { Module, HttpModule, HttpService } from '@nestjs/common';
+import { Module, HttpModule } from '@nestjs/common';
 import { Rule } from './rule.class';
 import { RulesService } from './rules.service';
 import { RunnableService } from '../runnables/runnable';
 import { RunnableModule } from '../runnables/runnable.module';
 
-const RulesValues = Object.values(require('./index')).map(rule => rule as Rule);
+export const RulesValues = Object.values(require('./index')).map(
+  rule => rule as Rule,
+);
 const RulesProviders = RulesValues.map(rule => ({
   provide: rule,
   useClass: rule as any,

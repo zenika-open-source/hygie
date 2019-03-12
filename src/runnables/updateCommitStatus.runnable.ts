@@ -19,7 +19,7 @@ interface UpdateCommitStatusArgs {
 
 @Injectable()
 export class UpdateCommitStatusRunnable implements RunnableInterface {
-  name: string = 'UpdateCommitStatusRunnable';
+  name = 'UpdateCommitStatusRunnable';
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,

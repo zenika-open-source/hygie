@@ -3,7 +3,11 @@ import { WebhookRunnable } from './webhook.runnable';
 import { CommentIssueRunnable } from './commentIssue.runnable';
 import { GitModule } from '../git/git.module';
 import { RunnableService } from './runnable';
+import { RunnableInterface } from './runnable.interface';
 
+export const RunnablesValues = Object.values(require('./index')).map(
+  runnable => runnable as RunnableInterface,
+);
 @Module({
   imports: [HttpModule, GitModule],
   providers: [CommentIssueRunnable, WebhookRunnable, RunnableService],

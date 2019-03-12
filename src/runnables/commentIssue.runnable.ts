@@ -14,7 +14,7 @@ interface CommentIssueArgs {
 
 @Injectable()
 export class CommentIssueRunnable implements RunnableInterface {
-  name: string = 'CommentIssueRunnable';
+  name = 'CommentIssueRunnable';
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,

@@ -15,7 +15,7 @@ interface CommentPRArgs {
 
 @Injectable()
 export class CommentPullRequestRunnable implements RunnableInterface {
-  name: string = 'CommentPullRequestRunnable';
+  name = 'CommentPullRequestRunnable';
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,

@@ -9,7 +9,7 @@ interface LoggerArgs {
   message: string;
 }
 export class LoggerRunnable implements RunnableInterface {
-  name: string = 'LoggerRunnable';
+  name = 'LoggerRunnable';
 
   run(
     callbackType: CallbackType,
