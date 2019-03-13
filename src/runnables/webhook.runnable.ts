@@ -1,10 +1,11 @@
-import { RunnableInterface } from './runnable.interface';
-import { HttpService, Injectable } from '@nestjs/common';
+import { Runnable } from './runnable.class';
+import { HttpService } from '@nestjs/common';
 import { RuleResult } from '../rules/ruleResult';
 import { render } from 'mustache';
-import { CallbackType } from './runnable';
+import { CallbackType } from './runnables.service';
 import { getObjectValue } from '../utils/convert.utils';
 import { logger } from '../logger/logger.service';
+import { RunnableDecorator } from './runnable.decorator';
 
 interface WebhookArgs {
   url: string;
@@ -12,11 +13,11 @@ interface WebhookArgs {
   config: object;
 }
 
-@Injectable()
-export class WebhookRunnable implements RunnableInterface {
-  constructor(private readonly httpService: HttpService) {}
-
-  name = 'WebhookRunnable';
+@RunnableDecorator('WebhookRunnable')
+export class WebhookRunnable extends Runnable {
+  constructor(private readonly httpService: HttpService) {
+    super();
+  }
 
   run(
     callbackType: CallbackType,

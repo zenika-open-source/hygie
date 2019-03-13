@@ -1,14 +1,13 @@
-import { RunnableInterface } from './runnable.interface';
+import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { Injectable } from '@nestjs/common';
-import { CallbackType } from './runnable';
+import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { getStringValue } from '../utils/convert.utils';
+import { RunnableDecorator } from './runnable.decorator';
 
 interface UpdateCommitStatusArgs {
   successTargetUrl: string;
@@ -17,13 +16,14 @@ interface UpdateCommitStatusArgs {
   failDescriptionMessage: string;
 }
 
-@Injectable()
-export class UpdateCommitStatusRunnable implements RunnableInterface {
-  name = 'UpdateCommitStatusRunnable';
+@RunnableDecorator('UpdateCommitStatusRunnable')
+export class UpdateCommitStatusRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
-  ) {}
+  ) {
+    super();
+  }
   run(
     callbackType: CallbackType,
     ruleResult: RuleResult,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Rule } from './rule.class';
-import { RunnableService } from '../runnables/runnable';
+import { RunnablesService } from '../runnables/runnables.service';
 import { Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
 import { safeLoad } from 'js-yaml';
@@ -12,7 +12,7 @@ import { logger } from '../logger/logger.service';
 @Injectable()
 export class RulesService {
   constructor(
-    private readonly runnableService: RunnableService,
+    private readonly runnableService: RunnablesService,
     private readonly rulesClasses: Rule[] = [],
   ) {}
 

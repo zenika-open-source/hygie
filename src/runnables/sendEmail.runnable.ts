@@ -1,11 +1,12 @@
-import { RunnableInterface } from './runnable.interface';
+import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
 import { render } from 'mustache';
 import { readFile, writeFile } from 'fs';
 import { createInterface } from 'readline';
 import { google } from 'googleapis';
 import { logger } from '../logger/logger.service';
-import { CallbackType } from './runnable';
+import { CallbackType } from './runnables.service';
+import { RunnableDecorator } from './runnable.decorator';
 
 function makeBody(to: string, subject: string, message: string): string {
   const str = [
@@ -33,9 +34,9 @@ interface SendEmailArgs {
   subject: string;
   message: string;
 }
-export class SendEmailRunnable implements RunnableInterface {
-  name = 'SendEmailRunnable';
 
+@RunnableDecorator('SendEmailRunnable')
+export class SendEmailRunnable extends Runnable {
   // If modifying these scopes, delete token.json.
   SCOPES = [
     'https://mail.google.com/',

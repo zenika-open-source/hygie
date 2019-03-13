@@ -1,7 +1,7 @@
 import { Module, HttpModule } from '@nestjs/common';
 import { Rule } from './rule.class';
 import { RulesService } from './rules.service';
-import { RunnableService } from '../runnables/runnable';
+import { RunnablesService } from '../runnables/runnables.service';
 import { RunnableModule } from '../runnables/runnable.module';
 
 export const RulesValues = Object.values(require('./index')).map(
@@ -21,7 +21,7 @@ const RulesProviders = RulesValues.map(rule => ({
       useFactory(runnableService, ...rules) {
         return new RulesService(runnableService, rules);
       },
-      inject: [RunnableService, ...RulesValues],
+      inject: [RunnablesService, ...RulesValues],
     },
     ...RulesProviders,
   ],
