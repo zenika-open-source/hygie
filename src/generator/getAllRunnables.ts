@@ -4,19 +4,16 @@ import * as fs from 'fs';
 export function getAllRunnables(): object {
   const path = require('path');
 
-  let result: any = {};
-
   const rulesPath = RunnablesValues.map(r => {
-    return (
-      r.name[0].toLowerCase() +
-      r.name.substr(1, r.name.length - 9) +
-      '.runnable.ts'
-    );
+    return `${r.name[0].toLowerCase()}${r.name.substr(
+      1,
+      r.name.length - 9,
+    )}.runnable.ts`;
   });
 
   let contentFile: string = '';
 
-  result = rulesPath.map(rulePath => {
+  return rulesPath.map(rulePath => {
     contentFile = fs.readFileSync(
       path.resolve(__dirname, '../runnables/' + rulePath),
       'utf-8',
@@ -39,16 +36,14 @@ export function getAllRunnables(): object {
     args.pop();
 
     runnable.args = args.map(a => {
-      const res: any = {};
-      const arg = a.split(':');
-      res.name = arg[0];
-      res.type = arg[1];
-      res.value = '';
-      return res;
+      const [name, type] = a.split(':');
+      return {
+        name,
+        type,
+        value: '',
+      };
     });
 
     return runnable;
   });
-
-  return result;
 }

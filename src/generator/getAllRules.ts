@@ -4,17 +4,16 @@ import * as fs from 'fs';
 export function getAllRules(): object {
   const path = require('path');
 
-  let result: any = {};
-
   const rulesPath = RulesValues.map(r => {
-    return (
-      r.name[0].toLowerCase() + r.name.substr(1, r.name.length - 5) + '.rule.ts'
-    );
+    return `${r.name[0].toLowerCase()}${r.name.substr(
+      1,
+      r.name.length - 5,
+    )}.rule.ts`;
   });
 
   let contentFile: string = '';
 
-  result = rulesPath.map(rulePath => {
+  return rulesPath.map(rulePath => {
     contentFile = fs.readFileSync(
       path.resolve(__dirname, '../rules/' + rulePath),
       'utf-8',
@@ -41,16 +40,14 @@ export function getAllRules(): object {
     options.pop();
 
     rule.options = options.map(o => {
-      const res: any = {};
-      const option = o.split(':');
-      res.name = option[0];
-      res.type = option[1];
-      res.value = '';
-      return res;
+      const [name, type] = o.split(':');
+      return {
+        name,
+        type,
+        value: '',
+      };
     });
 
     return rule;
   });
-
-  return result;
 }
