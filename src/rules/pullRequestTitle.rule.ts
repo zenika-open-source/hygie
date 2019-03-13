@@ -3,6 +3,7 @@ import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Injectable } from '@nestjs/common';
 import { Webhook } from '../webhook/webhook';
+import { RuleDecorator } from './rule.decorator';
 
 interface PullRequestTitleOptions {
   regexp: string;
@@ -13,8 +14,8 @@ interface PullRequestTitleOptions {
  * @return return a `RuleResult` object
  */
 @Injectable()
+@RuleDecorator('pullRequestTitle')
 export class PullRequestTitleRule extends Rule {
-  name = 'pullRequestTitle';
   options: PullRequestTitleOptions;
   events = [GitEventEnum.NewPR];
 

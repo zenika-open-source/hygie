@@ -3,6 +3,7 @@ import { GitEventEnum, CommitStatusEnum } from '../webhook/utils.enum';
 import { WebhookCommit, Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
 import { Injectable } from '@nestjs/common';
+import { RuleDecorator } from './rule.decorator';
 
 interface CommitMessageOptions {
   regexp: string;
@@ -21,8 +22,8 @@ export class CommitMatches {
  * @return return a `RuleResult` object
  */
 @Injectable()
+@RuleDecorator('commitMessage')
 export class CommitMessageRule extends Rule {
-  name = 'commitMessage';
   options: CommitMessageOptions;
 
   events = [GitEventEnum.Push];
