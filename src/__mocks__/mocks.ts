@@ -4,6 +4,9 @@ export class MockHttpService {
   get: jest.Mock = jest.fn(() => {
     return of([]);
   });
+  post: jest.Mock = jest.fn(() => {
+    return of([]);
+  });
 }
 
 export class MockGitlabService {
@@ -20,7 +23,8 @@ export class MockGithubService {
   createPullRequest: jest.Mock = jest.fn().mockName('createPullRequestGithub');
 }
 
-export class MockLoggerService {
-  info: jest.Mock = jest.fn().mockName('logger.info');
-  warn: jest.Mock = jest.fn().mockName('logger.warn');
+export class MockSendEmailRunnable {
+  run: jest.Mock = jest.fn(() => {
+    return 'OK';
+  });
 }
