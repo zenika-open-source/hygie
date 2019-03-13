@@ -1,7 +1,6 @@
 import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
-import { Injectable } from '@nestjs/common';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 
@@ -9,7 +8,6 @@ import { RuleDecorator } from './rule.decorator';
  * `OneCommitPerPRRule` check if there is only one commit in the current PR/MR/Push
  * @return return a `RuleResult` object
  */
-@Injectable()
 @RuleDecorator('oneCommitPerPR')
 export class OneCommitPerPRRule extends Rule {
   events = [GitEventEnum.Push];

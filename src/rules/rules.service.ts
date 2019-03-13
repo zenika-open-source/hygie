@@ -76,7 +76,9 @@ export class RulesService {
           }
         });
       } catch (e) {
-        logger.error(e);
+        if (e !== BreakException) {
+          logger.error(e);
+        }
       }
     }
 

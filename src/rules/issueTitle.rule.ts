@@ -1,7 +1,6 @@
 import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
-import { Injectable } from '@nestjs/common';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 
@@ -13,7 +12,6 @@ interface IssueTitleOptions {
  * `IssueTitleRule` check the issue's title according to a regular expression
  * @return return a `RuleResult` object
  */
-@Injectable()
 @RuleDecorator('issueTitle')
 export class IssueTitleRule extends Rule {
   options: IssueTitleOptions;
