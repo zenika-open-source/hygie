@@ -22,7 +22,7 @@ export function getAllRules(): object {
 
     rule.runnables = [];
 
-    const regexName = new RegExp(/name = '(.*)'/);
+    const regexName = new RegExp(/@RuleDecorator\('(.*)'\)/);
     rule.name = contentFile.match(regexName)[1];
 
     let interfaceOptions = contentFile.substring(

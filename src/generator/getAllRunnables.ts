@@ -21,7 +21,7 @@ export function getAllRunnables(): object {
 
     const runnable: any = {};
 
-    const regexName = new RegExp(/name = '(.*)'/);
+    const regexName = new RegExp(/@RunnableDecorator\('(.*)'\)/);
     runnable.name = contentFile.match(regexName)[1];
 
     let interfaceArgs = contentFile.substring(
