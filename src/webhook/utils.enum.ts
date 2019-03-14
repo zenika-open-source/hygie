@@ -75,7 +75,7 @@ export function isGithubPushEvent(
 export function isGithubBranchEvent(
   git: GitlabEvent | GithubEvent,
 ): git is GithubBranchEvent {
-  return (git as GithubBranchEvent).ref_type !== undefined;
+  return (git as GithubBranchEvent).ref_type === 'branch';
 }
 
 export function isGitlabBranchEvent(
