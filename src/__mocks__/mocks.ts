@@ -28,3 +28,9 @@ export class MockSendEmailRunnable {
     return 'OK';
   });
 }
+
+export class MockObservable {
+  subscribe: jest.Mock = jest.fn((next, error, complete?) => {
+    return;
+  });
+}
