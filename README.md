@@ -5,7 +5,7 @@
 ![npm](https://img.shields.io/npm/v/@dxdeveloperexperience/git-webhooks.svg)
 ![GitHub release](https://img.shields.io/github/release/dx-developerexperience/git-webhooks.svg)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/dx-developerexperience/git-webhooks.svg)
-![Website](https://img.shields.io/website-up-down-green-red/https/dx-developerexperience.github.io/git-webhooks/.svg?label=documentation%20website)
+![Website](https://img.shields.io/website/https/dx-developerexperience.github.io/git-webhooks.svg)
 
 ## Motivation
 

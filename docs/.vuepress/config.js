@@ -17,6 +17,11 @@ module.exports = {
       { text: 'Rules', link: '/rules/' },
       { text: 'Post-Actions', link: '/post-actions/' },
       {
+        text: 'Generator',
+        link:
+          'https://dx-developerexperience.github.io/git-webhooks-config-generator/',
+      },
+      {
         text: 'Doc',
         link: 'https://dx-developerexperience.github.io/git-webhooks/tsdoc/',
       },
@@ -26,7 +31,7 @@ module.exports = {
       {
         title: 'Guide',
         collapsable: false,
-        children: ['/guide/gettingStarted.md'],
+        children: ['/guide/gettingStarted.md', '/guide/configGenerator.md'],
       },
       {
         title: 'Rules',
