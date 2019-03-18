@@ -1,13 +1,13 @@
-import { RunnableInterface } from './runnable.interface';
+import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { Injectable } from '@nestjs/common';
 import { GitCreatePRInfos } from '../git/gitPRInfos';
 import { render } from 'mustache';
-import { CallbackType } from './runnable';
+import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
+import { RunnableDecorator } from './runnable.decorator';
 
 interface CreatePullRequestArgs {
   title: string;
@@ -16,13 +16,14 @@ interface CreatePullRequestArgs {
   target: string;
 }
 
-@Injectable()
-export class CreatePullRequestRunnable implements RunnableInterface {
-  name: string = 'CreatePullRequestRunnable';
+@RunnableDecorator('CreatePullRequestRunnable')
+export class CreatePullRequestRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
-  ) {}
+  ) {
+    super();
+  }
 
   run(
     callbackType: CallbackType,

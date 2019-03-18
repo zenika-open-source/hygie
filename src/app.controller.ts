@@ -7,6 +7,7 @@ import {
   Res,
   HttpStatus,
   UseFilters,
+  Header,
 } from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { WebhookInterceptor } from './webhook/webhook.interceptor';
@@ -15,6 +16,9 @@ import { RulesService } from './rules/rules.service';
 import { GitTypeEnum, GitEventEnum } from './webhook/utils.enum';
 import { AllExceptionsFilter } from './exceptions/allExceptionFilter';
 import { PreconditionException } from './exceptions/precondition.exception';
+import { getAllRules } from './generator/getAllRules';
+import { getAllRunnables } from './generator/getAllRunnables';
+import { getAllOptions } from './generator/getAllOptions';
 
 @Controller()
 export class AppController {
@@ -23,6 +27,24 @@ export class AppController {
   @Get('/')
   welcome(): string {
     return '<p>Welcome, <b>Git Webhooks</b> is running!</p>';
+  }
+
+  @Get('/rules')
+  @Header('Access-Control-Allow-Origin', '*')
+  getAllRules(): object {
+    return getAllRules();
+  }
+
+  @Get('/runnables')
+  @Header('Access-Control-Allow-Origin', '*')
+  getAllRunnables(): object {
+    return getAllRunnables();
+  }
+
+  @Get('/options')
+  @Header('Access-Control-Allow-Origin', '*')
+  getAllOptions(): object {
+    return getAllOptions();
   }
 
   @Post('/webhook')

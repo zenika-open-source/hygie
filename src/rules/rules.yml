@@ -95,7 +95,7 @@ rules:
           message: '{{data.issueTitle}} is not a correct issue title'
       - callback: CommentIssueRunnable
         args:
-          comment: 'ping @bastienterrier'   
+          comment: 'ping @bastienterrier'
   - name: pullRequestTitle
     options:
       regexp: (WIP|FIX):\s.*
@@ -110,7 +110,7 @@ rules:
       - callback: CommentPullRequestRunnable
         args:
           comment: 'ping @bastienterrier'
-      
+
 
 groups:
   - groupName: "check pattern 1"

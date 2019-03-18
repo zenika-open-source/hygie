@@ -1,5 +1,5 @@
 import { Injectable, HttpService } from '@nestjs/common';
-import { RunnableInterface } from './runnable.interface';
+import { Runnable } from './runnable.class';
 import { LoggerRunnable } from './logger.runnable';
 import { Rule } from '../rules/rule.class';
 import { WebhookRunnable } from './webhook.runnable';
@@ -20,15 +20,15 @@ export enum CallbackType {
 }
 
 @Injectable()
-export class RunnableService {
+export class RunnablesService {
   constructor(
     private readonly httpService: HttpService,
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
   ) {}
 
-  getRunnable(name: string): RunnableInterface {
-    let runnable: RunnableInterface;
+  getRunnable(name: string): Runnable {
+    let runnable: Runnable;
     switch (name) {
       case 'LoggerRunnable':
         runnable = new LoggerRunnable();
@@ -71,7 +71,7 @@ export class RunnableService {
     ruleResult: RuleResult,
     ruleOrGroup: Rule | Group,
   ): boolean {
-    let runnable: RunnableInterface;
+    let runnable: Runnable;
 
     if (typeof ruleOrGroup.onBoth !== 'undefined') {
       ruleOrGroup.onBoth.forEach(both => {

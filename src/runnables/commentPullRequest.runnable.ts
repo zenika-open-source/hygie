@@ -1,25 +1,26 @@
-import { RunnableInterface } from './runnable.interface';
+import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { Injectable } from '@nestjs/common';
 import { GitCommentPRInfos } from '../git/gitPRInfos';
-import { CallbackType } from './runnable';
+import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
+import { RunnableDecorator } from './runnable.decorator';
 
 interface CommentPRArgs {
   comment: string;
 }
 
-@Injectable()
-export class CommentPullRequestRunnable implements RunnableInterface {
-  name: string = 'CommentPullRequestRunnable';
+@RunnableDecorator('CommentPullRequestRunnable')
+export class CommentPullRequestRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
-  ) {}
+  ) {
+    super();
+  }
   run(
     callbackType: CallbackType,
     ruleResult: RuleResult,

@@ -1,8 +1,8 @@
 import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
-import { Injectable } from '@nestjs/common';
 import { Webhook } from '../webhook/webhook';
+import { RuleDecorator } from './rule.decorator';
 
 interface BranchNameOptions {
   regexp: string;
@@ -12,9 +12,8 @@ interface BranchNameOptions {
  * `BranchNameRule` check the branch's name according to a regular expression
  * @return return a `RuleResult` object
  */
-@Injectable()
+@RuleDecorator('branchName')
 export class BranchNameRule extends Rule {
-  name = 'branchName';
   options: BranchNameOptions;
   events = [GitEventEnum.NewBranch];
 

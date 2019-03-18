@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Rule } from './rule.class';
-import { RunnableService } from '../runnables/runnable';
+import { RunnablesService } from '../runnables/runnables.service';
 import { Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
 import { safeLoad } from 'js-yaml';
@@ -12,7 +12,7 @@ import { logger } from '../logger/logger.service';
 @Injectable()
 export class RulesService {
   constructor(
-    private readonly runnableService: RunnableService,
+    private readonly runnableService: RunnablesService,
     private readonly rulesClasses: Rule[] = [],
   ) {}
 
@@ -53,9 +53,6 @@ export class RulesService {
     const groups: Group[] = this.getGroupsConfiguration();
     const rulesOptions: RulesOptions = this.getRulesOptions();
 
-    // tslint:disable-next-line:no-console
-    console.log(JSON.stringify(rulesOptions, null, 4));
-
     const BreakException = {};
     const results: RuleResult[] = new Array();
 
@@ -79,8 +76,9 @@ export class RulesService {
           }
         });
       } catch (e) {
-        // tslint:disable-next-line:no-console
-        console.error(e);
+        if (e !== BreakException) {
+          logger.error(e);
+        }
       }
     }
 
