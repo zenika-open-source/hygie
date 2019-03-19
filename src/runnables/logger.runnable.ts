@@ -20,14 +20,11 @@ export class LoggerRunnable extends Runnable {
     // Defaults
     if (
       typeof args.type === 'undefined' &&
-      callbackType === CallbackType.Success
-    ) {
-      args.type = 'info';
-    } else if (
-      typeof args.type === 'undefined' &&
       callbackType === CallbackType.Error
     ) {
       args.type = 'warn';
+    } else {
+      args.type = 'info';
     }
 
     switch (args.type) {

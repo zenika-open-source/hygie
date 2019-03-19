@@ -33,8 +33,9 @@ export class RulesService {
     return groupsConfig.map(g => {
       const group = new Group();
       group.groupName = g.groupName;
-      group.onError = g.onError;
-      group.onSuccess = g.onSuccess;
+      group.onError = g.onError || [];
+      group.onSuccess = g.onSuccess || [];
+      group.onBoth = g.onBoth || [];
       group.rules = g.rules;
       return group;
     });
