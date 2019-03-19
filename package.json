@@ -7,7 +7,7 @@
     "build": "tsc -p tsconfig.build.json && (cp src/rules/rules.yml dist/rules/rules.yml) && (cp config.env dist/config.env)",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "prettier-test": "prettier -l \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "ts-node -r tsconfig-paths/register src/main.ts",
+    "start": "ts-node --transpile-only -r tsconfig-paths/register src/main.ts",
     "start:dev": "nodemon",
     "start:debug": "nodemon --config nodemon-debug.json",
     "prestart:prod": "rimraf dist && npm run build",

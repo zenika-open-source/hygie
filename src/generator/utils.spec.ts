@@ -1,5 +1,11 @@
+import { getAllComments } from './utils';
+import { exec } from 'shelljs';
+
+describe('Utils', () => {
+  it('should return a array of comments', () => {
+    const result = getAllComments(`
 /**
- * Options supported in the `rules.yml` file
+ * Options supported in the rules.yml file
  */
 export class RulesOptions {
   /**
@@ -29,4 +35,13 @@ export class RulesOptions {
           : r.enableGroups;
     }
   }
-}
+}`);
+
+    expect(result).toEqual([
+      '  Options supported in the rules.yml file ',
+      ' Specify if the process continue when a rule does not succeed',
+      ' Specify if rules will be processed',
+      ' Specify if groups will be processed',
+    ]);
+  });
+});
