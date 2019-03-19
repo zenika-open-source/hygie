@@ -23,7 +23,7 @@ export class LoggerRunnable extends Runnable {
       callbackType === CallbackType.Error
     ) {
       args.type = 'warn';
-    } else {
+    } else if (typeof args.type === 'undefined') {
       args.type = 'info';
     }
 
