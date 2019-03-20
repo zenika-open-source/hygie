@@ -6,6 +6,7 @@ rules:
   - name: commitMessage
     options:
       regexp: '(feat|fix|docs)(\([a-z]+\))?:\s[^(]*(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
+      maxLength: 100
     onSuccess:
       - callback: LoggerRunnable
         args:
@@ -25,7 +26,7 @@ rules:
     onError:
       - callback: LoggerRunnable
         args:
-          message: 'pattern does not match, commit name must begin with : "feat|fix|docs"! Check your commit message:
+          message: 'pattern does not match, commit name must begin with : "feat|fix|docs" and contains less than 100 numerals! Check your commit message:
             {{#data.commits}}
               > {{message.commits}} (#{{sha}})
             {{/data.commits}}

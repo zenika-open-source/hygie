@@ -6,6 +6,7 @@ import { RuleDecorator } from './rule.decorator';
 
 interface CommitMessageOptions {
   regexp: string;
+  maxLength: number;
 }
 
 export class CommitMatches {
@@ -17,7 +18,7 @@ export class CommitMatches {
 }
 
 /**
- * `CommitMessageRule` check all commits title according to a regular expression
+ * `CommitMessageRule` check all commits title according to a regular expression and an optional max size.
  * @return return a `RuleResult` object
  */
 @RuleDecorator('commitMessage')
@@ -39,7 +40,12 @@ export class CommitMessageRule extends Rule {
 
     commits.forEach(c => {
       commitMatches = new CommitMatches();
-      regexpSuccessed = commitRegExp.test(c.message);
+
+      regexpSuccessed =
+        commitRegExp.test(c.message) &&
+        (ruleConfig.options.maxLength !== undefined
+          ? c.message.length <= ruleConfig.options.maxLength
+          : true);
 
       if (regexpSuccessed) {
         commitMatches.status = CommitStatusEnum.Success;

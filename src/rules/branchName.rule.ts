@@ -9,7 +9,7 @@ interface BranchNameOptions {
 }
 
 /**
- * `BranchNameRule` check the branch's name according to a regular expression
+ * `BranchNameRule` check the branch's name according to a regular expression.
  * @return return a `RuleResult` object
  */
 @RuleDecorator('branchName')
