@@ -1,6 +1,5 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
@@ -13,6 +12,10 @@ interface CommentPRArgs {
   comment: string;
 }
 
+/**
+ * `CommentPullRequestRunnable` comment the PR or MR processed by the previous rule.
+ *  @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object.
+ */
 @RunnableDecorator('CommentPullRequestRunnable')
 export class CommentPullRequestRunnable extends Runnable {
   constructor(
