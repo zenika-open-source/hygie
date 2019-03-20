@@ -5,7 +5,7 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 
 /**
- * `OneCommitPerPRRule` check if there is only one commit in the current PR/MR/Push
+ * `OneCommitPerPRRule` check if there is only one commit in the current PR, MR or Push
  * @return return a `RuleResult` object
  */
 @RuleDecorator('oneCommitPerPR')

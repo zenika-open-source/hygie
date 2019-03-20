@@ -9,7 +9,7 @@ interface PullRequestTitleOptions {
 }
 
 /**
- * `PullRequestTitleRule` check the PR/MR's title according to a regular expression
+ * `PullRequestTitleRule` check the PR or MR's title according to a regular expression
  * @return return a `RuleResult` object
  */
 @RuleDecorator('pullRequestTitle')

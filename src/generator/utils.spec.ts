@@ -38,10 +38,10 @@ export class RulesOptions {
 }`);
 
     expect(result).toEqual([
-      '  Options supported in the rules.yml file ',
-      ' Specify if the process continue when a rule does not succeed',
-      ' Specify if rules will be processed',
-      ' Specify if groups will be processed',
+      'Options supported in the rules.yml file',
+      'Specify if the process continue when a rule does not succeed',
+      'Specify if rules will be processed',
+      'Specify if groups will be processed',
     ]);
   });
 });
