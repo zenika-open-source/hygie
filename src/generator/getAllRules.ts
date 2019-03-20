@@ -22,7 +22,6 @@ export function getAllRules(): object {
     const rule: any = {};
 
     const tooltip = getAllComments(contentFile)[0];
-
     rule.tooltip = tooltip.substring(0, tooltip.indexOf('@return')).trim();
 
     rule.runnables = [];

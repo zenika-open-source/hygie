@@ -1,5 +1,6 @@
 import { RunnablesValues } from '../runnables/runnable.module';
 import * as fs from 'fs';
+import { getAllComments } from './utils';
 
 export function getAllRunnables(): object {
   const path = require('path');
@@ -20,6 +21,8 @@ export function getAllRunnables(): object {
     );
 
     const runnable: any = {};
+
+    runnable.tooltip = getAllComments(contentFile)[0];
 
     const regexName = new RegExp(/@RunnableDecorator\('(.*)'\)/);
     runnable.name = contentFile.match(regexName)[1];
