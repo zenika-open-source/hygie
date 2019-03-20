@@ -66,6 +66,7 @@ describe('RulesService', () => {
       commitMessage.options = {
         regexp:
           '(feat|fix|docs)(\\([a-z]+\\))?:\\s[^(]*(\\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\\))?$',
+        maxLength: 100,
       };
 
       jest.spyOn(commitMessage, 'validate');
@@ -134,6 +135,7 @@ describe('RulesService', () => {
       commitMessage.options = {
         regexp:
           '(feat|fix|docs)(\\([a-z]+\\))?:\\s[^(]*(\\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\\))?$',
+        maxLength: 100,
       };
 
       jest.spyOn(commitMessage, 'validate');
