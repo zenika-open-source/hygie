@@ -36,7 +36,7 @@ interface SendEmailArgs {
 }
 
 /**
- * `SendEmailRunnable` allow you to send Email with the Gmail API.
+ * `SendEmailRunnable` allows you to send Email with the Gmail API.
  * @warn Be sure to have configured the Gmail API as explained in the documentation.
  */
 @RunnableDecorator('SendEmailRunnable')

@@ -13,7 +13,7 @@ interface CommentIssueArgs {
 }
 
 /**
- * `CommentIssueRunnable` comment the Issue processed by the previous rule.
+ * `CommentIssueRunnable` comments the Issue processed by the previous rule.
  * @warn Be sure that the rule returned the `issueNumber` property in the `RuleResult` object.
  */
 @RunnableDecorator('CommentIssueRunnable')

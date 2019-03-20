@@ -13,7 +13,7 @@ interface CommentPRArgs {
 }
 
 /**
- * `CommentPullRequestRunnable` comment the PR or MR processed by the previous rule.
+ * `CommentPullRequestRunnable` comments the PR or MR processed by the previous rule.
  *  @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object.
  */
 @RunnableDecorator('CommentPullRequestRunnable')

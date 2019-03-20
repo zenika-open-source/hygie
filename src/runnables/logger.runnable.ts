@@ -11,7 +11,7 @@ interface LoggerArgs {
 }
 
 /**
- * `LoggerRunnable` log informations in your terminal.
+ * `LoggerRunnable` logs informations in your terminal.
  */
 @RunnableDecorator('LoggerRunnable')
 export class LoggerRunnable extends Runnable {

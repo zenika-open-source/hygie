@@ -17,7 +17,7 @@ interface UpdateCommitStatusArgs {
 }
 
 /**
- * `UpdateCommitStatusRunnable` update the commits' status processed by the previous rule.
+ * `UpdateCommitStatusRunnable` updates the commits' status processed by the previous rule.
  * @warn Be sure that the previous rule returned the `commits` property in the `RuleResult` object.
  */
 @RunnableDecorator('UpdateCommitStatusRunnable')

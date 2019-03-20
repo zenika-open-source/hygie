@@ -18,7 +18,7 @@ export class CommitMatches {
 }
 
 /**
- * `CommitMessageRule` check all commits title according to a regular expression and an optional max size.
+ * `CommitMessageRule` checks all commits title according to a regular expression and an optional max size.
  * @return return a `RuleResult` object
  */
 @RuleDecorator('commitMessage')
