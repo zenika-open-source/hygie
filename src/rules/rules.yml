@@ -1,8 +1,8 @@
 --- # Rules config file
 options:
-  executeAllRules: true
-  enableGroups: true
-  enableRules: false
+  executeAllRules: false
+  enableGroups: false
+  enableRules: true
   allRuleResultInOne: true
 rules:
   - name: commitMessage
