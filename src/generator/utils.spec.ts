@@ -1,5 +1,4 @@
 import { getAllComments } from './utils';
-import { exec } from 'shelljs';
 
 describe('Utils', () => {
   it('should return a array of comments', () => {
