@@ -1,7 +1,9 @@
 --- # Rules config file
 options:
-  executeAllRules: false
-  enableGroups: false
+  executeAllRules: true
+  enableGroups: true
+  enableRules: false
+  allRuleResultInOne: true
 rules:
   - name: commitMessage
     options:
@@ -119,25 +121,18 @@ groups:
       - name: commitMessage
         options:
           regexp: '(feat|fix):\s.*'
+      - name: oneCommitPerPR
       - name: branchName
         options:
           regex: "feature/.*"
-    onSuccess:
+    onBoth:
       - callback: LoggerRunnable
         args:
-          message: "Pattern match! 11"
+          message: "blablabla..."
       - callback: WebhookRunnable
         args:
           url: "https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8"
-          data: { message: "Pattern match! 11" }
-    onError:
-      - callback: LoggerRunnable
-        args:
-          message: "Pattern do not match... 11"
-      - callback: WebhookRunnable
-        args:
-          url: "https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8"
-          data: { message: "Pattern do not match... 11" }
+          data: { message: "data : {{#data}}- {{name}} -{{/data}}" }
 
   - groupName: "check pattern 2"
     rules:
