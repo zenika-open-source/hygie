@@ -8,6 +8,7 @@ import { readFileSync } from 'fs';
 import { RulesOptions } from './rules.options';
 import { Group } from './group.class';
 import { logger } from '../logger/logger.service';
+import { GroupResult } from './groupResult';
 
 @Injectable()
 export class RulesService {
@@ -33,8 +34,9 @@ export class RulesService {
     return groupsConfig.map(g => {
       const group = new Group();
       group.groupName = g.groupName;
-      group.onError = g.onError;
-      group.onSuccess = g.onSuccess;
+      group.onError = g.onError || [];
+      group.onSuccess = g.onSuccess || [];
+      group.onBoth = g.onBoth || [];
       group.rules = g.rules;
       return group;
     });
@@ -87,19 +89,44 @@ export class RulesService {
       try {
         logger.info('### TRY GROUPS ###');
         groups.forEach(g => {
-          g.displayInformations();
+          const groupResults: GroupResult[] = new Array();
+
+          // g.displayInformations();
           g.rules.forEach(ruleConfig => {
             const r = this.getRule(ruleConfig);
             if (r.isEnabled(webhook, ruleConfig)) {
               const ruleResult: RuleResult = r.validate(webhook, ruleConfig);
               results.push(ruleResult);
 
-              this.runnableService.executeRunnableFunctions(ruleResult, g);
-              if (!rulesOptions.executeAllRules && !ruleResult.validated) {
+              if (rulesOptions.allRuleResultInOne) {
+                groupResults.push({
+                  name: ruleConfig.name,
+                  ruleResult,
+                });
+              } else {
+                this.runnableService.executeRunnableFunctions(ruleResult, g);
+              }
+
+              if (
+                !rulesOptions.executeAllRules &&
+                !rulesOptions.allRuleResultInOne &&
+                !ruleResult.validated
+              ) {
                 throw BreakException;
               }
             }
           });
+
+          // If all rules have been tested, we can execute runnable functions with the result of previous rules
+          if (rulesOptions.allRuleResultInOne) {
+            if (groupResults.length > 0) {
+              const ruleResult: RuleResult = new RuleResult(
+                webhook.getGitApiInfos(),
+              );
+              ruleResult.data = groupResults;
+              this.runnableService.executeRunnableFunctions(ruleResult, g);
+            }
+          }
         });
       } catch (e) {
         // tslint:disable-next-line:no-console

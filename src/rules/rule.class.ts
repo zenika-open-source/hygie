@@ -34,6 +34,7 @@ export abstract class Rule {
     logger.info('events:' + this.events);
     logger.info('onSuccess:' + this.onSuccess);
     logger.info('onError:' + this.onError);
+    logger.info('onBoth:' + this.onBoth);
     logger.info('options:' + this.options);
   }
 

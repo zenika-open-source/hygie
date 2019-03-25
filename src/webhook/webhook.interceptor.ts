@@ -1,4 +1,9 @@
-import { Injectable, NestInterceptor, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { GithubEvent } from '../github/githubEvent';
 import { GitlabEvent } from '../gitlab/gitlabEvent';
@@ -13,10 +18,7 @@ export class WebhookInterceptor implements NestInterceptor {
     private readonly githubService: GithubService,
   ) {}
 
-  intercept(
-    context: ExecutionContext,
-    call$: Observable<any>,
-  ): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
 
     const bodyRequest: GithubEvent | GitlabEvent = request.body;
@@ -29,6 +31,6 @@ export class WebhookInterceptor implements NestInterceptor {
 
     request.body = webhook;
 
-    return call$;
+    return next.handle();
   }
 }

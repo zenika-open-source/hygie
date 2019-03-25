@@ -35,6 +35,10 @@ interface SendEmailArgs {
   message: string;
 }
 
+/**
+ * `SendEmailRunnable` allows you to send Email with the Gmail API.
+ * @warn Be sure to have configured the Gmail API as explained in the documentation.
+ */
 @RunnableDecorator('SendEmailRunnable')
 export class SendEmailRunnable extends Runnable {
   // If modifying these scopes, delete token.json.

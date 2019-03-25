@@ -13,6 +13,9 @@ interface WebhookArgs {
   config: object;
 }
 
+/**
+ * `WebhookRunnable` sends a POST request to the provided URL with custom `body` and `config`.
+ */
 @RunnableDecorator('WebhookRunnable')
 export class WebhookRunnable extends Runnable {
   constructor(private readonly httpService: HttpService) {

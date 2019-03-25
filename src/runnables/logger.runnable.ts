@@ -10,6 +10,9 @@ interface LoggerArgs {
   message: string;
 }
 
+/**
+ * `LoggerRunnable` logs informations in your terminal.
+ */
 @RunnableDecorator('LoggerRunnable')
 export class LoggerRunnable extends Runnable {
   run(
@@ -20,14 +23,11 @@ export class LoggerRunnable extends Runnable {
     // Defaults
     if (
       typeof args.type === 'undefined' &&
-      callbackType === CallbackType.Success
-    ) {
-      args.type = 'info';
-    } else if (
-      typeof args.type === 'undefined' &&
       callbackType === CallbackType.Error
     ) {
       args.type = 'warn';
+    } else if (typeof args.type === 'undefined') {
+      args.type = 'info';
     }
 
     switch (args.type) {

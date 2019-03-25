@@ -9,7 +9,7 @@ interface IssueTitleOptions {
 }
 
 /**
- * `IssueTitleRule` check the issue's title according to a regular expression
+ * `IssueTitleRule` checks the issue's title according to a regular expression.
  * @return return a `RuleResult` object
  */
 @RuleDecorator('issueTitle')

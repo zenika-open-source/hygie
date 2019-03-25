@@ -16,6 +16,9 @@ interface CreatePullRequestArgs {
   target: string;
 }
 
+/**
+ * `CreatePullRequestRunnable` creates a new PR or MR.
+ */
 @RunnableDecorator('CreatePullRequestRunnable')
 export class CreatePullRequestRunnable extends Runnable {
   constructor(

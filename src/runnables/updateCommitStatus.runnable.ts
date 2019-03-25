@@ -16,6 +16,10 @@ interface UpdateCommitStatusArgs {
   failDescriptionMessage: string;
 }
 
+/**
+ * `UpdateCommitStatusRunnable` updates the commits' status processed by the previous rule.
+ * @warn Be sure that the previous rule returned the `commits` property in the `RuleResult` object.
+ */
 @RunnableDecorator('UpdateCommitStatusRunnable')
 export class UpdateCommitStatusRunnable extends Runnable {
   constructor(

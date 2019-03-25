@@ -2,10 +2,13 @@
 options:
   executeAllRules: false
   enableGroups: false
+  enableRules: true
+  allRuleResultInOne: true
 rules:
   - name: commitMessage
     options:
       regexp: '(feat|fix|docs)(\([a-z]+\))?:\s[^(]*(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
+      maxLength: 100
     onSuccess:
       - callback: LoggerRunnable
         args:
@@ -25,7 +28,7 @@ rules:
     onError:
       - callback: LoggerRunnable
         args:
-          message: 'pattern does not match, commit name must begin with : "feat|fix|docs"! Check your commit message:
+          message: 'pattern does not match, commit name must begin with : "feat|fix|docs" and contains less than 100 numerals! Check your commit message:
             {{#data.commits}}
               > {{message.commits}} (#{{sha}})
             {{/data.commits}}
@@ -118,25 +121,18 @@ groups:
       - name: commitMessage
         options:
           regexp: '(feat|fix):\s.*'
+      - name: oneCommitPerPR
       - name: branchName
         options:
           regex: "feature/.*"
-    onSuccess:
+    onBoth:
       - callback: LoggerRunnable
         args:
-          message: "Pattern match! 11"
+          message: "blablabla..."
       - callback: WebhookRunnable
         args:
           url: "https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8"
-          data: { message: "Pattern match! 11" }
-    onError:
-      - callback: LoggerRunnable
-        args:
-          message: "Pattern do not match... 11"
-      - callback: WebhookRunnable
-        args:
-          url: "https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8"
-          data: { message: "Pattern do not match... 11" }
+          data: { message: "data : {{#data}}- {{name}} -{{/data}}" }
 
   - groupName: "check pattern 2"
     rules:

@@ -10,8 +10,17 @@ export class Group {
 
   displayInformations(): void {
     logger.info(`== ${this.groupName} ==`);
-    logger.info(`> ${this.rules.length} rules`);
-    logger.info(`> ${this.onSuccess.length} onSuccess callback`);
-    logger.info(`> ${this.onError.length} onError callback`);
+    if (this.rules !== undefined) {
+      logger.info(`> ${this.rules.length} rules`);
+    }
+    if (this.onSuccess !== undefined) {
+      logger.info(`> ${this.onSuccess.length} onSuccess callback`);
+    }
+    if (this.onError !== undefined) {
+      logger.info(`> ${this.onError.length} onError callback`);
+    }
+    if (this.onBoth !== undefined) {
+      logger.info(`> ${this.onBoth.length} onBoth callback`);
+    }
   }
 }

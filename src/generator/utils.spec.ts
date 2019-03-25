@@ -1,5 +1,10 @@
+import { getAllComments } from './utils';
+
+describe('Utils', () => {
+  it('should return a array of comments', () => {
+    const result = getAllComments(`
 /**
- * Options supported in the `rules.yml` file
+ * Options supported in the rules.yml file
  */
 export class RulesOptions {
   /**
@@ -14,10 +19,6 @@ export class RulesOptions {
    * Specify if groups will be processed
    */
   enableGroups: boolean = true;
-  /**
-   * Specify if execute a runnable only once with the result of all rules
-   */
-  allRuleResultInOne: boolean = false;
 
   constructor(r?: RulesOptions) {
     if (r !== undefined && r !== null) {
@@ -31,10 +32,15 @@ export class RulesOptions {
         typeof r.enableGroups === 'undefined'
           ? this.enableGroups
           : r.enableGroups;
-      this.allRuleResultInOne =
-        typeof r.allRuleResultInOne === 'undefined'
-          ? this.allRuleResultInOne
-          : r.allRuleResultInOne;
     }
   }
-}
+}`);
+
+    expect(result).toEqual([
+      'Options supported in the rules.yml file',
+      'Specify if the process continue when a rule does not succeed',
+      'Specify if rules will be processed',
+      'Specify if groups will be processed',
+    ]);
+  });
+});

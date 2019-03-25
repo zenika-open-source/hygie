@@ -7,7 +7,7 @@ import { RunnableModule } from '../runnables/runnable.module';
 export const RulesValues = Object.values(require('./index')).map(
   rule => rule as Rule,
 );
-const RulesProviders = RulesValues.map(rule => ({
+const RulesProviders: any = RulesValues.map(rule => ({
   provide: rule,
   useClass: rule as any,
 }));

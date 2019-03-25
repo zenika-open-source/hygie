@@ -1,6 +1,7 @@
 import { RulesValues } from '../rules/rules.module';
 
 import * as fs from 'fs';
+import { getAllComments } from './utils';
 export function getAllRules(): object {
   const path = require('path');
 
@@ -19,6 +20,9 @@ export function getAllRules(): object {
       'utf-8',
     );
     const rule: any = {};
+
+    const tooltip = getAllComments(contentFile)[0];
+    rule.tooltip = tooltip.substring(0, tooltip.indexOf('@return')).trim();
 
     rule.runnables = [];
 
