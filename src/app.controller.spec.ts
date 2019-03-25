@@ -61,6 +61,7 @@ describe('AppController', () => {
       fullName: 'bastienterrier/test_webhook',
       name: 'test_webhook',
       description: 'amazing project',
+      cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
     };
 
     // githubPushWebhook initialisation
@@ -80,6 +81,7 @@ describe('AppController', () => {
       fullName: 'bastienterrier/test_webhook',
       name: 'test_webhook',
       description: 'amazing project',
+      cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
     };
 
     // githubBranchWebhook initialisation
@@ -99,6 +101,7 @@ describe('AppController', () => {
       fullName: 'bastienterrier/test_webhook',
       name: 'test_webhook',
       description: 'amazing project',
+      cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
     };
   });
 

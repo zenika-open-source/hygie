@@ -47,6 +47,7 @@ describe('RulesService', () => {
         fullName: 'bastienterrier/test_webhook',
         name: 'test_webhook',
         description: 'amazing project',
+        cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
       };
       webhook.commits = [
         {
@@ -116,6 +117,7 @@ describe('RulesService', () => {
         fullName: 'bastienterrier/test_webhook',
         name: 'test_webhook',
         description: 'amazing project',
+        cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
       };
       webhook.commits = [
         {

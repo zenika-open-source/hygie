@@ -19,6 +19,7 @@ import { PreconditionException } from './exceptions/precondition.exception';
 import { getAllRules } from './generator/getAllRules';
 import { getAllRunnables } from './generator/getAllRunnables';
 import { getAllOptions } from './generator/getAllOptions';
+import { cloneOrUpdateGitRepository } from './remote-config/utils';
 
 @Controller()
 export class AppController {
@@ -57,11 +58,17 @@ export class AppController {
     ) {
       throw new PreconditionException();
     } else {
+      // First, check if the config folder of the emitter already exist
+      // If not, create the folder with the `/remote-config` files (with config.env + rules.yml)
+      const remoteRepository = cloneOrUpdateGitRepository(
+        webhook.getCloneURL(),
+      );
+
       logger.info(
         `\n\n=== processWebhook - ${webhook.getGitType()} - ${webhook.getGitEvent()} ===\n`,
       );
 
-      const result = this.rulesService.testRules(webhook);
+      const result = this.rulesService.testRules(webhook, remoteRepository);
       response.status(HttpStatus.ACCEPTED).send(result);
     }
   }

@@ -12,6 +12,7 @@ export interface GithubRepository {
   full_name: string;
   name: string;
   description: string;
+  clone_url: string;
 }
 /**
  * GithubCommit dto
