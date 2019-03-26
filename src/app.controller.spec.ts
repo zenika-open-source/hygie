@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
-import { HttpModule, HttpService } from '@nestjs/common';
+import { HttpService } from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { GitEventEnum, GitTypeEnum } from './webhook/utils.enum';
 import { RulesModule } from './rules/rules.module';
@@ -61,6 +61,7 @@ describe('AppController', () => {
       fullName: 'bastienterrier/test_webhook',
       name: 'test_webhook',
       description: 'amazing project',
+      cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
     };
 
     // githubPushWebhook initialisation
@@ -80,6 +81,7 @@ describe('AppController', () => {
       fullName: 'bastienterrier/test_webhook',
       name: 'test_webhook',
       description: 'amazing project',
+      cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
     };
 
     // githubBranchWebhook initialisation
@@ -99,6 +101,7 @@ describe('AppController', () => {
       fullName: 'bastienterrier/test_webhook',
       name: 'test_webhook',
       description: 'amazing project',
+      cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
     };
   });
 

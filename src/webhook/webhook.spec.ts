@@ -31,6 +31,7 @@ webhook.repository = {
   fullName: 'bastienterrier/test_webhook',
   name: 'test_webhook',
   description: 'amazing project',
+  cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
 };
 webhook.pullRequest = {
   title: 'my PR for webhook',
@@ -96,6 +97,14 @@ describe('Webhook', () => {
   describe('getGitEvent', () => {
     it('should return GitEventEnum.NewBranch', () => {
       expect(webhook.getGitEvent()).toBe(GitEventEnum.NewBranch);
+    });
+  });
+
+  describe('getCloneURL', () => {
+    it('should return https://github.com/bastienterrier/test-webhook.git', () => {
+      expect(webhook.getCloneURL()).toBe(
+        'https://github.com/bastienterrier/test-webhook.git',
+      );
     });
   });
 });

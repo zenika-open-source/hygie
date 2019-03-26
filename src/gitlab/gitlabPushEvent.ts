@@ -1,4 +1,4 @@
-import { GitlabCommit } from './gitlab.interface';
+import { GitlabCommit, GitlabProject } from './gitlab.interface';
 
 /**
  * GitlabPushEvent dto
@@ -9,4 +9,5 @@ export interface GitlabPushEvent {
   before: string;
   ref: string;
   object_kind: string;
+  project: GitlabProject;
 }

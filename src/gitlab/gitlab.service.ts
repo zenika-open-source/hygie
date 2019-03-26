@@ -15,10 +15,22 @@ export class GitlabService implements GitServiceInterface {
   token: string;
   urlApi: string;
 
-  constructor(private readonly httpService: HttpService) {
-    require('dotenv').config({ path: 'config.env' });
-    this.token = process.env.GITLAB_TOKEN;
-    this.urlApi = process.env.GITLAB_API;
+  constructor(private readonly httpService: HttpService) {}
+
+  setToken(token: string) {
+    this.token = token;
+  }
+
+  setUrlApi(urlApi: string) {
+    this.urlApi = urlApi;
+  }
+
+  setEnvironmentVariables(filePath: string): void {
+    require('dotenv').config({
+      path: 'remote-envs/' + filePath + '/config.env',
+    });
+    this.setToken(process.env.gitToken);
+    this.setUrlApi(process.env.gitApi);
   }
 
   updateCommitStatus(

@@ -19,14 +19,34 @@ import { PreconditionException } from './exceptions/precondition.exception';
 import { getAllRules } from './generator/getAllRules';
 import { getAllRunnables } from './generator/getAllRunnables';
 import { getAllOptions } from './generator/getAllOptions';
+import {
+  cloneOrUpdateGitRepository,
+  registerConfigEnv,
+} from './remote-config/utils';
+import { GitlabService } from './gitlab/gitlab.service';
+import { GithubService } from './github/github.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly rulesService: RulesService) {}
+  constructor(
+    private readonly rulesService: RulesService,
+    private readonly githubService: GithubService,
+    private readonly gitlabService: GitlabService,
+  ) {}
 
   @Get('/')
   welcome(): string {
     return '<p>Welcome, <b>Git Webhooks</b> is running!</p>';
+  }
+
+  @Post('/config-env')
+  postConfigEnv(@Body() body: any, @Res() response): void {
+    const configEnv = {
+      gitApi: body.gitApi,
+      gitToken: body.gitToken,
+      gitRepo: body.gitRepo,
+    };
+    response.send(registerConfigEnv(configEnv));
   }
 
   @Get('/rules')
@@ -57,11 +77,21 @@ export class AppController {
     ) {
       throw new PreconditionException();
     } else {
+      // First, check if the config folder of the emitter already exist
+      // If not, create the folder in the `/remote-rules` (with .git-webhooks/rules.yml)
+      const remoteRepository = cloneOrUpdateGitRepository(
+        webhook.getCloneURL(),
+      );
+
+      const remoteEnvs: string = webhook.getRemoteEnvs();
+      this.githubService.setEnvironmentVariables(remoteEnvs);
+      this.gitlabService.setEnvironmentVariables(remoteEnvs);
+
       logger.info(
         `\n\n=== processWebhook - ${webhook.getGitType()} - ${webhook.getGitEvent()} ===\n`,
       );
 
-      const result = this.rulesService.testRules(webhook);
+      const result = this.rulesService.testRules(webhook, remoteRepository);
       response.status(HttpStatus.ACCEPTED).send(result);
     }
   }

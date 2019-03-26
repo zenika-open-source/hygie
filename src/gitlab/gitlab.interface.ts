@@ -28,4 +28,5 @@ export interface GitlabPR {
 export interface GitlabProject {
   id: number;
   name: string;
+  git_http_url: string;
 }

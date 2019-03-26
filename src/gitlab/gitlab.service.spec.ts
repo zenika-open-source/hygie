@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GithubService } from '../github/github.service';
 import { HttpService } from '@nestjs/common';
 import { MockHttpService, MockObservable } from '../__mocks__/mocks';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
-import { GitTypeEnum, CommitStatusEnum } from '../webhook/utils.enum';
+import { CommitStatusEnum } from '../webhook/utils.enum';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitCreatePRInfos, GitCommentPRInfos } from '../git/gitPRInfos';
 import { Observable } from 'rxjs';
@@ -12,7 +11,7 @@ import { GitlabService } from './gitlab.service';
 
 require('dotenv').config({ path: 'config.env' });
 
-describe('RulesService', () => {
+describe('Gitlab Service', () => {
   let app: TestingModule;
   let gitlabService: GitlabService;
   let httpService: HttpService;

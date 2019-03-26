@@ -38,6 +38,7 @@ export class WebhookRepository {
   fullName: string;
   name: string;
   description: string;
+  cloneURL: string;
 }
 
 export class WebhookPR {
@@ -107,6 +108,20 @@ export class Webhook {
     return this.gitEvent;
   }
 
+  getCloneURL(): string {
+    return this.repository.cloneURL;
+  }
+
+  getRemoteEnvs(): string {
+    const splitedURL = this.getCloneURL().split('/');
+
+    return (
+      splitedURL[splitedURL.length - 2] +
+      '/' +
+      splitedURL[splitedURL.length - 1].replace('.git', '')
+    );
+  }
+
   gitToWebhook(git: GitlabEvent | GithubEvent): void {
     this.gitEvent = GitEventEnum.Undefined;
     this.gitType = GitTypeEnum.Undefined;
@@ -121,12 +136,14 @@ export class Webhook {
         this.commits.push(commit);
       });
       this.branchName = git.ref.split('/')[1];
+      this.repository.cloneURL = git.project.git_http_url;
     } else if (isGitlabBranchEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewBranch;
       this.gitService = this.gitlabService;
       this.branchName = git.ref.substring(11);
       this.projectId = git.project_id;
+      this.repository.cloneURL = git.project.git_http_url;
     } else if (isGithubPushEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.Push;
@@ -137,6 +154,7 @@ export class Webhook {
         this.commits.push(commit);
       });
       this.branchName = git.ref.substring(11);
+      this.repository.cloneURL = git.repository.clone_url;
     } else if (isGithubBranchEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewBranch;
@@ -149,6 +167,7 @@ export class Webhook {
       this.issue.number = git.issue.number;
       this.issue.title = git.issue.title;
       this.repository.fullName = git.repository.full_name;
+      this.repository.cloneURL = git.repository.clone_url;
     } else if (isGitlabIssueEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewIssue;
@@ -156,6 +175,7 @@ export class Webhook {
       this.issue.number = git.object_attributes.iid;
       this.issue.title = git.object_attributes.title;
       this.projectId = git.object_attributes.project_id;
+      this.repository.cloneURL = git.project.git_http_url;
     } else if (isGithubNewRepoEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewRepo;
@@ -163,6 +183,7 @@ export class Webhook {
       this.repository.fullName = git.repository.full_name;
       this.repository.name = git.repository.name;
       this.repository.description = git.repository.description;
+      this.repository.cloneURL = git.repository.clone_url;
     } else if (isGithubNewPREvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewPR;
@@ -171,6 +192,7 @@ export class Webhook {
       this.pullRequest.description = git.pull_request.body;
       this.pullRequest.number = git.number;
       this.repository.fullName = git.repository.full_name;
+      this.repository.cloneURL = git.repository.clone_url;
     } else if (isGitlabNewPREvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewPR;
@@ -179,6 +201,7 @@ export class Webhook {
       this.pullRequest.title = git.object_attributes.title;
       this.pullRequest.description = git.object_attributes.description;
       this.pullRequest.number = git.object_attributes.iid;
+      this.repository.cloneURL = git.project.git_http_url;
     }
   }
 
