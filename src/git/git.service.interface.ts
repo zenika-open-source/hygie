@@ -41,4 +41,10 @@ export interface GitServiceInterface {
     gitApiInfos: GitApiInfos,
     gitCreatePRInfos: GitCreatePRInfos,
   ): void;
+
+  /**
+   * Initialize `gitApi` and `gitToken` env. variables on new webhook
+   * by reading the corresponding `config.env` file
+   */
+  setEnvironmentVariables(filePath: string): void;
 }

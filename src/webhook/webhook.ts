@@ -112,6 +112,16 @@ export class Webhook {
     return this.repository.cloneURL;
   }
 
+  getRemoteEnvs(): string {
+    const splitedURL = this.getCloneURL().split('/');
+
+    return (
+      splitedURL[splitedURL.length - 2] +
+      '/' +
+      splitedURL[splitedURL.length - 1].replace('.git', '')
+    );
+  }
+
   gitToWebhook(git: GitlabEvent | GithubEvent): void {
     this.gitEvent = GitEventEnum.Undefined;
     this.gitType = GitTypeEnum.Undefined;

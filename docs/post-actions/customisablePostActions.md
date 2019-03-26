@@ -6,7 +6,7 @@ This allow you to customise your process, according to the result of a rule.
 You can:
 
 - log informations,
-- send webhook with data priviously proccessed,
+- send webhook with data priviously processed,
 - comment an issue or a PR,
 - and much more!
 

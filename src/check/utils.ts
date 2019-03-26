@@ -23,6 +23,7 @@ export function checkIfFileExist(filename: string): boolean {
  * Array of relative paths
  */
 export function checkNeededFiles(filenames: string[]): boolean {
+  require('dotenv').config({ path: 'config.env' });
   const devEnv: boolean = process.env.NODE_ENV === 'development';
 
   let allFilesOk: boolean = true;

@@ -3,6 +3,15 @@ module.exports = {
   title: 'Git Webhooks',
   description:
     "Git Webhooks is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJS API expose a set of customizable rules to automate your project's life cycle.",
+  head: [
+    [
+      'link',
+      {
+        rel: 'stylesheet',
+        href: `https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css`,
+      },
+    ],
+  ],
   themeConfig: {
     repo: 'DX-DeveloperExperience/git-webhooks',
     docsRepo: 'DX-DeveloperExperience/git-webhooks',
@@ -31,7 +40,11 @@ module.exports = {
       {
         title: 'Guide',
         collapsable: false,
-        children: ['/guide/gettingStarted.md', '/guide/configGenerator.md'],
+        children: [
+          '/guide/gettingStarted.md',
+          '/guide/configGenerator.md',
+          '/guide/registerToken.md',
+        ],
       },
       {
         title: 'Rules',

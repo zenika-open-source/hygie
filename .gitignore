@@ -73,4 +73,5 @@ token.json
 # vuepress
 docs/.vuepress/dist/*
 
-remote-repository
+remote-rules
+remote-envs

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
-import { HttpModule, HttpService } from '@nestjs/common';
+import { HttpService } from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { GitEventEnum, GitTypeEnum } from './webhook/utils.enum';
 import { RulesModule } from './rules/rules.module';

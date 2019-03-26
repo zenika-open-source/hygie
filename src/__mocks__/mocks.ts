@@ -11,6 +11,9 @@ export class MockHttpService {
 
 export class MockGitlabService {
   updateCommitStatus: jest.Mock = jest.fn();
+  setEnvironmentVariables: jest.Mock = jest
+    .fn()
+    .mockName('setEnvironmentVariablesGitlab');
   addIssueComment: jest.Mock = jest.fn().mockName('addIssueCommentGitlab');
   addPRComment: jest.Mock = jest.fn().mockName('addPRCommentGitlab');
   createPullRequest: jest.Mock = jest.fn().mockName('createPullRequestGitlab');
@@ -18,6 +21,9 @@ export class MockGitlabService {
 
 export class MockGithubService {
   updateCommitStatus: jest.Mock = jest.fn();
+  setEnvironmentVariables: jest.Mock = jest
+    .fn()
+    .mockName('setEnvironmentVariablesGithub');
   addIssueComment: jest.Mock = jest.fn().mockName('addIssueCommentGithub');
   addPRComment: jest.Mock = jest.fn().mockName('addPRCommentGithub');
   createPullRequest: jest.Mock = jest.fn().mockName('createPullRequestGithub');

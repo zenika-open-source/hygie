@@ -4,14 +4,14 @@ import { HttpService } from '@nestjs/common';
 import { MockHttpService, MockObservable } from '../__mocks__/mocks';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
-import { GitTypeEnum, CommitStatusEnum } from '../webhook/utils.enum';
+import { CommitStatusEnum } from '../webhook/utils.enum';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitCreatePRInfos, GitCommentPRInfos } from '../git/gitPRInfos';
 import { Observable } from 'rxjs';
 
 require('dotenv').config({ path: 'config.env' });
 
-describe('RulesService', () => {
+describe('Github Service', () => {
   let app: TestingModule;
   let githubService: GithubService;
   let httpService: HttpService;
@@ -35,12 +35,20 @@ describe('RulesService', () => {
     httpService = app.get(HttpService);
     observable = app.get(Observable);
 
+    githubService.setToken('0123456789abcdef');
+    githubService.setUrlApi('https://api.github.com');
+    githubService.setConfigGitHub({
+      headers: {
+        Authorization: `token 0123456789abcdef`,
+      },
+    });
+
     gitApiInfos = new GitApiInfos();
     gitApiInfos.repositoryFullName = 'bastienterrier/test';
 
     expectedConfig = {
       headers: {
-        Authorization: `token ${process.env.GITHUB_TOKEN}`,
+        Authorization: `token 0123456789abcdef`,
       },
     };
   });
@@ -59,9 +67,7 @@ describe('RulesService', () => {
 
       githubService.updateCommitStatus(gitApiInfos, gitCommitStatusInfos);
 
-      const expectedUrl = `${
-        process.env.GITHUB_API
-      }/repos/bastienterrier/test/statuses/1`;
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/statuses/1`;
 
       const expectedData = {
         state: 'success',
@@ -85,9 +91,7 @@ describe('RulesService', () => {
 
       githubService.addIssueComment(gitApiInfos, gitIssueInfos);
 
-      const expectedUrl = `${
-        process.env.GITHUB_API
-      }/repos/bastienterrier/test/issues/1/comments`;
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues/1/comments`;
 
       const expectedData = {
         body: 'my comment',
@@ -109,9 +113,7 @@ describe('RulesService', () => {
 
       githubService.addPRComment(gitApiInfos, gitCommentPRInfos);
 
-      const expectedUrl = `${
-        process.env.GITHUB_API
-      }/repos/bastienterrier/test/issues/1/comments`;
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues/1/comments`;
 
       const expectedData = {
         body: 'my comment',
@@ -135,9 +137,7 @@ describe('RulesService', () => {
 
       githubService.createPullRequest(gitApiInfos, gitCreatePRInfos);
 
-      const expectedUrl = `${
-        process.env.GITHUB_API
-      }/repos/bastienterrier/test/pulls`;
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/pulls`;
 
       const expectedData = {
         title: 'my PR',

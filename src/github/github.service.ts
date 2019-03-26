@@ -17,15 +17,31 @@ export class GithubService implements GitServiceInterface {
 
   configGitHub: object;
 
-  constructor(private readonly httpService: HttpService) {
-    require('dotenv').config({ path: 'config.env' });
-    this.token = process.env.GITHUB_TOKEN;
-    this.configGitHub = {
+  constructor(private readonly httpService: HttpService) {}
+
+  setToken(token: string) {
+    this.token = token;
+  }
+
+  setUrlApi(urlApi: string) {
+    this.urlApi = urlApi;
+  }
+
+  setConfigGitHub(conf?: any) {
+    this.configGitHub = conf || {
       headers: {
         Authorization: 'token ' + this.token,
       },
     };
-    this.urlApi = process.env.GITHUB_API;
+  }
+
+  setEnvironmentVariables(filePath: string): void {
+    require('dotenv').config({
+      path: 'remote-envs/' + filePath + '/config.env',
+    });
+    this.setToken(process.env.gitToken);
+    this.setUrlApi(process.env.gitApi);
+    this.setConfigGitHub();
   }
 
   updateCommitStatus(
