@@ -54,9 +54,14 @@ export function cloneOrUpdateGitRepository(cloneURL: string): string {
  * @param gitApi
  * @param gitToken
  * @param nodeEnv
- * @return true if registration succeed, false otherwise
+ * @return an Object with the success status (true if registration succeed, false otherwise) and if the file already exist
  */
-export function registerConfigEnv(configEnv: ConfigEnv): boolean {
+export function registerConfigEnv(configEnv: ConfigEnv): any {
+  const result: any = {
+    succeed: true,
+    alreadyExist: false,
+  };
+
   const configFile: string =
     'remote-envs/' + getPath(configEnv.gitRepo.split('/')) + '/config.env';
 
@@ -64,6 +69,10 @@ export function registerConfigEnv(configEnv: ConfigEnv): boolean {
 gitToken=${configEnv.gitToken}`;
 
   const path = require('path');
+
+  if (fs.existsSync(configFile)) {
+    result.alreadyExist = true;
+  }
 
   fs.promises.mkdir(path.dirname(configFile), { recursive: true }).then(x =>
     fs.writeFileSync(configFile, content, err => {
@@ -73,5 +82,5 @@ gitToken=${configEnv.gitToken}`;
     }),
   );
 
-  return true;
+  return result;
 }
