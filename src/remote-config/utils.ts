@@ -29,12 +29,17 @@ export function cloneOrUpdateGitRepository(cloneURL: string): string {
   try {
     // If we already download the repo, juste need to pull
     if (fs.existsSync(`${target}`)) {
-      execa.shellSync(`git -C ${target} pull`);
+      execa.shellSync(
+        `git -C ${target} reset --hard HEAD && git -C ${target} pull`,
+      );
     } else {
       // Otherwise, clone the repo
-      execa.shellSync(`git clone --depth 1 ${cloneURL} ${target}`);
       execa.shellSync(
-        `cd ${target} && shopt -s extglob && rm -rf !(.git|.git-webhooks) && git fetch && git checkout HEAD .git-webhooks`,
+        `git clone --no-checkout --single-branch --no-tags --depth 1 ${cloneURL} ${target}`,
+      );
+      execa.shellSync(
+        // tslint:disable-next-line:max-line-length
+        `cd ${target} && git config core.sparseCheckout true && echo ".git-webhooks/rules.yml" > .git/info/sparse-checkoutech && git fetch && git checkout HEAD .git-webhooks`,
       );
     }
     return gitWebhooksFolder;
