@@ -68,8 +68,8 @@
     "tslint": "5.13.0",
     "typedoc": "0.14.2",
     "typescript": "3.3.3",
-    "vuepress": "^1.0.0-alpha.44",
-    "vuetify": "^1.5.7"
+    "vuepress": "1.0.0-alpha.44",
+    "vuetify": "1.5.7"
   },
   "jest": {
     "moduleFileExtensions": [

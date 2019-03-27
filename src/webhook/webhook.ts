@@ -25,11 +25,11 @@ export class WebhookIssue {
 }
 
 export class WebhookCommit {
-  id: string;
+  sha: string;
   message: string;
 
-  constructor(id: string, message: string) {
-    this.id = id;
+  constructor(sha: string, message: string) {
+    this.sha = sha;
     this.message = message;
   }
 }
@@ -69,11 +69,7 @@ export class Webhook {
   }
 
   getAllCommits(): WebhookCommit[] {
-    const commits: WebhookCommit[] = new Array();
-    this.commits.forEach(c => {
-      commits.push(c);
-    });
-    return commits;
+    return this.commits;
   }
 
   getPullRequestNumber(): number {

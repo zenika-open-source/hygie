@@ -49,22 +49,14 @@ module.exports = {
       {
         title: 'Rules',
         collapsable: false,
-        children: [
-          '/rules/customisableRules.md',
-          '/rules/branchName.md',
-          '/rules/commitMessage.md',
-          '/rules/issueTitle.md',
-          '/rules/oneCommitPerPR.md',
-        ],
+        children: ['/rules/customisableRules.md', '/rules/existingRules.md'],
       },
       {
         title: 'Post-Actions',
         collapsable: false,
         children: [
           '/post-actions/customisablePostActions.md',
-          '/post-actions/loggerRunnable.md',
-          '/post-actions/webhookRunnable.md',
-          '/post-actions/commentIssueRunnable.md',
+          '/post-actions/existingRunnables.md',
         ],
       },
     ],
