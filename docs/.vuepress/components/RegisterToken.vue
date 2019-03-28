@@ -1,7 +1,10 @@
 <template>
   <v-container>
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css">
-
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css"
+    >
 
     <v-layout>
       <v-flex xs12>
@@ -95,6 +98,10 @@ export default {
           gitToken: this.gitToken,
           gitApi: this.gitApi,
           gitRepo: this.gitRepo,
+        })
+        .catch(err => {
+          this.responseMessage =
+            '<span class="warning">Server to no answer</span>';
         })
         .then(response => {
           if (response.data.alreadyExist) {
