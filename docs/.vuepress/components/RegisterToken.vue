@@ -1,5 +1,8 @@
 <template>
   <v-container>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css">
+
+
     <v-layout>
       <v-flex xs12>
         <v-form v-model="valid" ref="form">
