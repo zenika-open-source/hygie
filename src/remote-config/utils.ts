@@ -1,4 +1,5 @@
 import { logger } from '../logger/logger.service';
+import { HttpService } from '@nestjs/common';
 
 const execa = require('execa');
 const fs = require('fs');
@@ -7,6 +8,18 @@ interface ConfigEnv {
   gitRepo: string;
   gitApi: string;
   gitToken: string;
+}
+
+function writeFileSync(fileName, fileContent): boolean {
+  const path = require('path');
+  fs.promises.mkdir(path.dirname(fileName), { recursive: true }).then(x =>
+    fs.writeFileSync(fileName, fileContent, err => {
+      if (err) {
+        throw err;
+      }
+    }),
+  );
+  return true;
 }
 
 function getPath(splitedURL: string[]): string {
@@ -18,30 +31,29 @@ function getPath(splitedURL: string[]): string {
 }
 
 /**
- * Clone the repository associate to the `cloneURL`. If this repo already exist, update it.
- * @param cloneURL
- * @return the location of the .git-webhooks/ repo
+ * Download the `rules.yml` from the repository associate to the `projectURL`.
+ * @param projectURL
+ * @return the location of the `.git-webhooks` repo
  */
-export function cloneOrUpdateGitRepository(cloneURL: string): string {
-  const target: string = 'remote-rules/' + getPath(cloneURL.split('/'));
+export function downloadRulesFile(
+  httpService: HttpService,
+  projectURL: string,
+): string {
+  const rulesFilePath: string = `${projectURL.replace(
+    '.git',
+    '',
+  )}/raw/master/.git-webhooks/rules.yml`;
 
-  const gitWebhooksFolder: string = target + '/.git-webhooks';
+  const gitWebhooksFolder: string =
+    'remote-rules/' + getPath(projectURL.split('/')) + '/.git-webhooks';
+
   try {
-    // If we already download the repo, juste need to pull
-    if (fs.existsSync(`${target}`)) {
-      execa.shellSync(
-        `git -C ${target} reset --hard HEAD && git -C ${target} pull`,
-      );
-    } else {
-      // Otherwise, clone the repo
-      execa.shellSync(
-        `git clone --no-checkout --single-branch --no-tags --depth 1 ${cloneURL} ${target}`,
-      );
-      execa.shellSync(
-        // tslint:disable-next-line:max-line-length
-        `cd ${target} && git config core.sparseCheckout true && echo ".git-webhooks/rules.yml" > .git/info/sparse-checkoutech && git fetch && git checkout HEAD .git-webhooks`,
-      );
-    }
+    httpService.get(rulesFilePath).subscribe(
+      response => {
+        writeFileSync(`${gitWebhooksFolder}/rules.yml`, response.data);
+      },
+      err => logger.error(err),
+    );
     return gitWebhooksFolder;
   } catch (e) {
     logger.error(e);
@@ -74,13 +86,7 @@ gitToken=${configEnv.gitToken}`;
     result.alreadyExist = true;
   }
 
-  fs.promises.mkdir(path.dirname(configFile), { recursive: true }).then(x =>
-    fs.writeFileSync(configFile, content, err => {
-      if (err) {
-        throw err;
-      }
-    }),
-  );
+  writeFileSync(configFile, content);
 
   return result;
 }

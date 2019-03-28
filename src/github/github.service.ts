@@ -6,6 +6,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
+import { PreconditionException } from '../exceptions/precondition.exception';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -39,6 +40,12 @@ export class GithubService implements GitServiceInterface {
     require('dotenv').config({
       path: 'remote-envs/' + filePath + '/config.env',
     });
+    if (
+      process.env.gitToken === undefined ||
+      process.env.gitApi === undefined
+    ) {
+      throw new PreconditionException();
+    }
     this.setToken(process.env.gitToken);
     this.setUrlApi(process.env.gitApi);
     this.setConfigGitHub();

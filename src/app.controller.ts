@@ -8,6 +8,7 @@ import {
   HttpStatus,
   UseFilters,
   Header,
+  HttpService,
 } from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { WebhookInterceptor } from './webhook/webhook.interceptor';
@@ -19,16 +20,14 @@ import { PreconditionException } from './exceptions/precondition.exception';
 import { getAllRules } from './generator/getAllRules';
 import { getAllRunnables } from './generator/getAllRunnables';
 import { getAllOptions } from './generator/getAllOptions';
-import {
-  cloneOrUpdateGitRepository,
-  registerConfigEnv,
-} from './remote-config/utils';
+import { registerConfigEnv, downloadRulesFile } from './remote-config/utils';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
 
 @Controller()
 export class AppController {
   constructor(
+    private readonly httpService: HttpService,
     private readonly rulesService: RulesService,
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
@@ -79,13 +78,25 @@ export class AppController {
     } else {
       // First, check if the config folder of the emitter already exist
       // If not, create the folder in the `/remote-rules` (with .git-webhooks/rules.yml)
-      const remoteRepository = cloneOrUpdateGitRepository(
+      const remoteRepository = downloadRulesFile(
+        this.httpService,
         webhook.getCloneURL(),
       );
 
-      const remoteEnvs: string = webhook.getRemoteEnvs();
-      this.githubService.setEnvironmentVariables(remoteEnvs);
-      this.gitlabService.setEnvironmentVariables(remoteEnvs);
+      try {
+        const remoteEnvs: string = webhook.getRemoteEnvs();
+        this.githubService.setEnvironmentVariables(remoteEnvs);
+        this.gitlabService.setEnvironmentVariables(remoteEnvs);
+      } catch (e) {
+        if (e instanceof PreconditionException) {
+          logger.warn(
+            'There is no config.env file for the current git project',
+          );
+          return;
+        } else {
+          throw e;
+        }
+      }
 
       logger.info(
         `\n\n=== processWebhook - ${webhook.getGitType()} - ${webhook.getGitEvent()} ===\n`,
