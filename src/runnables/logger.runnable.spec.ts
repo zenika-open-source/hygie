@@ -90,8 +90,8 @@ describe('RunnableService', () => {
       );
 
       expect(logger.info).not.toBeCalled();
-      expect(logger.error).not.toBeCalled();
-      expect(logger.warn).toBeCalled();
+      expect(logger.error).toBeCalled();
+      expect(logger.warn).not.toBeCalled();
     });
   });
 
