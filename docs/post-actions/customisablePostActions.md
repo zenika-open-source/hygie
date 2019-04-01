@@ -15,14 +15,14 @@ You can:
 In your `rules.yml` config file, you can add `callback` functions that will be called if the rule succeeds or not.
 
 These `callback`s are `Runnable` classes, that implementing the `Runnable` abstract class.
-The `Runnable` interface will have a `run()` method with `callbackType`, `RuleResult` and `args` as arguments.
+The `Runnable` class will have a `run()` method with `callbackType`, `RuleResult` and `args` as arguments.
 
 `callbackType` precise if the Runnable is called because the rule failed, succeed or if it always called.
 [`RuleResult`](../rules/customisableRules.html#validate-method) is an object containing the result of the rule, and `args` is a custom object, with as many properties as you want.
 
 ## Create your own Runnable class
 
-If you don't find a suitable Post-Action for your needs, you can easily create yours by extende the `Runnable` class.
+If you don't find a suitable Post-Action for your needs, you can easily create yours by extending the `Runnable` class.
 
 Your Runnable class must have a name and implement the `run()` method as said in the previous section.
 

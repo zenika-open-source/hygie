@@ -3,7 +3,7 @@
 The `.git-webhooks/rules.yml` file contains all the rules you've configured.
 Check our example `rules.yml` file [here](./rulesExample.md).
 
-You can use our existing rules or adding yours. Rules are very simply to extend.
+You can use our existing rules or adding yours. Rules are very simply to add.
 When you create your own rule, it must extends the `Rule` class (`src/rules/rule.class.ts`).
 
 ## Rule configuration
@@ -62,7 +62,7 @@ For more examples, check out the [documentation](https://github.com/janl/mustach
 
 ## Create your own rule
 
-If you want to create a new type of rule, you can create your own class. This class must extend the abstract `Rule` class, and implement the `valide()` method. This method contains all your business logic.
+If you want to create a new type of rule, you can create your own class. This class must extend the abstract `Rule` class, and implement the `validate()` method. This method contains all your business logic.
 
 The easiest way to create it is to use our CLI: [git-webhooks-cli](https://github.com/DX-DeveloperExperience/git-webhooks-cli).
 

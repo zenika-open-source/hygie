@@ -4,7 +4,7 @@
 
 If you want to use the `Git Webhooks` API, you need to create a `.git-webhooks` folder in your root directory.
 
-This folder will be source everytime you interact with our API.
+This folder will be fetched everytime you interact with our API.
 
 ```
 
@@ -33,11 +33,11 @@ If you don't register your credentials, you will not be able to interact with yo
 If you want to run this project, you have different choices :
 
 - [turnkey solutions](#turnkey-solutions)
-    - [directly use our public API](#from-our-public-api)
-    - [running directly one of ours docker images](#run-our-docker-image-from-dockerhub)
+  - [directly use our public API](#from-our-public-api)
+  - [running directly one of ours docker images](#run-our-docker-image-from-dockerhub)
 - [clone and extend it](#clone-and-extend-it)
-    - [launch it via CLI](#from-our-github-repository)
-    - [create your own docker container](#build-your-own-docker-image)
+  - [launch it via CLI](#from-our-github-repository)
+  - [create your own docker container](#build-your-own-docker-image)
 
 ## Turnkey solutions
 
@@ -100,6 +100,7 @@ cd git-webhooks
 ```
 
 Then, build it:
+
 ```
 docker build -t my-webhook .
 ```

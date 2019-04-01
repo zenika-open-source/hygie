@@ -89,7 +89,7 @@ export class AppController {
         this.gitlabService.setEnvironmentVariables(remoteEnvs);
       } catch (e) {
         if (e instanceof PreconditionException) {
-          logger.warn(
+          logger.error(
             'There is no config.env file for the current git project',
           );
           return;

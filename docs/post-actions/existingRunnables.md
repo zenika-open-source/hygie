@@ -94,9 +94,9 @@ The `LoggerRunnable` Post-Action, like its name suggest, log informations, using
 
 This Post-Action need two args:
 
-- `type`: info|warn _[optional]_,
+- `type`: info|warn|error _[optional]_,
   ::: tip
-  If you're in an `onSuccess` or `onBoth` statement, the default value will be `info`. On the other hand, if you're in an `onError` statement, it would be `warn`.
+  If you're in an `onSuccess` or `onBoth` statement, the default value will be `info`. On the other hand, if you're in an `onError` statement, it would be `error`.
   :::
 - `message`: a string that can contain _mustache_ templating.
 

@@ -69,6 +69,8 @@
 
 <script>
 import axios from 'axios';
+import configJS from '../config.js';
+
 export default {
   data: function() {
     return {
@@ -92,7 +94,7 @@ export default {
       if (!this.$refs.form.validate()) {
         return;
       }
-      const serverURL = 'http://localhost:3000/config-env';
+      const serverURL = configJS.gitwebhooksURL + '/config-env';
       axios
         .post(serverURL, {
           gitToken: this.gitToken,

@@ -56,4 +56,5 @@ module.exports = {
       },
     ],
   },
+  gitwebhooksURL: 'http://localhost:3000',
 };

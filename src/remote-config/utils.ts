@@ -1,5 +1,6 @@
 import { logger } from '../logger/logger.service';
 import { HttpService } from '@nestjs/common';
+import { GitTypeEnum } from '../webhook/utils.enum';
 
 const execa = require('execa');
 const fs = require('fs');
@@ -39,10 +40,27 @@ export function downloadRulesFile(
   httpService: HttpService,
   projectURL: string,
 ): string {
-  const rulesFilePath: string = `${projectURL.replace(
-    '.git',
-    '',
-  )}/raw/master/.git-webhooks/rules.yml`;
+  const whichGit: GitTypeEnum =
+    projectURL.indexOf('github.com') > -1
+      ? GitTypeEnum.Github
+      : projectURL.indexOf('gitlab.com') > -1
+      ? GitTypeEnum.Gitlab
+      : GitTypeEnum.Undefined;
+
+  let rulesFilePath: string;
+  switch (whichGit) {
+    case GitTypeEnum.Github:
+      rulesFilePath = `https://raw.githubusercontent.com/${getPath(
+        projectURL.split('/'),
+      )}/master/.git-webhooks/rules.yml`;
+      break;
+    case GitTypeEnum.Gitlab:
+      rulesFilePath = `${projectURL.replace(
+        '.git',
+        '',
+      )}/raw/master/.git-webhooks/rules.yml`;
+      break;
+  }
 
   const gitWebhooksFolder: string =
     'remote-rules/' + getPath(projectURL.split('/')) + '/.git-webhooks';

@@ -7,6 +7,7 @@ import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
 import { PreconditionException } from '../exceptions/precondition.exception';
+import { loadEnv } from '../utils/dotenv.utils';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -29,17 +30,19 @@ export class GithubService implements GitServiceInterface {
   }
 
   setConfigGitHub(conf?: any) {
-    this.configGitHub = conf || {
-      headers: {
-        Authorization: 'token ' + this.token,
-      },
-    };
+    this.configGitHub =
+      typeof conf !== 'undefined'
+        ? conf
+        : {
+            headers: {
+              Authorization: 'token ' + this.token,
+            },
+          };
   }
 
   setEnvironmentVariables(filePath: string): void {
-    require('dotenv').config({
-      path: 'remote-envs/' + filePath + '/config.env',
-    });
+    loadEnv('remote-envs/' + filePath + '/config.env');
+
     if (
       process.env.gitToken === undefined ||
       process.env.gitApi === undefined
