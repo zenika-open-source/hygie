@@ -5,6 +5,7 @@ export interface GithubIssue {
   pull_request?: any;
   number: number;
   title: string;
+  body: string;
 }
 /**
  * GithubRepository dto

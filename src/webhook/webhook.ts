@@ -227,6 +227,9 @@ export class Webhook {
       this.repository.cloneURL = git.repository.clone_url;
       this.comment.id = git.comment.id;
       this.comment.description = git.comment.body;
+      this.pullRequest.description = git.issue.body;
+      this.pullRequest.title = git.issue.title;
+      this.pullRequest.number = git.issue.number;
     } else if (isGitlabIssueCommentEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewIssueComment;
@@ -245,6 +248,9 @@ export class Webhook {
       this.repository.cloneURL = git.project.git_http_url;
       this.comment.id = git.object_attributes.id;
       this.comment.description = git.object_attributes.description;
+      this.pullRequest.title = git.merge_request.title;
+      this.pullRequest.description = git.merge_request.description;
+      this.pullRequest.number = git.merge_request.iid;
     } else if (isGithubNewRepoEvent(git)) {
       // Caution: need to be after isGithubIssueComment and isGithubPRComment
       this.gitType = GitTypeEnum.Github;

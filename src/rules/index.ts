@@ -4,3 +4,4 @@ export { BranchNameRule } from './branchName.rule';
 export { IssueTitleRule } from './issueTitle.rule';
 export { PullRequestTitleRule } from './pullRequestTitle.rule';
 export { IssueCommentRule } from './issueComment.rule';
+export { PullRequestCommentRule } from './pullRequestComment.rule';
