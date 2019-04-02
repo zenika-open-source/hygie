@@ -119,6 +119,14 @@ export class Webhook {
     return this.repository.cloneURL;
   }
 
+  getCommentId(): number {
+    return this.comment.id;
+  }
+
+  getCommentDescription(): string {
+    return this.comment.description;
+  }
+
   getRemoteEnvs(): string {
     const splitedURL = this.getCloneURL().split('/');
 
@@ -209,6 +217,8 @@ export class Webhook {
       this.repository.cloneURL = git.repository.clone_url;
       this.comment.id = git.comment.id;
       this.comment.description = git.comment.body;
+      this.issue.title = git.issue.title;
+      this.issue.number = git.issue.number;
     } else if (isGithubPRCommentEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewPRComment;
@@ -225,6 +235,8 @@ export class Webhook {
       this.repository.cloneURL = git.project.git_http_url;
       this.comment.id = git.object_attributes.id;
       this.comment.description = git.object_attributes.description;
+      this.issue.title = git.issue.title;
+      this.issue.number = git.issue.iid;
     } else if (isGitlabPRCommentEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewPRComment;
