@@ -20,9 +20,9 @@ import { PreconditionException } from './exceptions/precondition.exception';
 import { getAllRules } from './generator/getAllRules';
 import { getAllRunnables } from './generator/getAllRunnables';
 import { getAllOptions } from './generator/getAllOptions';
-import { registerConfigEnv, downloadRulesFile } from './remote-config/utils';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
+import { RemoteConfigUtils } from './remote-config/utils';
 
 @Controller()
 export class AppController {
@@ -45,7 +45,7 @@ export class AppController {
       gitToken: body.gitToken,
       gitRepo: body.gitRepo,
     };
-    response.send(registerConfigEnv(configEnv));
+    response.send(RemoteConfigUtils.registerConfigEnv(configEnv));
   }
 
   @Get('/rules')
@@ -78,7 +78,7 @@ export class AppController {
     } else {
       // First, check if the config folder of the emitter already exist
       // If not, create the folder in the `/remote-rules` (with .git-webhooks/rules.yml)
-      const remoteRepository = downloadRulesFile(
+      const remoteRepository = RemoteConfigUtils.downloadRulesFile(
         this.httpService,
         webhook.getCloneURL(),
       );
