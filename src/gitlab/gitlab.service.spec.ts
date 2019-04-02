@@ -128,4 +128,35 @@ describe('Gitlab Service', () => {
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
     });
   });
+
+  describe('setToken', () => {
+    it('should set the token', () => {
+      gitlabService.setToken('azertyuiop');
+      expect(gitlabService.token).toBe('azertyuiop');
+    });
+  });
+
+  describe('setUrlApi', () => {
+    it('should set the url of the API', () => {
+      gitlabService.setUrlApi('https://githubapi.com');
+      expect(gitlabService.urlApi).toBe('https://githubapi.com');
+    });
+  });
+
+  describe('setEnvironmentVariables', () => {
+    it('should set the token and urlApi', () => {
+      const fs = require('fs');
+      jest.mock('fs');
+
+      fs.readFileSync.mockReturnValue(
+        `gitApi=https://mygitapi.com
+      gitToken=qsdfghjklm`,
+      );
+
+      gitlabService.setEnvironmentVariables('myFilePath');
+
+      expect(gitlabService.token).toBe('qsdfghjklm');
+      expect(gitlabService.urlApi).toBe('https://mygitapi.com');
+    });
+  });
 });
