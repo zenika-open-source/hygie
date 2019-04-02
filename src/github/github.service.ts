@@ -45,7 +45,9 @@ export class GithubService implements GitServiceInterface {
 
     if (
       process.env.gitToken === undefined ||
-      process.env.gitApi === undefined
+      process.env.gitToken === '' ||
+      process.env.gitApi === undefined ||
+      process.env.gitToken === ''
     ) {
       throw new PreconditionException();
     }

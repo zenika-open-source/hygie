@@ -9,8 +9,6 @@ import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitCreatePRInfos, GitCommentPRInfos } from '../git/gitPRInfos';
 import { Observable } from 'rxjs';
 
-require('dotenv').config({ path: 'config.env' });
-
 describe('Github Service', () => {
   let app: TestingModule;
   let githubService: GithubService;
@@ -153,6 +151,52 @@ describe('Github Service', () => {
       );
 
       // expect(observable.subscribe).toBeCalled();
+    });
+  });
+
+  describe('setToken', () => {
+    it('should set the token', () => {
+      githubService.setToken('azertyuiop');
+      expect(githubService.token).toBe('azertyuiop');
+    });
+  });
+
+  describe('setUrlApi', () => {
+    it('should set the url of the API', () => {
+      githubService.setUrlApi('https://githubapi.com');
+      expect(githubService.urlApi).toBe('https://githubapi.com');
+    });
+  });
+
+  describe('setConfigGitHub', () => {
+    it('should set the config header', () => {
+      githubService.setConfigGitHub({
+        headers: {
+          Authorization: 'token azertyuiop',
+        },
+      });
+      expect(githubService.configGitHub).toEqual({
+        headers: {
+          Authorization: 'token azertyuiop',
+        },
+      });
+    });
+  });
+
+  describe('setEnvironmentVariables', () => {
+    it('should set the token and urlApi', () => {
+      const fs = require('fs');
+      jest.mock('fs');
+
+      fs.readFileSync.mockReturnValue(
+        `gitApi=https://mygitapi.com
+      gitToken=qsdfghjklm`,
+      );
+
+      githubService.setEnvironmentVariables('myFilePath');
+
+      expect(githubService.token).toBe('qsdfghjklm');
+      expect(githubService.urlApi).toBe('https://mygitapi.com');
     });
   });
 });
