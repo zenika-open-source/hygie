@@ -2,6 +2,7 @@
  * GithubIssue dto
  */
 export interface GithubIssue {
+  pull_request?: any;
   number: number;
   title: string;
 }
@@ -33,5 +34,13 @@ export interface GithubSender {
 export interface GithubPullRequest {
   state: string;
   title: string;
+  body: string;
+}
+
+/**
+ * GithubComment dto
+ */
+export interface GithubComment {
+  id: number;
   body: string;
 }

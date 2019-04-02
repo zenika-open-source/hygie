@@ -17,7 +17,7 @@ export interface GitlabCommit {
  * GitlabPR dto
  */
 export interface GitlabPR {
-  action: string;
+  action?: string;
   title: string;
   iid: number;
   description: string;
@@ -29,4 +29,12 @@ export interface GitlabProject {
   id: number;
   name: string;
   git_http_url: string;
+}
+/**
+ * GitlabComment dto
+ */
+export interface GitlabComment {
+  id: number;
+  note: string;
+  description: string;
 }

@@ -11,6 +11,10 @@ import {
   isGithubNewRepoEvent,
   isGithubNewPREvent,
   isGitlabNewPREvent,
+  isGithubIssueCommentEvent,
+  isGithubPRCommentEvent,
+  isGitlabIssueCommentEvent,
+  isGitlabPRCommentEvent,
 } from './utils.enum';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
@@ -47,6 +51,11 @@ export class WebhookPR {
   number: number;
 }
 
+export class WebhookComment {
+  id: number;
+  description: string;
+}
+
 export class Webhook {
   gitType: GitTypeEnum;
   gitEvent: GitEventEnum;
@@ -57,6 +66,7 @@ export class Webhook {
   branchName: string;
   issue: WebhookIssue;
   pullRequest: WebhookPR;
+  comment: WebhookComment;
 
   constructor(
     private readonly gitlabService: GitlabService,
@@ -66,6 +76,7 @@ export class Webhook {
     this.commits = new Array<WebhookCommit>();
     this.issue = new WebhookIssue();
     this.pullRequest = new WebhookPR();
+    this.comment = new WebhookComment();
   }
 
   getAllCommits(): WebhookCommit[] {
@@ -172,14 +183,6 @@ export class Webhook {
       this.issue.title = git.object_attributes.title;
       this.projectId = git.object_attributes.project_id;
       this.repository.cloneURL = git.project.git_http_url;
-    } else if (isGithubNewRepoEvent(git)) {
-      this.gitType = GitTypeEnum.Github;
-      this.gitEvent = GitEventEnum.NewRepo;
-      this.gitService = this.githubService;
-      this.repository.fullName = git.repository.full_name;
-      this.repository.name = git.repository.name;
-      this.repository.description = git.repository.description;
-      this.repository.cloneURL = git.repository.clone_url;
     } else if (isGithubNewPREvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewPR;
@@ -198,6 +201,47 @@ export class Webhook {
       this.pullRequest.description = git.object_attributes.description;
       this.pullRequest.number = git.object_attributes.iid;
       this.repository.cloneURL = git.project.git_http_url;
+    } else if (isGithubIssueCommentEvent(git)) {
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.NewIssueComment;
+      this.gitService = this.githubService;
+      this.repository.fullName = git.repository.full_name;
+      this.repository.cloneURL = git.repository.clone_url;
+      this.comment.id = git.comment.id;
+      this.comment.description = git.comment.body;
+    } else if (isGithubPRCommentEvent(git)) {
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.NewPRComment;
+      this.gitService = this.githubService;
+      this.repository.fullName = git.repository.full_name;
+      this.repository.cloneURL = git.repository.clone_url;
+      this.comment.id = git.comment.id;
+      this.comment.description = git.comment.body;
+    } else if (isGitlabIssueCommentEvent(git)) {
+      this.gitType = GitTypeEnum.Gitlab;
+      this.gitEvent = GitEventEnum.NewIssueComment;
+      this.gitService = this.gitlabService;
+      this.projectId = git.project.id;
+      this.repository.cloneURL = git.project.git_http_url;
+      this.comment.id = git.object_attributes.id;
+      this.comment.description = git.object_attributes.description;
+    } else if (isGitlabPRCommentEvent(git)) {
+      this.gitType = GitTypeEnum.Gitlab;
+      this.gitEvent = GitEventEnum.NewPRComment;
+      this.gitService = this.gitlabService;
+      this.projectId = git.project.id;
+      this.repository.cloneURL = git.project.git_http_url;
+      this.comment.id = git.object_attributes.id;
+      this.comment.description = git.object_attributes.description;
+    } else if (isGithubNewRepoEvent(git)) {
+      // Caution: need to be after isGithubIssueComment and isGithubPRComment
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.NewRepo;
+      this.gitService = this.githubService;
+      this.repository.fullName = git.repository.full_name;
+      this.repository.name = git.repository.name;
+      this.repository.description = git.repository.description;
+      this.repository.cloneURL = git.repository.clone_url;
     }
   }
 

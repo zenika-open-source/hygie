@@ -8,6 +8,9 @@ import { GitlabIssueEvent } from '../gitlab/gitlabIssueEvent';
 import { GithubNewRepoEvent } from '../github/githubNewRepoEvent';
 import { GithubNewPREvent } from '../github/githubNewPREvent';
 import { GitlabNewPREvent } from '../gitlab/gitlabNewPREvent';
+import { GithubIssuePRCommentEvent } from '../github/githubIssuePRCommentEvent';
+import { GitlabIssueCommentEvent } from '../gitlab/gitlabIssueCommentEvent';
+import { GitlabPRCommentEvent } from '../gitlab/gitlabPRCommentEvent';
 
 export enum GitTypeEnum {
   Undefined = 'Undefined',
@@ -27,6 +30,8 @@ export enum GitEventEnum {
   NewIssue = 'NewIssue',
   NewRepo = 'NewRepo',
   NewPR = 'NewPR',
+  NewIssueComment = 'NewIssueComment',
+  NewPRComment = 'NewPRComment',
 }
 
 export function convertCommitStatus(
@@ -110,7 +115,9 @@ export function isGithubNewRepoEvent(
     (git as GithubNewRepoEvent).repository !== undefined &&
     (git as GithubNewRepoEvent).sender !== undefined &&
     (git as GithubNewRepoEvent).action === 'created' &&
-    (git as GithubIssueEvent).issue === undefined
+    (git as GithubIssueEvent).issue === undefined &&
+    // tslint:disable-next-line:no-string-literal
+    git['comment'] === undefined
   );
 }
 
@@ -132,5 +139,55 @@ export function isGitlabNewPREvent(
     (git as GitlabNewPREvent).object_kind === 'merge_request' &&
     (git as GitlabNewPREvent).object_attributes !== undefined &&
     (git as GitlabNewPREvent).object_attributes.action === 'open'
+  );
+}
+
+export function isGithubIssueCommentEvent(
+  git: GitlabEvent | GithubEvent,
+): git is GithubIssuePRCommentEvent {
+  return (
+    (git as GithubIssuePRCommentEvent).issue !== undefined &&
+    (git as GithubIssuePRCommentEvent).comment !== undefined &&
+    (git as GithubIssuePRCommentEvent).repository !== undefined &&
+    (git as GithubIssuePRCommentEvent).action !== undefined &&
+    (git as GithubIssuePRCommentEvent).issue.pull_request === undefined
+  );
+}
+
+export function isGithubPRCommentEvent(
+  git: GitlabEvent | GithubEvent,
+): git is GithubIssuePRCommentEvent {
+  return (
+    (git as GithubIssuePRCommentEvent).issue !== undefined &&
+    (git as GithubIssuePRCommentEvent).comment !== undefined &&
+    (git as GithubIssuePRCommentEvent).repository !== undefined &&
+    (git as GithubIssuePRCommentEvent).action !== undefined &&
+    (git as GithubIssuePRCommentEvent).issue.pull_request !== undefined
+  );
+}
+
+export function isGitlabIssueCommentEvent(
+  git: GitlabEvent | GithubEvent,
+): git is GitlabIssueCommentEvent {
+  return (
+    (git as GitlabIssueCommentEvent).object_kind === 'note' &&
+    (git as GitlabIssueCommentEvent).event_type === 'note' &&
+    (git as GitlabIssueCommentEvent).object_attributes !== undefined &&
+    (git as GitlabIssueCommentEvent).issue !== undefined &&
+    (git as GitlabIssueCommentEvent).project !== undefined &&
+    (git as GitlabPRCommentEvent).merge_request === undefined
+  );
+}
+
+export function isGitlabPRCommentEvent(
+  git: GitlabEvent | GithubEvent,
+): git is GitlabPRCommentEvent {
+  return (
+    (git as GitlabPRCommentEvent).object_kind === 'note' &&
+    (git as GitlabPRCommentEvent).event_type === 'note' &&
+    (git as GitlabPRCommentEvent).object_attributes !== undefined &&
+    (git as GitlabPRCommentEvent).merge_request !== undefined &&
+    (git as GitlabPRCommentEvent).project !== undefined &&
+    (git as GitlabIssueCommentEvent).issue === undefined
   );
 }
