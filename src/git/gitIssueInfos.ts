@@ -12,4 +12,5 @@ export class GitIssueInfos {
   number: string;
   title: string;
   state: IssueStateEnum;
+  labels: string[];
 }

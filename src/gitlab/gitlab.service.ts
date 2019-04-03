@@ -178,10 +178,18 @@ export class GitlabService implements GitServiceInterface {
       headers: {
         'PRIVATE-TOKEN': this.token,
       },
-      params: {
-        state_event: convertIssueState(GitTypeEnum.Gitlab, gitIssueInfos.state),
-      },
+      params: {},
     };
+
+    if (typeof gitIssueInfos.state !== 'undefined') {
+      (configGitLab.params as any).state_event = convertIssueState(
+        GitTypeEnum.Gitlab,
+        gitIssueInfos.state,
+      );
+    }
+    if (typeof gitIssueInfos.labels !== 'undefined') {
+      (configGitLab.params as any).labels = gitIssueInfos.labels.join(',');
+    }
 
     // Data for GitLab
     const dataGitLab = {};

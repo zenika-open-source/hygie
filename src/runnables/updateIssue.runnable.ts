@@ -11,6 +11,7 @@ import { IssueStateEnum, GitIssueInfos } from '../git/gitIssueInfos';
 
 interface UpdateIssueArgs {
   state: string;
+  labels: string[];
 }
 
 /**
@@ -43,6 +44,10 @@ export class UpdateIssueRunnable extends Runnable {
           : args.state.toLowerCase() === 'close'
           ? IssueStateEnum.Close
           : IssueStateEnum.Undefined;
+    }
+
+    if (typeof args.labels !== 'undefined') {
+      gitIssueInfos.labels = args.labels;
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {

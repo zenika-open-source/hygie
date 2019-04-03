@@ -146,9 +146,17 @@ export class GithubService implements GitServiceInterface {
   }
 
   updateIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void {
-    const dataGitHub = {
-      state: convertIssueState(GitTypeEnum.Github, gitIssueInfos.state),
-    };
+    const dataGitHub: any = {};
+
+    if (typeof gitIssueInfos.state !== 'undefined') {
+      dataGitHub.state = convertIssueState(
+        GitTypeEnum.Github,
+        gitIssueInfos.state,
+      );
+    }
+    if (typeof gitIssueInfos.labels !== 'undefined') {
+      dataGitHub.labels = gitIssueInfos.labels;
+    }
 
     this.httpService
       .patch(
