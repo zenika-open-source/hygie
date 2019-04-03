@@ -1,6 +1,7 @@
 export enum IssueStateEnum {
   Open = 'Open',
   Close = 'Close',
+  Undefined = 'Undefined',
 }
 
 /**

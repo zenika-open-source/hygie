@@ -13,7 +13,7 @@ import { CreatePullRequestRunnable } from './createPullRequest.runnable';
 import { Group } from '../rules/group.class';
 import { UpdateCommitStatusRunnable } from './updateCommitStatus.runnable';
 import { DeleteBranchRunnable } from './deleteBranch.runnable';
-import { logger } from '../logger/logger.service';
+import { UpdateIssueRunnable } from './updateIssue.runnable';
 
 export enum CallbackType {
   Success = 'Success',
@@ -67,6 +67,12 @@ export class RunnablesService {
         break;
       case 'DeleteBranchRunnable':
         runnable = new DeleteBranchRunnable(
+          this.githubService,
+          this.gitlabService,
+        );
+        break;
+      case 'UpdateIssueRunnable':
+        runnable = new UpdateIssueRunnable(
           this.githubService,
           this.gitlabService,
         );
