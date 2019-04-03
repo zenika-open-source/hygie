@@ -4,7 +4,7 @@ import { MockHttpService, MockObservable } from '../__mocks__/mocks';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { CommitStatusEnum } from '../webhook/utils.enum';
-import { GitIssueInfos } from '../git/gitIssueInfos';
+import { GitIssueInfos, IssueStateEnum } from '../git/gitIssueInfos';
 import { GitCreatePRInfos, GitCommentPRInfos } from '../git/gitPRInfos';
 import { Observable } from 'rxjs';
 import { GitlabService } from './gitlab.service';
@@ -83,6 +83,40 @@ describe('Gitlab Service', () => {
       };
 
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+  });
+
+  describe('updateIssue', () => {
+    it('should emit a PUT request with specific params', () => {
+      const gitIssueInfos = new GitIssueInfos();
+      gitIssueInfos.number = '1';
+      gitIssueInfos.state = IssueStateEnum.Close;
+
+      gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
+
+      const expectedUrl = `${process.env.GITLAB_API}/projects/1/issues/1`;
+
+      expectedConfig.params = {
+        state_event: 'close',
+      };
+
+      expect(httpService.put).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+
+    it('should emit a PUT request with specific params', () => {
+      const gitIssueInfos = new GitIssueInfos();
+      gitIssueInfos.number = '1';
+      gitIssueInfos.state = IssueStateEnum.Open;
+
+      gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
+
+      const expectedUrl = `${process.env.GITLAB_API}/projects/1/issues/1`;
+
+      expectedConfig.params = {
+        state_event: 'reopen',
+      };
+
+      expect(httpService.put).toBeCalledWith(expectedUrl, {}, expectedConfig);
     });
   });
 

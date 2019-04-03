@@ -1,6 +1,10 @@
 import { Injectable, HttpService } from '@nestjs/common';
 import { GitServiceInterface } from '../git/git.service.interface';
-import { GitTypeEnum, convertCommitStatus } from '../webhook/utils.enum';
+import {
+  GitTypeEnum,
+  convertCommitStatus,
+  convertIssueState,
+} from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
@@ -130,12 +134,28 @@ export class GithubService implements GitServiceInterface {
       .subscribe(null, err => logger.error(err));
   }
 
-  deleteBranch(gitApiInfos: GitApiInfos, branchName: string) {
+  deleteBranch(gitApiInfos: GitApiInfos, branchName: string): void {
     this.httpService
       .delete(
         `${this.urlApi}/repos/${
           gitApiInfos.repositoryFullName
         }/git/refs/heads/${encodeURIComponent(branchName)}`,
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  updateIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void {
+    const dataGitHub = {
+      state: convertIssueState(GitTypeEnum.Github, gitIssueInfos.state),
+    };
+
+    this.httpService
+      .patch(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues/${
+          gitIssueInfos.number
+        }`,
+        dataGitHub,
         this.configGitHub,
       )
       .subscribe(null, err => logger.error(err));

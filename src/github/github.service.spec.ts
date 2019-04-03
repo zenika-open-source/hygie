@@ -5,7 +5,7 @@ import { MockHttpService, MockObservable } from '../__mocks__/mocks';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { CommitStatusEnum } from '../webhook/utils.enum';
-import { GitIssueInfos } from '../git/gitIssueInfos';
+import { GitIssueInfos, IssueStateEnum } from '../git/gitIssueInfos';
 import { GitCreatePRInfos, GitCommentPRInfos } from '../git/gitPRInfos';
 import { Observable } from 'rxjs';
 
@@ -96,6 +96,48 @@ describe('Github Service', () => {
       };
 
       expect(httpService.post).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
+    });
+  });
+
+  describe('updateIssue', () => {
+    it('should emit a PATCH request with specific params', () => {
+      const gitIssueInfos = new GitIssueInfos();
+      gitIssueInfos.number = '1';
+      gitIssueInfos.state = IssueStateEnum.Close;
+
+      githubService.updateIssue(gitApiInfos, gitIssueInfos);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues/1`;
+
+      const expectedData = {
+        state: 'closed',
+      };
+
+      expect(httpService.patch).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
+    });
+
+    it('should emit a PATCH request with specific params', () => {
+      const gitIssueInfos = new GitIssueInfos();
+      gitIssueInfos.number = '1';
+      gitIssueInfos.state = IssueStateEnum.Open;
+
+      githubService.updateIssue(gitApiInfos, gitIssueInfos);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues/1`;
+
+      const expectedData = {
+        state: 'open',
+      };
+
+      expect(httpService.patch).toBeCalledWith(
         expectedUrl,
         expectedData,
         expectedConfig,

@@ -1,6 +1,10 @@
 import { Injectable, HttpService } from '@nestjs/common';
 import { GitServiceInterface } from '../git/git.service.interface';
-import { convertCommitStatus, GitTypeEnum } from '../webhook/utils.enum';
+import {
+  convertCommitStatus,
+  GitTypeEnum,
+  convertIssueState,
+} from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
@@ -163,6 +167,30 @@ export class GitlabService implements GitServiceInterface {
         `${this.urlApi}/projects/${
           gitApiInfos.projectId
         }/repository/branches/${encodeURIComponent(branchName)}`,
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  updateIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void {
+    // Config URL for GitLab
+    const configGitLab = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {
+        state_event: convertIssueState(GitTypeEnum.Gitlab, gitIssueInfos.state),
+      },
+    };
+
+    // Data for GitLab
+    const dataGitLab = {};
+    this.httpService
+      .put(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/issues/${
+          gitIssueInfos.number
+        }`,
+        dataGitLab,
         configGitLab,
       )
       .subscribe(null, err => logger.error(err));

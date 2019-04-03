@@ -7,6 +7,12 @@ export class MockHttpService {
   post: jest.Mock = jest.fn(() => {
     return of([]);
   });
+  patch: jest.Mock = jest.fn(() => {
+    return of([]);
+  });
+  put: jest.Mock = jest.fn(() => {
+    return of([]);
+  });
 }
 
 export class MockGitlabService {
