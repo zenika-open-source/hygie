@@ -142,7 +142,17 @@ Go to your repository integrations settings: `https://gitlab.com/:owner/:repo/se
 
 The `SendEmailRunnable` makes use of Google API to send mails.
 
-If you want to use it, you need to create the `crendentials.json` file as describe [in the offical documentation](https://developers.google.com/gmail/api/quickstart/nodejs).
+### Through our API
+
+If you're using **Git Webhooks** through our API, you do not have any configuration to do.
+::: warning
+But be aware, emails will be sent as **gitwebhooks@zenika.com**.
+:::
+
+### In your own server
+
+If you want to use your own account, you have to deploy the project in your server.
+You need to create the `crendentials.json` file as describe [in the offical documentation](https://developers.google.com/gmail/api/quickstart/nodejs).
 
 You just have to follow `Step 1` to get your credentials.
 

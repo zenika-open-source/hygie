@@ -35,7 +35,10 @@ export class AppController {
 
   @Get('/')
   welcome(): string {
-    return '<p>Welcome, <b>Git Webhooks</b> is running!</p>';
+    return (
+      '<p><b>Git Webhooks</b> is running!</p>' +
+      '<p>Have a look at our <a href="https://dx-developerexperience.github.io/git-webhooks/">documentation</a> for more informations.</p>'
+    );
   }
 
   @Post('/config-env')
