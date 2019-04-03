@@ -150,4 +150,21 @@ export class GitlabService implements GitServiceInterface {
       )
       .subscribe(null, err => logger.error(err));
   }
+
+  deleteBranch(gitApiInfos: GitApiInfos, branchName: string) {
+    // Config URL for GitLab
+    const configGitLab = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+    };
+    this.httpService
+      .delete(
+        `${this.urlApi}/projects/${
+          gitApiInfos.projectId
+        }/repository/branches/${encodeURIComponent(branchName)}`,
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
 }

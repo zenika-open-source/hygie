@@ -10,6 +10,7 @@ export class MockHttpService {
 }
 
 export class MockGitlabService {
+  deleteBranch: jest.Mock = jest.fn().mockName('deleteBranchGitlab');
   updateCommitStatus: jest.Mock = jest.fn();
   setEnvironmentVariables: jest.Mock = jest
     .fn()
@@ -20,6 +21,7 @@ export class MockGitlabService {
 }
 
 export class MockGithubService {
+  deleteBranch: jest.Mock = jest.fn().mockName('deleteBranchGithub');
   updateCommitStatus: jest.Mock = jest.fn();
   setEnvironmentVariables: jest.Mock = jest
     .fn()

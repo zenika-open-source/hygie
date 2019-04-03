@@ -129,4 +129,15 @@ export class GithubService implements GitServiceInterface {
       )
       .subscribe(null, err => logger.error(err));
   }
+
+  deleteBranch(gitApiInfos: GitApiInfos, branchName: string) {
+    this.httpService
+      .delete(
+        `${this.urlApi}/repos/${
+          gitApiInfos.repositoryFullName
+        }/git/refs/heads/${encodeURIComponent(branchName)}`,
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
 }

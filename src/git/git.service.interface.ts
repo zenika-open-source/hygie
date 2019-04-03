@@ -43,6 +43,11 @@ export interface GitServiceInterface {
   ): void;
 
   /**
+   * Delete the `brachName` branch
+   */
+  deleteBranch(gitApiInfos: GitApiInfos, branchName: string): void;
+
+  /**
    * Initialize `gitApi` and `gitToken` env. variables on new webhook
    * by reading the corresponding `config.env` file
    */

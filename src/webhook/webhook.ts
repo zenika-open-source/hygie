@@ -175,6 +175,8 @@ export class Webhook {
       this.gitEvent = GitEventEnum.NewBranch;
       this.gitService = this.githubService;
       this.branchName = git.ref;
+      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.fullName = git.repository.full_name;
     } else if (isGithubIssueEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewIssue;
