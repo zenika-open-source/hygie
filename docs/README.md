@@ -7,3 +7,15 @@
 This [NestJs](https://docs.nestjs.com/) API expose a set of customizable Rules to automate your project's life cycle.
 
 Keywords : [#NestJs](), [#NodeJs](), [#TypeScript](), [#Docker](), [#Webhooks](), [#FaaS](), [#Github](), [#GitLab](), [#CI](), [#Open-Source]()...
+
+## Prerequisite
+
+This API is available for [Github](https://github.com) and [Gitlab](https://about.gitlab.com/) repositories.
+
+Other Git version control systems will may be available in the future. Do not hesitate to ask for one of them.
+
+## Contribution
+
+If you want to contribute to this project, fill free to ask for Pull Request.
+
+Every new rule or runnable is welcomed!

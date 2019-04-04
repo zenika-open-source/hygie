@@ -4,14 +4,12 @@ import { HttpService } from '@nestjs/common';
 import { MockHttpService, MockObservable } from '../__mocks__/mocks';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
-import { GitTypeEnum, CommitStatusEnum } from '../webhook/utils.enum';
-import { GitIssueInfos } from '../git/gitIssueInfos';
+import { CommitStatusEnum } from '../webhook/utils.enum';
+import { GitIssueInfos, IssueStateEnum } from '../git/gitIssueInfos';
 import { GitCreatePRInfos, GitCommentPRInfos } from '../git/gitPRInfos';
 import { Observable } from 'rxjs';
 
-require('dotenv').config({ path: 'config.env' });
-
-describe('RulesService', () => {
+describe('Github Service', () => {
   let app: TestingModule;
   let githubService: GithubService;
   let httpService: HttpService;
@@ -35,12 +33,20 @@ describe('RulesService', () => {
     httpService = app.get(HttpService);
     observable = app.get(Observable);
 
+    githubService.setToken('0123456789abcdef');
+    githubService.setUrlApi('https://api.github.com');
+    githubService.setConfigGitHub({
+      headers: {
+        Authorization: `token 0123456789abcdef`,
+      },
+    });
+
     gitApiInfos = new GitApiInfos();
     gitApiInfos.repositoryFullName = 'bastienterrier/test';
 
     expectedConfig = {
       headers: {
-        Authorization: `token ${process.env.GITHUB_TOKEN}`,
+        Authorization: `token 0123456789abcdef`,
       },
     };
   });
@@ -59,9 +65,7 @@ describe('RulesService', () => {
 
       githubService.updateCommitStatus(gitApiInfos, gitCommitStatusInfos);
 
-      const expectedUrl = `${
-        process.env.GITHUB_API
-      }/repos/bastienterrier/test/statuses/1`;
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/statuses/1`;
 
       const expectedData = {
         state: 'success',
@@ -85,15 +89,55 @@ describe('RulesService', () => {
 
       githubService.addIssueComment(gitApiInfos, gitIssueInfos);
 
-      const expectedUrl = `${
-        process.env.GITHUB_API
-      }/repos/bastienterrier/test/issues/1/comments`;
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues/1/comments`;
 
       const expectedData = {
         body: 'my comment',
       };
 
       expect(httpService.post).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
+    });
+  });
+
+  describe('updateIssue', () => {
+    it('should emit a PATCH request with specific params', () => {
+      const gitIssueInfos = new GitIssueInfos();
+      gitIssueInfos.number = '1';
+      gitIssueInfos.state = IssueStateEnum.Close;
+
+      githubService.updateIssue(gitApiInfos, gitIssueInfos);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues/1`;
+
+      const expectedData = {
+        state: 'closed',
+      };
+
+      expect(httpService.patch).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
+    });
+
+    it('should emit a PATCH request with specific params', () => {
+      const gitIssueInfos = new GitIssueInfos();
+      gitIssueInfos.number = '1';
+      gitIssueInfos.state = IssueStateEnum.Open;
+
+      githubService.updateIssue(gitApiInfos, gitIssueInfos);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues/1`;
+
+      const expectedData = {
+        state: 'open',
+      };
+
+      expect(httpService.patch).toBeCalledWith(
         expectedUrl,
         expectedData,
         expectedConfig,
@@ -109,9 +153,7 @@ describe('RulesService', () => {
 
       githubService.addPRComment(gitApiInfos, gitCommentPRInfos);
 
-      const expectedUrl = `${
-        process.env.GITHUB_API
-      }/repos/bastienterrier/test/issues/1/comments`;
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues/1/comments`;
 
       const expectedData = {
         body: 'my comment',
@@ -135,9 +177,7 @@ describe('RulesService', () => {
 
       githubService.createPullRequest(gitApiInfos, gitCreatePRInfos);
 
-      const expectedUrl = `${
-        process.env.GITHUB_API
-      }/repos/bastienterrier/test/pulls`;
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/pulls`;
 
       const expectedData = {
         title: 'my PR',
@@ -153,6 +193,52 @@ describe('RulesService', () => {
       );
 
       // expect(observable.subscribe).toBeCalled();
+    });
+  });
+
+  describe('setToken', () => {
+    it('should set the token', () => {
+      githubService.setToken('azertyuiop');
+      expect(githubService.token).toBe('azertyuiop');
+    });
+  });
+
+  describe('setUrlApi', () => {
+    it('should set the url of the API', () => {
+      githubService.setUrlApi('https://githubapi.com');
+      expect(githubService.urlApi).toBe('https://githubapi.com');
+    });
+  });
+
+  describe('setConfigGitHub', () => {
+    it('should set the config header', () => {
+      githubService.setConfigGitHub({
+        headers: {
+          Authorization: 'token azertyuiop',
+        },
+      });
+      expect(githubService.configGitHub).toEqual({
+        headers: {
+          Authorization: 'token azertyuiop',
+        },
+      });
+    });
+  });
+
+  describe('setEnvironmentVariables', () => {
+    it('should set the token and urlApi', () => {
+      const fs = require('fs');
+      jest.mock('fs');
+
+      fs.readFileSync.mockReturnValue(
+        `gitApi=https://mygitapi.com
+      gitToken=qsdfghjklm`,
+      );
+
+      githubService.setEnvironmentVariables('myFilePath');
+
+      expect(githubService.token).toBe('qsdfghjklm');
+      expect(githubService.urlApi).toBe('https://mygitapi.com');
     });
   });
 });

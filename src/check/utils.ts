@@ -9,7 +9,7 @@ import { logger } from '../logger/logger.service';
  */
 export function checkIfFileExist(filename: string): boolean {
   if (!existsSync(filename)) {
-    logger.warn(
+    logger.error(
       `${filename} do not exist! Please refer to the documentation: https://dx-developerexperience.github.io/git-webhooks/`,
     );
     return false;
@@ -23,6 +23,7 @@ export function checkIfFileExist(filename: string): boolean {
  * Array of relative paths
  */
 export function checkNeededFiles(filenames: string[]): boolean {
+  require('dotenv').config({ path: 'config.env' });
   const devEnv: boolean = process.env.NODE_ENV === 'development';
 
   let allFilesOk: boolean = true;

@@ -36,7 +36,9 @@
     "@nestjs/testing": "6.0.2",
     "@nestjs/websockets": "6.0.2",
     "class-transformer": "0.2.0",
+    "cors": "2.8.5",
     "dotenv": "6.2.0",
+    "execa": "1.0.0",
     "fs": "0.0.1-security",
     "github-release-notes": "0.17.0",
     "googleapis": "27.0.0",
@@ -66,7 +68,8 @@
     "tslint": "5.13.0",
     "typedoc": "0.14.2",
     "typescript": "3.3.3",
-    "vuepress": "1.0.0-alpha.44"
+    "vuepress": "1.0.0-alpha.44",
+    "vuetify": "1.5.7"
   },
   "jest": {
     "moduleFileExtensions": [

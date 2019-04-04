@@ -47,19 +47,20 @@ describe('RulesService', () => {
         fullName: 'bastienterrier/test_webhook',
         name: 'test_webhook',
         description: 'amazing project',
+        cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
       };
       webhook.commits = [
         {
           message: 'fix: readme (#12)',
-          id: '1',
+          sha: '1',
         },
         {
           message: 'feat(test): tdd (#34)',
-          id: '2',
+          sha: '2',
         },
         {
           message: 'docs: gh-pages',
-          id: '3',
+          sha: '3',
         },
       ];
       const commitMessage = new CommitMessageRule();
@@ -116,19 +117,20 @@ describe('RulesService', () => {
         fullName: 'bastienterrier/test_webhook',
         name: 'test_webhook',
         description: 'amazing project',
+        cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
       };
       webhook.commits = [
         {
           message: 'update: readme (#12)',
-          id: '1',
+          sha: '1',
         },
         {
           message: 'feat(test): tdd (#34)',
-          id: '2',
+          sha: '2',
         },
         {
           message: 'docs: gh-pages',
-          id: '3',
+          sha: '3',
         },
       ];
       const commitMessage = new CommitMessageRule();

@@ -1,11 +1,16 @@
 import { Injectable, HttpService } from '@nestjs/common';
 import { GitServiceInterface } from '../git/git.service.interface';
-import { convertCommitStatus, GitTypeEnum } from '../webhook/utils.enum';
+import {
+  convertCommitStatus,
+  GitTypeEnum,
+  convertIssueState,
+} from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
+import { loadEnv } from '../utils/dotenv.utils';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -15,10 +20,21 @@ export class GitlabService implements GitServiceInterface {
   token: string;
   urlApi: string;
 
-  constructor(private readonly httpService: HttpService) {
-    require('dotenv').config({ path: 'config.env' });
-    this.token = process.env.GITLAB_TOKEN;
-    this.urlApi = process.env.GITLAB_API;
+  constructor(private readonly httpService: HttpService) {}
+
+  setToken(token: string) {
+    this.token = token;
+  }
+
+  setUrlApi(urlApi: string) {
+    this.urlApi = urlApi;
+  }
+
+  setEnvironmentVariables(filePath: string): void {
+    loadEnv('remote-envs/' + filePath + '/config.env');
+
+    this.setToken(process.env.gitToken);
+    this.setUrlApi(process.env.gitApi);
   }
 
   updateCommitStatus(
@@ -133,6 +149,55 @@ export class GitlabService implements GitServiceInterface {
     this.httpService
       .post(
         `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests`,
+        dataGitLab,
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  deleteBranch(gitApiInfos: GitApiInfos, branchName: string) {
+    // Config URL for GitLab
+    const configGitLab = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+    };
+    this.httpService
+      .delete(
+        `${this.urlApi}/projects/${
+          gitApiInfos.projectId
+        }/repository/branches/${encodeURIComponent(branchName)}`,
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  updateIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void {
+    // Config URL for GitLab
+    const configGitLab = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {},
+    };
+
+    if (typeof gitIssueInfos.state !== 'undefined') {
+      (configGitLab.params as any).state_event = convertIssueState(
+        GitTypeEnum.Gitlab,
+        gitIssueInfos.state,
+      );
+    }
+    if (typeof gitIssueInfos.labels !== 'undefined') {
+      (configGitLab.params as any).labels = gitIssueInfos.labels.join(',');
+    }
+
+    // Data for GitLab
+    const dataGitLab = {};
+    this.httpService
+      .put(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/issues/${
+          gitIssueInfos.number
+        }`,
         dataGitLab,
         configGitLab,
       )

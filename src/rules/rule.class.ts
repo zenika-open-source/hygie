@@ -45,13 +45,15 @@ export abstract class Rule {
    */
   isEnabled(webhook: Webhook, ruleConfig) {
     const events = ruleConfig.events || this.events;
-    const enabled = ruleConfig.enable === undefined ? true : ruleConfig.enabled;
+    const enabled =
+      ruleConfig.enabled === undefined ? true : ruleConfig.enabled;
     let eventEnabled: boolean = false;
     events.forEach(e => {
       if (e === webhook.gitEvent) {
         eventEnabled = true;
       }
     });
+
     return enabled && eventEnabled;
   }
 

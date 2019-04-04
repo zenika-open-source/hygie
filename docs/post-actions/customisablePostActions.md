@@ -6,7 +6,7 @@ This allow you to customise your process, according to the result of a rule.
 You can:
 
 - log informations,
-- send webhook with data priviously proccessed,
+- send webhook with data priviously processed,
 - comment an issue or a PR,
 - and much more!
 
@@ -14,30 +14,26 @@ You can:
 
 In your `rules.yml` config file, you can add `callback` functions that will be called if the rule succeeds or not.
 
-These `callback`s are `Runnable` classes, that implementing the `RunnableInterface` interface.
-The `Runnable` interface will have a `run()` method with `RuleResult` and `args` as arguments.
+These `callback`s are `Runnable` classes, that implementing the `Runnable` abstract class.
+The `Runnable` class will have a `run()` method with `callbackType`, `RuleResult` and `args` as arguments.
 
+`callbackType` precise if the Runnable is called because the rule failed, succeed or if it always called.
 [`RuleResult`](../rules/customisableRules.html#validate-method) is an object containing the result of the rule, and `args` is a custom object, with as many properties as you want.
 
 ## Create your own Runnable class
 
-If you don't find a suitable Post-Action for your needs, you can easily create yours by implementing the `RunnableInterface`.
+If you don't find a suitable Post-Action for your needs, you can easily create yours by extending the `Runnable` class.
 
 Your Runnable class must have a name and implement the `run()` method as said in the previous section.
 
-You actualy need to complete the `getRunnable()` method in `src/runnables/runnable.ts` as follow:
+Same as Rules creation, the easiest way to create it is to use our CLI: [git-webhooks-cli](https://github.com/DX-DeveloperExperience/git-webhooks-cli).
 
-```typescript
-  getRunnable(name: string): RunnableInterface {
-    let runnable: RunnableInterface;
-    switch (name) {
-      case 'MyRunnable':
-        runnable = new MyRunnable();
-        break;
-        // ...
-    }
-  }
-```
+This CLI will create your runnable file and add everything necessary in the project. You just have to focus on your business logic.
+
+::: warning
+The CLI do not inject the service you add, you still have to inject them yourself.
+See the next section for more informations.
+:::
 
 ### Use of services
 
@@ -69,6 +65,10 @@ Finally, you must add the needed service in the module `imports`, and your new `
   exports: [CommentIssueRunnable, WebhookRunnable, MyRunnable],
 })
 ```
+
+::: tip
+All these boring modifications should be automate quickly.
+:::
 
 ### _mustache_ templating
 

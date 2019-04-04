@@ -1,16 +1,77 @@
 # Getting Started
 
+## Directory structure
+
+If you want to use the `Git Webhooks` API, you need to create a `.git-webhooks` folder in your root directory.
+
+This folder will be fetched everytime you interact with our API.
+
+```
+
+.
+├── .git-webhooks
+│	├── credentials.json
+│   └── rules.yml
+└── package.json
+```
+
+It contains the following files:
+
+- `.git-webhooks/rules.yml`: all the rules and post-actions you configured (see the [config generator](configGenerator.md)),
+- `.git-webhooks/credentials.json`: [Google API](#google-api) credentials _[optional]_.
+
+## Repository registration
+
+You also need to [register your repository](registerToken.md) in our server.
+
+::: warning
+If you don't register your credentials, you will not be able to interact with your git repository (ie. create comment, update commit status, etc.).
+:::
+
 ## Running the project
 
 If you want to run this project, you have different choices :
 
-- [cloning it and launch it via CLI](#from-npm-cli)
-- [cloning it and create your own docker container](#build-your-own-docker-image)
-- [running directly one of ours docker images](#run-our-docker-image-from-dockerhub)
+- [turnkey solutions](#turnkey-solutions)
+  - [directly use our public API](#from-our-public-api)
+  - [running directly one of ours docker images](#run-our-docker-image-from-dockerhub)
+- [clone and extend it](#clone-and-extend-it)
+  - [launch it via CLI](#from-our-github-repository)
+  - [create your own docker container](#build-your-own-docker-image)
 
-### From npm CLI
+## Turnkey solutions
 
-First, clone our project and go to the root directory :
+::: warning
+With these turnkey solutions, you can't create your custom rules, to do that, check the next section.
+:::
+
+### From our public API
+
+The easiest solution is to use directly our public API to getting started and discover our solution.
+
+Our API is currently running at : [OUR URL]().
+
+### Run our Docker image from DockerHub
+
+If you just want to test our project, without cloning it, you can run a container with one of the existing versions in [DockerHub](https://hub.docker.com/r/dxdeveloperexperience/git-webhooks).
+
+You can simply run a container :
+
+```
+docker run --name webhook-container -d -p 3000:3000 dxdeveloperexperience/git-webhooks:TAG
+```
+
+## Clone and extend it
+
+Cloning this project allows you to extend it and create custom rules and runnables.
+
+::: tip
+If you create rules or post-actions that can be usefull for others, please ask for a PR!
+:::
+
+### From our Github repository
+
+First, clone our project and go to the root directory:
 
 ```
 git clone https://github.com/DX-DeveloperExperience/git-webhooks
@@ -29,7 +90,7 @@ You can check if everything's alright, you sould get a welcome message.
 
 ### Build your own Docker image
 
-You can create a docker image of our **_Git Webhooks_** Project.
+You can create a docker image of our **_Git Webhooks_** API.
 
 First, clone our project and go to the root directory :
 
@@ -38,7 +99,7 @@ git clone https://github.com/DX-DeveloperExperience/git-webhooks
 cd git-webhooks
 ```
 
-Then run :
+Then, build it:
 
 ```
 docker build -t my-webhook .
@@ -48,40 +109,21 @@ docker build -t my-webhook .
 This will execute the `Dockerfile` config file.
 :::
 
-Then, you can simply run a container :
+Finally, you can run the Docker image:
 
 ```
-docker run --name webhook-container -d -p 3000:3000 my-webhook:latest
+docker run --name webhook-container -d -p 3000:3000 my-webhook
 ```
 
-### Run our Docker image from DockerHub
+## Github/Gitlab webhook configuration
 
-If you just want to test our project, without cloning it, you can run a container with one of the existing versions in [DockerHub]().
-
-::: warning
-You need to add the `config.env` file: look at [this section](#create-the-config-env-file)
-:::
-
-Therefore, you have to create your `Dockerfile`:
-
-```
-FROM dxdeveloperexperience/git-webhooks:TAG
-COPY config.env config.env
-```
-
-Then, build your image and run it, as defined in the [previous step](#build-your-own-docker-image).
-
-## Github/Gitlab configuration
-
-### Add a webhook
-
-Once the API is running, you can configure create a webhook to your git repository with the url : `http://<url of your server>/webhook`. You can also select the events you want to receive, or select all of them.
+Once the API is running, you can add a webhook to your git repository with the url : `http://<url of your server>/webhook`. You can also select the events you want to receive, or select all of them.
 
 ::: tip
 You can use [ngrok](https://ngrok.com/) to convert localhost url to public url.
 :::
 
-#### Github
+### Github
 
 You can add as many webhooks as you want. Just go to your repository settings: `https://github.com/:owner/:repo/settings/hooks`, add click the `Add webhook` button.
 
@@ -92,76 +134,28 @@ Now you can :
 - select the `send me everything` option,
 - save this configuration.
 
-#### Gitlab
+### Gitlab
 
 Go to your repository integrations settings: `https://gitlab.com/:owner/:repo/settings/integrations`, configure the webhook URL and select all the events you want to intercept. Finally, save it via the `Add webhook` button.
-
-### Add token access
-
-This project allows you to interact with Github and Gitlab repositories. You can update commit status, add comments on issues or Pull Request/ Merge Request, etc.
-
-In order to do it, you have to get a _token_ of the repo you interact with.
-
-#### Github
-
-Navigate to [https://github.com/settings/tokens](https://github.com/settings/tokens) to generate a new token. You just need to fill the `token description` field and give it the `repo` scope.
-
-#### Gitlab
-
-Go to [https://gitlab.com/profile/personal_access_tokens](https://gitlab.com/profile/personal_access_tokens) and fill the `name` field with the name of your token, choose an expiration date and give it the `api` scope.
-
-### Create the `config.env` file
-
-Once you get your token, create a `config.env` file at your root's project and add the following lines:
-
-```
-GITHUB_TOKEN=your_github_token
-GITLAB_TOKEN=your_gitlab_token
-GITHUB_API=https://api.github.com
-GITLAB_API=https://gitlab.com/api/v4
-```
-
-If your project is hosted on an official github or gitlab repository, you can leave the GITHUB_API and GITLAB_API as default. But, if you are using another host, you have to adapt the API URL.
 
 ## Google API
 
 The `SendEmailRunnable` makes use of Google API to send mails.
 
-If you want to use it, you need to create the `crendentials.json` file as describe [in the offical documentation](https://developers.google.com/gmail/api/quickstart/nodejs).
+### Through our API
+
+If you're using **Git Webhooks** through our API, you do not have any configuration to do.
+::: warning
+But be aware, emails will be sent as **gitwebhooks@zenika.com**.
+:::
+
+### In your own server
+
+If you want to use your own account, you have to deploy the project in your server.
+You need to create the `crendentials.json` file as describe [in the offical documentation](https://developers.google.com/gmail/api/quickstart/nodejs).
 
 You just have to follow `Step 1` to get your credentials.
 
 ::: warning
 The chosen account will be the sender (email `from` field) of all emails sended through the `SendEmailRunnable`.
-:::
-
-## Testing the project
-
-### GitLab local instance
-
-You can install GitLab Community Edition for testing purposes.
-
-First, install **Docker**.
-
-Second, create a docker volume for persistent data : `docker volume create vol-gitlab`.
-
-Then, you can simply run :
-
-```
-docker run --detach \
-	--hostname gitlab.example.com \
-	--publish 443:443 --publish 80:80 --publish 22:22 \
-	--name gitlab \
-	--mount source=vol-gitlab,target=/app \
-	--restart always \
-	--volume /srv/gitlab/config:/etc/gitlab \
-	--volume /srv/gitlab/logs:/var/log/gitlab \
-	--volume /srv/gitlab/data:/var/opt/gitlab \
-	gitlab/gitlab-ce:latest
-```
-
-Or, for Windows PowerShell : `docker run --detach --hostname gitlab.example.com --publish 443:443 --publish 80:80 --publish 22:22 --name gitlab --mount source=vol-gitlab,target=/app --restart always --volume /srv/gitlab/config:/etc/gitlab --volume /srv/gitlab/logs:/var/log/gitlab --volume /srv/gitlab/data:/var/opt/gitlab gitlab/gitlab-ce:latest`
-
-::: warning
-Do not use Windows PowerShell ISE
 :::

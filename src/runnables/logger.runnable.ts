@@ -25,7 +25,7 @@ export class LoggerRunnable extends Runnable {
       typeof args.type === 'undefined' &&
       callbackType === CallbackType.Error
     ) {
-      args.type = 'warn';
+      args.type = 'error';
     } else if (typeof args.type === 'undefined') {
       args.type = 'info';
     }
@@ -36,6 +36,9 @@ export class LoggerRunnable extends Runnable {
         break;
       case 'warn':
         logger.warn(render(args.message, ruleResult));
+        break;
+      case 'error':
+        logger.error(render(args.message, ruleResult));
         break;
     }
   }

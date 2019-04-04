@@ -17,19 +17,22 @@ export class RulesService {
     private readonly rulesClasses: Rule[] = [],
   ) {}
 
-  getConfiguration(): any {
+  getConfiguration(remoteRepository: string): any {
     const path = require('path');
     return safeLoad(
-      readFileSync(path.resolve(__dirname, 'rules.yml'), 'utf-8'),
+      readFileSync(
+        path.resolve(__dirname, `../../${remoteRepository}/rules.yml`),
+        'utf-8',
+      ),
     );
   }
 
-  getRulesConfiguration(): Rule[] {
-    return this.getConfiguration().rules || [];
+  getRulesConfiguration(remoteRepository: string): Rule[] {
+    return this.getConfiguration(remoteRepository).rules || [];
   }
 
-  getGroupsConfiguration(): Group[] {
-    const groupsConfig = this.getConfiguration().groups || [];
+  getGroupsConfiguration(remoteRepository: string): Group[] {
+    const groupsConfig = this.getConfiguration(remoteRepository).groups || [];
 
     return groupsConfig.map(g => {
       const group = new Group();
@@ -42,18 +45,18 @@ export class RulesService {
     });
   }
 
-  getRulesOptions(): RulesOptions {
-    return new RulesOptions(this.getConfiguration().options);
+  getRulesOptions(remoteRepository: string): RulesOptions {
+    return new RulesOptions(this.getConfiguration(remoteRepository).options);
   }
 
   getRule(ruleConfig): Rule {
     return this.rulesClasses.find(r => r.name === ruleConfig.name);
   }
 
-  testRules(webhook: Webhook): RuleResult[] {
-    const rules: Rule[] = this.getRulesConfiguration();
-    const groups: Group[] = this.getGroupsConfiguration();
-    const rulesOptions: RulesOptions = this.getRulesOptions();
+  testRules(webhook: Webhook, remoteRepository: string): RuleResult[] {
+    const rules: Rule[] = this.getRulesConfiguration(remoteRepository);
+    const groups: Group[] = this.getGroupsConfiguration(remoteRepository);
+    const rulesOptions: RulesOptions = this.getRulesOptions(remoteRepository);
 
     const BreakException = {};
     const results: RuleResult[] = new Array();

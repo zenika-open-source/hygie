@@ -31,17 +31,19 @@ module.exports = {
       {
         title: 'Guide',
         collapsable: false,
-        children: ['/guide/gettingStarted.md', '/guide/configGenerator.md'],
+        children: [
+          '/guide/gettingStarted.md',
+          '/guide/configGenerator.md',
+          '/guide/registerToken.md',
+        ],
       },
       {
         title: 'Rules',
         collapsable: false,
         children: [
           '/rules/customisableRules.md',
-          '/rules/branchName.md',
-          '/rules/commitMessage.md',
-          '/rules/issueTitle.md',
-          '/rules/oneCommitPerPR.md',
+          '/rules/existingRules.md',
+          '/rules/rulesExample.md',
         ],
       },
       {
@@ -49,11 +51,10 @@ module.exports = {
         collapsable: false,
         children: [
           '/post-actions/customisablePostActions.md',
-          '/post-actions/loggerRunnable.md',
-          '/post-actions/webhookRunnable.md',
-          '/post-actions/commentIssueRunnable.md',
+          '/post-actions/existingRunnables.md',
         ],
       },
     ],
   },
+  gitwebhooksURL: 'http://localhost:3000',
 };

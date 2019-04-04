@@ -1,11 +1,17 @@
 import { Injectable, HttpService } from '@nestjs/common';
 import { GitServiceInterface } from '../git/git.service.interface';
-import { GitTypeEnum, convertCommitStatus } from '../webhook/utils.enum';
+import {
+  GitTypeEnum,
+  convertCommitStatus,
+  convertIssueState,
+} from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
+import { PreconditionException } from '../exceptions/precondition.exception';
+import { loadEnv } from '../utils/dotenv.utils';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -17,15 +23,41 @@ export class GithubService implements GitServiceInterface {
 
   configGitHub: object;
 
-  constructor(private readonly httpService: HttpService) {
-    require('dotenv').config({ path: 'config.env' });
-    this.token = process.env.GITHUB_TOKEN;
-    this.configGitHub = {
-      headers: {
-        Authorization: 'token ' + this.token,
-      },
-    };
-    this.urlApi = process.env.GITHUB_API;
+  constructor(private readonly httpService: HttpService) {}
+
+  setToken(token: string) {
+    this.token = token;
+  }
+
+  setUrlApi(urlApi: string) {
+    this.urlApi = urlApi;
+  }
+
+  setConfigGitHub(conf?: any) {
+    this.configGitHub =
+      typeof conf !== 'undefined'
+        ? conf
+        : {
+            headers: {
+              Authorization: 'token ' + this.token,
+            },
+          };
+  }
+
+  setEnvironmentVariables(filePath: string): void {
+    loadEnv('remote-envs/' + filePath + '/config.env');
+
+    if (
+      process.env.gitToken === undefined ||
+      process.env.gitToken === '' ||
+      process.env.gitApi === undefined ||
+      process.env.gitToken === ''
+    ) {
+      throw new PreconditionException();
+    }
+    this.setToken(process.env.gitToken);
+    this.setUrlApi(process.env.gitApi);
+    this.setConfigGitHub();
   }
 
   updateCommitStatus(
@@ -96,6 +128,41 @@ export class GithubService implements GitServiceInterface {
     this.httpService
       .post(
         `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls`,
+        dataGitHub,
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  deleteBranch(gitApiInfos: GitApiInfos, branchName: string): void {
+    this.httpService
+      .delete(
+        `${this.urlApi}/repos/${
+          gitApiInfos.repositoryFullName
+        }/git/refs/heads/${encodeURIComponent(branchName)}`,
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  updateIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void {
+    const dataGitHub: any = {};
+
+    if (typeof gitIssueInfos.state !== 'undefined') {
+      dataGitHub.state = convertIssueState(
+        GitTypeEnum.Github,
+        gitIssueInfos.state,
+      );
+    }
+    if (typeof gitIssueInfos.labels !== 'undefined') {
+      dataGitHub.labels = gitIssueInfos.labels;
+    }
+
+    this.httpService
+      .patch(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues/${
+          gitIssueInfos.number
+        }`,
         dataGitHub,
         this.configGitHub,
       )

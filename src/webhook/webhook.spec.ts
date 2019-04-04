@@ -2,7 +2,7 @@ import { Webhook, WebhookCommit } from './webhook';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
 import { HttpService } from '@nestjs/common';
-import { GitEventEnum, GitTypeEnum } from './utils.enum';
+import { GitEventEnum, GitTypeEnum, CommitStatusEnum } from './utils.enum';
 
 // INIT
 const gitlabService: GitlabService = new GitlabService(new HttpService());
@@ -12,15 +12,15 @@ webhook.branchName = 'features/fix';
 webhook.commits = [
   {
     message: 'fix: readme (#12)',
-    id: '1',
+    sha: '1',
   },
   {
     message: 'feat(test): tdd (#34)',
-    id: '2',
+    sha: '2',
   },
   {
     message: 'docs: gh-pages',
-    id: '3',
+    sha: '3',
   },
 ];
 webhook.gitEvent = GitEventEnum.NewBranch;
@@ -31,6 +31,7 @@ webhook.repository = {
   fullName: 'bastienterrier/test_webhook',
   name: 'test_webhook',
   description: 'amazing project',
+  cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
 };
 webhook.pullRequest = {
   title: 'my PR for webhook',
@@ -40,6 +41,10 @@ webhook.pullRequest = {
 webhook.issue = {
   number: 43,
   title: 'add rules documentation',
+};
+webhook.comment = {
+  id: 22,
+  description: 'my comment',
 };
 
 describe('Webhook', () => {
@@ -96,6 +101,62 @@ describe('Webhook', () => {
   describe('getGitEvent', () => {
     it('should return GitEventEnum.NewBranch', () => {
       expect(webhook.getGitEvent()).toBe(GitEventEnum.NewBranch);
+    });
+  });
+
+  describe('getCloneURL', () => {
+    it('should return https://github.com/bastienterrier/test-webhook.git', () => {
+      expect(webhook.getCloneURL()).toBe(
+        'https://github.com/bastienterrier/test-webhook.git',
+      );
+    });
+  });
+
+  describe('getCommentId', () => {
+    it('should return 22', () => {
+      expect(webhook.getCommentId()).toBe(22);
+    });
+  });
+
+  describe('getCommentDescription', () => {
+    it('should return "my comment"', () => {
+      expect(webhook.getCommentDescription()).toBe('my comment');
+    });
+  });
+
+  describe('getRemoteEnvs', () => {
+    it('should return "bastienterrier/test-webhook"', () => {
+      expect(webhook.getRemoteEnvs()).toBe('bastienterrier/test-webhook');
+    });
+  });
+
+  describe('getGitCommitStatusInfos', () => {
+    it('should return an object', () => {
+      expect(
+        webhook.getGitCommitStatusInfos(CommitStatusEnum.Success, '22'),
+      ).toEqual({
+        commitSha: '22',
+        commitStatus: 'Success',
+      });
+    });
+  });
+
+  describe('getGitApiInfos', () => {
+    it('should return an object with Github', () => {
+      expect(webhook.getGitApiInfos()).toEqual({
+        git: 'Github',
+        repositoryFullName: 'bastienterrier/test_webhook',
+      });
+    });
+  });
+
+  describe('getGitApiInfos', () => {
+    it('should return an object with Gitlab', () => {
+      webhook.gitType = GitTypeEnum.Gitlab;
+      expect(webhook.getGitApiInfos()).toEqual({
+        git: 'Gitlab',
+        projectId: '1',
+      });
     });
   });
 });

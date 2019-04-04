@@ -134,7 +134,7 @@ export class SendEmailRunnable extends Runnable {
   ): void {
     readFile('credentials.json', (err, content) => {
       if (err) {
-        return logger.warn('Error loading credentials.json:', err);
+        return logger.error('Error loading credentials.json:', err);
       }
       // Authorize a client with credentials, then call the Gmail API.
       this.authorize(

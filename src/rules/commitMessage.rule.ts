@@ -56,7 +56,7 @@ export class CommitMessageRule extends Rule {
         commitMatches.success = false;
       }
 
-      commitMatches.sha = c.id;
+      commitMatches.sha = c.sha;
       commitMatches.message = c.message;
       commitMatches.matches = c.message.match(commitRegExp);
 

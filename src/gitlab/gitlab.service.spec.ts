@@ -1,18 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GithubService } from '../github/github.service';
 import { HttpService } from '@nestjs/common';
 import { MockHttpService, MockObservable } from '../__mocks__/mocks';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
-import { GitTypeEnum, CommitStatusEnum } from '../webhook/utils.enum';
-import { GitIssueInfos } from '../git/gitIssueInfos';
+import { CommitStatusEnum } from '../webhook/utils.enum';
+import { GitIssueInfos, IssueStateEnum } from '../git/gitIssueInfos';
 import { GitCreatePRInfos, GitCommentPRInfos } from '../git/gitPRInfos';
 import { Observable } from 'rxjs';
 import { GitlabService } from './gitlab.service';
 
 require('dotenv').config({ path: 'config.env' });
 
-describe('RulesService', () => {
+describe('Gitlab Service', () => {
   let app: TestingModule;
   let gitlabService: GitlabService;
   let httpService: HttpService;
@@ -87,6 +86,40 @@ describe('RulesService', () => {
     });
   });
 
+  describe('updateIssue', () => {
+    it('should emit a PUT request with specific params', () => {
+      const gitIssueInfos = new GitIssueInfos();
+      gitIssueInfos.number = '1';
+      gitIssueInfos.state = IssueStateEnum.Close;
+
+      gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
+
+      const expectedUrl = `${process.env.GITLAB_API}/projects/1/issues/1`;
+
+      expectedConfig.params = {
+        state_event: 'close',
+      };
+
+      expect(httpService.put).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+
+    it('should emit a PUT request with specific params', () => {
+      const gitIssueInfos = new GitIssueInfos();
+      gitIssueInfos.number = '1';
+      gitIssueInfos.state = IssueStateEnum.Open;
+
+      gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
+
+      const expectedUrl = `${process.env.GITLAB_API}/projects/1/issues/1`;
+
+      expectedConfig.params = {
+        state_event: 'reopen',
+      };
+
+      expect(httpService.put).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+  });
+
   describe('addPRComment', () => {
     it('should emit a POST request with specific params', () => {
       const gitCommentPRInfos = new GitCommentPRInfos();
@@ -127,6 +160,37 @@ describe('RulesService', () => {
       };
 
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+  });
+
+  describe('setToken', () => {
+    it('should set the token', () => {
+      gitlabService.setToken('azertyuiop');
+      expect(gitlabService.token).toBe('azertyuiop');
+    });
+  });
+
+  describe('setUrlApi', () => {
+    it('should set the url of the API', () => {
+      gitlabService.setUrlApi('https://githubapi.com');
+      expect(gitlabService.urlApi).toBe('https://githubapi.com');
+    });
+  });
+
+  describe('setEnvironmentVariables', () => {
+    it('should set the token and urlApi', () => {
+      const fs = require('fs');
+      jest.mock('fs');
+
+      fs.readFileSync.mockReturnValue(
+        `gitApi=https://mygitapi.com
+      gitToken=qsdfghjklm`,
+      );
+
+      gitlabService.setEnvironmentVariables('myFilePath');
+
+      expect(gitlabService.token).toBe('qsdfghjklm');
+      expect(gitlabService.urlApi).toBe('https://mygitapi.com');
     });
   });
 });

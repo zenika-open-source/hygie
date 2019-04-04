@@ -11,6 +11,10 @@ import {
   isGithubNewRepoEvent,
   isGithubNewPREvent,
   isGitlabNewPREvent,
+  isGithubIssueCommentEvent,
+  isGithubPRCommentEvent,
+  isGitlabIssueCommentEvent,
+  isGitlabPRCommentEvent,
 } from './utils.enum';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
@@ -25,11 +29,11 @@ export class WebhookIssue {
 }
 
 export class WebhookCommit {
-  id: string;
+  sha: string;
   message: string;
 
-  constructor(id: string, message: string) {
-    this.id = id;
+  constructor(sha: string, message: string) {
+    this.sha = sha;
     this.message = message;
   }
 }
@@ -38,12 +42,18 @@ export class WebhookRepository {
   fullName: string;
   name: string;
   description: string;
+  cloneURL: string;
 }
 
 export class WebhookPR {
   title: string;
   description: string;
   number: number;
+}
+
+export class WebhookComment {
+  id: number;
+  description: string;
 }
 
 export class Webhook {
@@ -56,6 +66,7 @@ export class Webhook {
   branchName: string;
   issue: WebhookIssue;
   pullRequest: WebhookPR;
+  comment: WebhookComment;
 
   constructor(
     private readonly gitlabService: GitlabService,
@@ -65,14 +76,11 @@ export class Webhook {
     this.commits = new Array<WebhookCommit>();
     this.issue = new WebhookIssue();
     this.pullRequest = new WebhookPR();
+    this.comment = new WebhookComment();
   }
 
   getAllCommits(): WebhookCommit[] {
-    const commits: WebhookCommit[] = new Array();
-    this.commits.forEach(c => {
-      commits.push(c);
-    });
-    return commits;
+    return this.commits;
   }
 
   getPullRequestNumber(): number {
@@ -107,6 +115,28 @@ export class Webhook {
     return this.gitEvent;
   }
 
+  getCloneURL(): string {
+    return this.repository.cloneURL;
+  }
+
+  getCommentId(): number {
+    return this.comment.id;
+  }
+
+  getCommentDescription(): string {
+    return this.comment.description;
+  }
+
+  getRemoteEnvs(): string {
+    const splitedURL = this.getCloneURL().split('/');
+
+    return (
+      splitedURL[splitedURL.length - 2] +
+      '/' +
+      splitedURL[splitedURL.length - 1].replace('.git', '')
+    );
+  }
+
   gitToWebhook(git: GitlabEvent | GithubEvent): void {
     this.gitEvent = GitEventEnum.Undefined;
     this.gitType = GitTypeEnum.Undefined;
@@ -121,12 +151,14 @@ export class Webhook {
         this.commits.push(commit);
       });
       this.branchName = git.ref.split('/')[1];
+      this.repository.cloneURL = git.project.git_http_url;
     } else if (isGitlabBranchEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewBranch;
       this.gitService = this.gitlabService;
       this.branchName = git.ref.substring(11);
       this.projectId = git.project_id;
+      this.repository.cloneURL = git.project.git_http_url;
     } else if (isGithubPushEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.Push;
@@ -137,11 +169,14 @@ export class Webhook {
         this.commits.push(commit);
       });
       this.branchName = git.ref.substring(11);
+      this.repository.cloneURL = git.repository.clone_url;
     } else if (isGithubBranchEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewBranch;
       this.gitService = this.githubService;
       this.branchName = git.ref;
+      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.fullName = git.repository.full_name;
     } else if (isGithubIssueEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewIssue;
@@ -149,6 +184,7 @@ export class Webhook {
       this.issue.number = git.issue.number;
       this.issue.title = git.issue.title;
       this.repository.fullName = git.repository.full_name;
+      this.repository.cloneURL = git.repository.clone_url;
     } else if (isGitlabIssueEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewIssue;
@@ -156,13 +192,7 @@ export class Webhook {
       this.issue.number = git.object_attributes.iid;
       this.issue.title = git.object_attributes.title;
       this.projectId = git.object_attributes.project_id;
-    } else if (isGithubNewRepoEvent(git)) {
-      this.gitType = GitTypeEnum.Github;
-      this.gitEvent = GitEventEnum.NewRepo;
-      this.gitService = this.githubService;
-      this.repository.fullName = git.repository.full_name;
-      this.repository.name = git.repository.name;
-      this.repository.description = git.repository.description;
+      this.repository.cloneURL = git.project.git_http_url;
     } else if (isGithubNewPREvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewPR;
@@ -171,6 +201,7 @@ export class Webhook {
       this.pullRequest.description = git.pull_request.body;
       this.pullRequest.number = git.number;
       this.repository.fullName = git.repository.full_name;
+      this.repository.cloneURL = git.repository.clone_url;
     } else if (isGitlabNewPREvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewPR;
@@ -179,6 +210,58 @@ export class Webhook {
       this.pullRequest.title = git.object_attributes.title;
       this.pullRequest.description = git.object_attributes.description;
       this.pullRequest.number = git.object_attributes.iid;
+      this.repository.cloneURL = git.project.git_http_url;
+    } else if (isGithubIssueCommentEvent(git)) {
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.NewIssueComment;
+      this.gitService = this.githubService;
+      this.repository.fullName = git.repository.full_name;
+      this.repository.cloneURL = git.repository.clone_url;
+      this.comment.id = git.comment.id;
+      this.comment.description = git.comment.body;
+      this.issue.title = git.issue.title;
+      this.issue.number = git.issue.number;
+    } else if (isGithubPRCommentEvent(git)) {
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.NewPRComment;
+      this.gitService = this.githubService;
+      this.repository.fullName = git.repository.full_name;
+      this.repository.cloneURL = git.repository.clone_url;
+      this.comment.id = git.comment.id;
+      this.comment.description = git.comment.body;
+      this.pullRequest.description = git.issue.body;
+      this.pullRequest.title = git.issue.title;
+      this.pullRequest.number = git.issue.number;
+    } else if (isGitlabIssueCommentEvent(git)) {
+      this.gitType = GitTypeEnum.Gitlab;
+      this.gitEvent = GitEventEnum.NewIssueComment;
+      this.gitService = this.gitlabService;
+      this.projectId = git.project.id;
+      this.repository.cloneURL = git.project.git_http_url;
+      this.comment.id = git.object_attributes.id;
+      this.comment.description = git.object_attributes.description;
+      this.issue.title = git.issue.title;
+      this.issue.number = git.issue.iid;
+    } else if (isGitlabPRCommentEvent(git)) {
+      this.gitType = GitTypeEnum.Gitlab;
+      this.gitEvent = GitEventEnum.NewPRComment;
+      this.gitService = this.gitlabService;
+      this.projectId = git.project.id;
+      this.repository.cloneURL = git.project.git_http_url;
+      this.comment.id = git.object_attributes.id;
+      this.comment.description = git.object_attributes.description;
+      this.pullRequest.title = git.merge_request.title;
+      this.pullRequest.description = git.merge_request.description;
+      this.pullRequest.number = git.merge_request.iid;
+    } else if (isGithubNewRepoEvent(git)) {
+      // Caution: need to be after isGithubIssueComment and isGithubPRComment
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.NewRepo;
+      this.gitService = this.githubService;
+      this.repository.fullName = git.repository.full_name;
+      this.repository.name = git.repository.name;
+      this.repository.description = git.repository.description;
+      this.repository.cloneURL = git.repository.clone_url;
     }
   }
 
