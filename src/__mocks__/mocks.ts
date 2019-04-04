@@ -13,9 +13,13 @@ export class MockHttpService {
   put: jest.Mock = jest.fn(() => {
     return of([]);
   });
+  delete: jest.Mock = jest.fn(() => {
+    return of([]);
+  });
 }
 
 export class MockGitlabService {
+  deleteFile: jest.Mock = jest.fn().mockName('deleteFileGitlab');
   createIssue: jest.Mock = jest.fn().mockName('createIssueGitlab');
   deleteBranch: jest.Mock = jest.fn().mockName('deleteBranchGitlab');
   updateIssue: jest.Mock = jest.fn().mockName('updateIssueGitlab');
@@ -29,6 +33,7 @@ export class MockGitlabService {
 }
 
 export class MockGithubService {
+  deleteFile: jest.Mock = jest.fn().mockName('deleteFileGithub');
   createIssue: jest.Mock = jest.fn().mockName('createIssueGithub');
   updateIssue: jest.Mock = jest.fn().mockName('updateIssueGithub');
   deleteBranch: jest.Mock = jest.fn().mockName('deleteBranchGithub');

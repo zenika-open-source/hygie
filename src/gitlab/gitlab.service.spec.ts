@@ -8,6 +8,7 @@ import { GitIssueInfos, IssueStateEnum } from '../git/gitIssueInfos';
 import { GitCreatePRInfos, GitCommentPRInfos } from '../git/gitPRInfos';
 import { Observable } from 'rxjs';
 import { GitlabService } from './gitlab.service';
+import { GitFileInfos } from '../git/gitFileInfos';
 
 require('dotenv').config({ path: 'config.env' });
 
@@ -73,6 +74,7 @@ describe('Gitlab Service', () => {
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
     });
   });
+
   describe('addIssueComment', () => {
     it('should emit a POST request with specific params', () => {
       const gitIssueInfos = new GitIssueInfos();
@@ -188,6 +190,43 @@ describe('Gitlab Service', () => {
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
     });
   });
+
+  describe('deleteBranch', () => {
+    it('should emit a DELETE request with specific params', () => {
+      gitlabService.deleteBranch(gitApiInfos, 'feature/test');
+
+      const expectedUrl = `${
+        gitlabService.urlApi
+      }/projects/1/repository/branches/feature%2Ftest`;
+
+      expect(httpService.delete).toBeCalledWith(expectedUrl, {
+        headers: expectedConfig.headers,
+      });
+    });
+  });
+
+  describe('deleteFile', () => {
+    it('should emit a DELETE request with specific params', () => {
+      const gitFileInfos = new GitFileInfos();
+      gitFileInfos.fileBranch = 'master';
+      gitFileInfos.filePath = 'file/to/delete.txt';
+      gitFileInfos.commitMessage = 'delete file';
+      gitlabService.deleteFile(gitApiInfos, gitFileInfos);
+
+      const expectedUrl = `${
+        gitlabService.urlApi
+      }/projects/1/repository/files/file%2Fto%2Fdelete.txt`;
+
+      expectedConfig.params = {
+        branch: 'master',
+        commit_message: 'delete file',
+      };
+
+      expect(httpService.delete).toBeCalledWith(expectedUrl, expectedConfig);
+    });
+  });
+
+  // TESTS BEFORE
 
   describe('setToken', () => {
     it('should set the token', () => {

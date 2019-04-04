@@ -12,6 +12,7 @@ import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
 import { PreconditionException } from '../exceptions/precondition.exception';
 import { loadEnv } from '../utils/dotenv.utils';
+import { GitFileInfos } from '../git/gitFileInfos';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -195,5 +196,37 @@ export class GithubService implements GitServiceInterface {
         this.configGitHub,
       )
       .subscribe(null, err => logger.error(err));
+  }
+
+  deleteFile(gitApiInfos: GitApiInfos, gitFileInfos: GitFileInfos): void {
+    const localConfig: any = JSON.parse(JSON.stringify(this.configGitHub));
+
+    // First of all, get file blob sha
+    this.httpService
+      .get(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/contents/${
+          gitFileInfos.filePath
+        }`,
+        this.configGitHub,
+      )
+      .subscribe(
+        response => {
+          localConfig.params = {
+            sha: response.data.sha,
+            message: gitFileInfos.commitMessage,
+            branch: gitFileInfos.fileBranch,
+          };
+
+          this.httpService
+            .delete(
+              `${this.urlApi}/repos/${
+                gitApiInfos.repositoryFullName
+              }/contents/${gitFileInfos.filePath}`,
+              localConfig,
+            )
+            .subscribe(null, err => logger.error(err));
+        },
+        err => logger.error(err),
+      );
   }
 }

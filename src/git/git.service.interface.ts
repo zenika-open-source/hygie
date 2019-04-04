@@ -2,6 +2,7 @@ import { GitCommitStatusInfos } from './gitCommitStatusInfos';
 import { GitApiInfos } from './gitApiInfos';
 import { GitIssueInfos } from './gitIssueInfos';
 import { GitCommentPRInfos, GitCreatePRInfos } from './gitPRInfos';
+import { GitFileInfos } from './gitFileInfos';
 
 /**
  * Provide methods that must be implement by `GithubService` and `GitlabService` to interact with `git` repository
@@ -62,4 +63,9 @@ export interface GitServiceInterface {
    * by reading the corresponding `config.env` file
    */
   setEnvironmentVariables(filePath: string): void;
+
+  /**
+   * Remove a particular file describe in `gitFileInfos`
+   */
+  deleteFile(gitApiInfos: GitApiInfos, gitFileInfos: GitFileInfos): void;
 }

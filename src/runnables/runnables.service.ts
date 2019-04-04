@@ -15,6 +15,7 @@ import { UpdateCommitStatusRunnable } from './updateCommitStatus.runnable';
 import { DeleteBranchRunnable } from './deleteBranch.runnable';
 import { UpdateIssueRunnable } from './updateIssue.runnable';
 import { CreateIssueRunnable } from './createIssue.runnable';
+import { DeleteFilesRunnable } from './deleteFiles.runnable';
 
 export enum CallbackType {
   Success = 'Success',
@@ -80,6 +81,12 @@ export class RunnablesService {
         break;
       case 'CreateIssueRunnable':
         runnable = new CreateIssueRunnable(
+          this.githubService,
+          this.gitlabService,
+        );
+        break;
+      case 'DeleteFilesRunnable':
+        runnable = new DeleteFilesRunnable(
           this.githubService,
           this.gitlabService,
         );

@@ -11,6 +11,7 @@ import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
 import { loadEnv } from '../utils/dotenv.utils';
+import { GitFileInfos } from '../git/gitFileInfos';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -233,6 +234,27 @@ export class GitlabService implements GitServiceInterface {
       .post(
         `${this.urlApi}/projects/${gitApiInfos.projectId}/issues`,
         dataGitLab,
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  deleteFile(gitApiInfos: GitApiInfos, gitFileInfos: GitFileInfos): void {
+    // Config URL for GitLab
+    const configGitLab = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {
+        commit_message: gitFileInfos.commitMessage,
+        branch: gitFileInfos.fileBranch,
+      },
+    };
+    this.httpService
+      .delete(
+        `${this.urlApi}/projects/${
+          gitApiInfos.projectId
+        }/repository/files/${encodeURIComponent(gitFileInfos.filePath)}`,
         configGitLab,
       )
       .subscribe(null, err => logger.error(err));

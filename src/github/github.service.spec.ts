@@ -223,6 +223,38 @@ describe('Github Service', () => {
     });
   });
 
+  /*
+  describe('deleteFile', () => {
+    it('should emit GET and POST requests with specific params', () => {
+      const gitFileInfos = new GitFileInfos();
+      gitFileInfos.fileBranch = 'master';
+      gitFileInfos.filePath = 'file/to/remove.txt';
+      gitFileInfos.commitMessage = 'remove file/to/remove.txt';
+
+      httpService.get = jest.fn().mockRejectedValueOnce({
+        sha: 'e69de29bb2d1d6434b8b29ae775ad8c2e48c5391',
+      });
+
+      githubService.deleteFile(gitApiInfos, gitFileInfos);
+
+      const expectedUrl1 = `https://api.github.com/repos/bastienterrier/test/contents/file/to/remove.txt`;
+
+      expect(httpService.get).toBeCalledWith(expectedUrl1, expectedConfig);
+    });
+  });*/
+
+  describe('deleteBranch', () => {
+    it('should emit a DELETE request with specific params', () => {
+      githubService.deleteBranch(gitApiInfos, 'feature/test');
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/refs/heads/feature%2Ftest`;
+
+      expect(httpService.delete).toBeCalledWith(expectedUrl, expectedConfig);
+    });
+  });
+
+  // TESTS BEFORE
+
   describe('setToken', () => {
     it('should set the token', () => {
       githubService.setToken('azertyuiop');
