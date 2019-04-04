@@ -22,6 +22,7 @@ import { GitlabEvent } from '../gitlab/gitlabEvent';
 import { GithubEvent } from '../github/githubEvent';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
+import { logger } from '../logger/logger.service';
 
 export class WebhookIssue {
   number: number;
@@ -150,7 +151,7 @@ export class Webhook {
         const commit = new WebhookCommit(c.id, c.message);
         this.commits.push(commit);
       });
-      this.branchName = git.ref.split('/')[1];
+      this.branchName = git.ref.substring(11);
       this.repository.cloneURL = git.project.git_http_url;
     } else if (isGitlabBranchEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;

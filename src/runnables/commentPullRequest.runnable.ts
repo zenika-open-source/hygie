@@ -7,6 +7,7 @@ import { GitCommentPRInfos } from '../git/gitPRInfos';
 import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { RunnableDecorator } from './runnable.decorator';
+import { render } from 'mustache';
 
 interface CommentPRArgs {
   comment: string;
@@ -32,7 +33,7 @@ export class CommentPullRequestRunnable extends Runnable {
     const data = ruleResult.data as any;
     const gitPRInfos: GitCommentPRInfos = new GitCommentPRInfos();
     gitPRInfos.number = data.pullRequestNumber;
-    gitPRInfos.comment = args.comment;
+    gitPRInfos.comment = render(args.comment, ruleResult);
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
     if (gitApiInfos.git === GitTypeEnum.Github) {

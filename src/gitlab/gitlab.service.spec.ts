@@ -20,11 +20,7 @@ describe('Gitlab Service', () => {
   let gitApiInfos: GitApiInfos;
   let gitCommitStatusInfos: GitCommitStatusInfos;
 
-  const expectedConfig: any = {
-    headers: {
-      'PRIVATE-TOKEN': process.env.GITLAB_TOKEN,
-    },
-  };
+  let expectedConfig: any = {};
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -41,6 +37,15 @@ describe('Gitlab Service', () => {
 
     gitApiInfos = new GitApiInfos();
     gitApiInfos.projectId = '1';
+
+    gitlabService.setToken('0123456789abcdef');
+    gitlabService.setUrlApi('https://gitlab.com/api/v4');
+
+    expectedConfig = {
+      headers: {
+        'PRIVATE-TOKEN': gitlabService.token,
+      },
+    };
   });
 
   beforeEach(() => {
@@ -57,7 +62,7 @@ describe('Gitlab Service', () => {
 
       gitlabService.updateCommitStatus(gitApiInfos, gitCommitStatusInfos);
 
-      const expectedUrl = `${process.env.GITLAB_API}/projects/1/statuses/1`;
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/statuses/1`;
 
       expectedConfig.params = {
         state: 'success',
@@ -76,7 +81,7 @@ describe('Gitlab Service', () => {
 
       gitlabService.addIssueComment(gitApiInfos, gitIssueInfos);
 
-      const expectedUrl = `${process.env.GITLAB_API}/projects/1/issues/1/notes`;
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/issues/1/notes`;
 
       expectedConfig.params = {
         body: 'my comment',
@@ -94,7 +99,7 @@ describe('Gitlab Service', () => {
 
       gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
 
-      const expectedUrl = `${process.env.GITLAB_API}/projects/1/issues/1`;
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/issues/1`;
 
       expectedConfig.params = {
         state_event: 'close',
@@ -110,7 +115,7 @@ describe('Gitlab Service', () => {
 
       gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
 
-      const expectedUrl = `${process.env.GITLAB_API}/projects/1/issues/1`;
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/issues/1`;
 
       expectedConfig.params = {
         state_event: 'reopen',
@@ -129,7 +134,7 @@ describe('Gitlab Service', () => {
       gitlabService.addPRComment(gitApiInfos, gitCommentPRInfos);
 
       const expectedUrl = `${
-        process.env.GITLAB_API
+        gitlabService.urlApi
       }/projects/1/merge_requests/1/notes`;
 
       expectedConfig.params = {
@@ -150,13 +155,34 @@ describe('Gitlab Service', () => {
 
       gitlabService.createPullRequest(gitApiInfos, gitCreatePRInfos);
 
-      const expectedUrl = `${process.env.GITLAB_API}/projects/1/merge_requests`;
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/merge_requests`;
 
       expectedConfig.params = {
         title: 'my PR',
         description: 'my desc',
         source_branch: 'develop',
         target_branch: 'master',
+      };
+
+      expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+  });
+
+  describe('createIssue', () => {
+    it('should emit a POST request with specific params', () => {
+      const gitIssueInfos = new GitIssueInfos();
+      gitIssueInfos.title = 'my new issue';
+      gitIssueInfos.description = 'my desc';
+      gitIssueInfos.labels = ['good first issue', 'rules'];
+
+      gitlabService.createIssue(gitApiInfos, gitIssueInfos);
+
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/issues`;
+
+      expectedConfig.params = {
+        title: 'my new issue',
+        description: 'my desc',
+        labels: 'good first issue,rules',
       };
 
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);

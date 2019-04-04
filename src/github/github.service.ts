@@ -168,4 +168,32 @@ export class GithubService implements GitServiceInterface {
       )
       .subscribe(null, err => logger.error(err));
   }
+
+  createIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void {
+    const dataGitHub: any = {};
+
+    if (typeof gitIssueInfos.title !== 'undefined') {
+      dataGitHub.title = gitIssueInfos.title;
+    } else {
+      // Title is required
+      return;
+    }
+    if (typeof gitIssueInfos.labels !== 'undefined') {
+      dataGitHub.labels = gitIssueInfos.labels;
+    }
+    if (typeof gitIssueInfos.assignees !== 'undefined') {
+      dataGitHub.assignees = gitIssueInfos.assignees;
+    }
+    if (typeof gitIssueInfos.description !== 'undefined') {
+      dataGitHub.body = gitIssueInfos.description;
+    }
+
+    this.httpService
+      .post(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues`,
+        dataGitHub,
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
 }

@@ -48,6 +48,11 @@ export interface GitServiceInterface {
   deleteBranch(gitApiInfos: GitApiInfos, branchName: string): void;
 
   /**
+   * Create an Issue whose attributes are specify by the `gitCommitStatusInfos` param
+   */
+  createIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void;
+
+  /**
    * Update an issue partially
    */
   updateIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void;

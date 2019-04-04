@@ -203,4 +203,38 @@ export class GitlabService implements GitServiceInterface {
       )
       .subscribe(null, err => logger.error(err));
   }
+
+  createIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void {
+    // Config URL for GitLab
+    const configGitLab = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {},
+    };
+
+    // Data for GitLab
+    const dataGitLab = {};
+
+    if (typeof gitIssueInfos.title !== 'undefined') {
+      (configGitLab.params as any).title = gitIssueInfos.title;
+    } else {
+      // Title is required
+      return;
+    }
+    if (typeof gitIssueInfos.labels !== 'undefined') {
+      (configGitLab.params as any).labels = gitIssueInfos.labels.join(',');
+    }
+    if (typeof gitIssueInfos.description !== 'undefined') {
+      (configGitLab.params as any).description = gitIssueInfos.description;
+    }
+
+    this.httpService
+      .post(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/issues`,
+        dataGitLab,
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
 }

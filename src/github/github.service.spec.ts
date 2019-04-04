@@ -196,6 +196,33 @@ describe('Github Service', () => {
     });
   });
 
+  describe('createIssue', () => {
+    it('should emit a POST request with specific params', () => {
+      const gitIssueInfos = new GitIssueInfos();
+      gitIssueInfos.title = 'my new issue';
+      gitIssueInfos.description = 'my desc';
+      gitIssueInfos.assignees = ['bastienterrier'];
+      gitIssueInfos.labels = ['good first issue'];
+
+      githubService.createIssue(gitApiInfos, gitIssueInfos);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues`;
+
+      const expectedData = {
+        title: 'my new issue',
+        body: 'my desc',
+        assignees: ['bastienterrier'],
+        labels: ['good first issue'],
+      };
+
+      expect(httpService.post).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
+    });
+  });
+
   describe('setToken', () => {
     it('should set the token', () => {
       githubService.setToken('azertyuiop');

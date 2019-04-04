@@ -14,6 +14,7 @@ import { Group } from '../rules/group.class';
 import { UpdateCommitStatusRunnable } from './updateCommitStatus.runnable';
 import { DeleteBranchRunnable } from './deleteBranch.runnable';
 import { UpdateIssueRunnable } from './updateIssue.runnable';
+import { CreateIssueRunnable } from './createIssue.runnable';
 
 export enum CallbackType {
   Success = 'Success',
@@ -73,6 +74,12 @@ export class RunnablesService {
         break;
       case 'UpdateIssueRunnable':
         runnable = new UpdateIssueRunnable(
+          this.githubService,
+          this.gitlabService,
+        );
+        break;
+      case 'CreateIssueRunnable':
+        runnable = new CreateIssueRunnable(
           this.githubService,
           this.gitlabService,
         );

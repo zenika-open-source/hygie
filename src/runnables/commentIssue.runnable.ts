@@ -7,6 +7,7 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { RunnableDecorator } from './runnable.decorator';
+import { render } from 'mustache';
 
 interface CommentIssueArgs {
   comment: string;
@@ -32,7 +33,7 @@ export class CommentIssueRunnable extends Runnable {
     const data = ruleResult.data as any;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     gitIssueInfos.number = data.issueNumber;
-    gitIssueInfos.comment = args.comment;
+    gitIssueInfos.comment = render(args.comment, ruleResult);
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
     if (gitApiInfos.git === GitTypeEnum.Github) {

@@ -7,3 +7,4 @@ export { UpdateCommitStatusRunnable } from './updateCommitStatus.runnable';
 export { WebhookRunnable } from './webhook.runnable';
 export { DeleteBranchRunnable } from './deleteBranch.runnable';
 export { UpdateIssueRunnable } from './updateIssue.runnable';
+export { CreateIssueRunnable } from './createIssue.runnable';
