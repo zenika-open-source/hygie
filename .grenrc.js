@@ -15,6 +15,6 @@ module.exports = {
     'Bug Fixes:': ['bug'],
     'Rules:': ['rules'],
     'Post-Actions:': ['post actions'],
-    'Others:': ['question', 'build'],
+    'Others:': ['question', 'build', ''],
   },
 };
