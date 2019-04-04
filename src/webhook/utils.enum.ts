@@ -6,8 +6,8 @@ import { GithubEvent } from '../github/githubEvent';
 import { GithubIssueEvent } from '../github/githubIssueEvent';
 import { GitlabIssueEvent } from '../gitlab/gitlabIssueEvent';
 import { GithubNewRepoEvent } from '../github/githubNewRepoEvent';
-import { GithubNewPREvent } from '../github/githubNewPREvent';
-import { GitlabNewPREvent } from '../gitlab/gitlabNewPREvent';
+import { GithubPREvent } from '../github/githubPREvent';
+import { GitlabPREvent } from '../gitlab/gitlabPREvent';
 import { GithubIssuePRCommentEvent } from '../github/githubIssuePRCommentEvent';
 import { GitlabIssueCommentEvent } from '../gitlab/gitlabIssueCommentEvent';
 import { GitlabPRCommentEvent } from '../gitlab/gitlabPRCommentEvent';
@@ -143,22 +143,84 @@ export function isGithubNewRepoEvent(
 
 export function isGithubNewPREvent(
   git: GitlabEvent | GithubEvent,
-): git is GithubNewPREvent {
+): git is GithubPREvent {
   return (
-    (git as GithubNewPREvent).pull_request !== undefined &&
-    ((git as GithubNewPREvent).action === 'synchronised' ||
-      (git as GithubNewPREvent).action === 'opened') &&
-    (git as GithubNewPREvent).number !== undefined
+    (git as GithubPREvent).pull_request !== undefined &&
+    ((git as GithubPREvent).action === 'synchronised' ||
+      (git as GithubPREvent).action === 'opened') &&
+    (git as GithubPREvent).number !== undefined
+  );
+}
+
+export function isGithubMergedPREvent(
+  git: GitlabEvent | GithubEvent,
+): git is GithubPREvent {
+  return (
+    (git as GithubPREvent).pull_request !== undefined &&
+    (git as GithubPREvent).action === 'closed' &&
+    (git as GithubPREvent).number !== undefined &&
+    (git as GithubPREvent).pull_request.merged === true
+  );
+}
+
+export function isGithubClosedPREvent(
+  git: GitlabEvent | GithubEvent,
+): git is GithubPREvent {
+  return (
+    (git as GithubPREvent).pull_request !== undefined &&
+    (git as GithubPREvent).action === 'closed' &&
+    (git as GithubPREvent).number !== undefined &&
+    (git as GithubPREvent).pull_request.merged === false
+  );
+}
+
+export function isGithubReopenedPREvent(
+  git: GitlabEvent | GithubEvent,
+): git is GithubPREvent {
+  return (
+    (git as GithubPREvent).pull_request !== undefined &&
+    (git as GithubPREvent).action === 'reopened' &&
+    (git as GithubPREvent).number !== undefined
   );
 }
 
 export function isGitlabNewPREvent(
   git: GitlabEvent | GithubEvent,
-): git is GitlabNewPREvent {
+): git is GitlabPREvent {
   return (
-    (git as GitlabNewPREvent).object_kind === 'merge_request' &&
-    (git as GitlabNewPREvent).object_attributes !== undefined &&
-    (git as GitlabNewPREvent).object_attributes.action === 'open'
+    (git as GitlabPREvent).object_kind === 'merge_request' &&
+    (git as GitlabPREvent).object_attributes !== undefined &&
+    (git as GitlabPREvent).object_attributes.action === 'open'
+  );
+}
+
+export function isGitlabMergedPREvent(
+  git: GitlabEvent | GithubEvent,
+): git is GitlabPREvent {
+  return (
+    (git as GitlabPREvent).object_kind === 'merge_request' &&
+    (git as GitlabPREvent).object_attributes !== undefined &&
+    (git as GitlabPREvent).object_attributes.action === 'merge'
+  );
+}
+
+export function isGitlabClosedPREvent(
+  git: GitlabEvent | GithubEvent,
+): git is GitlabPREvent {
+  return (
+    (git as GitlabPREvent).object_kind === 'merge_request' &&
+    (git as GitlabPREvent).object_attributes !== undefined &&
+    (git as GitlabPREvent).object_attributes.action === 'close'
+  );
+}
+
+export function isGitlabReopenedPREvent(
+  git: GitlabEvent | GithubEvent,
+): git is GitlabPREvent {
+  return (
+    (git as GitlabPREvent).object_kind === 'merge_request' &&
+    (git as GitlabPREvent).object_attributes !== undefined &&
+    (git as GitlabPREvent).object_attributes.action === 'reopen'
   );
 }
 

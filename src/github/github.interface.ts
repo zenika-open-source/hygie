@@ -36,6 +36,7 @@ export interface GithubPullRequest {
   state: string;
   title: string;
   body: string;
+  merged: boolean;
 }
 
 /**

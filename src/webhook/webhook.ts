@@ -15,6 +15,12 @@ import {
   isGithubPRCommentEvent,
   isGitlabIssueCommentEvent,
   isGitlabPRCommentEvent,
+  isGithubClosedPREvent,
+  isGithubMergedPREvent,
+  isGitlabMergedPREvent,
+  isGitlabClosedPREvent,
+  isGitlabReopenedPREvent,
+  isGithubReopenedPREvent,
 } from './utils.enum';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
@@ -254,6 +260,18 @@ export class Webhook {
       this.pullRequest.title = git.merge_request.title;
       this.pullRequest.description = git.merge_request.description;
       this.pullRequest.number = git.merge_request.iid;
+    } else if (isGithubClosedPREvent(git)) {
+      logger.warn('isGithubClosedPREvent');
+    } else if (isGithubMergedPREvent(git)) {
+      logger.warn('isGithubMergedPREvent');
+    } else if (isGithubReopenedPREvent(git)) {
+      logger.warn('isGithubReopenedPREvent');
+    } else if (isGitlabMergedPREvent(git)) {
+      logger.warn('isGitlabMergedPREvent');
+    } else if (isGitlabClosedPREvent(git)) {
+      logger.warn('isGitlabClosedPREvent');
+    } else if (isGitlabReopenedPREvent(git)) {
+      logger.warn('isGitlabReopenedPREvent');
     } else if (isGithubNewRepoEvent(git)) {
       // Caution: need to be after isGithubIssueComment and isGithubPRComment
       this.gitType = GitTypeEnum.Github;

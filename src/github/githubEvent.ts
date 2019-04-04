@@ -2,7 +2,7 @@ import { GithubPushEvent } from './githubPushEvent';
 import { GithubBranchEvent } from './githubBranchEvent';
 import { GithubIssueEvent } from './githubIssueEvent';
 import { GithubNewRepoEvent } from './githubNewRepoEvent';
-import { GithubNewPREvent } from './githubNewPREvent';
+import { GithubPREvent } from './githubPREvent';
 import { GithubIssuePRCommentEvent } from './githubIssuePRCommentEvent';
 
 /**
@@ -13,5 +13,5 @@ export type GithubEvent =
   | GithubBranchEvent
   | GithubIssueEvent
   | GithubNewRepoEvent
-  | GithubNewPREvent
+  | GithubPREvent
   | GithubIssuePRCommentEvent;
