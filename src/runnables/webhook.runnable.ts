@@ -33,6 +33,11 @@ export class WebhookRunnable extends Runnable {
         render(JSON.stringify(args.data), ruleResult),
         render(JSON.stringify(Utils.getObjectValue(args.config)), ruleResult),
       )
-      .subscribe(null, err => logger.error(err));
+      .subscribe(
+        response => {
+          logger.info(render(args.url, ruleResult) + ' was correctly called');
+        },
+        err => logger.error(err),
+      );
   }
 }

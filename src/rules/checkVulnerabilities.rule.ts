@@ -56,6 +56,13 @@ export class CheckVulnerabilitiesRule extends Rule {
       ruleResult.validated = false;
     }
 
+    // Delete folder
+    // DO NOT WORK ON WINDOWS
+    // UNCOMMENT IT IN A LINUX ENV
+    /*execa.shellSync(
+      `rm -rf packages/${webhook.getRemoteDirectory().split('/')[0]}`,
+    );*/
+
     return ruleResult;
   }
 }
