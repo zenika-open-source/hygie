@@ -24,7 +24,6 @@ import { getAllOptions } from './generator/getAllOptions';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
 import { RemoteConfigUtils } from './remote-config/utils';
-import { Utils } from './utils/utils';
 
 @Controller()
 export class AppController {
@@ -41,26 +40,6 @@ export class AppController {
       '<p><b>Git Webhooks</b> is running!</p>' +
       '<p>Have a look at our <a href="https://dx-developerexperience.github.io/git-webhooks/">documentation</a> for more informations.</p>'
     );
-  }
-
-  @Get('/package/:package/:packageLock')
-  async dlPackage(
-    @Param('package') packageFile,
-    @Param('packageLock') packageLockFile,
-  ): Promise<string> {
-    const execa = require('execa');
-    const download = require('download');
-
-    await Promise.all([
-      download(packageFile, 'packages/test'),
-      download(packageLockFile, 'packages/test'),
-    ]);
-    try {
-      return execa.shellSync('cd packages/test & npm audit');
-    } catch (e) {
-      logger.error(e);
-      return e;
-    }
   }
 
   @Post('/config-env')
@@ -94,7 +73,10 @@ export class AppController {
   @Post('/webhook')
   @UseInterceptors(WebhookInterceptor)
   @UseFilters(AllExceptionsFilter)
-  processWebhook(@Body() webhook: Webhook, @Res() response): void {
+  async processWebhook(
+    @Body() webhook: Webhook,
+    @Res() response,
+  ): Promise<void> {
     if (
       webhook.getGitType() === GitTypeEnum.Undefined ||
       webhook.getGitEvent() === GitEventEnum.Undefined
@@ -109,7 +91,7 @@ export class AppController {
       );
 
       try {
-        const remoteEnvs: string = webhook.getRemoteEnvs();
+        const remoteEnvs: string = webhook.getRemoteDirectory();
         this.githubService.setEnvironmentVariables(remoteEnvs);
         this.gitlabService.setEnvironmentVariables(remoteEnvs);
       } catch (e) {
@@ -127,7 +109,10 @@ export class AppController {
         `\n\n=== processWebhook - ${webhook.getGitType()} - ${webhook.getGitEvent()} ===\n`,
       );
 
-      const result = this.rulesService.testRules(webhook, remoteRepository);
+      const result = await this.rulesService.testRules(
+        webhook,
+        remoteRepository,
+      );
       response.status(HttpStatus.ACCEPTED).send(result);
     }
   }

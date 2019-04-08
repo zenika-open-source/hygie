@@ -134,7 +134,7 @@ export class Webhook {
     return this.comment.description;
   }
 
-  getRemoteEnvs(): string {
+  getRemoteDirectory(): string {
     const splitedURL = this.getCloneURL().split('/');
 
     return (

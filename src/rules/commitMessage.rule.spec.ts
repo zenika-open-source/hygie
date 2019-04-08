@@ -36,7 +36,7 @@ describe('RulesService', () => {
 
   // CommitMessage Rule
   describe('commitMessage Rule', () => {
-    it('should return true + an array of sha, matches and message ', () => {
+    it('should return true + an array of sha, matches and message ', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.gitEvent = GitEventEnum.Push;
       webhook.gitService = githubService;
@@ -72,7 +72,10 @@ describe('RulesService', () => {
 
       jest.spyOn(commitMessage, 'validate');
 
-      const result: RuleResult = commitMessage.validate(webhook, commitMessage);
+      const result: RuleResult = await commitMessage.validate(
+        webhook,
+        commitMessage,
+      );
       const expectedResult = {
         branch: 'test_webhook',
         commits: [
@@ -106,7 +109,7 @@ describe('RulesService', () => {
     });
   });
   describe('commitMessage Rule', () => {
-    it('should return false + an array of sha, matches and message ', () => {
+    it('should return false + an array of sha, matches and message ', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.gitEvent = GitEventEnum.Push;
       webhook.gitService = githubService;
@@ -142,7 +145,10 @@ describe('RulesService', () => {
 
       jest.spyOn(commitMessage, 'validate');
 
-      const result: RuleResult = commitMessage.validate(webhook, commitMessage);
+      const result: RuleResult = await commitMessage.validate(
+        webhook,
+        commitMessage,
+      );
       expect(result.validated).toBe(false);
     });
   });

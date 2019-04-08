@@ -12,13 +12,16 @@ import { RuleDecorator } from './rule.decorator';
 export class OneCommitPerPRRule extends Rule {
   events = [GitEventEnum.Push];
 
-  validate(webhook: Webhook, ruleConfig: OneCommitPerPRRule): RuleResult {
+  async validate(
+    webhook: Webhook,
+    ruleConfig: OneCommitPerPRRule,
+  ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     ruleResult.validated = webhook.getAllCommits().length === 1 ? true : false;
     ruleResult.data = {
       branch: webhook.getBranchName(),
       commits: webhook.getAllCommits(),
     };
-    return ruleResult;
+    return Promise.resolve(ruleResult);
   }
 }

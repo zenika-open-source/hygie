@@ -17,7 +17,10 @@ export class BranchNameRule extends Rule {
   options: BranchNameOptions;
   events = [GitEventEnum.NewBranch];
 
-  validate(webhook: Webhook, ruleConfig: BranchNameRule): RuleResult {
+  async validate(
+    webhook: Webhook,
+    ruleConfig: BranchNameRule,
+  ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const branchName = webhook.getBranchName();
     const branchRegExp = RegExp(ruleConfig.options.regexp);
@@ -27,6 +30,6 @@ export class BranchNameRule extends Rule {
       branchSplit: branchName.split('/'),
     };
 
-    return ruleResult;
+    return Promise.resolve(ruleResult);
   }
 }

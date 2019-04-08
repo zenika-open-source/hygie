@@ -17,7 +17,10 @@ export class PullRequestCommentRule extends Rule {
   options: PullRequestCommentOptions;
   events = [GitEventEnum.NewPRComment];
 
-  validate(webhook: Webhook, ruleConfig: PullRequestCommentRule): RuleResult {
+  async validate(
+    webhook: Webhook,
+    ruleConfig: PullRequestCommentRule,
+  ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
 
     const commentDescription = webhook.getCommentDescription();
@@ -32,6 +35,6 @@ export class PullRequestCommentRule extends Rule {
       commentDescription,
     };
 
-    return ruleResult;
+    return Promise.resolve(ruleResult);
   }
 }

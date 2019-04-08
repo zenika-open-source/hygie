@@ -126,7 +126,7 @@ describe('Webhook', () => {
 
   describe('getRemoteEnvs', () => {
     it('should return "bastienterrier/test-webhook"', () => {
-      expect(webhook.getRemoteEnvs()).toBe('bastienterrier/test-webhook');
+      expect(webhook.getRemoteDirectory()).toBe('bastienterrier/test-webhook');
     });
   });
 

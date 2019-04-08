@@ -52,8 +52,11 @@ describe('RulesService', () => {
 
   // PullRequestComment Rule
   describe('PullRequestComment Rule', () => {
-    it('should return false', () => {
-      const result: RuleResult = issueComment.validate(webhook, issueComment);
+    it('should return false', async () => {
+      const result: RuleResult = await issueComment.validate(
+        webhook,
+        issueComment,
+      );
       expect(result.validated).toBe(false);
       expect(result.data).toEqual({
         issueTitle: webhook.issue.title,
@@ -63,9 +66,12 @@ describe('RulesService', () => {
       });
     });
 
-    it('should return true', () => {
+    it('should return true', async () => {
       webhook.comment.description = '@ping';
-      const result: RuleResult = issueComment.validate(webhook, issueComment);
+      const result: RuleResult = await issueComment.validate(
+        webhook,
+        issueComment,
+      );
       expect(result.validated).toBe(true);
       expect(result.data).toEqual({
         issueTitle: webhook.issue.title,

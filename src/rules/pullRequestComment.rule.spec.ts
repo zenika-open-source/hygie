@@ -53,8 +53,8 @@ describe('RulesService', () => {
 
   // PullRequestComment Rule
   describe('PullRequestComment Rule', () => {
-    it('should return false', () => {
-      const result: RuleResult = pullRequestComment.validate(
+    it('should return false', async () => {
+      const result: RuleResult = await pullRequestComment.validate(
         webhook,
         pullRequestComment,
       );
@@ -68,9 +68,9 @@ describe('RulesService', () => {
       });
     });
 
-    it('should return true', () => {
+    it('should return true', async () => {
       webhook.comment.description = '@pong';
-      const result: RuleResult = pullRequestComment.validate(
+      const result: RuleResult = await pullRequestComment.validate(
         webhook,
         pullRequestComment,
       );

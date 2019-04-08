@@ -35,7 +35,7 @@ describe('RulesService', () => {
 
   // PullRequestTitle Rule
   describe('pullRequestTitle Rule', () => {
-    it('should return false', () => {
+    it('should return false', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.branchName = 'test_webhook';
       webhook.pullRequest = {
@@ -50,7 +50,7 @@ describe('RulesService', () => {
       };
       jest.spyOn(pullRequestTitle, 'validate');
 
-      const result: RuleResult = pullRequestTitle.validate(
+      const result: RuleResult = await pullRequestTitle.validate(
         webhook,
         pullRequestTitle,
       );
@@ -63,7 +63,7 @@ describe('RulesService', () => {
     });
   });
   describe('pullRequestTitle Rule', () => {
-    it('should return true', () => {
+    it('should return true', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.branchName = 'test_webhook';
       webhook.pullRequest = {
@@ -78,7 +78,7 @@ describe('RulesService', () => {
       };
       jest.spyOn(pullRequestTitle, 'validate');
 
-      const result: RuleResult = pullRequestTitle.validate(
+      const result: RuleResult = await pullRequestTitle.validate(
         webhook,
         pullRequestTitle,
       );

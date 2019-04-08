@@ -35,7 +35,7 @@ describe('RulesService', () => {
 
   // BrancheName Rule
   describe('branchName Rule', () => {
-    it('should return true', () => {
+    it('should return true', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.branchName = 'features/tdd';
       const branchName = new BranchNameRule();
@@ -44,14 +44,14 @@ describe('RulesService', () => {
       };
       jest.spyOn(branchName, 'validate');
 
-      const result: RuleResult = branchName.validate(webhook, branchName);
+      const result: RuleResult = await branchName.validate(webhook, branchName);
       expect(result.validated).toBe(true);
       expect((result.data as any).branch).toEqual('features/tdd');
       expect((result.data as any).branchSplit).toEqual(['features', 'tdd']);
     });
   });
   describe('branchName Rule', () => {
-    it('should return false', () => {
+    it('should return false', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.branchName = 'testing/tdd';
       const branchName = new BranchNameRule();
@@ -60,7 +60,7 @@ describe('RulesService', () => {
       };
       jest.spyOn(branchName, 'validate');
 
-      const result: RuleResult = branchName.validate(webhook, branchName);
+      const result: RuleResult = await branchName.validate(webhook, branchName);
       expect(result.validated).toBe(false);
       expect((result.data as any).branch).toEqual('testing/tdd');
       expect((result.data as any).branchSplit).toEqual(['testing', 'tdd']);
