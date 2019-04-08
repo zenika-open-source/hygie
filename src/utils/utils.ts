@@ -20,20 +20,15 @@ export class Utils {
     }
   }
 
-  static downloadRemoteFile(
-    httpService: HttpService,
-    url: string,
-    filePath: string,
-  ): boolean {
+  static writeFileSync(fileName: string, fileContent: string): boolean {
     const fs = require('fs');
-    httpService.get(url).subscribe(
-      response => {
-        //
-      },
-      err => {
-        logger.error(err);
-        return false;
-      },
+    const path = require('path');
+    fs.promises.mkdir(path.dirname(fileName), { recursive: true }).then(x =>
+      fs.writeFileSync(fileName, fileContent, err => {
+        if (err) {
+          throw err;
+        }
+      }),
     );
     return true;
   }

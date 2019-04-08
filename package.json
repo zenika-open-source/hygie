@@ -38,6 +38,7 @@
     "class-transformer": "0.2.0",
     "cors": "2.8.5",
     "dotenv": "6.2.0",
+    "download": "7.1.0",
     "execa": "1.0.0",
     "fs": "0.0.1-security",
     "github-release-notes": "0.17.0",

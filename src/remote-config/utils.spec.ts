@@ -2,12 +2,13 @@ import { TestingModule, Test } from '@nestjs/testing';
 import { HttpService } from '@nestjs/common';
 import { MockHttpService } from '../__mocks__/mocks';
 import { RemoteConfigUtils } from './utils';
+import { Utils } from '../utils/utils';
 
 describe('remote-config', () => {
   let app: TestingModule;
   let httpService: HttpService;
 
-  RemoteConfigUtils.writeFileSync = jest.fn();
+  Utils.writeFileSync = jest.fn();
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -68,7 +69,7 @@ describe('remote-config', () => {
 
       RemoteConfigUtils.registerConfigEnv(configEnv);
 
-      expect(RemoteConfigUtils.writeFileSync).toHaveBeenCalledWith(
+      expect(Utils.writeFileSync).toHaveBeenCalledWith(
         'remote-envs/DX-DeveloperExperience/git-webhooks/config.env',
         `gitApi=https://gitapi.com\ngitToken=azertyuiop`,
       );

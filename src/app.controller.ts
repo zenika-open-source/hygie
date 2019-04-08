@@ -9,6 +9,7 @@ import {
   UseFilters,
   Header,
   HttpService,
+  Param,
 } from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { WebhookInterceptor } from './webhook/webhook.interceptor';
@@ -23,6 +24,7 @@ import { getAllOptions } from './generator/getAllOptions';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
 import { RemoteConfigUtils } from './remote-config/utils';
+import { Utils } from './utils/utils';
 
 @Controller()
 export class AppController {
@@ -39,6 +41,26 @@ export class AppController {
       '<p><b>Git Webhooks</b> is running!</p>' +
       '<p>Have a look at our <a href="https://dx-developerexperience.github.io/git-webhooks/">documentation</a> for more informations.</p>'
     );
+  }
+
+  @Get('/package/:package/:packageLock')
+  async dlPackage(
+    @Param('package') packageFile,
+    @Param('packageLock') packageLockFile,
+  ): Promise<string> {
+    const execa = require('execa');
+    const download = require('download');
+
+    await Promise.all([
+      download(packageFile, 'packages/test'),
+      download(packageLockFile, 'packages/test'),
+    ]);
+    try {
+      return execa.shellSync('cd packages/test & npm audit');
+    } catch (e) {
+      logger.error(e);
+      return e;
+    }
   }
 
   @Post('/config-env')

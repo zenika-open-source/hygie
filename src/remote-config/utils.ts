@@ -1,6 +1,7 @@
 import { logger } from '../logger/logger.service';
 import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
+import { Utils } from '../utils/utils';
 
 const fs = require('fs');
 
@@ -11,18 +12,6 @@ interface ConfigEnv {
 }
 
 export class RemoteConfigUtils {
-  static writeFileSync(fileName, fileContent): boolean {
-    const path = require('path');
-    fs.promises.mkdir(path.dirname(fileName), { recursive: true }).then(x =>
-      fs.writeFileSync(fileName, fileContent, err => {
-        if (err) {
-          throw err;
-        }
-      }),
-    );
-    return true;
-  }
-
   private static getPath(splitedURL: string[]): string {
     return (
       splitedURL[splitedURL.length - 2] +
@@ -68,7 +57,7 @@ export class RemoteConfigUtils {
     try {
       httpService.get(rulesFilePath).subscribe(
         response => {
-          this.writeFileSync(`${gitWebhooksFolder}/rules.yml`, response.data);
+          Utils.writeFileSync(`${gitWebhooksFolder}/rules.yml`, response.data);
         },
         err => logger.error(err),
       );
@@ -106,7 +95,7 @@ gitToken=${configEnv.gitToken}`;
       result.alreadyExist = true;
     }
 
-    this.writeFileSync(configFile, content);
+    Utils.writeFileSync(configFile, content);
 
     return result;
   }
