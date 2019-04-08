@@ -10,8 +10,8 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
-import { loadEnv } from '../utils/dotenv.utils';
 import { GitFileInfos } from '../git/gitFileInfos';
+import { Utils } from '../utils/utils';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -32,7 +32,7 @@ export class GitlabService implements GitServiceInterface {
   }
 
   setEnvironmentVariables(filePath: string): void {
-    loadEnv('remote-envs/' + filePath + '/config.env');
+    Utils.loadEnv('remote-envs/' + filePath + '/config.env');
 
     this.setToken(process.env.gitToken);
     this.setUrlApi(process.env.gitApi);

@@ -1,4 +1,5 @@
-import { loadEnv } from './dotenv.utils';
+import { Utils } from './utils';
+
 const fs = require('fs');
 jest.mock('fs');
 
@@ -9,7 +10,7 @@ describe('dotenv utils', () => {
 gitToken=azertyuiop`,
     );
 
-    loadEnv('myFilePath');
+    Utils.loadEnv('myFilePath');
 
     expect(process.env.gitApi).toBe('https://gitapi.com');
     expect(process.env.gitToken).toBe('azertyuiop');

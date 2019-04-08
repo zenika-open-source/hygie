@@ -11,8 +11,8 @@ import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
 import { PreconditionException } from '../exceptions/precondition.exception';
-import { loadEnv } from '../utils/dotenv.utils';
 import { GitFileInfos } from '../git/gitFileInfos';
+import { Utils } from '../utils/utils';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -46,7 +46,7 @@ export class GithubService implements GitServiceInterface {
   }
 
   setEnvironmentVariables(filePath: string): void {
-    loadEnv('remote-envs/' + filePath + '/config.env');
+    Utils.loadEnv('remote-envs/' + filePath + '/config.env');
 
     if (
       process.env.gitToken === undefined ||
