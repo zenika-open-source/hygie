@@ -10,7 +10,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import {
   GitCommentPRInfos,
-  GitCreatePRInfos,
+  GitPRInfos,
   GitMergePRInfos,
   PRMethodsEnum,
 } from '../git/gitPRInfos';
@@ -122,7 +122,7 @@ export class GithubService implements GitServiceInterface {
 
   createPullRequest(
     gitApiInfos: GitApiInfos,
-    gitCreatePRInfos: GitCreatePRInfos,
+    gitCreatePRInfos: GitPRInfos,
   ): void {
     const dataGitHub = {
       title: gitCreatePRInfos.title,
@@ -260,6 +260,36 @@ export class GithubService implements GitServiceInterface {
         `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls/${
           gitMergePRInfos.number
         }/merge`,
+        dataGitHub,
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  updatePullRequest(gitApiInfos: GitApiInfos, gitPRInfos: GitPRInfos): void {
+    const dataGitHub: any = {};
+
+    if (typeof gitPRInfos.state !== 'undefined') {
+      dataGitHub.state = convertIssueState(
+        GitTypeEnum.Github,
+        gitPRInfos.state,
+      );
+    }
+    if (typeof gitPRInfos.title !== 'undefined') {
+      dataGitHub.title = gitPRInfos.title;
+    }
+    if (typeof gitPRInfos.target !== 'undefined') {
+      dataGitHub.base = gitPRInfos.target;
+    }
+    if (typeof gitPRInfos.description !== 'undefined') {
+      dataGitHub.body = gitPRInfos.description;
+    }
+
+    this.httpService
+      .patch(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls/${
+          gitPRInfos.number
+        }`,
         dataGitHub,
         this.configGitHub,
       )

@@ -4,9 +4,9 @@ import { MockHttpService, MockObservable } from '../__mocks__/mocks';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { CommitStatusEnum } from '../webhook/utils.enum';
-import { GitIssueInfos, IssueStateEnum } from '../git/gitIssueInfos';
+import { GitIssueInfos, IssuePRStateEnum } from '../git/gitIssueInfos';
 import {
-  GitCreatePRInfos,
+  GitPRInfos,
   GitCommentPRInfos,
   GitMergePRInfos,
   PRMethodsEnum,
@@ -102,7 +102,7 @@ describe('Gitlab Service', () => {
     it('should emit a PUT request with specific params', () => {
       const gitIssueInfos = new GitIssueInfos();
       gitIssueInfos.number = '1';
-      gitIssueInfos.state = IssueStateEnum.Close;
+      gitIssueInfos.state = IssuePRStateEnum.Close;
 
       gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
 
@@ -118,7 +118,7 @@ describe('Gitlab Service', () => {
     it('should emit a PUT request with specific params', () => {
       const gitIssueInfos = new GitIssueInfos();
       gitIssueInfos.number = '1';
-      gitIssueInfos.state = IssueStateEnum.Open;
+      gitIssueInfos.state = IssuePRStateEnum.Open;
 
       gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
 
@@ -154,7 +154,7 @@ describe('Gitlab Service', () => {
 
   describe('createPullRequest', () => {
     it('should emit a POST request with specific params', () => {
-      const gitCreatePRInfos = new GitCreatePRInfos();
+      const gitCreatePRInfos = new GitPRInfos();
       gitCreatePRInfos.title = 'my PR';
       gitCreatePRInfos.description = 'my desc';
       gitCreatePRInfos.source = 'develop';
@@ -249,6 +249,32 @@ describe('Gitlab Service', () => {
         squash: true,
         merge_commit_message: 'commit message',
         squash_commit_message: 'commit message',
+      };
+
+      expect(httpService.put).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+  });
+
+  describe('updatePullRequest', () => {
+    it('should emit a PUT request with specific params', () => {
+      const gitPRInfos = new GitPRInfos();
+      gitPRInfos.number = 42;
+      gitPRInfos.title = 'pr title';
+      gitPRInfos.description = 'pr description';
+      gitPRInfos.target = 'master';
+      gitPRInfos.state = IssuePRStateEnum.Close;
+
+      gitlabService.updatePullRequest(gitApiInfos, gitPRInfos);
+
+      const expectedUrl = `${
+        gitlabService.urlApi
+      }/projects/1/merge_requests/42`;
+
+      expectedConfig.params = {
+        title: 'pr title',
+        description: 'pr description',
+        state_event: 'close',
+        target_branch: 'master',
       };
 
       expect(httpService.put).toBeCalledWith(expectedUrl, {}, expectedConfig);

@@ -7,7 +7,7 @@ import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { IssueStateEnum, GitIssueInfos } from '../git/gitIssueInfos';
+import { IssuePRStateEnum, GitIssueInfos } from '../git/gitIssueInfos';
 
 interface UpdateIssueArgs {
   state: string;
@@ -40,10 +40,10 @@ export class UpdateIssueRunnable extends Runnable {
     if (typeof args.state !== 'undefined') {
       gitIssueInfos.state =
         args.state.toLowerCase() === 'open'
-          ? IssueStateEnum.Open
+          ? IssuePRStateEnum.Open
           : args.state.toLowerCase() === 'close'
-          ? IssueStateEnum.Close
-          : IssueStateEnum.Undefined;
+          ? IssuePRStateEnum.Close
+          : IssuePRStateEnum.Undefined;
     }
 
     if (typeof args.labels !== 'undefined') {

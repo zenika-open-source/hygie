@@ -10,7 +10,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import {
   GitCommentPRInfos,
-  GitCreatePRInfos,
+  GitPRInfos,
   GitMergePRInfos,
   PRMethodsEnum,
 } from '../git/gitPRInfos';
@@ -134,7 +134,7 @@ export class GitlabService implements GitServiceInterface {
 
   createPullRequest(
     gitApiInfos: GitApiInfos,
-    gitCreatePRInfos: GitCreatePRInfos,
+    gitCreatePRInfos: GitPRInfos,
   ): void {
     // Config URL for GitLab
     const configGitLab = {
@@ -296,6 +296,44 @@ export class GitlabService implements GitServiceInterface {
           gitMergePRInfos.number
         }/merge`,
         {},
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  updatePullRequest(gitApiInfos: GitApiInfos, gitPRInfos: GitPRInfos): void {
+    // Config URL for GitLab
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {},
+    };
+
+    if (typeof gitPRInfos.state !== 'undefined') {
+      configGitLab.params.state_event = convertIssueState(
+        GitTypeEnum.Gitlab,
+        gitPRInfos.state,
+      );
+    }
+    if (typeof gitPRInfos.title !== 'undefined') {
+      configGitLab.params.title = gitPRInfos.title;
+    }
+    if (typeof gitPRInfos.target !== 'undefined') {
+      configGitLab.params.target_branch = gitPRInfos.target;
+    }
+    if (typeof gitPRInfos.description !== 'undefined') {
+      configGitLab.params.description = gitPRInfos.description;
+    }
+
+    // Data for GitLab
+    const dataGitLab = {};
+    this.httpService
+      .put(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests/${
+          gitPRInfos.number
+        }`,
+        dataGitLab,
         configGitLab,
       )
       .subscribe(null, err => logger.error(err));

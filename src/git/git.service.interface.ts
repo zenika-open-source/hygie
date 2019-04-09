@@ -1,11 +1,7 @@
 import { GitCommitStatusInfos } from './gitCommitStatusInfos';
 import { GitApiInfos } from './gitApiInfos';
 import { GitIssueInfos } from './gitIssueInfos';
-import {
-  GitCommentPRInfos,
-  GitCreatePRInfos,
-  GitMergePRInfos,
-} from './gitPRInfos';
+import { GitCommentPRInfos, GitPRInfos, GitMergePRInfos } from './gitPRInfos';
 import { GitFileInfos } from './gitFileInfos';
 
 /**
@@ -44,7 +40,7 @@ export interface GitServiceInterface {
    */
   createPullRequest(
     gitApiInfos: GitApiInfos,
-    gitCreatePRInfos: GitCreatePRInfos,
+    gitCreatePRInfos: GitPRInfos,
   ): void;
 
   /**
@@ -80,4 +76,9 @@ export interface GitServiceInterface {
     gitApiInfos: GitApiInfos,
     gitMergePRInfos: GitMergePRInfos,
   ): void;
+
+  /**
+   * Update a Pull Request partially
+   */
+  updatePullRequest(gitApiInfos: GitApiInfos, gitPRInfos: GitPRInfos): void;
 }

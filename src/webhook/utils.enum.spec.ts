@@ -1,6 +1,6 @@
 import * as utils from './utils.enum';
 import { CommitStatusEnum } from './utils.enum';
-import { IssueStateEnum } from '../git/gitIssueInfos';
+import { IssuePRStateEnum } from '../git/gitIssueInfos';
 describe('Utils Enum', () => {
   describe('convertCommitStatus', () => {
     it('should equal "failure"', () => {
@@ -40,7 +40,7 @@ describe('Utils Enum', () => {
     it('should equal "open"', () => {
       const res: string = utils.convertIssueState(
         utils.GitTypeEnum.Github,
-        IssueStateEnum.Open,
+        IssuePRStateEnum.Open,
       );
       expect(res).toBe('open');
     });
@@ -48,7 +48,7 @@ describe('Utils Enum', () => {
     it('should equal "closed"', () => {
       const res: string = utils.convertIssueState(
         utils.GitTypeEnum.Github,
-        IssueStateEnum.Close,
+        IssuePRStateEnum.Close,
       );
       expect(res).toBe('closed');
     });
@@ -56,7 +56,7 @@ describe('Utils Enum', () => {
     it('should equal "reopen"', () => {
       const res: string = utils.convertIssueState(
         utils.GitTypeEnum.Gitlab,
-        IssueStateEnum.Open,
+        IssuePRStateEnum.Open,
       );
       expect(res).toBe('reopen');
     });
@@ -64,7 +64,7 @@ describe('Utils Enum', () => {
     it('should equal "close"', () => {
       const res: string = utils.convertIssueState(
         utils.GitTypeEnum.Gitlab,
-        IssueStateEnum.Close,
+        IssuePRStateEnum.Close,
       );
       expect(res).toBe('close');
     });

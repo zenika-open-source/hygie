@@ -11,7 +11,7 @@ import { GitlabPREvent } from '../gitlab/gitlabPREvent';
 import { GithubIssuePRCommentEvent } from '../github/githubIssuePRCommentEvent';
 import { GitlabIssueCommentEvent } from '../gitlab/gitlabIssueCommentEvent';
 import { GitlabPRCommentEvent } from '../gitlab/gitlabPRCommentEvent';
-import { GitIssueInfos, IssueStateEnum } from '../git/gitIssueInfos';
+import { GitIssueInfos, IssuePRStateEnum } from '../git/gitIssueInfos';
 
 export enum GitTypeEnum {
   Undefined = 'Undefined',
@@ -56,17 +56,17 @@ export function convertCommitStatus(
 
 export function convertIssueState(
   gitType: GitTypeEnum,
-  issueStateEnum: IssueStateEnum,
+  issueStateEnum: IssuePRStateEnum,
 ): string {
   // tslint:disable-next-line:one-variable-per-declaration
   const IssueState = {
     [GitTypeEnum.Github]: {
-      [IssueStateEnum.Open]: 'open',
-      [IssueStateEnum.Close]: 'closed',
+      [IssuePRStateEnum.Open]: 'open',
+      [IssuePRStateEnum.Close]: 'closed',
     },
     [GitTypeEnum.Gitlab]: {
-      [IssueStateEnum.Open]: 'reopen',
-      [IssueStateEnum.Close]: 'close',
+      [IssuePRStateEnum.Open]: 'reopen',
+      [IssuePRStateEnum.Close]: 'close',
     },
   };
 

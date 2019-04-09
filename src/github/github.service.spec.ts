@@ -5,9 +5,9 @@ import { MockHttpService, MockObservable } from '../__mocks__/mocks';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { CommitStatusEnum } from '../webhook/utils.enum';
-import { GitIssueInfos, IssueStateEnum } from '../git/gitIssueInfos';
+import { GitIssueInfos, IssuePRStateEnum } from '../git/gitIssueInfos';
 import {
-  GitCreatePRInfos,
+  GitPRInfos,
   GitCommentPRInfos,
   GitMergePRInfos,
   PRMethodsEnum,
@@ -112,7 +112,7 @@ describe('Github Service', () => {
     it('should emit a PATCH request with specific params', () => {
       const gitIssueInfos = new GitIssueInfos();
       gitIssueInfos.number = '1';
-      gitIssueInfos.state = IssueStateEnum.Close;
+      gitIssueInfos.state = IssuePRStateEnum.Close;
 
       githubService.updateIssue(gitApiInfos, gitIssueInfos);
 
@@ -132,7 +132,7 @@ describe('Github Service', () => {
     it('should emit a PATCH request with specific params', () => {
       const gitIssueInfos = new GitIssueInfos();
       gitIssueInfos.number = '1';
-      gitIssueInfos.state = IssueStateEnum.Open;
+      gitIssueInfos.state = IssuePRStateEnum.Open;
 
       githubService.updateIssue(gitApiInfos, gitIssueInfos);
 
@@ -174,7 +174,7 @@ describe('Github Service', () => {
 
   describe('createPullRequest', () => {
     it('should emit a POST request with specific params', () => {
-      const gitCreatePRInfos = new GitCreatePRInfos();
+      const gitCreatePRInfos = new GitPRInfos();
       gitCreatePRInfos.title = 'my PR';
       gitCreatePRInfos.description = 'my desc';
       gitCreatePRInfos.source = 'develop';
@@ -277,6 +277,34 @@ describe('Github Service', () => {
       };
 
       expect(httpService.put).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
+    });
+  });
+
+  describe('updatePullRequest', () => {
+    it('should emit a PATCH request with specific params', () => {
+      const gitPRInfos = new GitPRInfos();
+      gitPRInfos.number = 42;
+      gitPRInfos.title = 'pr title';
+      gitPRInfos.description = 'pr description';
+      gitPRInfos.target = 'master';
+      gitPRInfos.state = IssuePRStateEnum.Close;
+
+      githubService.updatePullRequest(gitApiInfos, gitPRInfos);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/pulls/42`;
+
+      const expectedData = {
+        title: 'pr title',
+        body: 'pr description',
+        state: 'closed',
+        base: 'master',
+      };
+
+      expect(httpService.patch).toBeCalledWith(
         expectedUrl,
         expectedData,
         expectedConfig,

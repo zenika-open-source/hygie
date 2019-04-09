@@ -19,6 +19,7 @@ export class MockHttpService {
 }
 
 export class MockGitlabService {
+  updatePullRequest: jest.Mock = jest.fn().mockName('updatePullRequestGitlab');
   mergePullRequest: jest.Mock = jest.fn().mockName('mergePullRequestGitlab');
   deleteFile: jest.Mock = jest.fn().mockName('deleteFileGitlab');
   createIssue: jest.Mock = jest.fn().mockName('createIssueGitlab');
@@ -34,6 +35,7 @@ export class MockGitlabService {
 }
 
 export class MockGithubService {
+  updatePullRequest: jest.Mock = jest.fn().mockName('updatePullRequestGithub');
   mergePullRequest: jest.Mock = jest.fn().mockName('mergePullRequestGithub');
   deleteFile: jest.Mock = jest.fn().mockName('deleteFileGithub');
   createIssue: jest.Mock = jest.fn().mockName('createIssueGithub');
