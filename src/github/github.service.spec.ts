@@ -6,7 +6,12 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { CommitStatusEnum } from '../webhook/utils.enum';
 import { GitIssueInfos, IssueStateEnum } from '../git/gitIssueInfos';
-import { GitCreatePRInfos, GitCommentPRInfos } from '../git/gitPRInfos';
+import {
+  GitCreatePRInfos,
+  GitCommentPRInfos,
+  GitMergePRInfos,
+  PRMethodsEnum,
+} from '../git/gitPRInfos';
 import { Observable } from 'rxjs';
 
 describe('Github Service', () => {
@@ -250,6 +255,32 @@ describe('Github Service', () => {
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/refs/heads/feature%2Ftest`;
 
       expect(httpService.delete).toBeCalledWith(expectedUrl, expectedConfig);
+    });
+  });
+
+  describe('mergePullRequest', () => {
+    it('should emit a PUT request with specific params', () => {
+      const gitMergePRInfos = new GitMergePRInfos();
+      gitMergePRInfos.number = 42;
+      gitMergePRInfos.commitTitle = 'commit title';
+      gitMergePRInfos.commitMessage = 'commit message';
+      gitMergePRInfos.method = PRMethodsEnum.Merge;
+
+      githubService.mergePullRequest(gitApiInfos, gitMergePRInfos);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/pulls/42/merge`;
+
+      const expectedData = {
+        commit_title: 'commit title',
+        commit_message: 'commit message',
+        merge_method: 'merge',
+      };
+
+      expect(httpService.put).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
     });
   });
 

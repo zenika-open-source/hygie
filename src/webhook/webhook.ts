@@ -56,6 +56,8 @@ export class WebhookPR {
   title: string;
   description: string;
   number: number;
+  sourceBranch?: string;
+  targetBranch?: string;
 }
 
 export class WebhookComment {
@@ -209,6 +211,8 @@ export class Webhook {
       this.pullRequest.number = git.number;
       this.repository.fullName = git.repository.full_name;
       this.repository.cloneURL = git.repository.clone_url;
+      this.pullRequest.sourceBranch = git.pull_request.head.ref;
+      this.pullRequest.targetBranch = git.pull_request.base.ref;
     } else if (isGitlabNewPREvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewPR;
@@ -218,6 +222,8 @@ export class Webhook {
       this.pullRequest.description = git.object_attributes.description;
       this.pullRequest.number = git.object_attributes.iid;
       this.repository.cloneURL = git.project.git_http_url;
+      this.pullRequest.sourceBranch = git.object_attributes.source_branch;
+      this.pullRequest.targetBranch = git.object_attributes.target_branch;
     } else if (isGithubIssueCommentEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewIssueComment;
@@ -239,6 +245,11 @@ export class Webhook {
       this.pullRequest.description = git.issue.body;
       this.pullRequest.title = git.issue.title;
       this.pullRequest.number = git.issue.number;
+
+      /**
+       * this.pullRequest.sourceBranch = git.merge_request.source_branch;
+       * this.pullRequest.targetBranch = git.merge_request.target_branch;
+       */
     } else if (isGitlabIssueCommentEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewIssueComment;
@@ -260,6 +271,8 @@ export class Webhook {
       this.pullRequest.title = git.merge_request.title;
       this.pullRequest.description = git.merge_request.description;
       this.pullRequest.number = git.merge_request.iid;
+      this.pullRequest.sourceBranch = git.merge_request.source_branch;
+      this.pullRequest.targetBranch = git.merge_request.target_branch;
     } else if (isGithubClosedPREvent(git)) {
       logger.warn('isGithubClosedPREvent');
     } else if (isGithubMergedPREvent(git)) {

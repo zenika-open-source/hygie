@@ -8,7 +8,12 @@ import {
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
-import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
+import {
+  GitCommentPRInfos,
+  GitCreatePRInfos,
+  GitMergePRInfos,
+  PRMethodsEnum,
+} from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
 import { PreconditionException } from '../exceptions/precondition.exception';
 import { GitFileInfos } from '../git/gitFileInfos';
@@ -228,5 +233,36 @@ export class GithubService implements GitServiceInterface {
         },
         err => logger.error(err),
       );
+  }
+
+  mergePullRequest(
+    gitApiInfos: GitApiInfos,
+    gitMergePRInfos: GitMergePRInfos,
+  ): void {
+    const dataGitHub: any = {};
+
+    if (gitMergePRInfos.commitTitle !== undefined) {
+      dataGitHub.commit_title = gitMergePRInfos.commitTitle;
+    }
+    if (gitMergePRInfos.commitMessage !== undefined) {
+      dataGitHub.commit_message = gitMergePRInfos.commitMessage;
+    }
+    if (gitMergePRInfos.sha !== undefined) {
+      dataGitHub.sha = gitMergePRInfos.sha;
+    }
+    dataGitHub.merge_method =
+      gitMergePRInfos.method !== undefined
+        ? gitMergePRInfos.method.toLowerCase()
+        : PRMethodsEnum.Merge.toLocaleLowerCase();
+
+    this.httpService
+      .put(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls/${
+          gitMergePRInfos.number
+        }/merge`,
+        dataGitHub,
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err));
   }
 }

@@ -22,3 +22,19 @@ export class GitCreatePRInfos {
     this.description = '';
   }
 }
+
+export enum PRMethodsEnum {
+  Merge = 'Merge',
+  Squash = 'Squash',
+  Rebase = 'Rebase',
+}
+/**
+ *
+ */
+export class GitMergePRInfos {
+  number: number;
+  commitTitle: string;
+  commitMessage: string;
+  method: PRMethodsEnum;
+  sha: string;
+}

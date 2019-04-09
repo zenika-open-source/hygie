@@ -8,7 +8,12 @@ import {
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
-import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
+import {
+  GitCommentPRInfos,
+  GitCreatePRInfos,
+  GitMergePRInfos,
+  PRMethodsEnum,
+} from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { Utils } from '../utils/utils';
@@ -255,6 +260,42 @@ export class GitlabService implements GitServiceInterface {
         `${this.urlApi}/projects/${
           gitApiInfos.projectId
         }/repository/files/${encodeURIComponent(gitFileInfos.filePath)}`,
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  mergePullRequest(
+    gitApiInfos: GitApiInfos,
+    gitMergePRInfos: GitMergePRInfos,
+  ): void {
+    // Config URL for GitLab
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {},
+    };
+
+    if (gitMergePRInfos.method === PRMethodsEnum.Squash) {
+      configGitLab.params.squash = true;
+    }
+
+    if (gitMergePRInfos.commitMessage !== undefined) {
+      configGitLab.params.squash_commit_message = gitMergePRInfos.commitMessage;
+      configGitLab.params.merge_commit_message = gitMergePRInfos.commitMessage;
+    }
+
+    if (gitMergePRInfos.sha !== undefined) {
+      configGitLab.params.sha = gitMergePRInfos.sha;
+    }
+
+    this.httpService
+      .put(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests/${
+          gitMergePRInfos.number
+        }/merge`,
+        {},
         configGitLab,
       )
       .subscribe(null, err => logger.error(err));

@@ -1,7 +1,11 @@
 import { GitCommitStatusInfos } from './gitCommitStatusInfos';
 import { GitApiInfos } from './gitApiInfos';
 import { GitIssueInfos } from './gitIssueInfos';
-import { GitCommentPRInfos, GitCreatePRInfos } from './gitPRInfos';
+import {
+  GitCommentPRInfos,
+  GitCreatePRInfos,
+  GitMergePRInfos,
+} from './gitPRInfos';
 import { GitFileInfos } from './gitFileInfos';
 
 /**
@@ -68,4 +72,12 @@ export interface GitServiceInterface {
    * Remove a particular file describe in `gitFileInfos`
    */
   deleteFile(gitApiInfos: GitApiInfos, gitFileInfos: GitFileInfos): void;
+
+  /**
+   * Merge a Pull Request specify in `gitMergePRInfos`
+   */
+  mergePullRequest(
+    gitApiInfos: GitApiInfos,
+    gitMergePRInfos: GitMergePRInfos,
+  ): void;
 }

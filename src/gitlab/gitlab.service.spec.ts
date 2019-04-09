@@ -5,7 +5,12 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { CommitStatusEnum } from '../webhook/utils.enum';
 import { GitIssueInfos, IssueStateEnum } from '../git/gitIssueInfos';
-import { GitCreatePRInfos, GitCommentPRInfos } from '../git/gitPRInfos';
+import {
+  GitCreatePRInfos,
+  GitCommentPRInfos,
+  GitMergePRInfos,
+  PRMethodsEnum,
+} from '../git/gitPRInfos';
 import { Observable } from 'rxjs';
 import { GitlabService } from './gitlab.service';
 import { GitFileInfos } from '../git/gitFileInfos';
@@ -223,6 +228,30 @@ describe('Gitlab Service', () => {
       };
 
       expect(httpService.delete).toBeCalledWith(expectedUrl, expectedConfig);
+    });
+  });
+
+  describe('mergePullRequest', () => {
+    it('should emit a PUT request with specific params', () => {
+      const gitMergePRInfos = new GitMergePRInfos();
+      gitMergePRInfos.number = 42;
+      gitMergePRInfos.commitTitle = 'commit title';
+      gitMergePRInfos.commitMessage = 'commit message';
+      gitMergePRInfos.method = PRMethodsEnum.Squash;
+
+      gitlabService.mergePullRequest(gitApiInfos, gitMergePRInfos);
+
+      const expectedUrl = `${
+        gitlabService.urlApi
+      }/projects/1/merge_requests/42/merge`;
+
+      expectedConfig.params = {
+        squash: true,
+        merge_commit_message: 'commit message',
+        squash_commit_message: 'commit message',
+      };
+
+      expect(httpService.put).toBeCalledWith(expectedUrl, {}, expectedConfig);
     });
   });
 
