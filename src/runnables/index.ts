@@ -9,3 +9,4 @@ export { DeleteBranchRunnable } from './deleteBranch.runnable';
 export { UpdateIssueRunnable } from './updateIssue.runnable';
 export { CreateIssueRunnable } from './createIssue.runnable';
 export { DeleteFilesRunnable } from './deleteFiles.runnable';
+export { MergePullRequestRunnable } from './mergePullRequest.runnable';

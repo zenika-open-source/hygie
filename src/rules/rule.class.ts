@@ -5,7 +5,7 @@ import { RuleResult } from './ruleResult';
 
 export interface OnSuccessError {
   callback: string;
-  args: any;
+  args?: any;
 }
 
 /**
