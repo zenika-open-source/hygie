@@ -59,7 +59,14 @@ export class RemoteConfigUtils {
         response => {
           Utils.writeFileSync(`${gitWebhooksFolder}/rules.yml`, response.data);
         },
-        err => logger.error(err),
+        err => {
+          logger.error(err);
+          logger.warn('No rules.yml file found.\nUse the default one.');
+          Utils.writeFileSync(
+            `${gitWebhooksFolder}/rules.yml`,
+            fs.readFileSync('src/rules/rules.yml'),
+          );
+        },
       );
       return gitWebhooksFolder;
     } catch (e) {
