@@ -33,6 +33,9 @@ export enum GitEventEnum {
   NewPR = 'NewPR',
   NewIssueComment = 'NewIssueComment',
   NewPRComment = 'NewPRComment',
+  ClosedPR = 'ClosedPR',
+  MergedPR = 'MergedPR',
+  ReopenedPR = 'ReopenedPR',
 }
 
 export function convertCommitStatus(
