@@ -6,3 +6,4 @@ export { PullRequestTitleRule } from './pullRequestTitle.rule';
 export { IssueCommentRule } from './issueComment.rule';
 export { PullRequestCommentRule } from './pullRequestComment.rule';
 export { CheckVulnerabilitiesRule } from './checkVulnerabilities.rule';
+export { CheckAddedFilesRule } from './checkAddedFiles.rule';

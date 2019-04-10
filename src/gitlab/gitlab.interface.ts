@@ -12,6 +12,9 @@ export interface GitlabIssue {
 export interface GitlabCommit {
   message: string;
   id: string;
+  added: string[];
+  modified: string[];
+  removed: string[];
 }
 /**
  * GitlabPR dto

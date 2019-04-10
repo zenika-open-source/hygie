@@ -38,10 +38,16 @@ export class WebhookIssue {
 export class WebhookCommit {
   sha: string;
   message: string;
+  added?: string[];
+  modified?: string[];
+  removed?: string[];
 
   constructor(sha: string, message: string) {
     this.sha = sha;
     this.message = message;
+    this.added = new Array();
+    this.modified = new Array();
+    this.removed = new Array();
   }
 }
 
@@ -157,6 +163,9 @@ export class Webhook {
       this.gitService = this.gitlabService;
       git.commits.forEach(c => {
         const commit = new WebhookCommit(c.id, c.message);
+        commit.added = c.added;
+        commit.modified = c.modified;
+        commit.removed = c.removed;
         this.commits.push(commit);
       });
       this.branchName = git.ref.substring(11);
@@ -175,6 +184,9 @@ export class Webhook {
       this.repository.fullName = git.repository.full_name;
       git.commits.forEach(c => {
         const commit = new WebhookCommit(c.id, c.message);
+        commit.added = c.added;
+        commit.modified = c.modified;
+        commit.removed = c.removed;
         this.commits.push(commit);
       });
       this.branchName = git.ref.substring(11);

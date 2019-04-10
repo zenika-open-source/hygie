@@ -22,6 +22,9 @@ export interface GithubRepository {
 export interface GithubCommit {
   message: string;
   id: string;
+  added: string[];
+  modified: string[];
+  removed: string[];
 }
 /**
  * GithubSender dto
