@@ -5236,4 +5236,211 @@ describe('Utils Enum', () => {
       );
     });
   });
+
+  describe('isNewRepoEvent', () => {
+    const githubNewRepoEvent = {
+      action: 'created',
+      repository: {
+        id: 180810951,
+        node_id: 'MDEwOlJlcG9zaXRvcnkxODA4MTA5NTE=',
+        name: 'test-repository',
+        full_name: 'DX-DeveloperExperience/test-repository',
+        private: false,
+        owner: {
+          login: 'DX-DeveloperExperience',
+          id: 36013040,
+          node_id: 'MDEyOk9yZ2FuaXphdGlvbjM2MDEzMDQw',
+          avatar_url: 'https://avatars1.githubusercontent.com/u/36013040?v=4',
+          gravatar_id: '',
+          url: 'https://api.github.com/users/DX-DeveloperExperience',
+          html_url: 'https://github.com/DX-DeveloperExperience',
+          followers_url:
+            'https://api.github.com/users/DX-DeveloperExperience/followers',
+          following_url:
+            'https://api.github.com/users/DX-DeveloperExperience/following{/other_user}',
+          gists_url:
+            'https://api.github.com/users/DX-DeveloperExperience/gists{/gist_id}',
+          starred_url:
+            'https://api.github.com/users/DX-DeveloperExperience/starred{/owner}{/repo}',
+          subscriptions_url:
+            'https://api.github.com/users/DX-DeveloperExperience/subscriptions',
+          organizations_url:
+            'https://api.github.com/users/DX-DeveloperExperience/orgs',
+          repos_url:
+            'https://api.github.com/users/DX-DeveloperExperience/repos',
+          events_url:
+            'https://api.github.com/users/DX-DeveloperExperience/events{/privacy}',
+          received_events_url:
+            'https://api.github.com/users/DX-DeveloperExperience/received_events',
+          type: 'Organization',
+          site_admin: false,
+        },
+        html_url: 'https://github.com/DX-DeveloperExperience/test-repository',
+        description: null,
+        fork: false,
+        url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository',
+        forks_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/forks',
+        keys_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/keys{/key_id}',
+        collaborators_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/collaborators{/collaborator}',
+        teams_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/teams',
+        hooks_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/hooks',
+        issue_events_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/issues/events{/number}',
+        events_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/events',
+        assignees_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/assignees{/user}',
+        branches_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/branches{/branch}',
+        tags_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/tags',
+        blobs_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/git/blobs{/sha}',
+        git_tags_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/git/tags{/sha}',
+        git_refs_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/git/refs{/sha}',
+        trees_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/git/trees{/sha}',
+        statuses_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/statuses/{sha}',
+        languages_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/languages',
+        stargazers_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/stargazers',
+        contributors_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/contributors',
+        subscribers_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/subscribers',
+        subscription_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/subscription',
+        commits_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/commits{/sha}',
+        git_commits_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/git/commits{/sha}',
+        comments_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/comments{/number}',
+        issue_comment_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/issues/comments{/number}',
+        contents_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/contents/{+path}',
+        compare_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/compare/{base}...{head}',
+        merges_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/merges',
+        archive_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/{archive_format}{/ref}',
+        downloads_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/downloads',
+        issues_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/issues{/number}',
+        pulls_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/pulls{/number}',
+        milestones_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/milestones{/number}',
+        notifications_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/notifications{?since,all,participating}',
+        labels_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/labels{/name}',
+        releases_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/releases{/id}',
+        deployments_url:
+          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/deployments',
+        created_at: '2019-04-11T14:34:40Z',
+        updated_at: '2019-04-11T14:34:40Z',
+        pushed_at: null,
+        git_url: 'git://github.com/DX-DeveloperExperience/test-repository.git',
+        ssh_url: 'git@github.com:DX-DeveloperExperience/test-repository.git',
+        clone_url:
+          'https://github.com/DX-DeveloperExperience/test-repository.git',
+        svn_url: 'https://github.com/DX-DeveloperExperience/test-repository',
+        homepage: null,
+        size: 0,
+        stargazers_count: 0,
+        watchers_count: 0,
+        language: null,
+        has_issues: true,
+        has_projects: true,
+        has_downloads: true,
+        has_wiki: true,
+        has_pages: false,
+        forks_count: 0,
+        mirror_url: null,
+        archived: false,
+        disabled: false,
+        open_issues_count: 0,
+        license: null,
+        forks: 0,
+        open_issues: 0,
+        watchers: 0,
+        default_branch: 'master',
+      },
+      organization: {
+        login: 'DX-DeveloperExperience',
+        id: 36013040,
+        node_id: 'MDEyOk9yZ2FuaXphdGlvbjM2MDEzMDQw',
+        url: 'https://api.github.com/orgs/DX-DeveloperExperience',
+        repos_url: 'https://api.github.com/orgs/DX-DeveloperExperience/repos',
+        events_url: 'https://api.github.com/orgs/DX-DeveloperExperience/events',
+        hooks_url: 'https://api.github.com/orgs/DX-DeveloperExperience/hooks',
+        issues_url: 'https://api.github.com/orgs/DX-DeveloperExperience/issues',
+        members_url:
+          'https://api.github.com/orgs/DX-DeveloperExperience/members{/member}',
+        public_members_url:
+          'https://api.github.com/orgs/DX-DeveloperExperience/public_members{/member}',
+        avatar_url: 'https://avatars1.githubusercontent.com/u/36013040?v=4',
+        description: '',
+      },
+      sender: {
+        login: 'bastienterrier',
+        id: 25296454,
+        node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+        avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+        gravatar_id: '',
+        url: 'https://api.github.com/users/bastienterrier',
+        html_url: 'https://github.com/bastienterrier',
+        followers_url: 'https://api.github.com/users/bastienterrier/followers',
+        following_url:
+          'https://api.github.com/users/bastienterrier/following{/other_user}',
+        gists_url:
+          'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+        starred_url:
+          'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+        subscriptions_url:
+          'https://api.github.com/users/bastienterrier/subscriptions',
+        organizations_url: 'https://api.github.com/users/bastienterrier/orgs',
+        repos_url: 'https://api.github.com/users/bastienterrier/repos',
+        events_url:
+          'https://api.github.com/users/bastienterrier/events{/privacy}',
+        received_events_url:
+          'https://api.github.com/users/bastienterrier/received_events',
+        type: 'User',
+        site_admin: false,
+      },
+    };
+    it('isGithubNewRepoEvent should equal "true"', () => {
+      expect(utils.isGithubNewRepoEvent(githubNewRepoEvent)).toBe(true);
+    });
+
+    it('should create a Webhook object according to the Github PR Merged Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(githubNewRepoEvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Github);
+      expect(webhook.gitEvent).toBe(GitEventEnum.NewRepo);
+      expect(webhook.gitService).toBe(githubService);
+      expect(webhook.repository.name).toBe('test-repository');
+      expect(webhook.repository.description).toBe(null);
+      expect(webhook.repository.fullName).toBe('DX-DeveloperExperience/test-repository');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://github.com/DX-DeveloperExperience/test-repository.git',
+      );
+    });
+  });
 });
