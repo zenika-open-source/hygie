@@ -5437,7 +5437,9 @@ describe('Utils Enum', () => {
       expect(webhook.gitService).toBe(githubService);
       expect(webhook.repository.name).toBe('test-repository');
       expect(webhook.repository.description).toBe(null);
-      expect(webhook.repository.fullName).toBe('DX-DeveloperExperience/test-repository');
+      expect(webhook.repository.fullName).toBe(
+        'DX-DeveloperExperience/test-repository',
+      );
       expect(webhook.repository.cloneURL).toBe(
         'https://github.com/DX-DeveloperExperience/test-repository.git',
       );
