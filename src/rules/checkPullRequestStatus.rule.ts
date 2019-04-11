@@ -34,7 +34,10 @@ export class CheckPullRequestStatusRule extends Rule {
         : false;
 
     ruleResult.data = {
-      PREvent: webhook.gitEvent,
+      pullRequestEvent: webhook.gitEvent,
+      pullRequestTitle: webhook.getPullRequestTitle(),
+      pullRequestNumber: webhook.getPullRequestNumber(),
+      pullRequestDescription: webhook.getPullRequestDescription(),
     };
 
     return Promise.resolve(ruleResult);

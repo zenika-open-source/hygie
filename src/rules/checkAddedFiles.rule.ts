@@ -42,9 +42,6 @@ export class CheckAddedFilesRule extends Rule {
         return elt !== undefined;
       });
 
-    // tslint:disable-next-line:no-console
-    console.log(allMatchingAddedFiles);
-
     ruleResult.validated = allMatchingAddedFiles.length > 0;
     ruleResult.data = {
       addedFiles: allMatchingAddedFiles,

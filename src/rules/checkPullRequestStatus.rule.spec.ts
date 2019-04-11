@@ -22,6 +22,11 @@ describe('RulesService', () => {
   const webhook = new Webhook(gitlabService, githubService);
   webhook.branchName = 'test_webhook';
   webhook.gitEvent = GitEventEnum.ClosedPR;
+  webhook.pullRequest = {
+    title: 'my PR for webhook',
+    description: 'my desc',
+    number: 22,
+  };
 
   const checkPullRequestStatus = new CheckPullRequestStatusRule();
 
@@ -52,7 +57,12 @@ describe('RulesService', () => {
         checkPullRequestStatus,
       );
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual({ PREvent: 'ClosedPR' });
+      expect(result.data).toEqual({
+        pullRequestDescription: 'my desc',
+        pullRequestEvent: 'ClosedPR',
+        pullRequestNumber: 22,
+        pullRequestTitle: 'my PR for webhook',
+      });
     });
   });
   describe('checkPullRequestStatus Rule', () => {
@@ -65,7 +75,12 @@ describe('RulesService', () => {
         checkPullRequestStatus,
       );
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual({ PREvent: 'ClosedPR' });
+      expect(result.data).toEqual({
+        pullRequestDescription: 'my desc',
+        pullRequestEvent: 'ClosedPR',
+        pullRequestNumber: 22,
+        pullRequestTitle: 'my PR for webhook',
+      });
     });
   });
 });

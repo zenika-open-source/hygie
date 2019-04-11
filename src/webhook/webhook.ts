@@ -286,17 +286,71 @@ export class Webhook {
       this.pullRequest.sourceBranch = git.merge_request.source_branch;
       this.pullRequest.targetBranch = git.merge_request.target_branch;
     } else if (isGithubClosedPREvent(git)) {
-      logger.warn('isGithubClosedPREvent');
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.ClosedPR;
+      this.gitService = this.githubService;
+      this.pullRequest.title = git.pull_request.title;
+      this.pullRequest.description = git.pull_request.body;
+      this.pullRequest.number = git.number;
+      this.repository.fullName = git.repository.full_name;
+      this.repository.cloneURL = git.repository.clone_url;
+      this.pullRequest.sourceBranch = git.pull_request.head.ref;
+      this.pullRequest.targetBranch = git.pull_request.base.ref;
     } else if (isGithubMergedPREvent(git)) {
-      logger.warn('isGithubMergedPREvent');
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.MergedPR;
+      this.gitService = this.githubService;
+      this.pullRequest.title = git.pull_request.title;
+      this.pullRequest.description = git.pull_request.body;
+      this.pullRequest.number = git.number;
+      this.repository.fullName = git.repository.full_name;
+      this.repository.cloneURL = git.repository.clone_url;
+      this.pullRequest.sourceBranch = git.pull_request.head.ref;
+      this.pullRequest.targetBranch = git.pull_request.base.ref;
     } else if (isGithubReopenedPREvent(git)) {
-      logger.warn('isGithubReopenedPREvent');
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.ReopenedPR;
+      this.gitService = this.githubService;
+      this.pullRequest.title = git.pull_request.title;
+      this.pullRequest.description = git.pull_request.body;
+      this.pullRequest.number = git.number;
+      this.repository.fullName = git.repository.full_name;
+      this.repository.cloneURL = git.repository.clone_url;
+      this.pullRequest.sourceBranch = git.pull_request.head.ref;
+      this.pullRequest.targetBranch = git.pull_request.base.ref;
     } else if (isGitlabMergedPREvent(git)) {
-      logger.warn('isGitlabMergedPREvent');
+      this.gitType = GitTypeEnum.Gitlab;
+      this.gitEvent = GitEventEnum.MergedPR;
+      this.gitService = this.gitlabService;
+      this.projectId = git.project.id;
+      this.pullRequest.title = git.object_attributes.title;
+      this.pullRequest.description = git.object_attributes.description;
+      this.pullRequest.number = git.object_attributes.iid;
+      this.repository.cloneURL = git.project.git_http_url;
+      this.pullRequest.sourceBranch = git.object_attributes.source_branch;
+      this.pullRequest.targetBranch = git.object_attributes.target_branch;
     } else if (isGitlabClosedPREvent(git)) {
-      logger.warn('isGitlabClosedPREvent');
+      this.gitType = GitTypeEnum.Gitlab;
+      this.gitEvent = GitEventEnum.ClosedPR;
+      this.gitService = this.gitlabService;
+      this.projectId = git.project.id;
+      this.pullRequest.title = git.object_attributes.title;
+      this.pullRequest.description = git.object_attributes.description;
+      this.pullRequest.number = git.object_attributes.iid;
+      this.repository.cloneURL = git.project.git_http_url;
+      this.pullRequest.sourceBranch = git.object_attributes.source_branch;
+      this.pullRequest.targetBranch = git.object_attributes.target_branch;
     } else if (isGitlabReopenedPREvent(git)) {
-      logger.warn('isGitlabReopenedPREvent');
+      this.gitType = GitTypeEnum.Gitlab;
+      this.gitEvent = GitEventEnum.ReopenedPR;
+      this.gitService = this.gitlabService;
+      this.projectId = git.project.id;
+      this.pullRequest.title = git.object_attributes.title;
+      this.pullRequest.description = git.object_attributes.description;
+      this.pullRequest.number = git.object_attributes.iid;
+      this.repository.cloneURL = git.project.git_http_url;
+      this.pullRequest.sourceBranch = git.object_attributes.source_branch;
+      this.pullRequest.targetBranch = git.object_attributes.target_branch;
     } else if (isGithubNewRepoEvent(git)) {
       // Caution: need to be after isGithubIssueComment and isGithubPRComment
       this.gitType = GitTypeEnum.Github;

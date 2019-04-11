@@ -2572,4 +2572,2344 @@ describe('Utils Enum', () => {
       expect(utils.isGithubPRCommentEvent(gitlabPRCommentEvent)).toBe(false);
     });
   });
+
+  describe('isClosedPREvent', () => {
+    const githubClosedPREvent = {
+      action: 'closed',
+      number: 129,
+      pull_request: {
+        url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129',
+        id: 269462455,
+        node_id: 'MDExOlB1bGxSZXF1ZXN0MjY5NDYyNDU1',
+        html_url: 'https://github.com/bastienterrier/test-webhook/pull/129',
+        diff_url:
+          'https://github.com/bastienterrier/test-webhook/pull/129.diff',
+        patch_url:
+          'https://github.com/bastienterrier/test-webhook/pull/129.patch',
+        issue_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/129',
+        number: 129,
+        state: 'closed',
+        locked: false,
+        title: 'Update README.md',
+        user: {
+          login: 'bastienterrier',
+          id: 25296454,
+          node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+          avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+          gravatar_id: '',
+          url: 'https://api.github.com/users/bastienterrier',
+          html_url: 'https://github.com/bastienterrier',
+          followers_url:
+            'https://api.github.com/users/bastienterrier/followers',
+          following_url:
+            'https://api.github.com/users/bastienterrier/following{/other_user}',
+          gists_url:
+            'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+          starred_url:
+            'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+          subscriptions_url:
+            'https://api.github.com/users/bastienterrier/subscriptions',
+          organizations_url: 'https://api.github.com/users/bastienterrier/orgs',
+          repos_url: 'https://api.github.com/users/bastienterrier/repos',
+          events_url:
+            'https://api.github.com/users/bastienterrier/events{/privacy}',
+          received_events_url:
+            'https://api.github.com/users/bastienterrier/received_events',
+          type: 'User',
+          site_admin: false,
+        },
+        body: '',
+        created_at: '2019-04-11T08:01:50Z',
+        updated_at: '2019-04-11T08:02:03Z',
+        closed_at: '2019-04-11T08:02:03Z',
+        merged_at: null,
+        merge_commit_sha: '0753861c64bc713b18ecca6c44ca4eda0288cc8b',
+        assignee: null,
+        assignees: [],
+        requested_reviewers: [],
+        requested_teams: [],
+        labels: [],
+        milestone: null,
+        commits_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129/commits',
+        review_comments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129/comments',
+        review_comment_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls/comments{/number}',
+        comments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/129/comments',
+        statuses_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/statuses/796d35504c393c3c019297b974d109eebee4c873',
+        head: {
+          label: 'bastienterrier:testingPR',
+          ref: 'testingPR',
+          sha: '796d35504c393c3c019297b974d109eebee4c873',
+          user: {
+            login: 'bastienterrier',
+            id: 25296454,
+            node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+            avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+            gravatar_id: '',
+            url: 'https://api.github.com/users/bastienterrier',
+            html_url: 'https://github.com/bastienterrier',
+            followers_url:
+              'https://api.github.com/users/bastienterrier/followers',
+            following_url:
+              'https://api.github.com/users/bastienterrier/following{/other_user}',
+            gists_url:
+              'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+            starred_url:
+              'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+            subscriptions_url:
+              'https://api.github.com/users/bastienterrier/subscriptions',
+            organizations_url:
+              'https://api.github.com/users/bastienterrier/orgs',
+            repos_url: 'https://api.github.com/users/bastienterrier/repos',
+            events_url:
+              'https://api.github.com/users/bastienterrier/events{/privacy}',
+            received_events_url:
+              'https://api.github.com/users/bastienterrier/received_events',
+            type: 'User',
+            site_admin: false,
+          },
+          repo: {
+            id: 169373600,
+            node_id: 'MDEwOlJlcG9zaXRvcnkxNjkzNzM2MDA=',
+            name: 'test-webhook',
+            full_name: 'bastienterrier/test-webhook',
+            private: false,
+            owner: {
+              login: 'bastienterrier',
+              id: 25296454,
+              node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+              avatar_url:
+                'https://avatars0.githubusercontent.com/u/25296454?v=4',
+              gravatar_id: '',
+              url: 'https://api.github.com/users/bastienterrier',
+              html_url: 'https://github.com/bastienterrier',
+              followers_url:
+                'https://api.github.com/users/bastienterrier/followers',
+              following_url:
+                'https://api.github.com/users/bastienterrier/following{/other_user}',
+              gists_url:
+                'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+              starred_url:
+                'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+              subscriptions_url:
+                'https://api.github.com/users/bastienterrier/subscriptions',
+              organizations_url:
+                'https://api.github.com/users/bastienterrier/orgs',
+              repos_url: 'https://api.github.com/users/bastienterrier/repos',
+              events_url:
+                'https://api.github.com/users/bastienterrier/events{/privacy}',
+              received_events_url:
+                'https://api.github.com/users/bastienterrier/received_events',
+              type: 'User',
+              site_admin: false,
+            },
+            html_url: 'https://github.com/bastienterrier/test-webhook',
+            description: null,
+            fork: false,
+            url: 'https://api.github.com/repos/bastienterrier/test-webhook',
+            forks_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/forks',
+            keys_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/keys{/key_id}',
+            collaborators_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/collaborators{/collaborator}',
+            teams_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/teams',
+            hooks_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/hooks',
+            issue_events_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/events{/number}',
+            events_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/events',
+            assignees_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/assignees{/user}',
+            branches_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/branches{/branch}',
+            tags_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/tags',
+            blobs_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/blobs{/sha}',
+            git_tags_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/tags{/sha}',
+            git_refs_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/refs{/sha}',
+            trees_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/trees{/sha}',
+            statuses_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/statuses/{sha}',
+            languages_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/languages',
+            stargazers_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/stargazers',
+            contributors_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/contributors',
+            subscribers_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/subscribers',
+            subscription_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/subscription',
+            commits_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/commits{/sha}',
+            git_commits_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/commits{/sha}',
+            comments_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/comments{/number}',
+            issue_comment_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/comments{/number}',
+            contents_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/contents/{+path}',
+            compare_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/compare/{base}...{head}',
+            merges_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/merges',
+            archive_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/{archive_format}{/ref}',
+            downloads_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/downloads',
+            issues_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues{/number}',
+            pulls_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls{/number}',
+            milestones_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/milestones{/number}',
+            notifications_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/notifications{?since,all,participating}',
+            labels_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/labels{/name}',
+            releases_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/releases{/id}',
+            deployments_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/deployments',
+            created_at: '2019-02-06T08:14:08Z',
+            updated_at: '2019-04-11T07:45:07Z',
+            pushed_at: '2019-04-11T08:01:51Z',
+            git_url: 'git://github.com/bastienterrier/test-webhook.git',
+            ssh_url: 'git@github.com:bastienterrier/test-webhook.git',
+            clone_url: 'https://github.com/bastienterrier/test-webhook.git',
+            svn_url: 'https://github.com/bastienterrier/test-webhook',
+            homepage: null,
+            size: 25501,
+            stargazers_count: 0,
+            watchers_count: 0,
+            language: 'JavaScript',
+            has_issues: true,
+            has_projects: true,
+            has_downloads: true,
+            has_wiki: true,
+            has_pages: false,
+            forks_count: 0,
+            mirror_url: null,
+            archived: false,
+            disabled: false,
+            open_issues_count: 33,
+            license: null,
+            forks: 0,
+            open_issues: 33,
+            watchers: 0,
+            default_branch: 'master',
+          },
+        },
+        base: {
+          label: 'bastienterrier:master',
+          ref: 'master',
+          sha: '500872c32c9cfe955576000fc01bae1a0d411ef3',
+          user: {
+            login: 'bastienterrier',
+            id: 25296454,
+            node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+            avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+            gravatar_id: '',
+            url: 'https://api.github.com/users/bastienterrier',
+            html_url: 'https://github.com/bastienterrier',
+            followers_url:
+              'https://api.github.com/users/bastienterrier/followers',
+            following_url:
+              'https://api.github.com/users/bastienterrier/following{/other_user}',
+            gists_url:
+              'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+            starred_url:
+              'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+            subscriptions_url:
+              'https://api.github.com/users/bastienterrier/subscriptions',
+            organizations_url:
+              'https://api.github.com/users/bastienterrier/orgs',
+            repos_url: 'https://api.github.com/users/bastienterrier/repos',
+            events_url:
+              'https://api.github.com/users/bastienterrier/events{/privacy}',
+            received_events_url:
+              'https://api.github.com/users/bastienterrier/received_events',
+            type: 'User',
+            site_admin: false,
+          },
+          repo: {
+            id: 169373600,
+            node_id: 'MDEwOlJlcG9zaXRvcnkxNjkzNzM2MDA=',
+            name: 'test-webhook',
+            full_name: 'bastienterrier/test-webhook',
+            private: false,
+            owner: {
+              login: 'bastienterrier',
+              id: 25296454,
+              node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+              avatar_url:
+                'https://avatars0.githubusercontent.com/u/25296454?v=4',
+              gravatar_id: '',
+              url: 'https://api.github.com/users/bastienterrier',
+              html_url: 'https://github.com/bastienterrier',
+              followers_url:
+                'https://api.github.com/users/bastienterrier/followers',
+              following_url:
+                'https://api.github.com/users/bastienterrier/following{/other_user}',
+              gists_url:
+                'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+              starred_url:
+                'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+              subscriptions_url:
+                'https://api.github.com/users/bastienterrier/subscriptions',
+              organizations_url:
+                'https://api.github.com/users/bastienterrier/orgs',
+              repos_url: 'https://api.github.com/users/bastienterrier/repos',
+              events_url:
+                'https://api.github.com/users/bastienterrier/events{/privacy}',
+              received_events_url:
+                'https://api.github.com/users/bastienterrier/received_events',
+              type: 'User',
+              site_admin: false,
+            },
+            html_url: 'https://github.com/bastienterrier/test-webhook',
+            description: null,
+            fork: false,
+            url: 'https://api.github.com/repos/bastienterrier/test-webhook',
+            forks_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/forks',
+            keys_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/keys{/key_id}',
+            collaborators_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/collaborators{/collaborator}',
+            teams_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/teams',
+            hooks_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/hooks',
+            issue_events_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/events{/number}',
+            events_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/events',
+            assignees_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/assignees{/user}',
+            branches_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/branches{/branch}',
+            tags_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/tags',
+            blobs_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/blobs{/sha}',
+            git_tags_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/tags{/sha}',
+            git_refs_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/refs{/sha}',
+            trees_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/trees{/sha}',
+            statuses_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/statuses/{sha}',
+            languages_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/languages',
+            stargazers_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/stargazers',
+            contributors_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/contributors',
+            subscribers_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/subscribers',
+            subscription_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/subscription',
+            commits_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/commits{/sha}',
+            git_commits_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/commits{/sha}',
+            comments_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/comments{/number}',
+            issue_comment_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/comments{/number}',
+            contents_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/contents/{+path}',
+            compare_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/compare/{base}...{head}',
+            merges_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/merges',
+            archive_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/{archive_format}{/ref}',
+            downloads_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/downloads',
+            issues_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues{/number}',
+            pulls_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls{/number}',
+            milestones_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/milestones{/number}',
+            notifications_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/notifications{?since,all,participating}',
+            labels_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/labels{/name}',
+            releases_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/releases{/id}',
+            deployments_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/deployments',
+            created_at: '2019-02-06T08:14:08Z',
+            updated_at: '2019-04-11T07:45:07Z',
+            pushed_at: '2019-04-11T08:01:51Z',
+            git_url: 'git://github.com/bastienterrier/test-webhook.git',
+            ssh_url: 'git@github.com:bastienterrier/test-webhook.git',
+            clone_url: 'https://github.com/bastienterrier/test-webhook.git',
+            svn_url: 'https://github.com/bastienterrier/test-webhook',
+            homepage: null,
+            size: 25501,
+            stargazers_count: 0,
+            watchers_count: 0,
+            language: 'JavaScript',
+            has_issues: true,
+            has_projects: true,
+            has_downloads: true,
+            has_wiki: true,
+            has_pages: false,
+            forks_count: 0,
+            mirror_url: null,
+            archived: false,
+            disabled: false,
+            open_issues_count: 33,
+            license: null,
+            forks: 0,
+            open_issues: 33,
+            watchers: 0,
+            default_branch: 'master',
+          },
+        },
+        _links: {
+          self: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129',
+          },
+          html: {
+            href: 'https://github.com/bastienterrier/test-webhook/pull/129',
+          },
+          issue: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/129',
+          },
+          comments: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/129/comments',
+          },
+          review_comments: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129/comments',
+          },
+          review_comment: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls/comments{/number}',
+          },
+          commits: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129/commits',
+          },
+          statuses: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/statuses/796d35504c393c3c019297b974d109eebee4c873',
+          },
+        },
+        author_association: 'OWNER',
+        draft: false,
+        merged: false,
+        mergeable: true,
+        rebaseable: true,
+        mergeable_state: 'clean',
+        merged_by: null,
+        comments: 0,
+        review_comments: 0,
+        maintainer_can_modify: false,
+        commits: 1,
+        additions: 1,
+        deletions: 0,
+        changed_files: 1,
+      },
+      repository: {
+        id: 169373600,
+        node_id: 'MDEwOlJlcG9zaXRvcnkxNjkzNzM2MDA=',
+        name: 'test-webhook',
+        full_name: 'bastienterrier/test-webhook',
+        private: false,
+        owner: {
+          login: 'bastienterrier',
+          id: 25296454,
+          node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+          avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+          gravatar_id: '',
+          url: 'https://api.github.com/users/bastienterrier',
+          html_url: 'https://github.com/bastienterrier',
+          followers_url:
+            'https://api.github.com/users/bastienterrier/followers',
+          following_url:
+            'https://api.github.com/users/bastienterrier/following{/other_user}',
+          gists_url:
+            'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+          starred_url:
+            'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+          subscriptions_url:
+            'https://api.github.com/users/bastienterrier/subscriptions',
+          organizations_url: 'https://api.github.com/users/bastienterrier/orgs',
+          repos_url: 'https://api.github.com/users/bastienterrier/repos',
+          events_url:
+            'https://api.github.com/users/bastienterrier/events{/privacy}',
+          received_events_url:
+            'https://api.github.com/users/bastienterrier/received_events',
+          type: 'User',
+          site_admin: false,
+        },
+        html_url: 'https://github.com/bastienterrier/test-webhook',
+        description: null,
+        fork: false,
+        url: 'https://api.github.com/repos/bastienterrier/test-webhook',
+        forks_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/forks',
+        keys_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/keys{/key_id}',
+        collaborators_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/collaborators{/collaborator}',
+        teams_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/teams',
+        hooks_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/hooks',
+        issue_events_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/events{/number}',
+        events_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/events',
+        assignees_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/assignees{/user}',
+        branches_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/branches{/branch}',
+        tags_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/tags',
+        blobs_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/blobs{/sha}',
+        git_tags_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/tags{/sha}',
+        git_refs_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/refs{/sha}',
+        trees_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/trees{/sha}',
+        statuses_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/statuses/{sha}',
+        languages_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/languages',
+        stargazers_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/stargazers',
+        contributors_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/contributors',
+        subscribers_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/subscribers',
+        subscription_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/subscription',
+        commits_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/commits{/sha}',
+        git_commits_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/commits{/sha}',
+        comments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/comments{/number}',
+        issue_comment_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/comments{/number}',
+        contents_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/contents/{+path}',
+        compare_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/compare/{base}...{head}',
+        merges_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/merges',
+        archive_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/{archive_format}{/ref}',
+        downloads_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/downloads',
+        issues_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues{/number}',
+        pulls_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls{/number}',
+        milestones_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/milestones{/number}',
+        notifications_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/notifications{?since,all,participating}',
+        labels_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/labels{/name}',
+        releases_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/releases{/id}',
+        deployments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/deployments',
+        created_at: '2019-02-06T08:14:08Z',
+        updated_at: '2019-04-11T07:45:07Z',
+        pushed_at: '2019-04-11T08:01:51Z',
+        git_url: 'git://github.com/bastienterrier/test-webhook.git',
+        ssh_url: 'git@github.com:bastienterrier/test-webhook.git',
+        clone_url: 'https://github.com/bastienterrier/test-webhook.git',
+        svn_url: 'https://github.com/bastienterrier/test-webhook',
+        homepage: null,
+        size: 25501,
+        stargazers_count: 0,
+        watchers_count: 0,
+        language: 'JavaScript',
+        has_issues: true,
+        has_projects: true,
+        has_downloads: true,
+        has_wiki: true,
+        has_pages: false,
+        forks_count: 0,
+        mirror_url: null,
+        archived: false,
+        disabled: false,
+        open_issues_count: 33,
+        license: null,
+        forks: 0,
+        open_issues: 33,
+        watchers: 0,
+        default_branch: 'master',
+      },
+      sender: {
+        login: 'bastienterrier',
+        id: 25296454,
+        node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+        avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+        gravatar_id: '',
+        url: 'https://api.github.com/users/bastienterrier',
+        html_url: 'https://github.com/bastienterrier',
+        followers_url: 'https://api.github.com/users/bastienterrier/followers',
+        following_url:
+          'https://api.github.com/users/bastienterrier/following{/other_user}',
+        gists_url:
+          'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+        starred_url:
+          'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+        subscriptions_url:
+          'https://api.github.com/users/bastienterrier/subscriptions',
+        organizations_url: 'https://api.github.com/users/bastienterrier/orgs',
+        repos_url: 'https://api.github.com/users/bastienterrier/repos',
+        events_url:
+          'https://api.github.com/users/bastienterrier/events{/privacy}',
+        received_events_url:
+          'https://api.github.com/users/bastienterrier/received_events',
+        type: 'User',
+        site_admin: false,
+      },
+    };
+    const gitlabClosedPREvent = {
+      object_kind: 'merge_request',
+      event_type: 'merge_request',
+      user: {
+        name: 'Bastien Terrier',
+        username: 'bastien.terrier',
+        avatar_url:
+          'https://secure.gravatar.com/avatar/a17bda7df8612108bc4442ce57cc6dc3?s=80&d=identicon',
+      },
+      project: {
+        id: 10607595,
+        name: 'test_webhook',
+        description: '',
+        web_url: 'https://gitlab.com/bastien.terrier/test_webhook',
+        avatar_url: null,
+        git_ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        git_http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+        namespace: 'bastien.terrier',
+        visibility_level: 20,
+        path_with_namespace: 'bastien.terrier/test_webhook',
+        default_branch: 'master',
+        ci_config_path: null,
+        homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+        url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+      },
+      object_attributes: {
+        assignee_id: null,
+        author_id: 3360534,
+        created_at: '2019-04-09 13:14:44 UTC',
+        description: '',
+        head_pipeline_id: 55243238,
+        id: 27349057,
+        iid: 35,
+        last_edited_at: null,
+        last_edited_by_id: null,
+        merge_commit_sha: null,
+        merge_error: null,
+        merge_params: {
+          force_remove_source_branch: '0',
+        },
+        merge_status: 'cannot_be_merged',
+        merge_user_id: null,
+        merge_when_pipeline_succeeds: false,
+        milestone_id: null,
+        source_branch: 'feature/close',
+        source_project_id: 10607595,
+        state: 'closed',
+        target_branch: 'master',
+        target_project_id: 10607595,
+        time_estimate: 0,
+        title: 'bad title...',
+        updated_at: '2019-04-11 08:04:10 UTC',
+        updated_by_id: null,
+        url:
+          'https://gitlab.com/bastien.terrier/test_webhook/merge_requests/35',
+        source: {
+          id: 10607595,
+          name: 'test_webhook',
+          description: '',
+          web_url: 'https://gitlab.com/bastien.terrier/test_webhook',
+          avatar_url: null,
+          git_ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          git_http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+          namespace: 'bastien.terrier',
+          visibility_level: 20,
+          path_with_namespace: 'bastien.terrier/test_webhook',
+          default_branch: 'master',
+          ci_config_path: null,
+          homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+          url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+        },
+        target: {
+          id: 10607595,
+          name: 'test_webhook',
+          description: '',
+          web_url: 'https://gitlab.com/bastien.terrier/test_webhook',
+          avatar_url: null,
+          git_ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          git_http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+          namespace: 'bastien.terrier',
+          visibility_level: 20,
+          path_with_namespace: 'bastien.terrier/test_webhook',
+          default_branch: 'master',
+          ci_config_path: null,
+          homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+          url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+        },
+        last_commit: {
+          id: '7f1f75e0fe821b814eba23277b5f0b736737ebd0',
+          message: 'Add new file',
+          timestamp: '2019-04-11T07:56:31Z',
+          url:
+            'https://gitlab.com/bastien.terrier/test_webhook/commit/7f1f75e0fe821b814eba23277b5f0b736737ebd0',
+          author: {
+            name: 'Bastien Terrier',
+            email: 'bastien.terrier@gmail.com',
+          },
+        },
+        work_in_progress: false,
+        total_time_spent: 0,
+        human_total_time_spent: null,
+        human_time_estimate: null,
+        action: 'close',
+      },
+      labels: [],
+      changes: {
+        state: {
+          previous: 'opened',
+          current: 'closed',
+        },
+        updated_at: {
+          previous: '2019-04-11 08:03:11 UTC',
+          current: '2019-04-11 08:04:10 UTC',
+        },
+        total_time_spent: {
+          previous: null,
+          current: 0,
+        },
+      },
+      repository: {
+        name: 'test_webhook',
+        url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        description: '',
+        homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+      },
+    };
+    it('isGitlabClosedPREvent should equal "true"', () => {
+      expect(utils.isGitlabClosedPREvent(gitlabClosedPREvent)).toBe(true);
+    });
+    it('isGitlabClosedPREvent should equal "false"', () => {
+      expect(utils.isGitlabClosedPREvent(githubClosedPREvent)).toBe(false);
+    });
+    it('isGithubClosedPREvent should equal "true"', () => {
+      expect(utils.isGithubClosedPREvent(githubClosedPREvent)).toBe(true);
+    });
+    it('isGithubClosedPREvent should equal "false"', () => {
+      expect(utils.isGithubClosedPREvent(gitlabClosedPREvent)).toBe(false);
+    });
+  });
+
+  describe('isReopenedPREvent', () => {
+    const githubReopenedPREvent = {
+      action: 'reopened',
+      number: 129,
+      pull_request: {
+        url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129',
+        id: 269462455,
+        node_id: 'MDExOlB1bGxSZXF1ZXN0MjY5NDYyNDU1',
+        html_url: 'https://github.com/bastienterrier/test-webhook/pull/129',
+        diff_url:
+          'https://github.com/bastienterrier/test-webhook/pull/129.diff',
+        patch_url:
+          'https://github.com/bastienterrier/test-webhook/pull/129.patch',
+        issue_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/129',
+        number: 129,
+        state: 'open',
+        locked: false,
+        title: 'Update README.md',
+        user: {
+          login: 'bastienterrier',
+          id: 25296454,
+          node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+          avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+          gravatar_id: '',
+          url: 'https://api.github.com/users/bastienterrier',
+          html_url: 'https://github.com/bastienterrier',
+          followers_url:
+            'https://api.github.com/users/bastienterrier/followers',
+          following_url:
+            'https://api.github.com/users/bastienterrier/following{/other_user}',
+          gists_url:
+            'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+          starred_url:
+            'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+          subscriptions_url:
+            'https://api.github.com/users/bastienterrier/subscriptions',
+          organizations_url: 'https://api.github.com/users/bastienterrier/orgs',
+          repos_url: 'https://api.github.com/users/bastienterrier/repos',
+          events_url:
+            'https://api.github.com/users/bastienterrier/events{/privacy}',
+          received_events_url:
+            'https://api.github.com/users/bastienterrier/received_events',
+          type: 'User',
+          site_admin: false,
+        },
+        body: '',
+        created_at: '2019-04-11T08:01:50Z',
+        updated_at: '2019-04-11T08:04:55Z',
+        closed_at: null,
+        merged_at: null,
+        merge_commit_sha: '0753861c64bc713b18ecca6c44ca4eda0288cc8b',
+        assignee: null,
+        assignees: [],
+        requested_reviewers: [],
+        requested_teams: [],
+        labels: [],
+        milestone: null,
+        commits_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129/commits',
+        review_comments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129/comments',
+        review_comment_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls/comments{/number}',
+        comments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/129/comments',
+        statuses_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/statuses/796d35504c393c3c019297b974d109eebee4c873',
+        head: {
+          label: 'bastienterrier:testingPR',
+          ref: 'testingPR',
+          sha: '796d35504c393c3c019297b974d109eebee4c873',
+          user: {
+            login: 'bastienterrier',
+            id: 25296454,
+            node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+            avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+            gravatar_id: '',
+            url: 'https://api.github.com/users/bastienterrier',
+            html_url: 'https://github.com/bastienterrier',
+            followers_url:
+              'https://api.github.com/users/bastienterrier/followers',
+            following_url:
+              'https://api.github.com/users/bastienterrier/following{/other_user}',
+            gists_url:
+              'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+            starred_url:
+              'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+            subscriptions_url:
+              'https://api.github.com/users/bastienterrier/subscriptions',
+            organizations_url:
+              'https://api.github.com/users/bastienterrier/orgs',
+            repos_url: 'https://api.github.com/users/bastienterrier/repos',
+            events_url:
+              'https://api.github.com/users/bastienterrier/events{/privacy}',
+            received_events_url:
+              'https://api.github.com/users/bastienterrier/received_events',
+            type: 'User',
+            site_admin: false,
+          },
+          repo: {
+            id: 169373600,
+            node_id: 'MDEwOlJlcG9zaXRvcnkxNjkzNzM2MDA=',
+            name: 'test-webhook',
+            full_name: 'bastienterrier/test-webhook',
+            private: false,
+            owner: {
+              login: 'bastienterrier',
+              id: 25296454,
+              node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+              avatar_url:
+                'https://avatars0.githubusercontent.com/u/25296454?v=4',
+              gravatar_id: '',
+              url: 'https://api.github.com/users/bastienterrier',
+              html_url: 'https://github.com/bastienterrier',
+              followers_url:
+                'https://api.github.com/users/bastienterrier/followers',
+              following_url:
+                'https://api.github.com/users/bastienterrier/following{/other_user}',
+              gists_url:
+                'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+              starred_url:
+                'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+              subscriptions_url:
+                'https://api.github.com/users/bastienterrier/subscriptions',
+              organizations_url:
+                'https://api.github.com/users/bastienterrier/orgs',
+              repos_url: 'https://api.github.com/users/bastienterrier/repos',
+              events_url:
+                'https://api.github.com/users/bastienterrier/events{/privacy}',
+              received_events_url:
+                'https://api.github.com/users/bastienterrier/received_events',
+              type: 'User',
+              site_admin: false,
+            },
+            html_url: 'https://github.com/bastienterrier/test-webhook',
+            description: null,
+            fork: false,
+            url: 'https://api.github.com/repos/bastienterrier/test-webhook',
+            forks_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/forks',
+            keys_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/keys{/key_id}',
+            collaborators_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/collaborators{/collaborator}',
+            teams_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/teams',
+            hooks_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/hooks',
+            issue_events_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/events{/number}',
+            events_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/events',
+            assignees_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/assignees{/user}',
+            branches_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/branches{/branch}',
+            tags_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/tags',
+            blobs_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/blobs{/sha}',
+            git_tags_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/tags{/sha}',
+            git_refs_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/refs{/sha}',
+            trees_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/trees{/sha}',
+            statuses_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/statuses/{sha}',
+            languages_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/languages',
+            stargazers_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/stargazers',
+            contributors_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/contributors',
+            subscribers_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/subscribers',
+            subscription_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/subscription',
+            commits_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/commits{/sha}',
+            git_commits_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/commits{/sha}',
+            comments_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/comments{/number}',
+            issue_comment_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/comments{/number}',
+            contents_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/contents/{+path}',
+            compare_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/compare/{base}...{head}',
+            merges_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/merges',
+            archive_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/{archive_format}{/ref}',
+            downloads_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/downloads',
+            issues_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues{/number}',
+            pulls_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls{/number}',
+            milestones_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/milestones{/number}',
+            notifications_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/notifications{?since,all,participating}',
+            labels_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/labels{/name}',
+            releases_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/releases{/id}',
+            deployments_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/deployments',
+            created_at: '2019-02-06T08:14:08Z',
+            updated_at: '2019-04-11T07:45:07Z',
+            pushed_at: '2019-04-11T08:01:51Z',
+            git_url: 'git://github.com/bastienterrier/test-webhook.git',
+            ssh_url: 'git@github.com:bastienterrier/test-webhook.git',
+            clone_url: 'https://github.com/bastienterrier/test-webhook.git',
+            svn_url: 'https://github.com/bastienterrier/test-webhook',
+            homepage: null,
+            size: 25501,
+            stargazers_count: 0,
+            watchers_count: 0,
+            language: 'JavaScript',
+            has_issues: true,
+            has_projects: true,
+            has_downloads: true,
+            has_wiki: true,
+            has_pages: false,
+            forks_count: 0,
+            mirror_url: null,
+            archived: false,
+            disabled: false,
+            open_issues_count: 34,
+            license: null,
+            forks: 0,
+            open_issues: 34,
+            watchers: 0,
+            default_branch: 'master',
+          },
+        },
+        base: {
+          label: 'bastienterrier:master',
+          ref: 'master',
+          sha: '500872c32c9cfe955576000fc01bae1a0d411ef3',
+          user: {
+            login: 'bastienterrier',
+            id: 25296454,
+            node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+            avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+            gravatar_id: '',
+            url: 'https://api.github.com/users/bastienterrier',
+            html_url: 'https://github.com/bastienterrier',
+            followers_url:
+              'https://api.github.com/users/bastienterrier/followers',
+            following_url:
+              'https://api.github.com/users/bastienterrier/following{/other_user}',
+            gists_url:
+              'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+            starred_url:
+              'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+            subscriptions_url:
+              'https://api.github.com/users/bastienterrier/subscriptions',
+            organizations_url:
+              'https://api.github.com/users/bastienterrier/orgs',
+            repos_url: 'https://api.github.com/users/bastienterrier/repos',
+            events_url:
+              'https://api.github.com/users/bastienterrier/events{/privacy}',
+            received_events_url:
+              'https://api.github.com/users/bastienterrier/received_events',
+            type: 'User',
+            site_admin: false,
+          },
+          repo: {
+            id: 169373600,
+            node_id: 'MDEwOlJlcG9zaXRvcnkxNjkzNzM2MDA=',
+            name: 'test-webhook',
+            full_name: 'bastienterrier/test-webhook',
+            private: false,
+            owner: {
+              login: 'bastienterrier',
+              id: 25296454,
+              node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+              avatar_url:
+                'https://avatars0.githubusercontent.com/u/25296454?v=4',
+              gravatar_id: '',
+              url: 'https://api.github.com/users/bastienterrier',
+              html_url: 'https://github.com/bastienterrier',
+              followers_url:
+                'https://api.github.com/users/bastienterrier/followers',
+              following_url:
+                'https://api.github.com/users/bastienterrier/following{/other_user}',
+              gists_url:
+                'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+              starred_url:
+                'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+              subscriptions_url:
+                'https://api.github.com/users/bastienterrier/subscriptions',
+              organizations_url:
+                'https://api.github.com/users/bastienterrier/orgs',
+              repos_url: 'https://api.github.com/users/bastienterrier/repos',
+              events_url:
+                'https://api.github.com/users/bastienterrier/events{/privacy}',
+              received_events_url:
+                'https://api.github.com/users/bastienterrier/received_events',
+              type: 'User',
+              site_admin: false,
+            },
+            html_url: 'https://github.com/bastienterrier/test-webhook',
+            description: null,
+            fork: false,
+            url: 'https://api.github.com/repos/bastienterrier/test-webhook',
+            forks_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/forks',
+            keys_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/keys{/key_id}',
+            collaborators_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/collaborators{/collaborator}',
+            teams_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/teams',
+            hooks_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/hooks',
+            issue_events_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/events{/number}',
+            events_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/events',
+            assignees_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/assignees{/user}',
+            branches_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/branches{/branch}',
+            tags_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/tags',
+            blobs_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/blobs{/sha}',
+            git_tags_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/tags{/sha}',
+            git_refs_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/refs{/sha}',
+            trees_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/trees{/sha}',
+            statuses_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/statuses/{sha}',
+            languages_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/languages',
+            stargazers_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/stargazers',
+            contributors_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/contributors',
+            subscribers_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/subscribers',
+            subscription_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/subscription',
+            commits_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/commits{/sha}',
+            git_commits_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/commits{/sha}',
+            comments_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/comments{/number}',
+            issue_comment_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/comments{/number}',
+            contents_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/contents/{+path}',
+            compare_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/compare/{base}...{head}',
+            merges_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/merges',
+            archive_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/{archive_format}{/ref}',
+            downloads_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/downloads',
+            issues_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues{/number}',
+            pulls_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls{/number}',
+            milestones_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/milestones{/number}',
+            notifications_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/notifications{?since,all,participating}',
+            labels_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/labels{/name}',
+            releases_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/releases{/id}',
+            deployments_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/deployments',
+            created_at: '2019-02-06T08:14:08Z',
+            updated_at: '2019-04-11T07:45:07Z',
+            pushed_at: '2019-04-11T08:01:51Z',
+            git_url: 'git://github.com/bastienterrier/test-webhook.git',
+            ssh_url: 'git@github.com:bastienterrier/test-webhook.git',
+            clone_url: 'https://github.com/bastienterrier/test-webhook.git',
+            svn_url: 'https://github.com/bastienterrier/test-webhook',
+            homepage: null,
+            size: 25501,
+            stargazers_count: 0,
+            watchers_count: 0,
+            language: 'JavaScript',
+            has_issues: true,
+            has_projects: true,
+            has_downloads: true,
+            has_wiki: true,
+            has_pages: false,
+            forks_count: 0,
+            mirror_url: null,
+            archived: false,
+            disabled: false,
+            open_issues_count: 34,
+            license: null,
+            forks: 0,
+            open_issues: 34,
+            watchers: 0,
+            default_branch: 'master',
+          },
+        },
+        _links: {
+          self: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129',
+          },
+          html: {
+            href: 'https://github.com/bastienterrier/test-webhook/pull/129',
+          },
+          issue: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/129',
+          },
+          comments: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/129/comments',
+          },
+          review_comments: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129/comments',
+          },
+          review_comment: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls/comments{/number}',
+          },
+          commits: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129/commits',
+          },
+          statuses: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/statuses/796d35504c393c3c019297b974d109eebee4c873',
+          },
+        },
+        author_association: 'OWNER',
+        draft: false,
+        merged: false,
+        mergeable: null,
+        rebaseable: null,
+        mergeable_state: 'unknown',
+        merged_by: null,
+        comments: 0,
+        review_comments: 0,
+        maintainer_can_modify: false,
+        commits: 1,
+        additions: 1,
+        deletions: 0,
+        changed_files: 1,
+      },
+      repository: {
+        id: 169373600,
+        node_id: 'MDEwOlJlcG9zaXRvcnkxNjkzNzM2MDA=',
+        name: 'test-webhook',
+        full_name: 'bastienterrier/test-webhook',
+        private: false,
+        owner: {
+          login: 'bastienterrier',
+          id: 25296454,
+          node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+          avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+          gravatar_id: '',
+          url: 'https://api.github.com/users/bastienterrier',
+          html_url: 'https://github.com/bastienterrier',
+          followers_url:
+            'https://api.github.com/users/bastienterrier/followers',
+          following_url:
+            'https://api.github.com/users/bastienterrier/following{/other_user}',
+          gists_url:
+            'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+          starred_url:
+            'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+          subscriptions_url:
+            'https://api.github.com/users/bastienterrier/subscriptions',
+          organizations_url: 'https://api.github.com/users/bastienterrier/orgs',
+          repos_url: 'https://api.github.com/users/bastienterrier/repos',
+          events_url:
+            'https://api.github.com/users/bastienterrier/events{/privacy}',
+          received_events_url:
+            'https://api.github.com/users/bastienterrier/received_events',
+          type: 'User',
+          site_admin: false,
+        },
+        html_url: 'https://github.com/bastienterrier/test-webhook',
+        description: null,
+        fork: false,
+        url: 'https://api.github.com/repos/bastienterrier/test-webhook',
+        forks_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/forks',
+        keys_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/keys{/key_id}',
+        collaborators_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/collaborators{/collaborator}',
+        teams_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/teams',
+        hooks_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/hooks',
+        issue_events_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/events{/number}',
+        events_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/events',
+        assignees_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/assignees{/user}',
+        branches_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/branches{/branch}',
+        tags_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/tags',
+        blobs_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/blobs{/sha}',
+        git_tags_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/tags{/sha}',
+        git_refs_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/refs{/sha}',
+        trees_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/trees{/sha}',
+        statuses_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/statuses/{sha}',
+        languages_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/languages',
+        stargazers_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/stargazers',
+        contributors_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/contributors',
+        subscribers_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/subscribers',
+        subscription_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/subscription',
+        commits_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/commits{/sha}',
+        git_commits_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/commits{/sha}',
+        comments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/comments{/number}',
+        issue_comment_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/comments{/number}',
+        contents_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/contents/{+path}',
+        compare_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/compare/{base}...{head}',
+        merges_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/merges',
+        archive_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/{archive_format}{/ref}',
+        downloads_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/downloads',
+        issues_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues{/number}',
+        pulls_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls{/number}',
+        milestones_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/milestones{/number}',
+        notifications_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/notifications{?since,all,participating}',
+        labels_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/labels{/name}',
+        releases_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/releases{/id}',
+        deployments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/deployments',
+        created_at: '2019-02-06T08:14:08Z',
+        updated_at: '2019-04-11T07:45:07Z',
+        pushed_at: '2019-04-11T08:01:51Z',
+        git_url: 'git://github.com/bastienterrier/test-webhook.git',
+        ssh_url: 'git@github.com:bastienterrier/test-webhook.git',
+        clone_url: 'https://github.com/bastienterrier/test-webhook.git',
+        svn_url: 'https://github.com/bastienterrier/test-webhook',
+        homepage: null,
+        size: 25501,
+        stargazers_count: 0,
+        watchers_count: 0,
+        language: 'JavaScript',
+        has_issues: true,
+        has_projects: true,
+        has_downloads: true,
+        has_wiki: true,
+        has_pages: false,
+        forks_count: 0,
+        mirror_url: null,
+        archived: false,
+        disabled: false,
+        open_issues_count: 34,
+        license: null,
+        forks: 0,
+        open_issues: 34,
+        watchers: 0,
+        default_branch: 'master',
+      },
+      sender: {
+        login: 'bastienterrier',
+        id: 25296454,
+        node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+        avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+        gravatar_id: '',
+        url: 'https://api.github.com/users/bastienterrier',
+        html_url: 'https://github.com/bastienterrier',
+        followers_url: 'https://api.github.com/users/bastienterrier/followers',
+        following_url:
+          'https://api.github.com/users/bastienterrier/following{/other_user}',
+        gists_url:
+          'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+        starred_url:
+          'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+        subscriptions_url:
+          'https://api.github.com/users/bastienterrier/subscriptions',
+        organizations_url: 'https://api.github.com/users/bastienterrier/orgs',
+        repos_url: 'https://api.github.com/users/bastienterrier/repos',
+        events_url:
+          'https://api.github.com/users/bastienterrier/events{/privacy}',
+        received_events_url:
+          'https://api.github.com/users/bastienterrier/received_events',
+        type: 'User',
+        site_admin: false,
+      },
+    };
+    const gitlabReopenedPREvent = {
+      object_kind: 'merge_request',
+      event_type: 'merge_request',
+      user: {
+        name: 'Bastien Terrier',
+        username: 'bastien.terrier',
+        avatar_url:
+          'https://secure.gravatar.com/avatar/a17bda7df8612108bc4442ce57cc6dc3?s=80&d=identicon',
+      },
+      project: {
+        id: 10607595,
+        name: 'test_webhook',
+        description: '',
+        web_url: 'https://gitlab.com/bastien.terrier/test_webhook',
+        avatar_url: null,
+        git_ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        git_http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+        namespace: 'bastien.terrier',
+        visibility_level: 20,
+        path_with_namespace: 'bastien.terrier/test_webhook',
+        default_branch: 'master',
+        ci_config_path: null,
+        homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+        url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+      },
+      object_attributes: {
+        assignee_id: null,
+        author_id: 3360534,
+        created_at: '2019-04-09 13:14:44 UTC',
+        description: '',
+        head_pipeline_id: 55243238,
+        id: 27349057,
+        iid: 35,
+        last_edited_at: null,
+        last_edited_by_id: null,
+        merge_commit_sha: null,
+        merge_error: null,
+        merge_params: {
+          force_remove_source_branch: '0',
+        },
+        merge_status: 'cannot_be_merged',
+        merge_user_id: null,
+        merge_when_pipeline_succeeds: false,
+        milestone_id: null,
+        source_branch: 'feature/close',
+        source_project_id: 10607595,
+        state: 'opened',
+        target_branch: 'master',
+        target_project_id: 10607595,
+        time_estimate: 0,
+        title: 'bad title...',
+        updated_at: '2019-04-11 08:03:11 UTC',
+        updated_by_id: null,
+        url:
+          'https://gitlab.com/bastien.terrier/test_webhook/merge_requests/35',
+        source: {
+          id: 10607595,
+          name: 'test_webhook',
+          description: '',
+          web_url: 'https://gitlab.com/bastien.terrier/test_webhook',
+          avatar_url: null,
+          git_ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          git_http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+          namespace: 'bastien.terrier',
+          visibility_level: 20,
+          path_with_namespace: 'bastien.terrier/test_webhook',
+          default_branch: 'master',
+          ci_config_path: null,
+          homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+          url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+        },
+        target: {
+          id: 10607595,
+          name: 'test_webhook',
+          description: '',
+          web_url: 'https://gitlab.com/bastien.terrier/test_webhook',
+          avatar_url: null,
+          git_ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          git_http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+          namespace: 'bastien.terrier',
+          visibility_level: 20,
+          path_with_namespace: 'bastien.terrier/test_webhook',
+          default_branch: 'master',
+          ci_config_path: null,
+          homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+          url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+        },
+        last_commit: {
+          id: '1e7d0cb7efbd03776c3d503452313ef492f1f936',
+          message: 'fix: Add new file',
+          timestamp: '2019-04-04T15:29:56Z',
+          url:
+            'https://gitlab.com/bastien.terrier/test_webhook/commit/1e7d0cb7efbd03776c3d503452313ef492f1f936',
+          author: {
+            name: 'Bastien Terrier',
+            email: 'bastien.terrier@gmail.com',
+          },
+        },
+        work_in_progress: false,
+        total_time_spent: 0,
+        human_total_time_spent: null,
+        human_time_estimate: null,
+        action: 'reopen',
+      },
+      labels: [],
+      changes: {
+        state: {
+          previous: 'closed',
+          current: 'opened',
+        },
+        updated_at: {
+          previous: '2019-04-09 13:17:04 UTC',
+          current: '2019-04-11 08:03:11 UTC',
+        },
+        total_time_spent: {
+          previous: null,
+          current: 0,
+        },
+      },
+      repository: {
+        name: 'test_webhook',
+        url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        description: '',
+        homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+      },
+    };
+    it('isGitlabReopenedPREvent should equal "true"', () => {
+      expect(utils.isGitlabReopenedPREvent(gitlabReopenedPREvent)).toBe(true);
+    });
+    it('isGitlabReopenedPREvent should equal "false"', () => {
+      expect(utils.isGitlabReopenedPREvent(githubReopenedPREvent)).toBe(false);
+    });
+    it('isGithubReopenedPREvent should equal "true"', () => {
+      expect(utils.isGithubReopenedPREvent(githubReopenedPREvent)).toBe(true);
+    });
+    it('isGithubReopenedPREvent should equal "false"', () => {
+      expect(utils.isGithubReopenedPREvent(gitlabReopenedPREvent)).toBe(false);
+    });
+  });
+
+  describe('isMergedPREvent', () => {
+    const githubMergedPREvent = {
+      action: 'closed',
+      number: 129,
+      pull_request: {
+        url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129',
+        id: 269462455,
+        node_id: 'MDExOlB1bGxSZXF1ZXN0MjY5NDYyNDU1',
+        html_url: 'https://github.com/bastienterrier/test-webhook/pull/129',
+        diff_url:
+          'https://github.com/bastienterrier/test-webhook/pull/129.diff',
+        patch_url:
+          'https://github.com/bastienterrier/test-webhook/pull/129.patch',
+        issue_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/129',
+        number: 129,
+        state: 'closed',
+        locked: false,
+        title: 'Update README.md',
+        user: {
+          login: 'bastienterrier',
+          id: 25296454,
+          node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+          avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+          gravatar_id: '',
+          url: 'https://api.github.com/users/bastienterrier',
+          html_url: 'https://github.com/bastienterrier',
+          followers_url:
+            'https://api.github.com/users/bastienterrier/followers',
+          following_url:
+            'https://api.github.com/users/bastienterrier/following{/other_user}',
+          gists_url:
+            'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+          starred_url:
+            'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+          subscriptions_url:
+            'https://api.github.com/users/bastienterrier/subscriptions',
+          organizations_url: 'https://api.github.com/users/bastienterrier/orgs',
+          repos_url: 'https://api.github.com/users/bastienterrier/repos',
+          events_url:
+            'https://api.github.com/users/bastienterrier/events{/privacy}',
+          received_events_url:
+            'https://api.github.com/users/bastienterrier/received_events',
+          type: 'User',
+          site_admin: false,
+        },
+        body: '',
+        created_at: '2019-04-11T08:01:50Z',
+        updated_at: '2019-04-11T08:05:34Z',
+        closed_at: '2019-04-11T08:05:34Z',
+        merged_at: '2019-04-11T08:05:34Z',
+        merge_commit_sha: '8b4098adbc87b08ad6fd2ad9f3e0fe2eab6900fc',
+        assignee: null,
+        assignees: [],
+        requested_reviewers: [],
+        requested_teams: [],
+        labels: [],
+        milestone: null,
+        commits_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129/commits',
+        review_comments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129/comments',
+        review_comment_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls/comments{/number}',
+        comments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/129/comments',
+        statuses_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/statuses/796d35504c393c3c019297b974d109eebee4c873',
+        head: {
+          label: 'bastienterrier:testingPR',
+          ref: 'testingPR',
+          sha: '796d35504c393c3c019297b974d109eebee4c873',
+          user: {
+            login: 'bastienterrier',
+            id: 25296454,
+            node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+            avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+            gravatar_id: '',
+            url: 'https://api.github.com/users/bastienterrier',
+            html_url: 'https://github.com/bastienterrier',
+            followers_url:
+              'https://api.github.com/users/bastienterrier/followers',
+            following_url:
+              'https://api.github.com/users/bastienterrier/following{/other_user}',
+            gists_url:
+              'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+            starred_url:
+              'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+            subscriptions_url:
+              'https://api.github.com/users/bastienterrier/subscriptions',
+            organizations_url:
+              'https://api.github.com/users/bastienterrier/orgs',
+            repos_url: 'https://api.github.com/users/bastienterrier/repos',
+            events_url:
+              'https://api.github.com/users/bastienterrier/events{/privacy}',
+            received_events_url:
+              'https://api.github.com/users/bastienterrier/received_events',
+            type: 'User',
+            site_admin: false,
+          },
+          repo: {
+            id: 169373600,
+            node_id: 'MDEwOlJlcG9zaXRvcnkxNjkzNzM2MDA=',
+            name: 'test-webhook',
+            full_name: 'bastienterrier/test-webhook',
+            private: false,
+            owner: {
+              login: 'bastienterrier',
+              id: 25296454,
+              node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+              avatar_url:
+                'https://avatars0.githubusercontent.com/u/25296454?v=4',
+              gravatar_id: '',
+              url: 'https://api.github.com/users/bastienterrier',
+              html_url: 'https://github.com/bastienterrier',
+              followers_url:
+                'https://api.github.com/users/bastienterrier/followers',
+              following_url:
+                'https://api.github.com/users/bastienterrier/following{/other_user}',
+              gists_url:
+                'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+              starred_url:
+                'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+              subscriptions_url:
+                'https://api.github.com/users/bastienterrier/subscriptions',
+              organizations_url:
+                'https://api.github.com/users/bastienterrier/orgs',
+              repos_url: 'https://api.github.com/users/bastienterrier/repos',
+              events_url:
+                'https://api.github.com/users/bastienterrier/events{/privacy}',
+              received_events_url:
+                'https://api.github.com/users/bastienterrier/received_events',
+              type: 'User',
+              site_admin: false,
+            },
+            html_url: 'https://github.com/bastienterrier/test-webhook',
+            description: null,
+            fork: false,
+            url: 'https://api.github.com/repos/bastienterrier/test-webhook',
+            forks_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/forks',
+            keys_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/keys{/key_id}',
+            collaborators_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/collaborators{/collaborator}',
+            teams_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/teams',
+            hooks_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/hooks',
+            issue_events_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/events{/number}',
+            events_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/events',
+            assignees_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/assignees{/user}',
+            branches_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/branches{/branch}',
+            tags_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/tags',
+            blobs_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/blobs{/sha}',
+            git_tags_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/tags{/sha}',
+            git_refs_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/refs{/sha}',
+            trees_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/trees{/sha}',
+            statuses_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/statuses/{sha}',
+            languages_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/languages',
+            stargazers_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/stargazers',
+            contributors_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/contributors',
+            subscribers_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/subscribers',
+            subscription_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/subscription',
+            commits_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/commits{/sha}',
+            git_commits_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/commits{/sha}',
+            comments_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/comments{/number}',
+            issue_comment_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/comments{/number}',
+            contents_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/contents/{+path}',
+            compare_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/compare/{base}...{head}',
+            merges_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/merges',
+            archive_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/{archive_format}{/ref}',
+            downloads_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/downloads',
+            issues_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues{/number}',
+            pulls_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls{/number}',
+            milestones_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/milestones{/number}',
+            notifications_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/notifications{?since,all,participating}',
+            labels_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/labels{/name}',
+            releases_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/releases{/id}',
+            deployments_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/deployments',
+            created_at: '2019-02-06T08:14:08Z',
+            updated_at: '2019-04-11T07:45:07Z',
+            pushed_at: '2019-04-11T08:05:34Z',
+            git_url: 'git://github.com/bastienterrier/test-webhook.git',
+            ssh_url: 'git@github.com:bastienterrier/test-webhook.git',
+            clone_url: 'https://github.com/bastienterrier/test-webhook.git',
+            svn_url: 'https://github.com/bastienterrier/test-webhook',
+            homepage: null,
+            size: 25501,
+            stargazers_count: 0,
+            watchers_count: 0,
+            language: 'JavaScript',
+            has_issues: true,
+            has_projects: true,
+            has_downloads: true,
+            has_wiki: true,
+            has_pages: false,
+            forks_count: 0,
+            mirror_url: null,
+            archived: false,
+            disabled: false,
+            open_issues_count: 33,
+            license: null,
+            forks: 0,
+            open_issues: 33,
+            watchers: 0,
+            default_branch: 'master',
+          },
+        },
+        base: {
+          label: 'bastienterrier:master',
+          ref: 'master',
+          sha: '500872c32c9cfe955576000fc01bae1a0d411ef3',
+          user: {
+            login: 'bastienterrier',
+            id: 25296454,
+            node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+            avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+            gravatar_id: '',
+            url: 'https://api.github.com/users/bastienterrier',
+            html_url: 'https://github.com/bastienterrier',
+            followers_url:
+              'https://api.github.com/users/bastienterrier/followers',
+            following_url:
+              'https://api.github.com/users/bastienterrier/following{/other_user}',
+            gists_url:
+              'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+            starred_url:
+              'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+            subscriptions_url:
+              'https://api.github.com/users/bastienterrier/subscriptions',
+            organizations_url:
+              'https://api.github.com/users/bastienterrier/orgs',
+            repos_url: 'https://api.github.com/users/bastienterrier/repos',
+            events_url:
+              'https://api.github.com/users/bastienterrier/events{/privacy}',
+            received_events_url:
+              'https://api.github.com/users/bastienterrier/received_events',
+            type: 'User',
+            site_admin: false,
+          },
+          repo: {
+            id: 169373600,
+            node_id: 'MDEwOlJlcG9zaXRvcnkxNjkzNzM2MDA=',
+            name: 'test-webhook',
+            full_name: 'bastienterrier/test-webhook',
+            private: false,
+            owner: {
+              login: 'bastienterrier',
+              id: 25296454,
+              node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+              avatar_url:
+                'https://avatars0.githubusercontent.com/u/25296454?v=4',
+              gravatar_id: '',
+              url: 'https://api.github.com/users/bastienterrier',
+              html_url: 'https://github.com/bastienterrier',
+              followers_url:
+                'https://api.github.com/users/bastienterrier/followers',
+              following_url:
+                'https://api.github.com/users/bastienterrier/following{/other_user}',
+              gists_url:
+                'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+              starred_url:
+                'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+              subscriptions_url:
+                'https://api.github.com/users/bastienterrier/subscriptions',
+              organizations_url:
+                'https://api.github.com/users/bastienterrier/orgs',
+              repos_url: 'https://api.github.com/users/bastienterrier/repos',
+              events_url:
+                'https://api.github.com/users/bastienterrier/events{/privacy}',
+              received_events_url:
+                'https://api.github.com/users/bastienterrier/received_events',
+              type: 'User',
+              site_admin: false,
+            },
+            html_url: 'https://github.com/bastienterrier/test-webhook',
+            description: null,
+            fork: false,
+            url: 'https://api.github.com/repos/bastienterrier/test-webhook',
+            forks_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/forks',
+            keys_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/keys{/key_id}',
+            collaborators_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/collaborators{/collaborator}',
+            teams_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/teams',
+            hooks_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/hooks',
+            issue_events_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/events{/number}',
+            events_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/events',
+            assignees_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/assignees{/user}',
+            branches_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/branches{/branch}',
+            tags_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/tags',
+            blobs_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/blobs{/sha}',
+            git_tags_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/tags{/sha}',
+            git_refs_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/refs{/sha}',
+            trees_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/trees{/sha}',
+            statuses_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/statuses/{sha}',
+            languages_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/languages',
+            stargazers_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/stargazers',
+            contributors_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/contributors',
+            subscribers_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/subscribers',
+            subscription_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/subscription',
+            commits_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/commits{/sha}',
+            git_commits_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/git/commits{/sha}',
+            comments_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/comments{/number}',
+            issue_comment_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/comments{/number}',
+            contents_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/contents/{+path}',
+            compare_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/compare/{base}...{head}',
+            merges_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/merges',
+            archive_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/{archive_format}{/ref}',
+            downloads_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/downloads',
+            issues_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues{/number}',
+            pulls_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls{/number}',
+            milestones_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/milestones{/number}',
+            notifications_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/notifications{?since,all,participating}',
+            labels_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/labels{/name}',
+            releases_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/releases{/id}',
+            deployments_url:
+              'https://api.github.com/repos/bastienterrier/test-webhook/deployments',
+            created_at: '2019-02-06T08:14:08Z',
+            updated_at: '2019-04-11T07:45:07Z',
+            pushed_at: '2019-04-11T08:05:34Z',
+            git_url: 'git://github.com/bastienterrier/test-webhook.git',
+            ssh_url: 'git@github.com:bastienterrier/test-webhook.git',
+            clone_url: 'https://github.com/bastienterrier/test-webhook.git',
+            svn_url: 'https://github.com/bastienterrier/test-webhook',
+            homepage: null,
+            size: 25501,
+            stargazers_count: 0,
+            watchers_count: 0,
+            language: 'JavaScript',
+            has_issues: true,
+            has_projects: true,
+            has_downloads: true,
+            has_wiki: true,
+            has_pages: false,
+            forks_count: 0,
+            mirror_url: null,
+            archived: false,
+            disabled: false,
+            open_issues_count: 33,
+            license: null,
+            forks: 0,
+            open_issues: 33,
+            watchers: 0,
+            default_branch: 'master',
+          },
+        },
+        _links: {
+          self: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129',
+          },
+          html: {
+            href: 'https://github.com/bastienterrier/test-webhook/pull/129',
+          },
+          issue: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/129',
+          },
+          comments: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/issues/129/comments',
+          },
+          review_comments: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129/comments',
+          },
+          review_comment: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls/comments{/number}',
+          },
+          commits: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/pulls/129/commits',
+          },
+          statuses: {
+            href:
+              'https://api.github.com/repos/bastienterrier/test-webhook/statuses/796d35504c393c3c019297b974d109eebee4c873',
+          },
+        },
+        author_association: 'OWNER',
+        draft: false,
+        merged: true,
+        mergeable: null,
+        rebaseable: null,
+        mergeable_state: 'unknown',
+        merged_by: {
+          login: 'bastienterrier',
+          id: 25296454,
+          node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+          avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+          gravatar_id: '',
+          url: 'https://api.github.com/users/bastienterrier',
+          html_url: 'https://github.com/bastienterrier',
+          followers_url:
+            'https://api.github.com/users/bastienterrier/followers',
+          following_url:
+            'https://api.github.com/users/bastienterrier/following{/other_user}',
+          gists_url:
+            'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+          starred_url:
+            'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+          subscriptions_url:
+            'https://api.github.com/users/bastienterrier/subscriptions',
+          organizations_url: 'https://api.github.com/users/bastienterrier/orgs',
+          repos_url: 'https://api.github.com/users/bastienterrier/repos',
+          events_url:
+            'https://api.github.com/users/bastienterrier/events{/privacy}',
+          received_events_url:
+            'https://api.github.com/users/bastienterrier/received_events',
+          type: 'User',
+          site_admin: false,
+        },
+        comments: 0,
+        review_comments: 0,
+        maintainer_can_modify: false,
+        commits: 1,
+        additions: 1,
+        deletions: 0,
+        changed_files: 1,
+      },
+      repository: {
+        id: 169373600,
+        node_id: 'MDEwOlJlcG9zaXRvcnkxNjkzNzM2MDA=',
+        name: 'test-webhook',
+        full_name: 'bastienterrier/test-webhook',
+        private: false,
+        owner: {
+          login: 'bastienterrier',
+          id: 25296454,
+          node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+          avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+          gravatar_id: '',
+          url: 'https://api.github.com/users/bastienterrier',
+          html_url: 'https://github.com/bastienterrier',
+          followers_url:
+            'https://api.github.com/users/bastienterrier/followers',
+          following_url:
+            'https://api.github.com/users/bastienterrier/following{/other_user}',
+          gists_url:
+            'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+          starred_url:
+            'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+          subscriptions_url:
+            'https://api.github.com/users/bastienterrier/subscriptions',
+          organizations_url: 'https://api.github.com/users/bastienterrier/orgs',
+          repos_url: 'https://api.github.com/users/bastienterrier/repos',
+          events_url:
+            'https://api.github.com/users/bastienterrier/events{/privacy}',
+          received_events_url:
+            'https://api.github.com/users/bastienterrier/received_events',
+          type: 'User',
+          site_admin: false,
+        },
+        html_url: 'https://github.com/bastienterrier/test-webhook',
+        description: null,
+        fork: false,
+        url: 'https://api.github.com/repos/bastienterrier/test-webhook',
+        forks_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/forks',
+        keys_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/keys{/key_id}',
+        collaborators_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/collaborators{/collaborator}',
+        teams_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/teams',
+        hooks_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/hooks',
+        issue_events_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/events{/number}',
+        events_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/events',
+        assignees_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/assignees{/user}',
+        branches_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/branches{/branch}',
+        tags_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/tags',
+        blobs_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/blobs{/sha}',
+        git_tags_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/tags{/sha}',
+        git_refs_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/refs{/sha}',
+        trees_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/trees{/sha}',
+        statuses_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/statuses/{sha}',
+        languages_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/languages',
+        stargazers_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/stargazers',
+        contributors_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/contributors',
+        subscribers_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/subscribers',
+        subscription_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/subscription',
+        commits_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/commits{/sha}',
+        git_commits_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/commits{/sha}',
+        comments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/comments{/number}',
+        issue_comment_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/comments{/number}',
+        contents_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/contents/{+path}',
+        compare_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/compare/{base}...{head}',
+        merges_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/merges',
+        archive_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/{archive_format}{/ref}',
+        downloads_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/downloads',
+        issues_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues{/number}',
+        pulls_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls{/number}',
+        milestones_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/milestones{/number}',
+        notifications_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/notifications{?since,all,participating}',
+        labels_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/labels{/name}',
+        releases_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/releases{/id}',
+        deployments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/deployments',
+        created_at: '2019-02-06T08:14:08Z',
+        updated_at: '2019-04-11T07:45:07Z',
+        pushed_at: '2019-04-11T08:05:34Z',
+        git_url: 'git://github.com/bastienterrier/test-webhook.git',
+        ssh_url: 'git@github.com:bastienterrier/test-webhook.git',
+        clone_url: 'https://github.com/bastienterrier/test-webhook.git',
+        svn_url: 'https://github.com/bastienterrier/test-webhook',
+        homepage: null,
+        size: 25501,
+        stargazers_count: 0,
+        watchers_count: 0,
+        language: 'JavaScript',
+        has_issues: true,
+        has_projects: true,
+        has_downloads: true,
+        has_wiki: true,
+        has_pages: false,
+        forks_count: 0,
+        mirror_url: null,
+        archived: false,
+        disabled: false,
+        open_issues_count: 33,
+        license: null,
+        forks: 0,
+        open_issues: 33,
+        watchers: 0,
+        default_branch: 'master',
+      },
+      sender: {
+        login: 'bastienterrier',
+        id: 25296454,
+        node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+        avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+        gravatar_id: '',
+        url: 'https://api.github.com/users/bastienterrier',
+        html_url: 'https://github.com/bastienterrier',
+        followers_url: 'https://api.github.com/users/bastienterrier/followers',
+        following_url:
+          'https://api.github.com/users/bastienterrier/following{/other_user}',
+        gists_url:
+          'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+        starred_url:
+          'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+        subscriptions_url:
+          'https://api.github.com/users/bastienterrier/subscriptions',
+        organizations_url: 'https://api.github.com/users/bastienterrier/orgs',
+        repos_url: 'https://api.github.com/users/bastienterrier/repos',
+        events_url:
+          'https://api.github.com/users/bastienterrier/events{/privacy}',
+        received_events_url:
+          'https://api.github.com/users/bastienterrier/received_events',
+        type: 'User',
+        site_admin: false,
+      },
+    };
+    const gitlabMergedPREvent = {
+      object_kind: 'merge_request',
+      event_type: 'merge_request',
+      user: {
+        name: 'Bastien Terrier',
+        username: 'bastien.terrier',
+        avatar_url:
+          'https://secure.gravatar.com/avatar/a17bda7df8612108bc4442ce57cc6dc3?s=80&d=identicon',
+      },
+      project: {
+        id: 10607595,
+        name: 'test_webhook',
+        description: '',
+        web_url: 'https://gitlab.com/bastien.terrier/test_webhook',
+        avatar_url: null,
+        git_ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        git_http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+        namespace: 'bastien.terrier',
+        visibility_level: 20,
+        path_with_namespace: 'bastien.terrier/test_webhook',
+        default_branch: 'master',
+        ci_config_path: null,
+        homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+        url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+      },
+      object_attributes: {
+        assignee_id: null,
+        author_id: 3360534,
+        created_at: '2019-04-09 13:14:44 UTC',
+        description: '',
+        head_pipeline_id: 55243238,
+        id: 27349057,
+        iid: 35,
+        last_edited_at: null,
+        last_edited_by_id: null,
+        merge_commit_sha: 'c88cdde05cc39fdd875afebd7de76057adcd15b6',
+        merge_error: null,
+        merge_params: {
+          force_remove_source_branch: '0',
+        },
+        merge_status: 'can_be_merged',
+        merge_user_id: null,
+        merge_when_pipeline_succeeds: false,
+        milestone_id: null,
+        source_branch: 'feature/close',
+        source_project_id: 10607595,
+        state: 'merged',
+        target_branch: 'master',
+        target_project_id: 10607595,
+        time_estimate: 0,
+        title: 'bad title...',
+        updated_at: '2019-04-11 08:07:56 UTC',
+        updated_by_id: null,
+        url:
+          'https://gitlab.com/bastien.terrier/test_webhook/merge_requests/35',
+        source: {
+          id: 10607595,
+          name: 'test_webhook',
+          description: '',
+          web_url: 'https://gitlab.com/bastien.terrier/test_webhook',
+          avatar_url: null,
+          git_ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          git_http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+          namespace: 'bastien.terrier',
+          visibility_level: 20,
+          path_with_namespace: 'bastien.terrier/test_webhook',
+          default_branch: 'master',
+          ci_config_path: null,
+          homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+          url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+        },
+        target: {
+          id: 10607595,
+          name: 'test_webhook',
+          description: '',
+          web_url: 'https://gitlab.com/bastien.terrier/test_webhook',
+          avatar_url: null,
+          git_ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          git_http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+          namespace: 'bastien.terrier',
+          visibility_level: 20,
+          path_with_namespace: 'bastien.terrier/test_webhook',
+          default_branch: 'master',
+          ci_config_path: null,
+          homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+          url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+          http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+        },
+        last_commit: {
+          id: 'e308f9f4542ad9b3e93b020cdfa67044ab8e0196',
+          message:
+            "Merge branch 'master' into 'feature/close'\n\n# Conflicts:\n#   README.md",
+          timestamp: '2019-04-11T08:07:31Z',
+          url:
+            'https://gitlab.com/bastien.terrier/test_webhook/commit/e308f9f4542ad9b3e93b020cdfa67044ab8e0196',
+          author: {
+            name: 'Bastien Terrier',
+            email: 'bastien.terrier@gmail.com',
+          },
+        },
+        work_in_progress: false,
+        total_time_spent: 0,
+        human_total_time_spent: null,
+        human_time_estimate: null,
+        action: 'merge',
+      },
+      labels: [],
+      changes: {
+        state: {
+          previous: 'locked',
+          current: 'merged',
+        },
+        updated_at: {
+          previous: '2019-04-11 08:07:56 UTC',
+          current: '2019-04-11 08:07:56 UTC',
+        },
+        total_time_spent: {
+          previous: null,
+          current: 0,
+        },
+      },
+      repository: {
+        name: 'test_webhook',
+        url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        description: '',
+        homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+      },
+    };
+    it('isGitlabMergedPREvent should equal "true"', () => {
+      expect(utils.isGitlabMergedPREvent(gitlabMergedPREvent)).toBe(true);
+    });
+    it('isGitlabMergedPREvent should equal "false"', () => {
+      expect(utils.isGitlabMergedPREvent(githubMergedPREvent)).toBe(false);
+    });
+    it('isGithubMergedPREvent should equal "true"', () => {
+      expect(utils.isGithubMergedPREvent(githubMergedPREvent)).toBe(true);
+    });
+    it('isGithubMergedPREvent should equal "false"', () => {
+      expect(utils.isGithubMergedPREvent(gitlabMergedPREvent)).toBe(false);
+    });
+  });
 });
