@@ -4862,7 +4862,7 @@ describe('Utils Enum', () => {
         last_commit: {
           id: 'e308f9f4542ad9b3e93b020cdfa67044ab8e0196',
           message:
-            "Merge branch 'master' into 'feature/close'\n\n# Conflicts:\n#   README.md",
+            'Merge branch master into feature/close\n\n# Conflicts:\n#   README.md',
           timestamp: '2019-04-11T08:07:31Z',
           url:
             'https://gitlab.com/bastien.terrier/test_webhook/commit/e308f9f4542ad9b3e93b020cdfa67044ab8e0196',
