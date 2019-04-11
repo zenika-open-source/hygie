@@ -12,13 +12,14 @@ import {
   GitMergePRInfos,
   PRMethodsEnum,
 } from '../git/gitPRInfos';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { GitFileInfos } from '../git/gitFileInfos';
+import { logger } from '../logger/logger.service';
 
 describe('Github Service', () => {
   let app: TestingModule;
   let githubService: GithubService;
   let httpService: HttpService;
-  let observable: Observable<any>;
 
   let gitApiInfos: GitApiInfos;
   let gitCommitStatusInfos: GitCommitStatusInfos;
@@ -36,7 +37,6 @@ describe('Github Service', () => {
 
     githubService = app.get(GithubService);
     httpService = app.get(HttpService);
-    observable = app.get(Observable);
 
     githubService.setToken('0123456789abcdef');
     githubService.setUrlApi('https://api.github.com');
@@ -228,7 +228,6 @@ describe('Github Service', () => {
     });
   });
 
-  /*
   describe('deleteFile', () => {
     it('should emit GET and POST requests with specific params', () => {
       const gitFileInfos = new GitFileInfos();
@@ -236,17 +235,37 @@ describe('Github Service', () => {
       gitFileInfos.filePath = 'file/to/remove.txt';
       gitFileInfos.commitMessage = 'remove file/to/remove.txt';
 
-      httpService.get = jest.fn().mockRejectedValueOnce({
-        sha: 'e69de29bb2d1d6434b8b29ae775ad8c2e48c5391',
+      // const firstGetReturned = Observable.create(observer => {
+      //   observer.next({
+      //     sha: 'e69de29bb2d1d6434b8b29ae775ad8c2e48c5391',
+      //   });
+      //   observer.complete();
+      // });
+
+      httpService.get = jest.fn().mockImplementationOnce(() => {
+        return of({
+          data: {
+            sha: 'tee69de29bb2d1d6434b8b29ae775ad8c2e48c5391st',
+          },
+        });
       });
 
       githubService.deleteFile(gitApiInfos, gitFileInfos);
 
       const expectedUrl1 = `https://api.github.com/repos/bastienterrier/test/contents/file/to/remove.txt`;
+      const expectedUrl2 = `https://api.github.com/repos/bastienterrier/test/contents/file/to/remove.txt`;
+
+      const expectedConfig2 = JSON.parse(JSON.stringify(expectedConfig));
+      expectedConfig2.params = {
+        branch: 'master',
+        message: 'remove file/to/remove.txt',
+        sha: 'tee69de29bb2d1d6434b8b29ae775ad8c2e48c5391st',
+      };
 
       expect(httpService.get).toBeCalledWith(expectedUrl1, expectedConfig);
+      expect(httpService.delete).toBeCalledWith(expectedUrl2, expectedConfig2);
     });
-  });*/
+  });
 
   describe('deleteBranch', () => {
     it('should emit a DELETE request with specific params', () => {
