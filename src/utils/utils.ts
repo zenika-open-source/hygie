@@ -1,6 +1,3 @@
-import { HttpService } from '@nestjs/common';
-import { logger } from '../logger/logger.service';
-
 export class Utils {
   static getObjectValue(obj: object): object {
     return typeof obj === 'undefined' ? {} : obj;

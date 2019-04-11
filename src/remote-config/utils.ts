@@ -77,9 +77,6 @@ export class RemoteConfigUtils {
 
   /**
    * Create the `config.env` file with `gitApi` URL and the corresponding `gitToken`
-   * @param gitApi
-   * @param gitToken
-   * @param nodeEnv
    * @return an Object with the success status (true if registration succeed, false otherwise) and if the file already exist
    */
   static registerConfigEnv(configEnv: ConfigEnv): any {
