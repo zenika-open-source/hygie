@@ -1,6 +1,16 @@
 import * as utils from './utils.enum';
-import { CommitStatusEnum } from './utils.enum';
+import { CommitStatusEnum, GitTypeEnum, GitEventEnum } from './utils.enum';
 import { IssuePRStateEnum } from '../git/gitIssueInfos';
+import { GitlabService } from '../gitlab/gitlab.service';
+import { GithubService } from '../github/github.service';
+import { HttpService } from '@nestjs/common';
+import { Webhook } from './webhook';
+
+// INIT
+const gitlabService: GitlabService = new GitlabService(new HttpService());
+const githubService: GithubService = new GithubService(new HttpService());
+let webhook = new Webhook(gitlabService, githubService);
+
 describe('Utils Enum', () => {
   describe('convertCommitStatus', () => {
     it('should equal "failure"', () => {
@@ -374,6 +384,52 @@ describe('Utils Enum', () => {
     it('isGithubPushEvent should equal "false"', () => {
       expect(utils.isGithubPushEvent(gitlabPushEvent)).toBe(false);
     });
+
+    it('should create a Webhook object according to the Gitlab Push Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(gitlabPushEvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Gitlab);
+      expect(webhook.gitEvent).toBe(GitEventEnum.Push);
+      expect(webhook.projectId).toBe(10607595);
+      expect(webhook.gitService).toBe(gitlabService);
+      expect(webhook.commits).toEqual([
+        {
+          added: [],
+          message: 'Update README.md',
+          modified: ['README.md'],
+          removed: [],
+          sha: 'a3b2abdc7815a4cfa8998e2b91aa74ff1736ce97',
+        },
+      ]);
+      expect(webhook.branchName).toBe('master');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://gitlab.com/bastien.terrier/test_webhook.git',
+      );
+    });
+
+    it('should create a Webhook object according to the Github Push Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(githubPushEvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Github);
+      expect(webhook.gitEvent).toBe(GitEventEnum.Push);
+      expect(webhook.repository.fullName).toBe('bastienterrier/test-webhook');
+      expect(webhook.gitService).toBe(githubService);
+      expect(webhook.commits).toEqual([
+        {
+          sha: 'f1e7b7b0eff0ac9b582a248e42534bffea0e3885',
+          message: 'Update README.md',
+          added: [],
+          modified: ['README.md'],
+          removed: [],
+        },
+      ]);
+      expect(webhook.branchName).toBe('test4');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://github.com/bastienterrier/test-webhook.git',
+      );
+    });
   });
 
   describe('isBranchEvent', () => {
@@ -607,6 +663,34 @@ describe('Utils Enum', () => {
 
     it('isGithubBranchEvent should equal "false"', () => {
       expect(utils.isGithubBranchEvent(gitlabNewBranchEvent)).toBe(false);
+    });
+
+    it('should create a Webhook object according to the Gitlab Branch Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(gitlabNewBranchEvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Gitlab);
+      expect(webhook.gitEvent).toBe(GitEventEnum.NewBranch);
+      expect(webhook.projectId).toBe(10607595);
+      expect(webhook.gitService).toBe(gitlabService);
+      expect(webhook.branchName).toBe('feature/tdd');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://gitlab.com/bastien.terrier/test_webhook.git',
+      );
+    });
+
+    it('should create a Webhook object according to the Github Branch Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(githubNewBranchEvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Github);
+      expect(webhook.gitEvent).toBe(GitEventEnum.NewBranch);
+      expect(webhook.gitService).toBe(githubService);
+      expect(webhook.branchName).toBe('feat/tdd');
+      expect(webhook.repository.fullName).toBe('bastienterrier/test-webhook');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://github.com/bastienterrier/test-webhook.git',
+      );
     });
   });
 
@@ -954,6 +1038,36 @@ describe('Utils Enum', () => {
     });
     it('isGithubIssueEvent should equal "false"', () => {
       expect(utils.isGithubIssueEvent(gitlabIssueEvent)).toBe(false);
+    });
+
+    it('should create a Webhook object according to the Gitlab Issue Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(gitlabIssueEvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Gitlab);
+      expect(webhook.gitEvent).toBe(GitEventEnum.NewIssue);
+      expect(webhook.projectId).toBe(10607595);
+      expect(webhook.gitService).toBe(gitlabService);
+      expect(webhook.issue.number).toBe(19);
+      expect(webhook.issue.title).toBe('new issue');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://gitlab.com/bastien.terrier/test_webhook.git',
+      );
+    });
+
+    it('should create a Webhook object according to the Github Issue Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(githubIssueEvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Github);
+      expect(webhook.gitEvent).toBe(GitEventEnum.NewIssue);
+      expect(webhook.gitService).toBe(githubService);
+      expect(webhook.issue.number).toBe(89);
+      expect(webhook.issue.title).toBe('new issue');
+      expect(webhook.repository.fullName).toBe('bastienterrier/test-webhook');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://github.com/bastienterrier/test-webhook.git',
+      );
     });
   });
 
@@ -1753,10 +1867,10 @@ describe('Utils Enum', () => {
       },
     };
 
-    it('isGitlabIssueEvent should equal "true"', () => {
+    it('isGitlabNewPREvent should equal "true"', () => {
       expect(utils.isGitlabNewPREvent(gitlabNewPREvent)).toBe(true);
     });
-    it('isGitlabIssueEvent should equal "false"', () => {
+    it('isGitlabNewPREvent should equal "false"', () => {
       expect(utils.isGitlabNewPREvent(githubNewPREvent)).toBe(false);
     });
     it('isGithubNewPREvent should equal "true"', () => {
@@ -1764,6 +1878,42 @@ describe('Utils Enum', () => {
     });
     it('isGithubNewPREvent should equal "false"', () => {
       expect(utils.isGithubNewPREvent(gitlabNewPREvent)).toBe(false);
+    });
+
+    it('should create a Webhook object according to the Gitlab PR Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(gitlabNewPREvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Gitlab);
+      expect(webhook.gitEvent).toBe(GitEventEnum.NewPR);
+      expect(webhook.projectId).toBe(10607595);
+      expect(webhook.gitService).toBe(gitlabService);
+      expect(webhook.pullRequest.number).toBe(25);
+      expect(webhook.pullRequest.title).toBe('WIP: Feature/tdd');
+      expect(webhook.pullRequest.description).toBe('');
+      expect(webhook.pullRequest.sourceBranch).toBe('feature/tdd');
+      expect(webhook.pullRequest.targetBranch).toBe('master');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://gitlab.com/bastien.terrier/test_webhook.git',
+      );
+    });
+
+    it('should create a Webhook object according to the Github PR Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(githubNewPREvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Github);
+      expect(webhook.gitEvent).toBe(GitEventEnum.NewPR);
+      expect(webhook.gitService).toBe(githubService);
+      expect(webhook.pullRequest.number).toBe(90);
+      expect(webhook.pullRequest.title).toBe('Feat/tdd');
+      expect(webhook.pullRequest.description).toBe('');
+      expect(webhook.pullRequest.sourceBranch).toBe('feat/tdd');
+      expect(webhook.pullRequest.targetBranch).toBe('master');
+      expect(webhook.repository.fullName).toBe('bastienterrier/test-webhook');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://github.com/bastienterrier/test-webhook.git',
+      );
     });
   });
 
@@ -2139,6 +2289,40 @@ describe('Utils Enum', () => {
     it('isGithubIssueCommentEvent should equal "false"', () => {
       expect(utils.isGithubIssueCommentEvent(gitlabIssueCommentEvent)).toBe(
         false,
+      );
+    });
+
+    it('should create a Webhook object according to the Gitlab Issue Comment Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(gitlabIssueCommentEvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Gitlab);
+      expect(webhook.gitEvent).toBe(GitEventEnum.NewIssueComment);
+      expect(webhook.projectId).toBe(10607595);
+      expect(webhook.gitService).toBe(gitlabService);
+      expect(webhook.comment.id).toBe(156036431);
+      expect(webhook.comment.description).toBe('testing comment');
+      expect(webhook.issue.title).toBe('sdvsdv');
+      expect(webhook.issue.number).toBe(21);
+      expect(webhook.repository.cloneURL).toBe(
+        'https://gitlab.com/bastien.terrier/test_webhook.git',
+      );
+    });
+
+    it('should create a Webhook object according to the Github Issue Comment Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(githubIssueCommentEvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Github);
+      expect(webhook.gitEvent).toBe(GitEventEnum.NewIssueComment);
+      expect(webhook.gitService).toBe(githubService);
+      expect(webhook.comment.id).toBe(478554801);
+      expect(webhook.comment.description).toBe('test comment');
+      expect(webhook.issue.title).toBe('testing new name');
+      expect(webhook.issue.number).toBe(91);
+      expect(webhook.repository.fullName).toBe('bastienterrier/test-webhook');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://github.com/bastienterrier/test-webhook.git',
       );
     });
   });
@@ -2570,6 +2754,41 @@ describe('Utils Enum', () => {
     });
     it('isGithubPRCommentEvent should equal "false"', () => {
       expect(utils.isGithubPRCommentEvent(gitlabPRCommentEvent)).toBe(false);
+    });
+    it('should create a Webhook object according to the Gitlab PR Comment Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(gitlabPRCommentEvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Gitlab);
+      expect(webhook.gitEvent).toBe(GitEventEnum.NewPRComment);
+      expect(webhook.projectId).toBe(10607595);
+      expect(webhook.gitService).toBe(gitlabService);
+      expect(webhook.comment.id).toBe(156037494);
+      expect(webhook.comment.description).toBe('test comment on MR');
+      expect(webhook.pullRequest.description).toBe('');
+      expect(webhook.pullRequest.title).toBe('WIP: Feature/tdd');
+      expect(webhook.pullRequest.number).toBe(25);
+      expect(webhook.repository.cloneURL).toBe(
+        'https://gitlab.com/bastien.terrier/test_webhook.git',
+      );
+    });
+
+    it('should create a Webhook object according to the Github PR Comment Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(githubPRCommentEvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Github);
+      expect(webhook.gitEvent).toBe(GitEventEnum.NewPRComment);
+      expect(webhook.gitService).toBe(githubService);
+      expect(webhook.comment.id).toBe(478555715);
+      expect(webhook.comment.description).toBe('test comment on PR');
+      expect(webhook.pullRequest.description).toBe('');
+      expect(webhook.pullRequest.title).toBe('ezfrthr');
+      expect(webhook.pullRequest.number).toBe(93);
+      expect(webhook.repository.fullName).toBe('bastienterrier/test-webhook');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://github.com/bastienterrier/test-webhook.git',
+      );
     });
   });
 
@@ -3342,6 +3561,41 @@ describe('Utils Enum', () => {
     it('isGithubClosedPREvent should equal "false"', () => {
       expect(utils.isGithubClosedPREvent(gitlabClosedPREvent)).toBe(false);
     });
+    it('should create a Webhook object according to the Gitlab PR Closed Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(gitlabClosedPREvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Gitlab);
+      expect(webhook.gitEvent).toBe(GitEventEnum.ClosedPR);
+      expect(webhook.projectId).toBe(10607595);
+      expect(webhook.gitService).toBe(gitlabService);
+      expect(webhook.pullRequest.number).toBe(35);
+      expect(webhook.pullRequest.title).toBe('bad title...');
+      expect(webhook.pullRequest.description).toBe('');
+      expect(webhook.pullRequest.sourceBranch).toBe('feature/close');
+      expect(webhook.pullRequest.targetBranch).toBe('master');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://gitlab.com/bastien.terrier/test_webhook.git',
+      );
+    });
+
+    it('should create a Webhook object according to the Github PR Closed Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(githubClosedPREvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Github);
+      expect(webhook.gitEvent).toBe(GitEventEnum.ClosedPR);
+      expect(webhook.gitService).toBe(githubService);
+      expect(webhook.pullRequest.number).toBe(129);
+      expect(webhook.pullRequest.title).toBe('Update README.md');
+      expect(webhook.pullRequest.description).toBe('');
+      expect(webhook.pullRequest.sourceBranch).toBe('testingPR');
+      expect(webhook.pullRequest.targetBranch).toBe('master');
+      expect(webhook.repository.fullName).toBe('bastienterrier/test-webhook');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://github.com/bastienterrier/test-webhook.git',
+      );
+    });
   });
 
   describe('isReopenedPREvent', () => {
@@ -4112,6 +4366,41 @@ describe('Utils Enum', () => {
     });
     it('isGithubReopenedPREvent should equal "false"', () => {
       expect(utils.isGithubReopenedPREvent(gitlabReopenedPREvent)).toBe(false);
+    });
+    it('should create a Webhook object according to the Gitlab PR Reopened Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(gitlabReopenedPREvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Gitlab);
+      expect(webhook.gitEvent).toBe(GitEventEnum.ReopenedPR);
+      expect(webhook.projectId).toBe(10607595);
+      expect(webhook.gitService).toBe(gitlabService);
+      expect(webhook.pullRequest.number).toBe(35);
+      expect(webhook.pullRequest.title).toBe('bad title...');
+      expect(webhook.pullRequest.description).toBe('');
+      expect(webhook.pullRequest.sourceBranch).toBe('feature/close');
+      expect(webhook.pullRequest.targetBranch).toBe('master');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://gitlab.com/bastien.terrier/test_webhook.git',
+      );
+    });
+
+    it('should create a Webhook object according to the Github PR Reopened Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(githubReopenedPREvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Github);
+      expect(webhook.gitEvent).toBe(GitEventEnum.ReopenedPR);
+      expect(webhook.gitService).toBe(githubService);
+      expect(webhook.pullRequest.number).toBe(129);
+      expect(webhook.pullRequest.title).toBe('Update README.md');
+      expect(webhook.pullRequest.description).toBe('');
+      expect(webhook.pullRequest.sourceBranch).toBe('testingPR');
+      expect(webhook.pullRequest.targetBranch).toBe('master');
+      expect(webhook.repository.fullName).toBe('bastienterrier/test-webhook');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://github.com/bastienterrier/test-webhook.git',
+      );
     });
   });
 
@@ -4910,6 +5199,41 @@ describe('Utils Enum', () => {
     });
     it('isGithubMergedPREvent should equal "false"', () => {
       expect(utils.isGithubMergedPREvent(gitlabMergedPREvent)).toBe(false);
+    });
+    it('should create a Webhook object according to the Gitlab PR Merged Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(gitlabMergedPREvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Gitlab);
+      expect(webhook.gitEvent).toBe(GitEventEnum.MergedPR);
+      expect(webhook.projectId).toBe(10607595);
+      expect(webhook.gitService).toBe(gitlabService);
+      expect(webhook.pullRequest.number).toBe(35);
+      expect(webhook.pullRequest.title).toBe('bad title...');
+      expect(webhook.pullRequest.description).toBe('');
+      expect(webhook.pullRequest.sourceBranch).toBe('feature/close');
+      expect(webhook.pullRequest.targetBranch).toBe('master');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://gitlab.com/bastien.terrier/test_webhook.git',
+      );
+    });
+
+    it('should create a Webhook object according to the Github PR Merged Hook', () => {
+      webhook = new Webhook(gitlabService, githubService);
+      webhook.gitToWebhook(githubMergedPREvent);
+
+      expect(webhook.gitType).toBe(GitTypeEnum.Github);
+      expect(webhook.gitEvent).toBe(GitEventEnum.MergedPR);
+      expect(webhook.gitService).toBe(githubService);
+      expect(webhook.pullRequest.number).toBe(129);
+      expect(webhook.pullRequest.title).toBe('Update README.md');
+      expect(webhook.pullRequest.description).toBe('');
+      expect(webhook.pullRequest.sourceBranch).toBe('testingPR');
+      expect(webhook.pullRequest.targetBranch).toBe('master');
+      expect(webhook.repository.fullName).toBe('bastienterrier/test-webhook');
+      expect(webhook.repository.cloneURL).toBe(
+        'https://github.com/bastienterrier/test-webhook.git',
+      );
     });
   });
 });
