@@ -9,7 +9,7 @@ interface CheckPullRequestStatusOptions {
 }
 
 /**
- * `CheckPullRequestStatusRule` check if the PR event match.
+ * `CheckPullRequestStatusRule` checks if the Pull Request event matchs.
  * @return return a `RuleResult` object
  */
 @RuleDecorator('checkPullRequestStatus')

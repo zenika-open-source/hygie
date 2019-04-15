@@ -4,7 +4,6 @@ import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook, WebhookCommit } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import 'array-flat-polyfill';
-import { logger } from '../logger/logger.service';
 
 interface CheckAddedFilesOptions {
   regexp: string;

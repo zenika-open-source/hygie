@@ -54,6 +54,11 @@ module.exports = {
           '/post-actions/existingRunnables.md',
         ],
       },
+      {
+        title: 'Others',
+        collapsable: false,
+        children: ['/others/events.md'],
+      },
     ],
   },
   gitwebhooksURL: 'http://localhost:3000',

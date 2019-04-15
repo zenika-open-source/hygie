@@ -22,6 +22,62 @@ Checks the branch's name according to a regular expression.
 }
 ```
 
+## CheckAddedFilesRule
+
+### Goal
+
+Checks all added filenames in commits according to a regular expression.
+
+### `ruleResult` object
+
+```typescript
+{
+  validated: boolean,
+  data: {
+    addedFiles: string[]
+  }
+}
+```
+
+## CheckPullRequestStatusRule
+
+### Goal
+
+Checks if the Pull Request event matchs.
+
+### `ruleResult` object
+
+```typescript
+{
+  validated: boolean,
+  data: {
+    pullRequestEvent: GitEvent,
+    pullRequestTitle: string,
+    pullRequestNumber: number,
+    pullRequestDescription: string
+  }
+}
+```
+
+## CheckVulnerabilitiesRule
+
+### Goal
+
+Checks if `package.json` and `package-lock.json` contain vulnerabilities thank's to `npm audit`.
+
+### `ruleResult` object
+
+```typescript
+{
+  validated: boolean,
+  data: {
+    vulnerabilities: object[]
+  }
+}
+```
+
+`vulnerabilities` contains all vulnerabilities returned by `npm audit` in JSON format.
+
 ## CommitMessageRule
 
 ### Goal
@@ -40,6 +96,26 @@ Checks all commits title according to a regular expression and an optional max s
       message: string,
       matches: string[]
     }[],
+  }
+}
+```
+
+## IssueCommentRule
+
+### Goal
+
+Checks the new issue's comment according to a regular expression.
+
+### `ruleResult` object
+
+```typescript
+{
+  validated: boolean,
+  data: {
+    issueTitle: string,
+    issueNumber: number
+    commentId: number,
+    commentDescription: string
   }
 }
 ```
@@ -79,6 +155,27 @@ Checks if there is only one commit in the current PR, MR or Push.
       sha: string,
       message: string
     }[]
+  }
+}
+```
+
+## PullRequestCommentRule
+
+### Goal
+
+Checks the new PR or MR's comment according to a regular expression.
+
+### `ruleResult` object
+
+```typescript
+{
+  validated: boolea,
+  data: {
+    pullRequestTitle: string,
+    pullRequestNumber: number,
+    pullRequestDescription: string,
+    commentId: number,
+    commentDescription: string
   }
 }
 ```

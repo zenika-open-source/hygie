@@ -7,3 +7,8 @@ The following events are supported :
 - NewIssue
 - NewRepo
 - NewPR
+- NewIssueComment
+- NewPRComment
+- ClosedPR
+- MergedPR
+- ReopenedPR
