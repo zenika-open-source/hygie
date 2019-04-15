@@ -28,11 +28,11 @@ export class CreatePullRequestRunnable extends Runnable {
     super();
   }
 
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: CreatePullRequestArgs,
-  ): void {
+  ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
     const gitCreatePRInfos: GitPRInfos = new GitPRInfos();

@@ -244,25 +244,30 @@ export class GitlabService implements GitServiceInterface {
       .subscribe(null, err => logger.error(err));
   }
 
-  deleteFile(gitApiInfos: GitApiInfos, gitFileInfos: GitFileInfos): void {
-    // Config URL for GitLab
-    const configGitLab = {
-      headers: {
-        'PRIVATE-TOKEN': this.token,
-      },
-      params: {
-        commit_message: gitFileInfos.commitMessage,
-        branch: gitFileInfos.fileBranch,
-      },
-    };
-    this.httpService
-      .delete(
-        `${this.urlApi}/projects/${
-          gitApiInfos.projectId
-        }/repository/files/${encodeURIComponent(gitFileInfos.filePath)}`,
-        configGitLab,
-      )
-      .subscribe(null, err => logger.error(err));
+  deleteFile(
+    gitApiInfos: GitApiInfos,
+    gitFileInfos: GitFileInfos,
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // Config URL for GitLab
+      const configGitLab = {
+        headers: {
+          'PRIVATE-TOKEN': this.token,
+        },
+        params: {
+          commit_message: gitFileInfos.commitMessage,
+          branch: gitFileInfos.fileBranch,
+        },
+      };
+      this.httpService
+        .delete(
+          `${this.urlApi}/projects/${
+            gitApiInfos.projectId
+          }/repository/files/${encodeURIComponent(gitFileInfos.filePath)}`,
+          configGitLab,
+        )
+        .subscribe(null, err => logger.error(err));
+    });
   }
 
   mergePullRequest(

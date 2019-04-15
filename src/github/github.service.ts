@@ -203,36 +203,51 @@ export class GithubService implements GitServiceInterface {
       .subscribe(null, err => logger.error(err));
   }
 
-  deleteFile(gitApiInfos: GitApiInfos, gitFileInfos: GitFileInfos): void {
+  deleteFile(
+    gitApiInfos: GitApiInfos,
+    gitFileInfos: GitFileInfos,
+  ): Promise<void> {
+    logger.warn('calling deleteFile');
     const localConfig: any = JSON.parse(JSON.stringify(this.configGitHub));
 
-    // First of all, get file blob sha
-    this.httpService
-      .get(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/contents/${
-          gitFileInfos.filePath
-        }`,
-        this.configGitHub,
-      )
-      .subscribe(
-        response => {
-          localConfig.params = {
-            sha: response.data.sha,
-            message: gitFileInfos.commitMessage,
-            branch: gitFileInfos.fileBranch,
-          };
+    return new Promise((resolve, reject) => {
+      // First of all, get file blob sha
+      this.httpService
+        .get(
+          `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/contents/${
+            gitFileInfos.filePath
+          }`,
+          this.configGitHub,
+        )
+        .subscribe(
+          response => {
+            localConfig.params = {
+              sha: response.data.sha,
+              message: gitFileInfos.commitMessage,
+              branch: gitFileInfos.fileBranch,
+            };
 
-          this.httpService
-            .delete(
-              `${this.urlApi}/repos/${
-                gitApiInfos.repositoryFullName
-              }/contents/${gitFileInfos.filePath}`,
-              localConfig,
-            )
-            .subscribe(null, err => logger.error(err));
-        },
-        err => logger.error(err),
-      );
+            this.httpService
+              .delete(
+                `${this.urlApi}/repos/${
+                  gitApiInfos.repositoryFullName
+                }/contents/${gitFileInfos.filePath}`,
+                localConfig,
+              )
+              .subscribe(
+                response2 => resolve(),
+                err2 => {
+                  logger.error(err2);
+                  reject(err2);
+                },
+              );
+          },
+          err => {
+            logger.error(err);
+            reject(err);
+          },
+        );
+    });
   }
 
   mergePullRequest(

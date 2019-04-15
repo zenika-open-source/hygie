@@ -28,11 +28,11 @@ export class CreateIssueRunnable extends Runnable {
   ) {
     super();
   }
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: CreateIssueArgs,
-  ): void {
+  ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     gitIssueInfos.title = render(args.title, ruleResult);

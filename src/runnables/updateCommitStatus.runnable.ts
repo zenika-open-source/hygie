@@ -28,11 +28,11 @@ export class UpdateCommitStatusRunnable extends Runnable {
   ) {
     super();
   }
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: UpdateCommitStatusArgs,
-  ): void {
+  ): Promise<void> {
     const data = ruleResult.data as any;
     const gitCommitStatusInfos: GitCommitStatusInfos = new GitCommitStatusInfos();
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;

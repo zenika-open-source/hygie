@@ -29,11 +29,11 @@ export class MergePullRequestRunnable extends Runnable {
     super();
   }
 
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: MergePullRequestArgs,
-  ): void {
+  ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const data = ruleResult.data as any;
     const gitMergePRInfos = new GitMergePRInfos();

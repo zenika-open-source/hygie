@@ -30,11 +30,11 @@ export class UpdatePullRequestRunnable extends Runnable {
     super();
   }
 
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: UpdatePullRequestArgs,
-  ): void {
+  ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const data = ruleResult.data as any;
     const gitPRInfos = new GitPRInfos();

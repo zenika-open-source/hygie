@@ -11,13 +11,13 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { logger } from '../logger/logger.service';
 
 interface DeleteFilesArgs {
-  files: string[];
+  files: string[] | string;
   message: string;
   branch: string;
 }
 
 /**
- * `DeleteFilesRunnable` a set of files.
+ * `DeleteFilesRunnable` delete a set of files.
  */
 @RunnableDecorator('DeleteFilesRunnable')
 export class DeleteFilesRunnable extends Runnable {
@@ -28,28 +28,62 @@ export class DeleteFilesRunnable extends Runnable {
     super();
   }
 
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: DeleteFilesArgs,
-  ): void {
+  ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
-    args.files.forEach(file => {
+    let filesList: string[];
+
+    // Default
+    if (typeof args !== 'undefined' && typeof args.message === 'undefined') {
+      args.message = 'removing some files';
+    }
+
+    if (typeof args !== 'undefined' && typeof args.files !== 'undefined') {
+      filesList = render(args.files, ruleResult);
+      filesList = filesList
+        .toString()
+        .replace(/&#x2F;/g, '/')
+        .split(',')
+        .filter(f => f !== '');
+    } else {
+      if (typeof (ruleResult as any).data.addedFiles !== 'undefined') {
+        filesList = (ruleResult as any).data.addedFiles;
+      }
+    }
+
+    // tslint:disable-next-line:no-console
+    console.log(filesList);
+
+    await filesList.forEach(async file => {
       const gitFileInfos = new GitFileInfos();
-      if (typeof args.branch !== 'undefined') {
+      if (typeof args !== 'undefined' && typeof args.branch !== 'undefined') {
         gitFileInfos.fileBranch = render(args.branch, ruleResult);
       } else {
         // Default
-        gitFileInfos.fileBranch = 'master';
+        if (typeof (ruleResult as any).data.branch !== 'undefined') {
+          gitFileInfos.fileBranch = (ruleResult as any).data.branch;
+        } else {
+          gitFileInfos.fileBranch = 'master';
+        }
       }
       gitFileInfos.commitMessage = render(args.message, ruleResult);
       gitFileInfos.filePath = render(file, ruleResult);
 
       if (gitApiInfos.git === GitTypeEnum.Github) {
-        this.githubService.deleteFile(gitApiInfos, gitFileInfos);
+        await this.githubService
+          .deleteFile(gitApiInfos, gitFileInfos)
+          .then(() => {
+            logger.warn(gitFileInfos.filePath + ' deleted');
+          })
+          .catch(err => {
+            logger.warn(gitFileInfos.filePath + ' ' + err);
+          });
       } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-        this.gitlabService.deleteFile(gitApiInfos, gitFileInfos);
+        await this.gitlabService.deleteFile(gitApiInfos, gitFileInfos);
       }
     });
   }
