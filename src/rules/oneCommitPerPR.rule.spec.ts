@@ -35,7 +35,7 @@ describe('RulesService', () => {
 
   // OneCommitPerPR Rule
   describe('oneCommitPerPR Rule', () => {
-    it('should return false', () => {
+    it('should return false', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.branchName = 'test_webhook';
       webhook.commits = [
@@ -55,7 +55,7 @@ describe('RulesService', () => {
       const oneCommitPerPR = new OneCommitPerPRRule();
       jest.spyOn(oneCommitPerPR, 'validate');
 
-      const result: RuleResult = oneCommitPerPR.validate(
+      const result: RuleResult = await oneCommitPerPR.validate(
         webhook,
         oneCommitPerPR,
       );
@@ -65,7 +65,7 @@ describe('RulesService', () => {
     });
   });
   describe('oneCommitPerPR Rule', () => {
-    it('should return true', () => {
+    it('should return true', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.branchName = 'test_webhook';
       webhook.commits = [
@@ -77,7 +77,7 @@ describe('RulesService', () => {
       const oneCommitPerPR = new OneCommitPerPRRule();
       jest.spyOn(oneCommitPerPR, 'validate');
 
-      const result: RuleResult = oneCommitPerPR.validate(
+      const result: RuleResult = await oneCommitPerPR.validate(
         webhook,
         oneCommitPerPR,
       );

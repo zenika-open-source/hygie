@@ -27,7 +27,10 @@ export class CommitMessageRule extends Rule {
 
   events = [GitEventEnum.Push];
 
-  validate(webhook: Webhook, ruleConfig: CommitMessageRule): RuleResult {
+  async validate(
+    webhook: Webhook,
+    ruleConfig: CommitMessageRule,
+  ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const commits: WebhookCommit[] = webhook.getAllCommits();
     const commitRegExp = RegExp(ruleConfig.options.regexp);
@@ -68,6 +71,6 @@ export class CommitMessageRule extends Rule {
       branch: webhook.getBranchName(),
       commits: commitsMatches,
     };
-    return ruleResult;
+    return Promise.resolve(ruleResult);
   }
 }

@@ -8,9 +8,15 @@ import {
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
-import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
+import {
+  GitCommentPRInfos,
+  GitPRInfos,
+  GitMergePRInfos,
+  PRMethodsEnum,
+} from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
-import { loadEnv } from '../utils/dotenv.utils';
+import { GitFileInfos } from '../git/gitFileInfos';
+import { Utils } from '../utils/utils';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -31,7 +37,7 @@ export class GitlabService implements GitServiceInterface {
   }
 
   setEnvironmentVariables(filePath: string): void {
-    loadEnv('remote-envs/' + filePath + '/config.env');
+    Utils.loadEnv('remote-envs/' + filePath + '/config.env');
 
     this.setToken(process.env.gitToken);
     this.setUrlApi(process.env.gitApi);
@@ -128,7 +134,7 @@ export class GitlabService implements GitServiceInterface {
 
   createPullRequest(
     gitApiInfos: GitApiInfos,
-    gitCreatePRInfos: GitCreatePRInfos,
+    gitCreatePRInfos: GitPRInfos,
   ): void {
     // Config URL for GitLab
     const configGitLab = {
@@ -197,6 +203,135 @@ export class GitlabService implements GitServiceInterface {
       .put(
         `${this.urlApi}/projects/${gitApiInfos.projectId}/issues/${
           gitIssueInfos.number
+        }`,
+        dataGitLab,
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  createIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void {
+    // Config URL for GitLab
+    const configGitLab = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {},
+    };
+
+    // Data for GitLab
+    const dataGitLab = {};
+
+    if (typeof gitIssueInfos.title !== 'undefined') {
+      (configGitLab.params as any).title = gitIssueInfos.title;
+    } else {
+      // Title is required
+      return;
+    }
+    if (typeof gitIssueInfos.labels !== 'undefined') {
+      (configGitLab.params as any).labels = gitIssueInfos.labels.join(',');
+    }
+    if (typeof gitIssueInfos.description !== 'undefined') {
+      (configGitLab.params as any).description = gitIssueInfos.description;
+    }
+
+    this.httpService
+      .post(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/issues`,
+        dataGitLab,
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  deleteFile(gitApiInfos: GitApiInfos, gitFileInfos: GitFileInfos): void {
+    // Config URL for GitLab
+    const configGitLab = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {
+        commit_message: gitFileInfos.commitMessage,
+        branch: gitFileInfos.fileBranch,
+      },
+    };
+    this.httpService
+      .delete(
+        `${this.urlApi}/projects/${
+          gitApiInfos.projectId
+        }/repository/files/${encodeURIComponent(gitFileInfos.filePath)}`,
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  mergePullRequest(
+    gitApiInfos: GitApiInfos,
+    gitMergePRInfos: GitMergePRInfos,
+  ): void {
+    // Config URL for GitLab
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {},
+    };
+
+    if (gitMergePRInfos.method === PRMethodsEnum.Squash) {
+      configGitLab.params.squash = true;
+    }
+
+    if (gitMergePRInfos.commitMessage !== undefined) {
+      configGitLab.params.squash_commit_message = gitMergePRInfos.commitMessage;
+      configGitLab.params.merge_commit_message = gitMergePRInfos.commitMessage;
+    }
+
+    if (gitMergePRInfos.sha !== undefined) {
+      configGitLab.params.sha = gitMergePRInfos.sha;
+    }
+
+    this.httpService
+      .put(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests/${
+          gitMergePRInfos.number
+        }/merge`,
+        {},
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  updatePullRequest(gitApiInfos: GitApiInfos, gitPRInfos: GitPRInfos): void {
+    // Config URL for GitLab
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {},
+    };
+
+    if (typeof gitPRInfos.state !== 'undefined') {
+      configGitLab.params.state_event = convertIssueState(
+        GitTypeEnum.Gitlab,
+        gitPRInfos.state,
+      );
+    }
+    if (typeof gitPRInfos.title !== 'undefined') {
+      configGitLab.params.title = gitPRInfos.title;
+    }
+    if (typeof gitPRInfos.target !== 'undefined') {
+      configGitLab.params.target_branch = gitPRInfos.target;
+    }
+    if (typeof gitPRInfos.description !== 'undefined') {
+      configGitLab.params.description = gitPRInfos.description;
+    }
+
+    // Data for GitLab
+    const dataGitLab = {};
+    this.httpService
+      .put(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests/${
+          gitPRInfos.number
         }`,
         dataGitLab,
         configGitLab,

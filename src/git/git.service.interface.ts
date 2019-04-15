@@ -1,7 +1,8 @@
 import { GitCommitStatusInfos } from './gitCommitStatusInfos';
 import { GitApiInfos } from './gitApiInfos';
 import { GitIssueInfos } from './gitIssueInfos';
-import { GitCommentPRInfos, GitCreatePRInfos } from './gitPRInfos';
+import { GitCommentPRInfos, GitPRInfos, GitMergePRInfos } from './gitPRInfos';
+import { GitFileInfos } from './gitFileInfos';
 
 /**
  * Provide methods that must be implement by `GithubService` and `GitlabService` to interact with `git` repository
@@ -39,13 +40,18 @@ export interface GitServiceInterface {
    */
   createPullRequest(
     gitApiInfos: GitApiInfos,
-    gitCreatePRInfos: GitCreatePRInfos,
+    gitCreatePRInfos: GitPRInfos,
   ): void;
 
   /**
    * Delete the `brachName` branch
    */
   deleteBranch(gitApiInfos: GitApiInfos, branchName: string): void;
+
+  /**
+   * Create an Issue whose attributes are specify by the `gitCommitStatusInfos` param
+   */
+  createIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void;
 
   /**
    * Update an issue partially
@@ -57,4 +63,22 @@ export interface GitServiceInterface {
    * by reading the corresponding `config.env` file
    */
   setEnvironmentVariables(filePath: string): void;
+
+  /**
+   * Remove a particular file describe in `gitFileInfos`
+   */
+  deleteFile(gitApiInfos: GitApiInfos, gitFileInfos: GitFileInfos): void;
+
+  /**
+   * Merge a Pull Request specify in `gitMergePRInfos`
+   */
+  mergePullRequest(
+    gitApiInfos: GitApiInfos,
+    gitMergePRInfos: GitMergePRInfos,
+  ): void;
+
+  /**
+   * Update a Pull Request partially
+   */
+  updatePullRequest(gitApiInfos: GitApiInfos, gitPRInfos: GitPRInfos): void;
 }

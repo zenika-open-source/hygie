@@ -9,7 +9,9 @@ import {
   MockGitlabService,
   MockGithubService,
 } from '../__mocks__/mocks';
-import { IssueCommentRule } from './issueComment.rule';
+import { PullRequestCommentRule } from './pullRequestComment.rule';
+import { CheckPullRequestStatusRule } from './checkPullRequestStatus.rule';
+import { GitEventEnum } from '../webhook/utils.enum';
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -19,19 +21,14 @@ describe('RulesService', () => {
   // INIT
   const webhook = new Webhook(gitlabService, githubService);
   webhook.branchName = 'test_webhook';
-  webhook.issue = {
-    title: 'my issue for webhook',
+  webhook.gitEvent = GitEventEnum.ClosedPR;
+  webhook.pullRequest = {
+    title: 'my PR for webhook',
+    description: 'my desc',
     number: 22,
   };
-  webhook.comment = {
-    id: 123,
-    description: 'comment on issue',
-  };
 
-  const issueComment = new IssueCommentRule();
-  issueComment.options = {
-    regexp: '^@ping$',
-  };
+  const checkPullRequestStatus = new CheckPullRequestStatusRule();
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -50,34 +47,39 @@ describe('RulesService', () => {
     jest.clearAllMocks();
   });
 
-  // PullRequestComment Rule
-  describe('PullRequestComment Rule', () => {
+  describe('checkPullRequestStatus Rule', () => {
     it('should return false', async () => {
-      const result: RuleResult = await issueComment.validate(
+      checkPullRequestStatus.options = {
+        status: 'ReopenedPR',
+      };
+      const result: RuleResult = await checkPullRequestStatus.validate(
         webhook,
-        issueComment,
+        checkPullRequestStatus,
       );
       expect(result.validated).toBe(false);
       expect(result.data).toEqual({
-        issueTitle: webhook.issue.title,
-        issueNumber: webhook.issue.number,
-        commentId: webhook.comment.id,
-        commentDescription: webhook.comment.description,
+        pullRequestDescription: 'my desc',
+        pullRequestEvent: 'ClosedPR',
+        pullRequestNumber: 22,
+        pullRequestTitle: 'my PR for webhook',
       });
     });
-
+  });
+  describe('checkPullRequestStatus Rule', () => {
     it('should return true', async () => {
-      webhook.comment.description = '@ping';
-      const result: RuleResult = await issueComment.validate(
+      checkPullRequestStatus.options = {
+        status: 'ClosedPR',
+      };
+      const result: RuleResult = await checkPullRequestStatus.validate(
         webhook,
-        issueComment,
+        checkPullRequestStatus,
       );
       expect(result.validated).toBe(true);
       expect(result.data).toEqual({
-        issueTitle: webhook.issue.title,
-        issueNumber: webhook.issue.number,
-        commentId: webhook.comment.id,
-        commentDescription: webhook.comment.description,
+        pullRequestDescription: 'my desc',
+        pullRequestEvent: 'ClosedPR',
+        pullRequestNumber: 22,
+        pullRequestTitle: 'my PR for webhook',
       });
     });
   });

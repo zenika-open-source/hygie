@@ -3,9 +3,9 @@ import { HttpService } from '@nestjs/common';
 import { RuleResult } from '../rules/ruleResult';
 import { render } from 'mustache';
 import { CallbackType } from './runnables.service';
-import { getObjectValue } from '../utils/convert.utils';
 import { logger } from '../logger/logger.service';
 import { RunnableDecorator } from './runnable.decorator';
+import { Utils } from '../utils/utils';
 
 interface WebhookArgs {
   url: string;
@@ -31,8 +31,13 @@ export class WebhookRunnable extends Runnable {
       .post(
         render(args.url, ruleResult),
         render(JSON.stringify(args.data), ruleResult),
-        render(JSON.stringify(getObjectValue(args.config)), ruleResult),
+        render(JSON.stringify(Utils.getObjectValue(args.config)), ruleResult),
       )
-      .subscribe(null, err => logger.error(err));
+      .subscribe(
+        response => {
+          logger.info(render(args.url, ruleResult) + ' was correctly called');
+        },
+        err => logger.error(err),
+      );
   }
 }

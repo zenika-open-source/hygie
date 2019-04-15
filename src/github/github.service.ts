@@ -8,10 +8,16 @@ import {
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
-import { GitCommentPRInfos, GitCreatePRInfos } from '../git/gitPRInfos';
+import {
+  GitCommentPRInfos,
+  GitPRInfos,
+  GitMergePRInfos,
+  PRMethodsEnum,
+} from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
 import { PreconditionException } from '../exceptions/precondition.exception';
-import { loadEnv } from '../utils/dotenv.utils';
+import { GitFileInfos } from '../git/gitFileInfos';
+import { Utils } from '../utils/utils';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -45,7 +51,7 @@ export class GithubService implements GitServiceInterface {
   }
 
   setEnvironmentVariables(filePath: string): void {
-    loadEnv('remote-envs/' + filePath + '/config.env');
+    Utils.loadEnv('remote-envs/' + filePath + '/config.env');
 
     if (
       process.env.gitToken === undefined ||
@@ -116,7 +122,7 @@ export class GithubService implements GitServiceInterface {
 
   createPullRequest(
     gitApiInfos: GitApiInfos,
-    gitCreatePRInfos: GitCreatePRInfos,
+    gitCreatePRInfos: GitPRInfos,
   ): void {
     const dataGitHub = {
       title: gitCreatePRInfos.title,
@@ -162,6 +168,127 @@ export class GithubService implements GitServiceInterface {
       .patch(
         `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues/${
           gitIssueInfos.number
+        }`,
+        dataGitHub,
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  createIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void {
+    const dataGitHub: any = {};
+
+    if (typeof gitIssueInfos.title !== 'undefined') {
+      dataGitHub.title = gitIssueInfos.title;
+    } else {
+      // Title is required
+      return;
+    }
+    if (typeof gitIssueInfos.labels !== 'undefined') {
+      dataGitHub.labels = gitIssueInfos.labels;
+    }
+    if (typeof gitIssueInfos.assignees !== 'undefined') {
+      dataGitHub.assignees = gitIssueInfos.assignees;
+    }
+    if (typeof gitIssueInfos.description !== 'undefined') {
+      dataGitHub.body = gitIssueInfos.description;
+    }
+
+    this.httpService
+      .post(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues`,
+        dataGitHub,
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  deleteFile(gitApiInfos: GitApiInfos, gitFileInfos: GitFileInfos): void {
+    const localConfig: any = JSON.parse(JSON.stringify(this.configGitHub));
+
+    // First of all, get file blob sha
+    this.httpService
+      .get(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/contents/${
+          gitFileInfos.filePath
+        }`,
+        this.configGitHub,
+      )
+      .subscribe(
+        response => {
+          localConfig.params = {
+            sha: response.data.sha,
+            message: gitFileInfos.commitMessage,
+            branch: gitFileInfos.fileBranch,
+          };
+
+          this.httpService
+            .delete(
+              `${this.urlApi}/repos/${
+                gitApiInfos.repositoryFullName
+              }/contents/${gitFileInfos.filePath}`,
+              localConfig,
+            )
+            .subscribe(null, err => logger.error(err));
+        },
+        err => logger.error(err),
+      );
+  }
+
+  mergePullRequest(
+    gitApiInfos: GitApiInfos,
+    gitMergePRInfos: GitMergePRInfos,
+  ): void {
+    const dataGitHub: any = {};
+
+    if (gitMergePRInfos.commitTitle !== undefined) {
+      dataGitHub.commit_title = gitMergePRInfos.commitTitle;
+    }
+    if (gitMergePRInfos.commitMessage !== undefined) {
+      dataGitHub.commit_message = gitMergePRInfos.commitMessage;
+    }
+    if (gitMergePRInfos.sha !== undefined) {
+      dataGitHub.sha = gitMergePRInfos.sha;
+    }
+    dataGitHub.merge_method =
+      gitMergePRInfos.method !== undefined
+        ? gitMergePRInfos.method.toLowerCase()
+        : PRMethodsEnum.Merge.toLocaleLowerCase();
+
+    this.httpService
+      .put(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls/${
+          gitMergePRInfos.number
+        }/merge`,
+        dataGitHub,
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  updatePullRequest(gitApiInfos: GitApiInfos, gitPRInfos: GitPRInfos): void {
+    const dataGitHub: any = {};
+
+    if (typeof gitPRInfos.state !== 'undefined') {
+      dataGitHub.state = convertIssueState(
+        GitTypeEnum.Github,
+        gitPRInfos.state,
+      );
+    }
+    if (typeof gitPRInfos.title !== 'undefined') {
+      dataGitHub.title = gitPRInfos.title;
+    }
+    if (typeof gitPRInfos.target !== 'undefined') {
+      dataGitHub.base = gitPRInfos.target;
+    }
+    if (typeof gitPRInfos.description !== 'undefined') {
+      dataGitHub.body = gitPRInfos.description;
+    }
+
+    this.httpService
+      .patch(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls/${
+          gitPRInfos.number
         }`,
         dataGitHub,
         this.configGitHub,

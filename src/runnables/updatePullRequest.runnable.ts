@@ -6,20 +6,23 @@ import { RunnableDecorator } from './runnable.decorator';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
+import { GitPRInfos } from '../git/gitPRInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { IssuePRStateEnum, GitIssueInfos } from '../git/gitIssueInfos';
+import { IssuePRStateEnum } from '../git/gitIssueInfos';
 
-interface UpdateIssueArgs {
+interface UpdatePullRequestArgs {
+  target: string;
+  title: string;
   state: string;
-  labels: string[];
+  description: string;
 }
 
 /**
- * `UpdateIssueRunnable` update some issue's properties.
- *  @warn Be sure that the rule returned the `issueNumber` property in the `RuleResult` object.
+ * `UpdatePullRequestRunnable` update some PR's properties.
+ *  @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object.
  */
-@RunnableDecorator('UpdateIssueRunnable')
-export class UpdateIssueRunnable extends Runnable {
+@RunnableDecorator('UpdatePullRequestRunnable')
+export class UpdatePullRequestRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
@@ -30,30 +33,36 @@ export class UpdateIssueRunnable extends Runnable {
   run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
-    args: UpdateIssueArgs,
+    args: UpdatePullRequestArgs,
   ): void {
-    const data = ruleResult.data as any;
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
-    const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
-    gitIssueInfos.number = data.issueNumber;
+    const data = ruleResult.data as any;
+    const gitPRInfos = new GitPRInfos();
+
+    gitPRInfos.number = data.pullRequestNumber;
 
     if (typeof args.state !== 'undefined') {
-      gitIssueInfos.state =
+      gitPRInfos.state =
         args.state.toLowerCase() === 'open'
           ? IssuePRStateEnum.Open
           : args.state.toLowerCase() === 'close'
           ? IssuePRStateEnum.Close
           : IssuePRStateEnum.Undefined;
     }
-
-    if (typeof args.labels !== 'undefined') {
-      gitIssueInfos.labels = args.labels;
+    if (typeof args.title !== 'undefined') {
+      gitPRInfos.title = args.title;
+    }
+    if (typeof args.target !== 'undefined') {
+      gitPRInfos.target = args.target;
+    }
+    if (typeof args.description !== 'undefined') {
+      gitPRInfos.description = args.description;
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.updateIssue(gitApiInfos, gitIssueInfos);
+      this.githubService.updatePullRequest(gitApiInfos, gitPRInfos);
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
+      this.gitlabService.updatePullRequest(gitApiInfos, gitPRInfos);
     }
   }
 }

@@ -4,35 +4,40 @@ import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 
-interface PullRequestCommentOptions {
-  regexp: string;
+interface CheckPullRequestStatusOptions {
+  status: string;
 }
 
 /**
- * `PullRequestCommentRule` checks the new PR or MR's comment according to a regular expression.
+ * `CheckPullRequestStatusRule` check if the PR event match.
  * @return return a `RuleResult` object
  */
-@RuleDecorator('pullRequestComment')
-export class PullRequestCommentRule extends Rule {
-  options: PullRequestCommentOptions;
-  events = [GitEventEnum.NewPRComment];
-
+@RuleDecorator('checkPullRequestStatus')
+export class CheckPullRequestStatusRule extends Rule {
+  options: CheckPullRequestStatusOptions;
+  events = [
+    GitEventEnum.NewPR,
+    GitEventEnum.ClosedPR,
+    GitEventEnum.MergedPR,
+    GitEventEnum.ReopenedPR,
+  ];
   async validate(
     webhook: Webhook,
-    ruleConfig: PullRequestCommentRule,
+    ruleConfig: CheckPullRequestStatusRule,
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
 
-    const commentDescription = webhook.getCommentDescription();
-    const commentRegExp = RegExp(ruleConfig.options.regexp);
-    ruleResult.validated = commentRegExp.test(commentDescription);
+    ruleResult.validated =
+      webhook.gitEvent.toLowerCase() ===
+      ruleConfig.options.status.toLocaleLowerCase()
+        ? true
+        : false;
 
     ruleResult.data = {
+      pullRequestEvent: webhook.gitEvent,
       pullRequestTitle: webhook.getPullRequestTitle(),
       pullRequestNumber: webhook.getPullRequestNumber(),
       pullRequestDescription: webhook.getPullRequestDescription(),
-      commentId: webhook.getCommentId(),
-      commentDescription,
     };
 
     return Promise.resolve(ruleResult);

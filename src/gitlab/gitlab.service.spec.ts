@@ -4,10 +4,16 @@ import { MockHttpService, MockObservable } from '../__mocks__/mocks';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { CommitStatusEnum } from '../webhook/utils.enum';
-import { GitIssueInfos, IssueStateEnum } from '../git/gitIssueInfos';
-import { GitCreatePRInfos, GitCommentPRInfos } from '../git/gitPRInfos';
+import { GitIssueInfos, IssuePRStateEnum } from '../git/gitIssueInfos';
+import {
+  GitPRInfos,
+  GitCommentPRInfos,
+  GitMergePRInfos,
+  PRMethodsEnum,
+} from '../git/gitPRInfos';
 import { Observable } from 'rxjs';
 import { GitlabService } from './gitlab.service';
+import { GitFileInfos } from '../git/gitFileInfos';
 
 require('dotenv').config({ path: 'config.env' });
 
@@ -20,11 +26,7 @@ describe('Gitlab Service', () => {
   let gitApiInfos: GitApiInfos;
   let gitCommitStatusInfos: GitCommitStatusInfos;
 
-  const expectedConfig: any = {
-    headers: {
-      'PRIVATE-TOKEN': process.env.GITLAB_TOKEN,
-    },
-  };
+  let expectedConfig: any = {};
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -41,6 +43,15 @@ describe('Gitlab Service', () => {
 
     gitApiInfos = new GitApiInfos();
     gitApiInfos.projectId = '1';
+
+    gitlabService.setToken('0123456789abcdef');
+    gitlabService.setUrlApi('https://gitlab.com/api/v4');
+
+    expectedConfig = {
+      headers: {
+        'PRIVATE-TOKEN': gitlabService.token,
+      },
+    };
   });
 
   beforeEach(() => {
@@ -57,7 +68,7 @@ describe('Gitlab Service', () => {
 
       gitlabService.updateCommitStatus(gitApiInfos, gitCommitStatusInfos);
 
-      const expectedUrl = `${process.env.GITLAB_API}/projects/1/statuses/1`;
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/statuses/1`;
 
       expectedConfig.params = {
         state: 'success',
@@ -68,6 +79,7 @@ describe('Gitlab Service', () => {
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
     });
   });
+
   describe('addIssueComment', () => {
     it('should emit a POST request with specific params', () => {
       const gitIssueInfos = new GitIssueInfos();
@@ -76,7 +88,7 @@ describe('Gitlab Service', () => {
 
       gitlabService.addIssueComment(gitApiInfos, gitIssueInfos);
 
-      const expectedUrl = `${process.env.GITLAB_API}/projects/1/issues/1/notes`;
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/issues/1/notes`;
 
       expectedConfig.params = {
         body: 'my comment',
@@ -90,11 +102,11 @@ describe('Gitlab Service', () => {
     it('should emit a PUT request with specific params', () => {
       const gitIssueInfos = new GitIssueInfos();
       gitIssueInfos.number = '1';
-      gitIssueInfos.state = IssueStateEnum.Close;
+      gitIssueInfos.state = IssuePRStateEnum.Close;
 
       gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
 
-      const expectedUrl = `${process.env.GITLAB_API}/projects/1/issues/1`;
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/issues/1`;
 
       expectedConfig.params = {
         state_event: 'close',
@@ -106,11 +118,11 @@ describe('Gitlab Service', () => {
     it('should emit a PUT request with specific params', () => {
       const gitIssueInfos = new GitIssueInfos();
       gitIssueInfos.number = '1';
-      gitIssueInfos.state = IssueStateEnum.Open;
+      gitIssueInfos.state = IssuePRStateEnum.Open;
 
       gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
 
-      const expectedUrl = `${process.env.GITLAB_API}/projects/1/issues/1`;
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/issues/1`;
 
       expectedConfig.params = {
         state_event: 'reopen',
@@ -129,7 +141,7 @@ describe('Gitlab Service', () => {
       gitlabService.addPRComment(gitApiInfos, gitCommentPRInfos);
 
       const expectedUrl = `${
-        process.env.GITLAB_API
+        gitlabService.urlApi
       }/projects/1/merge_requests/1/notes`;
 
       expectedConfig.params = {
@@ -142,7 +154,7 @@ describe('Gitlab Service', () => {
 
   describe('createPullRequest', () => {
     it('should emit a POST request with specific params', () => {
-      const gitCreatePRInfos = new GitCreatePRInfos();
+      const gitCreatePRInfos = new GitPRInfos();
       gitCreatePRInfos.title = 'my PR';
       gitCreatePRInfos.description = 'my desc';
       gitCreatePRInfos.source = 'develop';
@@ -150,7 +162,7 @@ describe('Gitlab Service', () => {
 
       gitlabService.createPullRequest(gitApiInfos, gitCreatePRInfos);
 
-      const expectedUrl = `${process.env.GITLAB_API}/projects/1/merge_requests`;
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/merge_requests`;
 
       expectedConfig.params = {
         title: 'my PR',
@@ -162,6 +174,114 @@ describe('Gitlab Service', () => {
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
     });
   });
+
+  describe('createIssue', () => {
+    it('should emit a POST request with specific params', () => {
+      const gitIssueInfos = new GitIssueInfos();
+      gitIssueInfos.title = 'my new issue';
+      gitIssueInfos.description = 'my desc';
+      gitIssueInfos.labels = ['good first issue', 'rules'];
+
+      gitlabService.createIssue(gitApiInfos, gitIssueInfos);
+
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/issues`;
+
+      expectedConfig.params = {
+        title: 'my new issue',
+        description: 'my desc',
+        labels: 'good first issue,rules',
+      };
+
+      expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+  });
+
+  describe('deleteBranch', () => {
+    it('should emit a DELETE request with specific params', () => {
+      gitlabService.deleteBranch(gitApiInfos, 'feature/test');
+
+      const expectedUrl = `${
+        gitlabService.urlApi
+      }/projects/1/repository/branches/feature%2Ftest`;
+
+      expect(httpService.delete).toBeCalledWith(expectedUrl, {
+        headers: expectedConfig.headers,
+      });
+    });
+  });
+
+  describe('deleteFile', () => {
+    it('should emit a DELETE request with specific params', () => {
+      const gitFileInfos = new GitFileInfos();
+      gitFileInfos.fileBranch = 'master';
+      gitFileInfos.filePath = 'file/to/delete.txt';
+      gitFileInfos.commitMessage = 'delete file';
+      gitlabService.deleteFile(gitApiInfos, gitFileInfos);
+
+      const expectedUrl = `${
+        gitlabService.urlApi
+      }/projects/1/repository/files/file%2Fto%2Fdelete.txt`;
+
+      expectedConfig.params = {
+        branch: 'master',
+        commit_message: 'delete file',
+      };
+
+      expect(httpService.delete).toBeCalledWith(expectedUrl, expectedConfig);
+    });
+  });
+
+  describe('mergePullRequest', () => {
+    it('should emit a PUT request with specific params', () => {
+      const gitMergePRInfos = new GitMergePRInfos();
+      gitMergePRInfos.number = 42;
+      gitMergePRInfos.commitTitle = 'commit title';
+      gitMergePRInfos.commitMessage = 'commit message';
+      gitMergePRInfos.method = PRMethodsEnum.Squash;
+
+      gitlabService.mergePullRequest(gitApiInfos, gitMergePRInfos);
+
+      const expectedUrl = `${
+        gitlabService.urlApi
+      }/projects/1/merge_requests/42/merge`;
+
+      expectedConfig.params = {
+        squash: true,
+        merge_commit_message: 'commit message',
+        squash_commit_message: 'commit message',
+      };
+
+      expect(httpService.put).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+  });
+
+  describe('updatePullRequest', () => {
+    it('should emit a PUT request with specific params', () => {
+      const gitPRInfos = new GitPRInfos();
+      gitPRInfos.number = 42;
+      gitPRInfos.title = 'pr title';
+      gitPRInfos.description = 'pr description';
+      gitPRInfos.target = 'master';
+      gitPRInfos.state = IssuePRStateEnum.Close;
+
+      gitlabService.updatePullRequest(gitApiInfos, gitPRInfos);
+
+      const expectedUrl = `${
+        gitlabService.urlApi
+      }/projects/1/merge_requests/42`;
+
+      expectedConfig.params = {
+        title: 'pr title',
+        description: 'pr description',
+        state_event: 'close',
+        target_branch: 'master',
+      };
+
+      expect(httpService.put).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+  });
+
+  // TESTS BEFORE
 
   describe('setToken', () => {
     it('should set the token', () => {

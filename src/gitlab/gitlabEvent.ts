@@ -1,6 +1,6 @@
 import { GitlabPushEvent } from './gitlabPushEvent';
 import { GitlabIssueEvent } from './gitlabIssueEvent';
-import { GitlabNewPREvent } from './gitlabNewPREvent';
+import { GitlabPREvent } from './gitlabPREvent';
 import { GitlabIssueCommentEvent } from './gitlabIssueCommentEvent';
 import { GitlabPRCommentEvent } from './gitlabPRCommentEvent';
 
@@ -10,6 +10,6 @@ import { GitlabPRCommentEvent } from './gitlabPRCommentEvent';
 export type GitlabEvent =
   | GitlabPushEvent
   | GitlabIssueEvent
-  | GitlabNewPREvent
+  | GitlabPREvent
   | GitlabIssueCommentEvent
   | GitlabPRCommentEvent;

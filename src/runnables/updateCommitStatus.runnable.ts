@@ -6,8 +6,8 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
-import { getStringValue } from '../utils/convert.utils';
 import { RunnableDecorator } from './runnable.decorator';
+import { Utils } from '../utils/utils';
 
 interface UpdateCommitStatusArgs {
   successTargetUrl: string;
@@ -42,12 +42,12 @@ export class UpdateCommitStatusRunnable extends Runnable {
       gitCommitStatusInfos.commitStatus = c.status;
 
       gitCommitStatusInfos.descriptionMessage = c.success
-        ? getStringValue(args.successDescriptionMessage)
-        : getStringValue(args.failDescriptionMessage);
+        ? Utils.getStringValue(args.successDescriptionMessage)
+        : Utils.getStringValue(args.failDescriptionMessage);
 
       gitCommitStatusInfos.targetUrl = c.success
-        ? getStringValue(args.successTargetUrl)
-        : getStringValue(args.failTargetUrl);
+        ? Utils.getStringValue(args.successTargetUrl)
+        : Utils.getStringValue(args.failTargetUrl);
 
       if (gitApiInfos.git === GitTypeEnum.Github) {
         this.githubService.updateCommitStatus(

@@ -9,7 +9,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "lib": ["dom", "es2017"]
+    "lib": ["dom", "es2017", "esnext.array"]
   },
   "exclude": ["node_modules"],
   "typedocOptions": {

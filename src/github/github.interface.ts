@@ -22,6 +22,9 @@ export interface GithubRepository {
 export interface GithubCommit {
   message: string;
   id: string;
+  added: string[];
+  modified: string[];
+  removed: string[];
 }
 /**
  * GithubSender dto
@@ -29,6 +32,21 @@ export interface GithubCommit {
 export interface GithubSender {
   login: string;
 }
+
+/**
+ * GithubHeadPR dto
+ */
+export interface GithubHeadPR {
+  ref: string;
+}
+
+/**
+ * GithubBasePR dto
+ */
+export interface GithubBasePR {
+  ref: string;
+}
+
 /**
  * GithubPullRequest dto
  */
@@ -36,6 +54,9 @@ export interface GithubPullRequest {
   state: string;
   title: string;
   body: string;
+  merged: boolean;
+  head: GithubHeadPR;
+  base: GithubBasePR;
 }
 
 /**

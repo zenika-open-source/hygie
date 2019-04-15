@@ -2,12 +2,13 @@ import { TestingModule, Test } from '@nestjs/testing';
 import { HttpService } from '@nestjs/common';
 import { MockHttpService } from '../__mocks__/mocks';
 import { RemoteConfigUtils } from './utils';
+import { Utils } from '../utils/utils';
 
 describe('remote-config', () => {
   let app: TestingModule;
   let httpService: HttpService;
 
-  RemoteConfigUtils.writeFileSync = jest.fn();
+  Utils.writeFileSync = jest.fn();
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -38,7 +39,7 @@ describe('remote-config', () => {
   }); */
 
   describe('downloadRulesFile', () => {
-    it('should call httpService.get method', () => {
+    it('should call httpService.get method and return the good repo', () => {
       const result: string = RemoteConfigUtils.downloadRulesFile(
         httpService,
         'https://github.com/DX-DeveloperExperience/git-webhooks',
@@ -46,18 +47,23 @@ describe('remote-config', () => {
       expect(httpService.get).toBeCalledWith(
         'https://raw.githubusercontent.com/DX-DeveloperExperience/git-webhooks/master/.git-webhooks/rules.yml',
       );
-    });
-    it('should return the good repo', () => {
-      const result: string = RemoteConfigUtils.downloadRulesFile(
-        httpService,
-        'https://github.com/DX-DeveloperExperience/git-webhooks',
-      );
       expect(result).toBe(
         'remote-rules/DX-DeveloperExperience/git-webhooks/.git-webhooks',
       );
     });
   });
-
+  describe('downloadRulesFile', () => {
+    it('should call httpService.get method and return the good repo', () => {
+      const result: string = RemoteConfigUtils.downloadRulesFile(
+        httpService,
+        'https://gitlab.com/gitlab-org/gitlab-ce',
+      );
+      expect(httpService.get).toBeCalledWith(
+        'https://gitlab.com/gitlab-org/gitlab-ce/raw/master/.git-webhooks/rules.yml',
+      );
+      expect(result).toBe('remote-rules/gitlab-org/gitlab-ce/.git-webhooks');
+    });
+  });
   describe('registerConfigEnv', () => {
     it('should call writeFileSync method this good args', () => {
       const configEnv = {
@@ -68,7 +74,7 @@ describe('remote-config', () => {
 
       RemoteConfigUtils.registerConfigEnv(configEnv);
 
-      expect(RemoteConfigUtils.writeFileSync).toHaveBeenCalledWith(
+      expect(Utils.writeFileSync).toHaveBeenCalledWith(
         'remote-envs/DX-DeveloperExperience/git-webhooks/config.env',
         `gitApi=https://gitapi.com\ngitToken=azertyuiop`,
       );

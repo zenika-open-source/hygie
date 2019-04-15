@@ -5,7 +5,7 @@ import { RuleResult } from './ruleResult';
 
 export interface OnSuccessError {
   callback: string;
-  args: any;
+  args?: any;
 }
 
 /**
@@ -62,5 +62,8 @@ export abstract class Rule {
    * @param webhook
    * @param ruleConfig
    */
-  abstract validate(webhook: Webhook, ruleConfig: Rule): RuleResult;
+  abstract async validate(
+    webhook: Webhook,
+    ruleConfig: Rule,
+  ): Promise<RuleResult>;
 }

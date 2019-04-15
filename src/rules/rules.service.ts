@@ -53,7 +53,10 @@ export class RulesService {
     return this.rulesClasses.find(r => r.name === ruleConfig.name);
   }
 
-  testRules(webhook: Webhook, remoteRepository: string): RuleResult[] {
+  async testRules(
+    webhook: Webhook,
+    remoteRepository: string,
+  ): Promise<RuleResult[]> {
     const rules: Rule[] = this.getRulesConfiguration(remoteRepository);
     const groups: Group[] = this.getGroupsConfiguration(remoteRepository);
     const rulesOptions: RulesOptions = this.getRulesOptions(remoteRepository);
@@ -65,10 +68,13 @@ export class RulesService {
     if (rulesOptions.enableRules) {
       try {
         logger.info('### TRY RULES ###');
-        rules.forEach(ruleConfig => {
+        rules.forEach(async ruleConfig => {
           const r = this.getRule(ruleConfig);
           if (r.isEnabled(webhook, ruleConfig)) {
-            const ruleResult: RuleResult = r.validate(webhook, ruleConfig);
+            const ruleResult: RuleResult = await r.validate(
+              webhook,
+              ruleConfig,
+            );
             results.push(ruleResult);
 
             this.runnableService.executeRunnableFunctions(
@@ -95,10 +101,13 @@ export class RulesService {
           const groupResults: GroupResult[] = new Array();
 
           // g.displayInformations();
-          g.rules.forEach(ruleConfig => {
+          g.rules.forEach(async ruleConfig => {
             const r = this.getRule(ruleConfig);
             if (r.isEnabled(webhook, ruleConfig)) {
-              const ruleResult: RuleResult = r.validate(webhook, ruleConfig);
+              const ruleResult: RuleResult = await r.validate(
+                webhook,
+                ruleConfig,
+              );
               results.push(ruleResult);
 
               if (rulesOptions.allRuleResultInOne) {

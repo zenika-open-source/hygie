@@ -3,7 +3,7 @@ import { RuleResult } from '../rules/ruleResult';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { GitCreatePRInfos } from '../git/gitPRInfos';
+import { GitPRInfos } from '../git/gitPRInfos';
 import { render } from 'mustache';
 import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
@@ -35,7 +35,7 @@ export class CreatePullRequestRunnable extends Runnable {
   ): void {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
-    const gitCreatePRInfos: GitCreatePRInfos = new GitCreatePRInfos();
+    const gitCreatePRInfos: GitPRInfos = new GitPRInfos();
 
     // Defaults
     if (typeof args.description === 'undefined') {

@@ -17,7 +17,10 @@ export class IssueTitleRule extends Rule {
   options: IssueTitleOptions;
   events = [GitEventEnum.NewIssue];
 
-  validate(webhook: Webhook, ruleConfig: IssueTitleRule): RuleResult {
+  async validate(
+    webhook: Webhook,
+    ruleConfig: IssueTitleRule,
+  ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const titleIssue = webhook.getIssueTitle();
     const issueRegExp = RegExp(ruleConfig.options.regexp);
@@ -27,6 +30,6 @@ export class IssueTitleRule extends Rule {
       issueTitle: titleIssue,
       issueNumber: webhook.getIssueNumber(),
     };
-    return ruleResult;
+    return Promise.resolve(ruleResult);
   }
 }

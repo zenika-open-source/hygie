@@ -17,7 +17,10 @@ export class IssueCommentRule extends Rule {
   options: IssueCommentOptions;
   events = [GitEventEnum.NewIssueComment];
 
-  validate(webhook: Webhook, ruleConfig: IssueCommentRule): RuleResult {
+  async validate(
+    webhook: Webhook,
+    ruleConfig: IssueCommentRule,
+  ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
 
     const commentDescription = webhook.getCommentDescription();
@@ -30,6 +33,6 @@ export class IssueCommentRule extends Rule {
       commentId: webhook.getCommentId(),
       commentDescription,
     };
-    return ruleResult;
+    return Promise.resolve(ruleResult);
   }
 }

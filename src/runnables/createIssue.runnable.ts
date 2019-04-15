@@ -6,54 +6,53 @@ import { RunnableDecorator } from './runnable.decorator';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
+import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { IssuePRStateEnum, GitIssueInfos } from '../git/gitIssueInfos';
+import { logger } from '../logger/logger.service';
 
-interface UpdateIssueArgs {
-  state: string;
+interface CreateIssueArgs {
+  title: string;
+  description: string;
+  assignees: string[];
   labels: string[];
 }
 
 /**
- * `UpdateIssueRunnable` update some issue's properties.
- *  @warn Be sure that the rule returned the `issueNumber` property in the `RuleResult` object.
+ * `CreateIssueRunnable` create an issue the specified `CreateIssueArgs` params.
  */
-@RunnableDecorator('UpdateIssueRunnable')
-export class UpdateIssueRunnable extends Runnable {
+@RunnableDecorator('CreateIssueRunnable')
+export class CreateIssueRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
   ) {
     super();
   }
-
   run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
-    args: UpdateIssueArgs,
+    args: CreateIssueArgs,
   ): void {
-    const data = ruleResult.data as any;
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
-    gitIssueInfos.number = data.issueNumber;
+    gitIssueInfos.title = render(args.title, ruleResult);
 
-    if (typeof args.state !== 'undefined') {
-      gitIssueInfos.state =
-        args.state.toLowerCase() === 'open'
-          ? IssuePRStateEnum.Open
-          : args.state.toLowerCase() === 'close'
-          ? IssuePRStateEnum.Close
-          : IssuePRStateEnum.Undefined;
+    if (typeof args.description !== 'undefined') {
+      gitIssueInfos.description = render(args.description, ruleResult);
     }
 
     if (typeof args.labels !== 'undefined') {
       gitIssueInfos.labels = args.labels;
     }
 
+    if (typeof args.assignees !== 'undefined') {
+      gitIssueInfos.assignees = args.assignees;
+    }
+
     if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.updateIssue(gitApiInfos, gitIssueInfos);
+      this.githubService.createIssue(gitApiInfos, gitIssueInfos);
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
+      this.gitlabService.createIssue(gitApiInfos, gitIssueInfos);
     }
   }
 }

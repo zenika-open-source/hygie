@@ -36,7 +36,7 @@ describe('RulesService', () => {
 
   // IssueTitle Rule
   describe('issueTitle Rule', () => {
-    it('should return true + an object with issueTitle, git, issueNumber and gitApiInfos', () => {
+    it('should return true + an object with issueTitle, git, issueNumber and gitApiInfos', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.gitType = GitTypeEnum.Github;
       webhook.issue.number = 22;
@@ -55,7 +55,7 @@ describe('RulesService', () => {
 
       jest.spyOn(issueTitle, 'validate');
 
-      const result: RuleResult = issueTitle.validate(webhook, issueTitle);
+      const result: RuleResult = await issueTitle.validate(webhook, issueTitle);
       const expectedResult = {
         issueTitle: 'add rules documentation',
         issueNumber: 22,
@@ -69,7 +69,7 @@ describe('RulesService', () => {
     });
   });
   describe('issueTitle Rule', () => {
-    it('should return false + an object with issueTitle, git, issueNumber and gitApiInfos', () => {
+    it('should return false + an object with issueTitle, git, issueNumber and gitApiInfos', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.gitType = GitTypeEnum.Gitlab;
       webhook.issue.number = 42;
@@ -83,7 +83,7 @@ describe('RulesService', () => {
 
       jest.spyOn(issueTitle, 'validate');
 
-      const result: RuleResult = issueTitle.validate(webhook, issueTitle);
+      const result: RuleResult = await issueTitle.validate(webhook, issueTitle);
       const expectedResult = {
         issueTitle: 'update rules documentation',
         issueNumber: 42,

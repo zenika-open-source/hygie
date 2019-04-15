@@ -9,6 +9,7 @@ import {
   UseFilters,
   Header,
   HttpService,
+  Param,
 } from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { WebhookInterceptor } from './webhook/webhook.interceptor';
@@ -23,6 +24,7 @@ import { getAllOptions } from './generator/getAllOptions';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
 import { RemoteConfigUtils } from './remote-config/utils';
+import { Utils } from './utils/utils';
 
 @Controller()
 export class AppController {
@@ -72,22 +74,29 @@ export class AppController {
   @Post('/webhook')
   @UseInterceptors(WebhookInterceptor)
   @UseFilters(AllExceptionsFilter)
-  processWebhook(@Body() webhook: Webhook, @Res() response): void {
+  async processWebhook(
+    @Body() webhook: Webhook,
+    @Res() response,
+  ): Promise<void> {
     if (
       webhook.getGitType() === GitTypeEnum.Undefined ||
       webhook.getGitEvent() === GitEventEnum.Undefined
     ) {
       throw new PreconditionException();
     } else {
-      // First, check if the config folder of the emitter already exist
-      // If not, create the folder in the `/remote-rules` (with .git-webhooks/rules.yml)
-      const remoteRepository = RemoteConfigUtils.downloadRulesFile(
-        this.httpService,
-        webhook.getCloneURL(),
-      );
+      Utils.loadEnv('config.env');
+      const getRemoteRules: string = process.env.ALLOW_REMOTE_CONFIG;
+
+      const remoteRepository =
+        getRemoteRules === 'true'
+          ? RemoteConfigUtils.downloadRulesFile(
+              this.httpService,
+              webhook.getCloneURL(),
+            )
+          : 'src/rules';
 
       try {
-        const remoteEnvs: string = webhook.getRemoteEnvs();
+        const remoteEnvs: string = webhook.getRemoteDirectory();
         this.githubService.setEnvironmentVariables(remoteEnvs);
         this.gitlabService.setEnvironmentVariables(remoteEnvs);
       } catch (e) {
@@ -105,7 +114,10 @@ export class AppController {
         `\n\n=== processWebhook - ${webhook.getGitType()} - ${webhook.getGitEvent()} ===\n`,
       );
 
-      const result = this.rulesService.testRules(webhook, remoteRepository);
+      const result = await this.rulesService.testRules(
+        webhook,
+        remoteRepository,
+      );
       response.status(HttpStatus.ACCEPTED).send(result);
     }
   }

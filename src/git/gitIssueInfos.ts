@@ -1,4 +1,4 @@
-export enum IssueStateEnum {
+export enum IssuePRStateEnum {
   Open = 'Open',
   Close = 'Close',
   Undefined = 'Undefined',
@@ -11,6 +11,8 @@ export class GitIssueInfos {
   comment: string;
   number: string;
   title: string;
-  state: IssueStateEnum;
+  state: IssuePRStateEnum;
   labels: string[];
+  assignees: string[];
+  description: string;
 }

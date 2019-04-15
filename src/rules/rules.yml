@@ -30,7 +30,7 @@ rules:
         args:
           message: 'pattern does not match, commit name must begin with : "feat|fix|docs" and contains less than 100 numerals! Check your commit message:
             {{#data.commits}}
-              > {{message.commits}} (#{{sha}})
+              > {{message}} (#{{sha}})
             {{/data.commits}}
           '
     onBoth:

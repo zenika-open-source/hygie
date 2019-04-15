@@ -17,7 +17,10 @@ export class PullRequestTitleRule extends Rule {
   options: PullRequestTitleOptions;
   events = [GitEventEnum.NewPR];
 
-  validate(webhook: Webhook, ruleConfig: PullRequestTitleRule): RuleResult {
+  async validate(
+    webhook: Webhook,
+    ruleConfig: PullRequestTitleRule,
+  ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const titlePullRequest = webhook.getPullRequestTitle();
     const pullRequestRegExp = RegExp(ruleConfig.options.regexp);

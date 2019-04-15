@@ -3,7 +3,7 @@ import { GithubRepository, GithubPullRequest } from './github.interface';
 /**
  * GithubNewPREvent dto
  */
-export interface GithubNewPREvent {
+export interface GithubPREvent {
   action: string;
   pull_request: GithubPullRequest;
   repository: GithubRepository;
