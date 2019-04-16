@@ -94,7 +94,7 @@ The `DeleteBranchRunnable` delete a particular branch.
 
 This Post-Action has one optionnal arg:
 
-- `branchName`: the branch to delete _[optional]_,
+- `branchName`: the branch to delete _[optional]_.
   ::: tip
   If no branch name is provide, it will be set to `data.branch` returned by the previous rule.
   :::
@@ -119,12 +119,12 @@ The `DeleteFilesRunnable` delete a set of files.
 
 This Post-Action need the following args:
 
-- files: the files list to delete,
+- files: the files list to delete or a comma-separated string _[optional]_,
 - message: the commit message _[optional]_,
   ::: tip
-  If not provide, it will be `removing some files'`
+  If not provide, it will be `removing file`
   :::
-- branch: the branch on which it will delete the files _[optional]_,
+- branch: the branch on which it will delete the files _[optional]_.
   ::: tip
   If no branch name is provide, it will be set to `data.branch` returned by the previous rule if exist, `master` otherwise.
   :::
@@ -136,9 +136,16 @@ To use the `DeleteFilesRunnable`, simply add the `callback` on your `rules.yml` 
 onError:
   - callback: DeleteFilesRunnable
     args:
+      message: 'deleting file!'
+      branch: master
       files:
         - a.exe
         - b.exe
+      # or
+      # files: 'a.exe,b.exe'
+      #
+      # can be chained with `checkAddedFiles`
+      # files: '{{#data.addedFiles}}{{.}},{{/data.addedFiles}}
 ```
 
 ## LoggerRunnable
@@ -166,6 +173,47 @@ onSuccess:
     args:
       type: info
       message: '{{data.issueTitle}} is correct issue title'
+```
+
+## MergePullRequestRunnable
+
+### Goal
+
+`MergePullRequestRunnable` merge the PR or MR processed by the previous rule.
+
+::: warning
+Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object.
+:::
+
+### Usage
+
+This Post-Action need the following args:
+
+- `commitTitle`: the title of the commit _[optional]_,
+- `commitMessage`: extra commit informations _[optional]_,
+  ::: warning
+  Not available on Gitlab
+  :::
+- `sha`: sha that pull request head must match to allow merge _[optional]_,
+- `method`: merge|squash|rebase _[optional]_.
+  ::: tip
+  Default `method` value is `merge`
+  :::
+  ::: warning
+  `rebase` does not exist on Gitlab
+  :::
+
+To use the `MergePullRequestRunnable`, simply add the `callback` on your `rules.yml` config file.
+
+```yaml
+# ...
+onSuccess:
+  - callback: MergePullRequestRunnable
+    args:
+      commitTitle: 'merging {{data.branch}} PR'
+      commitMessage: 'extra informations...'
+      sha: 6dcb09b5b57875f334f61aebed695e2e4193db5e
+      method: squash
 ```
 
 ## SendEmailRunnable
@@ -232,6 +280,71 @@ onBoth:
       failTargetUrl: 'http://www.ko.com/'
       successDescriptionMessage: 'Good commit message!'
       failDescriptionMessage: 'Not good...'
+```
+
+## UpdateIssueRunnable
+
+### Goal
+
+`UpdateIssueRunnable` update some issue's properties.
+
+::: warning
+Be sure that the rule returned the `issueNumber` property in the `RuleResult` object.
+:::
+
+### Usage
+
+This Post-Action need the following args:
+
+- `labels`: the string list of labels _[optional]_,
+  ::: warning
+  Be careful, this will not appened `labels` to existing one, but overwrite them.
+  :::
+- `state`: open|close _[optional]_.
+
+To use the `UpdateIssueRunnable`, simply add the `callback` on your `rules.yml` config file.
+
+```yaml
+# ...
+onError:
+  - callback: UpdateIssueRunnable
+    args:
+      labels:
+        - good first issue
+        - enhancement
+      state: open
+```
+
+## UpdatePullRequestRunnable
+
+### Goal
+
+`UpdatePullRequestRunnable` update some PR's properties.
+
+::: warning
+Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object.
+:::
+
+### Usage
+
+This Post-Action need the following args:
+
+- `target`: the branch target _[optional]_,
+- `title`: the title of the PR _[optional]_,
+- `state`: open|close _[optional]_,
+- `description`: the PR description _[optional]_.
+
+To use the `UpdatePullRequestRunnable`, simply add the `callback` on your `rules.yml` config file.
+
+```yaml
+# ...
+onError:
+  - callback: UpdatePullRequestRunnable
+    args:
+      target: 'my_target_branch'
+      title: 'WIP: add custom rules'
+      description: 'some extra informations...'
+      state: open
 ```
 
 ## WebhookRunnable
