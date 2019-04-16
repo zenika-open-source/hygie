@@ -36,7 +36,7 @@ describe('RulesService', () => {
     webhook.gitService = githubService;
     webhook.gitType = GitTypeEnum.Github;
     webhook.projectId = 1;
-    webhook.branchName = 'test_webhook';
+    webhook.branchName = 'test_branch';
     webhook.repository = {
       fullName: 'bastienterrier/test_webhook',
       name: 'test_webhook',
@@ -78,6 +78,7 @@ describe('RulesService', () => {
       );
       const expectedResult = {
         addedFiles: [],
+        branch: 'test_branch',
       };
       expect(result.validated).toBe(false);
       expect(result.data).toEqual(expectedResult);
@@ -115,6 +116,7 @@ describe('RulesService', () => {
       );
       const expectedResult = {
         addedFiles: ['a.md', 'b.md', 'e.md', 'aa.md', 'bb.md', 'ee.md'],
+        branch: 'test_branch',
       };
       expect(result.validated).toBe(true);
       expect(result.data).toEqual(expectedResult);

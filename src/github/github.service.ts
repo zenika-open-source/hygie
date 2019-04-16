@@ -207,7 +207,6 @@ export class GithubService implements GitServiceInterface {
     gitApiInfos: GitApiInfos,
     gitFileInfos: GitFileInfos,
   ): Promise<void> {
-    logger.warn('calling deleteFile');
     const localConfig: any = JSON.parse(JSON.stringify(this.configGitHub));
 
     return new Promise((resolve, reject) => {

@@ -109,10 +109,10 @@ export class RunnablesService {
     return runnable;
   }
 
-  executeRunnableFunctions(
+  async executeRunnableFunctions(
     ruleResult: RuleResult,
     ruleOrGroup: Rule | Group,
-  ): boolean {
+  ): Promise<boolean> {
     let runnable: Runnable;
 
     if (typeof ruleOrGroup.onBoth !== 'undefined') {
@@ -127,7 +127,7 @@ export class RunnablesService {
         runnable = this.getRunnable(success.callback);
         runnable.run(CallbackType.Success, ruleResult, success.args);
       });
-      return true;
+      return Promise.resolve(true);
     } else if (
       !ruleResult.validated &&
       typeof ruleOrGroup.onError !== 'undefined'
@@ -136,9 +136,9 @@ export class RunnablesService {
         runnable = this.getRunnable(error.callback);
         runnable.run(CallbackType.Error, ruleResult, error.args);
       });
-      return false;
+      return Promise.resolve(false);
     }
 
-    return false;
+    return Promise.resolve(false);
   }
 }

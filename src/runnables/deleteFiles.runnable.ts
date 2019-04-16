@@ -39,11 +39,16 @@ export class DeleteFilesRunnable extends Runnable {
 
     // Default
     if (typeof args !== 'undefined' && typeof args.message === 'undefined') {
-      args.message = 'removing some files';
+      args.message = 'removing file';
     }
 
     if (typeof args !== 'undefined' && typeof args.files !== 'undefined') {
-      filesList = render(args.files, ruleResult);
+      if (typeof args.files === 'string') {
+        filesList = render(args.files, ruleResult);
+      } else {
+        filesList = args.files;
+      }
+
       filesList = filesList
         .toString()
         .replace(/&#x2F;/g, '/')
@@ -55,10 +60,11 @@ export class DeleteFilesRunnable extends Runnable {
       }
     }
 
-    // tslint:disable-next-line:no-console
-    console.log(filesList);
+    // tslint:disable-next-line:prefer-for-of
+    for (let index = 0; index < filesList.length; index++) {
+      // Need a for loop because Async/Wait does not work in ForEach
 
-    await filesList.forEach(async file => {
+      const file: string = filesList[index];
       const gitFileInfos = new GitFileInfos();
       if (typeof args !== 'undefined' && typeof args.branch !== 'undefined') {
         gitFileInfos.fileBranch = render(args.branch, ruleResult);
@@ -74,17 +80,10 @@ export class DeleteFilesRunnable extends Runnable {
       gitFileInfos.filePath = render(file, ruleResult);
 
       if (gitApiInfos.git === GitTypeEnum.Github) {
-        await this.githubService
-          .deleteFile(gitApiInfos, gitFileInfos)
-          .then(() => {
-            logger.warn(gitFileInfos.filePath + ' deleted');
-          })
-          .catch(err => {
-            logger.warn(gitFileInfos.filePath + ' ' + err);
-          });
+        await this.githubService.deleteFile(gitApiInfos, gitFileInfos);
       } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
         await this.gitlabService.deleteFile(gitApiInfos, gitFileInfos);
       }
-    });
+    }
   }
 }

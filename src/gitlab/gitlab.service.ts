@@ -266,7 +266,13 @@ export class GitlabService implements GitServiceInterface {
           }/repository/files/${encodeURIComponent(gitFileInfos.filePath)}`,
           configGitLab,
         )
-        .subscribe(null, err => logger.error(err));
+        .subscribe(
+          response => resolve(),
+          err => {
+            logger.error(err);
+            reject(err);
+          },
+        );
     });
   }
 
