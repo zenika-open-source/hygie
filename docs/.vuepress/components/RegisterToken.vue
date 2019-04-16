@@ -103,7 +103,7 @@ export default {
         })
         .catch(err => {
           this.responseMessage =
-            '<span class="warning">Server to no answer</span>';
+            '<span class="warning">No response from server</span>';
         })
         .then(response => {
           if (response.data.alreadyExist) {

@@ -21,7 +21,14 @@ export class MockHttpService {
 export class MockGitlabService {
   updatePullRequest: jest.Mock = jest.fn().mockName('updatePullRequestGitlab');
   mergePullRequest: jest.Mock = jest.fn().mockName('mergePullRequestGitlab');
-  deleteFile: jest.Mock = jest.fn().mockName('deleteFileGitlab');
+  deleteFile: jest.Mock = jest
+    .fn()
+    .mockName('deleteFileGitlab')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve();
+      });
+    });
   createIssue: jest.Mock = jest.fn().mockName('createIssueGitlab');
   deleteBranch: jest.Mock = jest.fn().mockName('deleteBranchGitlab');
   updateIssue: jest.Mock = jest.fn().mockName('updateIssueGitlab');
@@ -37,7 +44,14 @@ export class MockGitlabService {
 export class MockGithubService {
   updatePullRequest: jest.Mock = jest.fn().mockName('updatePullRequestGithub');
   mergePullRequest: jest.Mock = jest.fn().mockName('mergePullRequestGithub');
-  deleteFile: jest.Mock = jest.fn().mockName('deleteFileGithub');
+  deleteFile: jest.Mock = jest
+    .fn()
+    .mockName('deleteFileGithub')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve();
+      });
+    });
   createIssue: jest.Mock = jest.fn().mockName('createIssueGithub');
   updateIssue: jest.Mock = jest.fn().mockName('updateIssueGithub');
   deleteBranch: jest.Mock = jest.fn().mockName('deleteBranchGithub');

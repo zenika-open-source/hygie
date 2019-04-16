@@ -84,6 +84,63 @@ onError:
       description: 'this is the description'
 ```
 
+## DeleteBranchRunnable
+
+### Goal
+
+The `DeleteBranchRunnable` delete a particular branch.
+
+### Usage
+
+This Post-Action has one optionnal arg:
+
+- `branchName`: the branch to delete _[optional]_,
+  ::: tip
+  If no branch name is provide, it will be set to `data.branch` returned by the previous rule.
+  :::
+
+To use the `DeleteBranchRunnable`, simply add the `callback` on your `rules.yml` config file.
+
+```yaml
+# ...
+onError:
+  - callback: DeleteBranchRunnable
+    args:
+      branchName: develop
+```
+
+## DeleteFilesRunnable
+
+### Goal
+
+The `DeleteFilesRunnable` delete a set of files.
+
+### Usage
+
+This Post-Action need the following args:
+
+- files: the files list to delete,
+- message: the commit message _[optional]_,
+  ::: tip
+  If not provide, it will be `removing some files'`
+  :::
+- branch: the branch on which it will delete the files _[optional]_,
+  ::: tip
+  If no branch name is provide, it will be set to `data.branch` returned by the previous rule if exist, `master` otherwise.
+  :::
+
+To use the `DeleteFilesRunnable`, simply add the `callback` on your `rules.yml` config file.
+
+```yaml
+# ...
+onError:
+  - callback: DeleteFilesRunnable
+    args:
+      files:
+        - a.exe
+        - b.exe
+```
+
 ## LoggerRunnable
 
 ### Goal

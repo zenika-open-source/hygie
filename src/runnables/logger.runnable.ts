@@ -15,11 +15,11 @@ interface LoggerArgs {
  */
 @RunnableDecorator('LoggerRunnable')
 export class LoggerRunnable extends Runnable {
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: LoggerArgs,
-  ): void {
+  ): Promise<void> {
     // Defaults
     if (
       typeof args.type === 'undefined' &&
