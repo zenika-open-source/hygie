@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Cron, NestSchedule } from 'nest-schedule';
+import { Cron, NestSchedule } from '@dxdeveloperexperience/nest-schedule';
 import { logger } from '../logger/logger.service';
 import { Utils } from '../utils/utils';
 
@@ -21,21 +21,14 @@ export class Schedule extends NestSchedule {
     this.name = name;
     logger.info('Schedule :' + name);
     this.informations = infos;
+  }
 
-    logger.info(this.informations.cron);
-
-    Cron('*/2 * * * * *', {
-      startTime: new Date(),
-      endTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
-      tz: 'Europe/Paris',
-    })(
-      this,
-      async () => {
-        logger.info(
-          `#id${this.id} ${this.name} : ${this.informations.message}`,
-        );
-      },
-      {},
-    );
+  @Cron('*/5 * * * * *', {
+    startTime: new Date(),
+    endTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+    tz: 'Europe/Paris',
+  })
+  async cronJob() {
+    logger.info(`${this.id} ${this.name} : ${this.informations.message}`);
   }
 }

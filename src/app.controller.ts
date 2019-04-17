@@ -26,8 +26,7 @@ import { GithubService } from './github/github.service';
 import { RemoteConfigUtils } from './remote-config/utils';
 import { Utils } from './utils/utils';
 import { ScheduleService } from './scheduler/scheduler.service';
-import { NestSchedule } from 'nest-schedule';
-import { Schedule, ScheduleInformations } from './scheduler/schedule';
+import { ScheduleInformations } from './scheduler/schedule';
 
 @Controller()
 export class AppController {
