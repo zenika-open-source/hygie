@@ -25,6 +25,9 @@ import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
 import { RemoteConfigUtils } from './remote-config/utils';
 import { Utils } from './utils/utils';
+import { ScheduleService } from './scheduler/scheduler.service';
+import { NestSchedule } from 'nest-schedule';
+import { Schedule, ScheduleInformations } from './scheduler/schedule';
 
 @Controller()
 export class AppController {
@@ -33,6 +36,7 @@ export class AppController {
     private readonly rulesService: RulesService,
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
+    private readonly scheduleService: ScheduleService,
   ) {}
 
   @Get('/')
@@ -119,6 +123,17 @@ export class AppController {
         remoteRepository,
       );
       response.status(HttpStatus.ACCEPTED).send(result);
+    }
+  }
+
+  @Post('cron')
+  async cronJobs(@Body() body: any, @Res() response): Promise<void> {
+    const name: string = body.name;
+    const infos: ScheduleInformations = body.infos;
+    if (this.scheduleService.createSchedule(name, infos)) {
+      response.send('Schedule successfully created');
+    } else {
+      response.send('Cannot create Schedule...');
     }
   }
 }
