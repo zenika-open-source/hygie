@@ -43,6 +43,7 @@ describe('remote-config', () => {
       const result: string = RemoteConfigUtils.downloadRulesFile(
         httpService,
         'https://github.com/DX-DeveloperExperience/git-webhooks',
+        'rules.yml',
       );
       expect(httpService.get).toBeCalledWith(
         'https://raw.githubusercontent.com/DX-DeveloperExperience/git-webhooks/master/.git-webhooks/rules.yml',
@@ -57,6 +58,7 @@ describe('remote-config', () => {
       const result: string = RemoteConfigUtils.downloadRulesFile(
         httpService,
         'https://gitlab.com/gitlab-org/gitlab-ce',
+        'rules.yml',
       );
       expect(httpService.get).toBeCalledWith(
         'https://gitlab.com/gitlab-org/gitlab-ce/raw/master/.git-webhooks/rules.yml',

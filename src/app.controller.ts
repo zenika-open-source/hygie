@@ -26,7 +26,7 @@ import { GithubService } from './github/github.service';
 import { RemoteConfigUtils } from './remote-config/utils';
 import { Utils } from './utils/utils';
 import { ScheduleService } from './scheduler/scheduler.service';
-import { ScheduleInformations } from './scheduler/schedule';
+import { CronInterface } from './scheduler/cron.interface';
 
 @Controller()
 export class AppController {
@@ -95,6 +95,7 @@ export class AppController {
           ? RemoteConfigUtils.downloadRulesFile(
               this.httpService,
               webhook.getCloneURL(),
+              'rules.yml',
             )
           : 'src/rules';
 
@@ -103,14 +104,9 @@ export class AppController {
         this.githubService.setEnvironmentVariables(remoteEnvs);
         this.gitlabService.setEnvironmentVariables(remoteEnvs);
       } catch (e) {
-        if (e instanceof PreconditionException) {
-          logger.error(
-            'There is no config.env file for the current git project',
-          );
-          return;
-        } else {
-          throw e;
-        }
+        logger.error(e);
+        logger.error('There is no config.env file for the current git project');
+        return;
       }
 
       logger.info(
@@ -120,16 +116,27 @@ export class AppController {
       const result = await this.rulesService.testRules(
         webhook,
         remoteRepository,
+        'rules.yml',
       );
       response.status(HttpStatus.ACCEPTED).send(result);
     }
   }
 
   @Post('cron')
-  async cronJobs(@Body() body: any, @Res() response): Promise<void> {
-    const name: string = body.name;
-    const infos: ScheduleInformations = body.infos;
-    if (this.scheduleService.createSchedule(name, infos)) {
+  async cronJobs(@Body() cron: CronInterface, @Res() response): Promise<void> {
+    let remoteRepository: string;
+    // First, download the rules-cron.yml file
+    try {
+      remoteRepository = RemoteConfigUtils.downloadRulesFile(
+        this.httpService,
+        cron.projectURL,
+        cron.filename,
+      );
+    } catch (e) {
+      response.send(e);
+    }
+
+    if (this.scheduleService.createSchedule(cron, remoteRepository)) {
       response.send('Schedule successfully created');
     } else {
       response.send('Cannot create Schedule...');

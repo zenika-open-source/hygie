@@ -3,7 +3,6 @@ import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
-import { logger } from '../logger/logger.service';
 
 interface CheckVulnerabilitiesOptions {
   packageUrl: string;

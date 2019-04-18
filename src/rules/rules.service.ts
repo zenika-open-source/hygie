@@ -17,22 +17,23 @@ export class RulesService {
     private readonly rulesClasses: Rule[] = [],
   ) {}
 
-  getConfiguration(remoteRepository: string): any {
+  getConfiguration(remoteRepository: string, ruleFile: string): any {
     const path = require('path');
     return safeLoad(
       readFileSync(
-        path.resolve(__dirname, `../../${remoteRepository}/rules.yml`),
+        path.resolve(__dirname, `../../${remoteRepository}/${ruleFile}`),
         'utf-8',
       ),
     );
   }
 
-  getRulesConfiguration(remoteRepository: string): Rule[] {
-    return this.getConfiguration(remoteRepository).rules || [];
+  getRulesConfiguration(remoteRepository: string, ruleFile: string): Rule[] {
+    return this.getConfiguration(remoteRepository, ruleFile).rules || [];
   }
 
-  getGroupsConfiguration(remoteRepository: string): Group[] {
-    const groupsConfig = this.getConfiguration(remoteRepository).groups || [];
+  getGroupsConfiguration(remoteRepository: string, ruleFile: string): Group[] {
+    const groupsConfig =
+      this.getConfiguration(remoteRepository, ruleFile).groups || [];
 
     return groupsConfig.map(g => {
       const group = new Group();
@@ -45,8 +46,10 @@ export class RulesService {
     });
   }
 
-  getRulesOptions(remoteRepository: string): RulesOptions {
-    return new RulesOptions(this.getConfiguration(remoteRepository).options);
+  getRulesOptions(remoteRepository: string, ruleFile: string): RulesOptions {
+    return new RulesOptions(
+      this.getConfiguration(remoteRepository, ruleFile).options,
+    );
   }
 
   getRule(ruleConfig): Rule {
@@ -56,10 +59,20 @@ export class RulesService {
   async testRules(
     webhook: Webhook,
     remoteRepository: string,
+    ruleFile: string,
   ): Promise<RuleResult[]> {
-    const rules: Rule[] = this.getRulesConfiguration(remoteRepository);
-    const groups: Group[] = this.getGroupsConfiguration(remoteRepository);
-    const rulesOptions: RulesOptions = this.getRulesOptions(remoteRepository);
+    const rules: Rule[] = this.getRulesConfiguration(
+      remoteRepository,
+      ruleFile,
+    );
+    const groups: Group[] = this.getGroupsConfiguration(
+      remoteRepository,
+      ruleFile,
+    );
+    const rulesOptions: RulesOptions = this.getRulesOptions(
+      remoteRepository,
+      ruleFile,
+    );
 
     const BreakException = {};
     const results: RuleResult[] = new Array();
@@ -141,8 +154,7 @@ export class RulesService {
           }
         });
       } catch (e) {
-        // tslint:disable-next-line:no-console
-        console.error(e);
+        logger.error(e);
       }
     }
 

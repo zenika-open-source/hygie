@@ -1,5 +1,5 @@
 import { logger } from '../logger/logger.service';
-import { HttpService } from '@nestjs/common';
+import { HttpService, HttpException, HttpStatus } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
 
@@ -28,6 +28,7 @@ export class RemoteConfigUtils {
   static downloadRulesFile(
     httpService: HttpService,
     projectURL: string,
+    filename: string,
   ): string {
     const whichGit: GitTypeEnum =
       projectURL.indexOf('github.com') > -1
@@ -41,13 +42,13 @@ export class RemoteConfigUtils {
       case GitTypeEnum.Github:
         rulesFilePath = `https://raw.githubusercontent.com/${this.getPath(
           projectURL.split('/'),
-        )}/master/.git-webhooks/rules.yml`;
+        )}/master/.git-webhooks/${filename}`;
         break;
       case GitTypeEnum.Gitlab:
         rulesFilePath = `${projectURL.replace(
           '.git',
           '',
-        )}/raw/master/.git-webhooks/rules.yml`;
+        )}/raw/master/.git-webhooks/${filename}`;
         break;
     }
 
@@ -57,19 +58,32 @@ export class RemoteConfigUtils {
     try {
       httpService.get(rulesFilePath).subscribe(
         response => {
-          Utils.writeFileSync(`${gitWebhooksFolder}/rules.yml`, response.data);
+          Utils.writeFileSync(
+            `${gitWebhooksFolder}/${filename}`,
+            response.data,
+          );
         },
         err => {
           logger.error(err);
-          logger.warn('No rules.yml file found.\nUse the default one.');
-          Utils.writeFileSync(
-            `${gitWebhooksFolder}/rules.yml`,
-            fs.readFileSync('src/rules/rules.yml'),
-          );
+          if (filename === 'rules.yml') {
+            logger.warn('No rules.yml file found.\nUse the default one.');
+            Utils.writeFileSync(
+              `${gitWebhooksFolder}/rules.yml`,
+              fs.readFileSync('src/rules/rules.yml'),
+            );
+          } else {
+            throw new HttpException(
+              `${filename} do not exist!`,
+              HttpStatus.NOT_FOUND,
+            );
+          }
         },
       );
       return gitWebhooksFolder;
     } catch (e) {
+      if (e.getStatus() === HttpStatus.NOT_FOUND) {
+        throw e;
+      }
       logger.error(e);
       return gitWebhooksFolder;
     }
