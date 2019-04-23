@@ -16,52 +16,54 @@ interface CheckVulnerabilitiesOptions {
 @RuleDecorator('checkVulnerabilities')
 export class CheckVulnerabilitiesRule extends Rule {
   options: CheckVulnerabilitiesOptions;
-  events = [GitEventEnum.Push];
+  events = [GitEventEnum.Push, GitEventEnum.Cron];
 
   async validate(
     webhook: Webhook,
     ruleConfig: CheckVulnerabilitiesRule,
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+    return new Promise(async (resolve, reject) => {
+      const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
 
-    const execa = require('execa');
-    const download = require('download');
+      const execa = require('execa');
+      const download = require('download');
 
-    let audit: any;
+      let audit: any;
 
-    await Promise.all([
-      download(
-        ruleConfig.options.packageUrl,
-        `packages/${webhook.getRemoteDirectory()}`,
-      ),
-      download(
-        ruleConfig.options.packageLockUrl,
-        `packages/${webhook.getRemoteDirectory()}`,
-      ),
-    ]);
+      await Promise.all([
+        download(
+          ruleConfig.options.packageUrl,
+          `packages/${webhook.getRemoteDirectory()}`,
+        ),
+        download(
+          ruleConfig.options.packageLockUrl,
+          `packages/${webhook.getRemoteDirectory()}`,
+        ),
+      ]);
 
-    try {
-      audit = execa.shellSync(
-        `cd packages/${webhook.getRemoteDirectory()} & npm audit --json`,
-      );
-      ruleResult.data = {
-        vulnerabilities: JSON.parse(audit.stdout),
-      };
-      ruleResult.validated = true;
-    } catch (e) {
-      ruleResult.data = {
-        vulnerabilities: JSON.parse(e.stdout),
-      };
-      ruleResult.validated = false;
-    }
+      try {
+        audit = execa.shellSync(
+          `cd packages/${webhook.getRemoteDirectory()} & npm audit --json`,
+        );
+        ruleResult.data = {
+          vulnerabilities: JSON.parse(audit.stdout),
+        };
+        ruleResult.validated = true;
+      } catch (e) {
+        ruleResult.data = {
+          vulnerabilities: JSON.parse(e.stdout),
+        };
+        ruleResult.validated = false;
+      }
 
-    // Delete folder
-    // DO NOT WORK ON WINDOWS
-    // UNCOMMENT IT IN A LINUX ENV
-    /*execa.shellSync(
+      // Delete folder
+      // DO NOT WORK ON WINDOWS
+      // UNCOMMENT IT IN A LINUX ENV
+      /*execa.shellSync(
       `rm -rf packages/${webhook.getRemoteDirectory().split('/')[0]}`,
     );*/
 
-    return ruleResult;
+      resolve(ruleResult);
+    });
   }
 }

@@ -60,7 +60,6 @@ export class DeleteFilesRunnable extends Runnable {
       }
     }
 
-    // tslint:disable-next-line:prefer-for-of
     for (let index = 0; index < filesList.length; index++) {
       // Need a for loop because Async/Wait does not work in ForEach
 

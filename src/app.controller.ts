@@ -9,7 +9,6 @@ import {
   UseFilters,
   Header,
   HttpService,
-  Param,
 } from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { WebhookInterceptor } from './webhook/webhook.interceptor';
@@ -92,7 +91,7 @@ export class AppController {
 
       const remoteRepository =
         getRemoteRules === 'true'
-          ? RemoteConfigUtils.downloadRulesFile(
+          ? await RemoteConfigUtils.downloadRulesFile(
               this.httpService,
               webhook.getCloneURL(),
               'rules.yml',
@@ -127,7 +126,7 @@ export class AppController {
     let remoteRepository: string;
     // First, download the rules-cron.yml file
     try {
-      remoteRepository = RemoteConfigUtils.downloadRulesFile(
+      remoteRepository = await RemoteConfigUtils.downloadRulesFile(
         this.httpService,
         cron.projectURL,
         cron.filename,

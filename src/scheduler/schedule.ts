@@ -14,6 +14,7 @@ export class Schedule extends NestSchedule {
   readonly id: string;
   readonly remoteEnvs: string;
   readonly remoteRepository: string;
+  readonly webhook: Webhook;
 
   readonly cron: CronInterface;
 
@@ -29,12 +30,12 @@ export class Schedule extends NestSchedule {
     this.cron = cron;
     logger.info('Schedule :' + this.cron.filename);
 
-    const splitedURL = this.cron.projectURL.split('/');
-    this.remoteEnvs =
-      splitedURL[splitedURL.length - 2] +
-      '/' +
-      splitedURL[splitedURL.length - 1].replace('.git', '');
+    this.remoteEnvs = Utils.getRepositoryFullName(this.cron.projectURL);
     this.remoteRepository = remoteRepository;
+
+    // Init Webhook
+    this.webhook = new Webhook(this.gitlabService, this.githubService);
+    this.webhook.setCronWebhook(cron);
   }
 
   @Cron('*/5 * * * * *', {
@@ -53,20 +54,13 @@ export class Schedule extends NestSchedule {
 
     logger.info(`${this.id}: will execute ${this.cron.filename}`);
 
-    const webhook: Webhook = new Webhook(
-      this.gitlabService,
-      this.githubService,
-    );
-
-    logger.info('avant');
-    const result = await this.rulesService.testRules(
-      webhook,
+    const results = await this.rulesService.testRules(
+      this.webhook,
       this.remoteRepository,
       this.cron.filename,
     );
-    logger.info('apres');
 
     // tslint:disable-next-line:no-console
-    console.log(result);
+    console.log(results);
   }
 }

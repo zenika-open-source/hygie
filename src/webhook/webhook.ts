@@ -28,7 +28,8 @@ import { GitlabEvent } from '../gitlab/gitlabEvent';
 import { GithubEvent } from '../github/githubEvent';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { logger } from '../logger/logger.service';
+import { CronInterface } from '../scheduler/cron.interface';
+import { Utils } from '../utils/utils';
 
 export class WebhookIssue {
   number: number;
@@ -385,5 +386,19 @@ export class Webhook {
     }
 
     return gitApiInfos;
+  }
+
+  setCronWebhook(cron: CronInterface): void {
+    this.gitType = Utils.whichGitType(cron.projectURL);
+    this.gitEvent = GitEventEnum.Cron;
+
+    this.repository = new WebhookRepository();
+    this.repository.cloneURL = cron.projectURL;
+
+    if (this.gitType === GitTypeEnum.Github) {
+      this.repository.fullName = Utils.getRepositoryFullName(cron.projectURL);
+    } else if (this.gitType === GitTypeEnum.Gitlab) {
+      this.projectId = cron.gitlabProjectId;
+    }
   }
 }

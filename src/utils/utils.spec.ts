@@ -1,4 +1,5 @@
 import { Utils } from './utils';
+import { GitTypeEnum } from '../webhook/utils.enum';
 
 describe('Utils', () => {
   beforeEach(() => {
@@ -49,6 +50,34 @@ gitToken=azertyuiop`,
         key: 'value',
       };
       expect(Utils.getStringValue(test.key)).toBe('value');
+    });
+  });
+
+  describe('whichGitType', () => {
+    it('should return "Github"', () => {
+      expect(
+        Utils.whichGitType('https://github.com/bastienterrier/test-webhook'),
+      ).toBe(GitTypeEnum.Github);
+    });
+    it('should return "Gitlab"', () => {
+      expect(
+        Utils.whichGitType('https://gitlab.com/bastien.terrier/test_webhook'),
+      ).toBe(GitTypeEnum.Gitlab);
+    });
+    it('should return "Undifined"', () => {
+      expect(Utils.whichGitType('https://google.com')).toBe(
+        GitTypeEnum.Undefined,
+      );
+    });
+  });
+
+  describe('getRepositoryFullName', () => {
+    it('should return "DX-DeveloperExperience/git-webhooks"', () => {
+      expect(
+        Utils.getRepositoryFullName(
+          'https://github.com/DX-DeveloperExperience/git-webhooks',
+        ),
+      ).toBe('DX-DeveloperExperience/git-webhooks');
     });
   });
 

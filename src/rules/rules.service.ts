@@ -61,60 +61,32 @@ export class RulesService {
     remoteRepository: string,
     ruleFile: string,
   ): Promise<RuleResult[]> {
-    const rules: Rule[] = this.getRulesConfiguration(
-      remoteRepository,
-      ruleFile,
-    );
-    const groups: Group[] = this.getGroupsConfiguration(
-      remoteRepository,
-      ruleFile,
-    );
-    const rulesOptions: RulesOptions = this.getRulesOptions(
-      remoteRepository,
-      ruleFile,
-    );
+    return new Promise(async (resolve, reject) => {
+      const rules: Rule[] = this.getRulesConfiguration(
+        remoteRepository,
+        ruleFile,
+      );
+      const groups: Group[] = this.getGroupsConfiguration(
+        remoteRepository,
+        ruleFile,
+      );
+      const rulesOptions: RulesOptions = this.getRulesOptions(
+        remoteRepository,
+        ruleFile,
+      );
 
-    const BreakException = {};
-    const results: RuleResult[] = new Array();
+      const BreakException = {};
+      const results: RuleResult[] = new Array();
 
-    // Individual rules
-    if (rulesOptions.enableRules) {
-      try {
-        logger.info('### TRY RULES ###');
-        rules.forEach(async ruleConfig => {
-          const r = this.getRule(ruleConfig);
-          if (r.isEnabled(webhook, ruleConfig)) {
-            const ruleResult: RuleResult = await r.validate(
-              webhook,
-              ruleConfig,
-            );
-            results.push(ruleResult);
+      // Individual rules
+      if (rulesOptions.enableRules) {
+        try {
+          logger.info('### TRY RULES ###');
 
-            this.runnableService.executeRunnableFunctions(
-              ruleResult,
-              ruleConfig,
-            );
-            if (!rulesOptions.executeAllRules && !ruleResult.validated) {
-              throw BreakException;
-            }
-          }
-        });
-      } catch (e) {
-        if (e !== BreakException) {
-          logger.error(e);
-        }
-      }
-    }
+          for (let index = 0; index < rules.length; index++) {
+            // Need a for loop because Async/Wait does not work in ForEach
+            const ruleConfig = rules[index];
 
-    // Grouped rules
-    if (rulesOptions.enableGroups) {
-      try {
-        logger.info('### TRY GROUPS ###');
-        groups.forEach(g => {
-          const groupResults: GroupResult[] = new Array();
-
-          // g.displayInformations();
-          g.rules.forEach(async ruleConfig => {
             const r = this.getRule(ruleConfig);
             if (r.isEnabled(webhook, ruleConfig)) {
               const ruleResult: RuleResult = await r.validate(
@@ -123,41 +95,86 @@ export class RulesService {
               );
               results.push(ruleResult);
 
-              if (rulesOptions.allRuleResultInOne) {
-                groupResults.push({
-                  name: ruleConfig.name,
-                  ruleResult,
-                });
-              } else {
-                this.runnableService.executeRunnableFunctions(ruleResult, g);
-              }
-
-              if (
-                !rulesOptions.executeAllRules &&
-                !rulesOptions.allRuleResultInOne &&
-                !ruleResult.validated
-              ) {
+              this.runnableService.executeRunnableFunctions(
+                ruleResult,
+                ruleConfig,
+              );
+              if (!rulesOptions.executeAllRules && !ruleResult.validated) {
                 throw BreakException;
               }
             }
-          });
+          }
+        } catch (e) {
+          if (e !== BreakException) {
+            logger.error(e);
+          }
+        }
+      }
 
-          // If all rules have been tested, we can execute runnable functions with the result of previous rules
-          if (rulesOptions.allRuleResultInOne) {
-            if (groupResults.length > 0) {
-              const ruleResult: RuleResult = new RuleResult(
-                webhook.getGitApiInfos(),
-              );
-              ruleResult.data = groupResults;
-              this.runnableService.executeRunnableFunctions(ruleResult, g);
+      // Grouped rules
+      if (rulesOptions.enableGroups) {
+        try {
+          logger.info('### TRY GROUPS ###');
+
+          for (let indexGroup = 0; indexGroup < groups.length; indexGroup++) {
+            // Need a for loop because Async/Wait does not work in ForEach
+            const g = groups[indexGroup];
+
+            const groupResults: GroupResult[] = new Array();
+
+            for (
+              let indexRules = 0;
+              indexRules < g.rules.length;
+              indexRules++
+            ) {
+              // Need a for loop because Async/Wait does not work in ForEach
+
+              const ruleConfig = g.rules[indexRules];
+
+              const r = this.getRule(ruleConfig);
+              if (r.isEnabled(webhook, ruleConfig)) {
+                const ruleResult: RuleResult = await r.validate(
+                  webhook,
+                  ruleConfig,
+                );
+                results.push(ruleResult);
+
+                if (rulesOptions.allRuleResultInOne) {
+                  groupResults.push({
+                    name: ruleConfig.name,
+                    ruleResult,
+                  });
+                } else {
+                  this.runnableService.executeRunnableFunctions(ruleResult, g);
+                }
+
+                if (
+                  !rulesOptions.executeAllRules &&
+                  !rulesOptions.allRuleResultInOne &&
+                  !ruleResult.validated
+                ) {
+                  throw BreakException;
+                }
+              }
+            }
+
+            // If all rules have been tested, we can execute runnable functions with the result of previous rules
+            if (rulesOptions.allRuleResultInOne) {
+              if (groupResults.length > 0) {
+                const ruleResult: RuleResult = new RuleResult(
+                  webhook.getGitApiInfos(),
+                );
+                ruleResult.data = groupResults;
+                this.runnableService.executeRunnableFunctions(ruleResult, g);
+              }
             }
           }
-        });
-      } catch (e) {
-        logger.error(e);
+        } catch (e) {
+          logger.error(e);
+        }
       }
-    }
 
-    return results;
+      resolve(results);
+    });
   }
 }

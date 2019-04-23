@@ -1,6 +1,6 @@
 export interface CronInterface {
   filename: string;
   projectURL: string;
-  gitlabProjectId?: string;
+  gitlabProjectId?: number;
   expression?: string;
 }

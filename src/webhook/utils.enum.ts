@@ -36,6 +36,7 @@ export enum GitEventEnum {
   ClosedPR = 'ClosedPR',
   MergedPR = 'MergedPR',
   ReopenedPR = 'ReopenedPR',
+  Cron = 'Cron',
 }
 
 export function convertCommitStatus(
