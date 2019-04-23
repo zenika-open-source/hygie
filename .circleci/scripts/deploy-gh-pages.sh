@@ -25,6 +25,9 @@ cp .circleci/config.yml docs/.vuepress/dist/.circleci/config.yml
 echo "> cd docs/.vuepress/dist"
 cd docs/.vuepress/dist
 
+echo "> replace __DOCKER_TAG__"
+sed -i "s/__DOCKER_TAG__/${VERSION:1}/g" guide/gettingStarted.html
+
 
 git init
 git add -A

@@ -60,7 +60,7 @@ If you just want to test our project, without cloning it, you can run a containe
 You can simply run a container:
 
 ```
-docker run --name=webhook-container -v webhook-vol:/app -p 3000:3000 dxdeveloperexperience/git-webhooks:TAG
+docker run --name=webhook-container -v webhook-vol:/app -p 3000:3000 dxdeveloperexperience/git-webhooks:__DOCKER_TAG__
 ```
 
 ## Clone and extend it
