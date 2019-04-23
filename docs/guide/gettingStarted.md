@@ -81,12 +81,13 @@ cd git-webhooks
 Then, simply run :
 
 ```
+npm install
 npm run start
 ```
 
 The application is now running at [localhost:3000](localhost:3000)
 
-You can check if everything's alright, you sould get a welcome message.
+To check if everything's alright, you should get a welcome message.
 
 ### Build your own Docker image
 
@@ -152,7 +153,7 @@ But be aware, emails will be sent as **gitwebhooks@zenika.com**.
 ### In your own server
 
 If you want to use your own account, you have to deploy the project in your server.
-You need to create the `crendentials.json` file as describe [in the offical documentation](https://developers.google.com/gmail/api/quickstart/nodejs).
+You need to create the `crendentials.json` file as described [in the offical documentation](https://developers.google.com/gmail/api/quickstart/nodejs).
 
 You just have to follow `Step 1` to get your credentials.
 
