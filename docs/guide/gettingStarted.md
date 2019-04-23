@@ -7,18 +7,20 @@ If you want to use the `Git Webhooks` API, you need to create a `.git-webhooks` 
 This folder will be fetched everytime you interact with our API.
 
 ```
-
 .
 ├── .git-webhooks
-│	├── credentials.json
-│   └── rules.yml
+│  ├── rules.yml
+│  └── rules-cron-*.yml
 └── package.json
 ```
 
 It contains the following files:
 
 - `.git-webhooks/rules.yml`: all the rules and post-actions you configured (see the [config generator](configGenerator.md)),
-- `.git-webhooks/credentials.json`: [Google API](#google-api) credentials _[optional]_.
+- `.git-webhooks/rules-cron-*.yml`: all rules that will be evaluated in a cron job. Same as the `rules.yml` file, check out our [config generator](configGenerator.md). `*` is a wildchar; eg: `rules-cron-vulnerabilities.yml` or `rules-cron-1.yml`.
+  ::: tip
+  You can create as many Cron files as you want.
+  :::
 
 ## Repository registration
 
