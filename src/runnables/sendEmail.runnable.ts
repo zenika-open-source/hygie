@@ -127,11 +127,11 @@ export class SendEmailRunnable extends Runnable {
     });
   }
 
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: SendEmailArgs,
-  ): void {
+  ): Promise<void> {
     readFile('credentials.json', (err, content) => {
       if (err) {
         return logger.error('Error loading credentials.json:', err);

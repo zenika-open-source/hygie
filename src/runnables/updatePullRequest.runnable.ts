@@ -1,6 +1,5 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-import { render } from 'mustache';
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { GithubService } from '../github/github.service';
@@ -30,11 +29,11 @@ export class UpdatePullRequestRunnable extends Runnable {
     super();
   }
 
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: UpdatePullRequestArgs,
-  ): void {
+  ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const data = ruleResult.data as any;
     const gitPRInfos = new GitPRInfos();

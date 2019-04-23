@@ -25,11 +25,11 @@ export class CommentIssueRunnable extends Runnable {
   ) {
     super();
   }
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: CommentIssueArgs,
-  ): void {
+  ): Promise<void> {
     const data = ruleResult.data as any;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     gitIssueInfos.number = data.issueNumber;

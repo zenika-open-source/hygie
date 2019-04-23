@@ -24,11 +24,11 @@ export class DeleteBranchRunnable extends Runnable {
     super();
   }
 
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: DeleteBranchArgs,
-  ): void {
+  ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     let branchName: string;
     // Defaults

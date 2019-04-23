@@ -25,11 +25,11 @@ export class CommentPullRequestRunnable extends Runnable {
   ) {
     super();
   }
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: CommentPRArgs,
-  ): void {
+  ): Promise<void> {
     const data = ruleResult.data as any;
     const gitPRInfos: GitCommentPRInfos = new GitCommentPRInfos();
     gitPRInfos.number = data.pullRequestNumber;

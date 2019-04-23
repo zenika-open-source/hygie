@@ -22,11 +22,11 @@ export class WebhookRunnable extends Runnable {
     super();
   }
 
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: WebhookArgs,
-  ): void {
+  ): Promise<void> {
     this.httpService
       .post(
         render(args.url, ruleResult),

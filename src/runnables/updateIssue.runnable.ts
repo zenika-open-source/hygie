@@ -27,11 +27,11 @@ export class UpdateIssueRunnable extends Runnable {
     super();
   }
 
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: UpdateIssueArgs,
-  ): void {
+  ): Promise<void> {
     const data = ruleResult.data as any;
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();

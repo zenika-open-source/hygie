@@ -67,7 +67,10 @@ export interface GitServiceInterface {
   /**
    * Remove a particular file describe in `gitFileInfos`
    */
-  deleteFile(gitApiInfos: GitApiInfos, gitFileInfos: GitFileInfos): void;
+  deleteFile(
+    gitApiInfos: GitApiInfos,
+    gitFileInfos: GitFileInfos,
+  ): Promise<void>;
 
   /**
    * Merge a Pull Request specify in `gitMergePRInfos`

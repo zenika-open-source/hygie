@@ -55,10 +55,10 @@ Our API is currently running at : [OUR URL]().
 
 If you just want to test our project, without cloning it, you can run a container with one of the existing versions in [DockerHub](https://hub.docker.com/r/dxdeveloperexperience/git-webhooks).
 
-You can simply run a container :
+You can simply run a container:
 
 ```
-docker run --name webhook-container -d -p 3000:3000 dxdeveloperexperience/git-webhooks:TAG
+docker run --name=webhook-container -v webhook-vol:/app -p 3000:3000 dxdeveloperexperience/git-webhooks:TAG
 ```
 
 ## Clone and extend it

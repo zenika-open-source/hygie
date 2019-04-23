@@ -11,13 +11,13 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { logger } from '../logger/logger.service';
 
 interface DeleteFilesArgs {
-  files: string[];
+  files: string[] | string;
   message: string;
   branch: string;
 }
 
 /**
- * `DeleteFilesRunnable` a set of files.
+ * `DeleteFilesRunnable` delete a set of files.
  */
 @RunnableDecorator('DeleteFilesRunnable')
 export class DeleteFilesRunnable extends Runnable {
@@ -28,29 +28,62 @@ export class DeleteFilesRunnable extends Runnable {
     super();
   }
 
-  run(
+  async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: DeleteFilesArgs,
-  ): void {
+  ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
-    args.files.forEach(file => {
+    let filesList: string[];
+
+    // Default
+    if (typeof args !== 'undefined' && typeof args.message === 'undefined') {
+      args.message = 'removing file';
+    }
+
+    if (typeof args !== 'undefined' && typeof args.files !== 'undefined') {
+      if (typeof args.files === 'string') {
+        filesList = render(args.files, ruleResult);
+      } else {
+        filesList = args.files;
+      }
+
+      filesList = filesList
+        .toString()
+        .replace(/&#x2F;/g, '/')
+        .split(',')
+        .filter(f => f !== '');
+    } else {
+      if (typeof (ruleResult as any).data.addedFiles !== 'undefined') {
+        filesList = (ruleResult as any).data.addedFiles;
+      }
+    }
+
+    // tslint:disable-next-line:prefer-for-of
+    for (let index = 0; index < filesList.length; index++) {
+      // Need a for loop because Async/Wait does not work in ForEach
+
+      const file: string = filesList[index];
       const gitFileInfos = new GitFileInfos();
-      if (typeof args.branch !== 'undefined') {
+      if (typeof args !== 'undefined' && typeof args.branch !== 'undefined') {
         gitFileInfos.fileBranch = render(args.branch, ruleResult);
       } else {
         // Default
-        gitFileInfos.fileBranch = 'master';
+        if (typeof (ruleResult as any).data.branch !== 'undefined') {
+          gitFileInfos.fileBranch = (ruleResult as any).data.branch;
+        } else {
+          gitFileInfos.fileBranch = 'master';
+        }
       }
       gitFileInfos.commitMessage = render(args.message, ruleResult);
       gitFileInfos.filePath = render(file, ruleResult);
 
       if (gitApiInfos.git === GitTypeEnum.Github) {
-        this.githubService.deleteFile(gitApiInfos, gitFileInfos);
+        await this.githubService.deleteFile(gitApiInfos, gitFileInfos);
       } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-        this.gitlabService.deleteFile(gitApiInfos, gitFileInfos);
+        await this.gitlabService.deleteFile(gitApiInfos, gitFileInfos);
       }
-    });
+    }
   }
 }

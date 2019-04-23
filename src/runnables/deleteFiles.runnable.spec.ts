@@ -11,7 +11,7 @@ import {
   MockGitlabService,
   MockGithubService,
 } from '../__mocks__/mocks';
-import { BranchNameRule, CommitMessageRule } from '../rules';
+import { CheckAddedFilesRule } from '../rules';
 
 describe('RunnableService', () => {
   let app: TestingModule;
@@ -21,8 +21,8 @@ describe('RunnableService', () => {
 
   let runnableService: RunnablesService;
 
-  let commitMessageRule: CommitMessageRule;
-  let ruleResultCommitMessage: RuleResult;
+  let checkAddedFilesRule: CheckAddedFilesRule;
+  let ruleResultCheckAddedFiles: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -43,31 +43,22 @@ describe('RunnableService', () => {
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
     // branchNameRule initialisation
-    commitMessageRule = new CommitMessageRule();
-    commitMessageRule.onError = [
+    checkAddedFilesRule = new CheckAddedFilesRule();
+    checkAddedFilesRule.onSuccess = [
       {
         callback: 'DeleteFilesRunnable',
         args: {
-          files: ['toto.txt', 'tata.exe'],
           message: 'delete files',
-          branch: '{{data.branch}}',
+          files: 'a.exe,b.exe',
         },
       },
     ];
     // ruleResultBranchName initialisation
-    ruleResultCommitMessage = new RuleResult(myGitApiInfos);
-    ruleResultCommitMessage.validated = false;
-    ruleResultCommitMessage.data = {
-      branch: 'feature/test',
-      commits: [
-        {
-          status: 'Success',
-          success: true,
-          sha: '1',
-          message: 'fix: readme (#12)',
-          matches: ['fix: readme (#12)', 'fix', null, '(#12)'],
-        },
-      ],
+    ruleResultCheckAddedFiles = new RuleResult(myGitApiInfos);
+    ruleResultCheckAddedFiles.validated = true;
+    ruleResultCheckAddedFiles.data = {
+      addedFiles: ['toto.exe', 'tata.exe'],
+      branch: 'test_branch',
     };
   });
 
@@ -78,21 +69,21 @@ describe('RunnableService', () => {
   // DeleteBranch Runnable
   describe('deleteFiles Runnable', () => {
     it('should not call the deleteFile Github nor Gitlab service', () => {
-      ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Undefined;
+      ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Undefined;
       runnableService.executeRunnableFunctions(
-        ruleResultCommitMessage,
-        commitMessageRule,
+        ruleResultCheckAddedFiles,
+        checkAddedFilesRule,
       );
       expect(githubService.deleteFile).not.toBeCalled();
       expect(gitlabService.deleteFile).not.toBeCalled();
     });
   });
   describe('deleteFiles Runnable', () => {
-    it('should call the deleteFile Github service', () => {
-      ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Github;
-      runnableService.executeRunnableFunctions(
-        ruleResultCommitMessage,
-        commitMessageRule,
+    it('should call the deleteFile Github service', async () => {
+      ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Github;
+      await runnableService.executeRunnableFunctions(
+        ruleResultCheckAddedFiles,
+        checkAddedFilesRule,
       );
       expect(githubService.deleteFile).toHaveBeenNthCalledWith(
         1,
@@ -102,8 +93,8 @@ describe('RunnableService', () => {
         },
         {
           commitMessage: 'delete files',
-          fileBranch: 'feature&#x2F;test',
-          filePath: 'toto.txt',
+          fileBranch: 'test_branch',
+          filePath: 'a.exe',
         },
       );
       expect(githubService.deleteFile).toHaveBeenNthCalledWith(
@@ -114,19 +105,19 @@ describe('RunnableService', () => {
         },
         {
           commitMessage: 'delete files',
-          fileBranch: 'feature&#x2F;test',
-          filePath: 'tata.exe',
+          fileBranch: 'test_branch',
+          filePath: 'b.exe',
         },
       );
       expect(gitlabService.deleteFile).not.toBeCalled();
     });
   });
   describe('deleteFiles Runnable', () => {
-    it('should call the deleteFile Gitlab service', () => {
-      ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Gitlab;
-      runnableService.executeRunnableFunctions(
-        ruleResultCommitMessage,
-        commitMessageRule,
+    it('should call the deleteFile Gitlab service', async () => {
+      ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Gitlab;
+      await runnableService.executeRunnableFunctions(
+        ruleResultCheckAddedFiles,
+        checkAddedFilesRule,
       );
       expect(githubService.deleteFile).not.toBeCalled();
       expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
@@ -137,8 +128,8 @@ describe('RunnableService', () => {
         },
         {
           commitMessage: 'delete files',
-          fileBranch: 'feature&#x2F;test',
-          filePath: 'toto.txt',
+          fileBranch: 'test_branch',
+          filePath: 'a.exe',
         },
       );
       expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
@@ -149,8 +140,161 @@ describe('RunnableService', () => {
         },
         {
           commitMessage: 'delete files',
-          fileBranch: 'feature&#x2F;test',
+          fileBranch: 'test_branch',
+          filePath: 'b.exe',
+        },
+      );
+    });
+  });
+  describe('deleteFiles Runnable', () => {
+    it('should call the deleteFile Github service', async () => {
+      checkAddedFilesRule.onSuccess = [
+        {
+          callback: 'DeleteFilesRunnable',
+          args: {
+            message: 'delete files',
+          },
+        },
+      ];
+      ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Github;
+      await runnableService.executeRunnableFunctions(
+        ruleResultCheckAddedFiles,
+        checkAddedFilesRule,
+      );
+      expect(githubService.deleteFile).toHaveBeenNthCalledWith(
+        1,
+        {
+          git: 'Github',
+          repositoryFullName: 'bastienterrier/test_webhook',
+        },
+        {
+          commitMessage: 'delete files',
+          fileBranch: 'test_branch',
+          filePath: 'toto.exe',
+        },
+      );
+      expect(githubService.deleteFile).toHaveBeenNthCalledWith(
+        2,
+        {
+          git: 'Github',
+          repositoryFullName: 'bastienterrier/test_webhook',
+        },
+        {
+          commitMessage: 'delete files',
+          fileBranch: 'test_branch',
           filePath: 'tata.exe',
+        },
+      );
+      expect(gitlabService.deleteFile).not.toBeCalled();
+    });
+  });
+  describe('deleteFiles Runnable', () => {
+    it('should call the deleteFile Gitlab service', async () => {
+      ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Gitlab;
+      await runnableService.executeRunnableFunctions(
+        ruleResultCheckAddedFiles,
+        checkAddedFilesRule,
+      );
+      expect(githubService.deleteFile).not.toBeCalled();
+      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
+        1,
+        {
+          git: 'Gitlab',
+          repositoryFullName: 'bastienterrier/test_webhook',
+        },
+        {
+          commitMessage: 'delete files',
+          fileBranch: 'test_branch',
+          filePath: 'toto.exe',
+        },
+      );
+      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
+        2,
+        {
+          git: 'Gitlab',
+          repositoryFullName: 'bastienterrier/test_webhook',
+        },
+        {
+          commitMessage: 'delete files',
+          fileBranch: 'test_branch',
+          filePath: 'tata.exe',
+        },
+      );
+    });
+  });
+  describe('deleteFiles Runnable', () => {
+    it('should call the deleteFile Github service', async () => {
+      checkAddedFilesRule.onSuccess = [
+        {
+          callback: 'DeleteFilesRunnable',
+          args: {
+            message: 'delete files',
+            files: ['c.exe', 'd.exe'],
+          },
+        },
+      ];
+      ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Github;
+      await runnableService.executeRunnableFunctions(
+        ruleResultCheckAddedFiles,
+        checkAddedFilesRule,
+      );
+      expect(githubService.deleteFile).toHaveBeenNthCalledWith(
+        1,
+        {
+          git: 'Github',
+          repositoryFullName: 'bastienterrier/test_webhook',
+        },
+        {
+          commitMessage: 'delete files',
+          fileBranch: 'test_branch',
+          filePath: 'c.exe',
+        },
+      );
+      expect(githubService.deleteFile).toHaveBeenNthCalledWith(
+        2,
+        {
+          git: 'Github',
+          repositoryFullName: 'bastienterrier/test_webhook',
+        },
+        {
+          commitMessage: 'delete files',
+          fileBranch: 'test_branch',
+          filePath: 'd.exe',
+        },
+      );
+      expect(gitlabService.deleteFile).not.toBeCalled();
+    });
+  });
+  describe('deleteFiles Runnable', () => {
+    it('should call the deleteFile Gitlab service', async () => {
+      ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Gitlab;
+      await runnableService.executeRunnableFunctions(
+        ruleResultCheckAddedFiles,
+        checkAddedFilesRule,
+      );
+      expect(githubService.deleteFile).not.toBeCalled();
+      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
+        1,
+        {
+          git: 'Gitlab',
+          repositoryFullName: 'bastienterrier/test_webhook',
+        },
+        {
+          commitMessage: 'delete files',
+          fileBranch: 'test_branch',
+          filePath: 'c.exe',
+        },
+      );
+      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
+        2,
+        {
+          git: 'Gitlab',
+          repositoryFullName: 'bastienterrier/test_webhook',
+        },
+        {
+          commitMessage: 'delete files',
+          fileBranch: 'test_branch',
+          filePath: 'd.exe',
         },
       );
     });
