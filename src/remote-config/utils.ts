@@ -1,5 +1,5 @@
 import { logger } from '../logger/logger.service';
-import { HttpService } from '@nestjs/common';
+import { HttpService, HttpException, HttpStatus } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
 
@@ -25,54 +25,79 @@ export class RemoteConfigUtils {
    * @param projectURL
    * @return the location of the `.git-webhooks` repo
    */
-  static downloadRulesFile(
+  static async downloadRulesFile(
     httpService: HttpService,
     projectURL: string,
-  ): string {
-    const whichGit: GitTypeEnum =
-      projectURL.indexOf('github.com') > -1
-        ? GitTypeEnum.Github
-        : projectURL.indexOf('gitlab.com') > -1
-        ? GitTypeEnum.Gitlab
-        : GitTypeEnum.Undefined;
+    filename: string,
+  ): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const whichGit: GitTypeEnum =
+        projectURL.indexOf('github.com') > -1
+          ? GitTypeEnum.Github
+          : projectURL.indexOf('gitlab.com') > -1
+          ? GitTypeEnum.Gitlab
+          : GitTypeEnum.Undefined;
 
-    let rulesFilePath: string;
-    switch (whichGit) {
-      case GitTypeEnum.Github:
-        rulesFilePath = `https://raw.githubusercontent.com/${this.getPath(
-          projectURL.split('/'),
-        )}/master/.git-webhooks/rules.yml`;
-        break;
-      case GitTypeEnum.Gitlab:
-        rulesFilePath = `${projectURL.replace(
-          '.git',
-          '',
-        )}/raw/master/.git-webhooks/rules.yml`;
-        break;
-    }
+      let rulesFilePath: string;
+      switch (whichGit) {
+        case GitTypeEnum.Github:
+          rulesFilePath = `https://raw.githubusercontent.com/${this.getPath(
+            projectURL.split('/'),
+          )}/master/.git-webhooks/${filename}`;
+          break;
+        case GitTypeEnum.Gitlab:
+          rulesFilePath = `${projectURL.replace(
+            '.git',
+            '',
+          )}/raw/master/.git-webhooks/${filename}`;
+          break;
+      }
 
-    const gitWebhooksFolder: string =
-      'remote-rules/' + this.getPath(projectURL.split('/')) + '/.git-webhooks';
+      const gitWebhooksFolder: string =
+        'remote-rules/' +
+        this.getPath(projectURL.split('/')) +
+        '/.git-webhooks';
 
-    try {
-      httpService.get(rulesFilePath).subscribe(
-        response => {
-          Utils.writeFileSync(`${gitWebhooksFolder}/rules.yml`, response.data);
-        },
-        err => {
-          logger.error(err);
-          logger.warn('No rules.yml file found.\nUse the default one.');
-          Utils.writeFileSync(
-            `${gitWebhooksFolder}/rules.yml`,
-            fs.readFileSync('src/rules/rules.yml'),
-          );
-        },
-      );
-      return gitWebhooksFolder;
-    } catch (e) {
-      logger.error(e);
-      return gitWebhooksFolder;
-    }
+      try {
+        await httpService
+          .get(rulesFilePath)
+          .toPromise()
+          .then(response => {
+            return new Promise(async (res, rej) => {
+              await Utils.writeFileSync(
+                `${gitWebhooksFolder}/${filename}`,
+                response.data,
+              );
+              res(gitWebhooksFolder);
+            });
+          })
+          .catch(err => {
+            return new Promise(async (res, rej) => {
+              logger.error(err);
+              if (filename === 'rules.yml') {
+                logger.warn('No rules.yml file found.\nUse the default one.');
+                await Utils.writeFileSync(
+                  `${gitWebhooksFolder}/rules.yml`,
+                  fs.readFileSync('src/rules/rules.yml'),
+                );
+                res(gitWebhooksFolder);
+              } else {
+                throw new HttpException(
+                  `${filename} do not exist!`,
+                  HttpStatus.NOT_FOUND,
+                );
+              }
+            });
+          });
+        resolve(gitWebhooksFolder);
+      } catch (e) {
+        if (e.getStatus() === HttpStatus.NOT_FOUND) {
+          throw e;
+        }
+        logger.error(e);
+        resolve(gitWebhooksFolder);
+      }
+    });
   }
 
   /**

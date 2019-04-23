@@ -15,3 +15,4 @@ The following events are supported :
 - ClosedPR
 - MergedPR
 - ReopenedPR
+- Cron

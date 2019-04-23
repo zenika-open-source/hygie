@@ -39,10 +39,11 @@ describe('remote-config', () => {
   }); */
 
   describe('downloadRulesFile', () => {
-    it('should call httpService.get method and return the good repo', () => {
-      const result: string = RemoteConfigUtils.downloadRulesFile(
+    it('should call httpService.get method and return the good repo', async () => {
+      const result: string = await RemoteConfigUtils.downloadRulesFile(
         httpService,
         'https://github.com/DX-DeveloperExperience/git-webhooks',
+        'rules.yml',
       );
       expect(httpService.get).toBeCalledWith(
         'https://raw.githubusercontent.com/DX-DeveloperExperience/git-webhooks/master/.git-webhooks/rules.yml',
@@ -53,10 +54,11 @@ describe('remote-config', () => {
     });
   });
   describe('downloadRulesFile', () => {
-    it('should call httpService.get method and return the good repo', () => {
-      const result: string = RemoteConfigUtils.downloadRulesFile(
+    it('should call httpService.get method and return the good repo', async () => {
+      const result: string = await RemoteConfigUtils.downloadRulesFile(
         httpService,
         'https://gitlab.com/gitlab-org/gitlab-ce',
+        'rules.yml',
       );
       expect(httpService.get).toBeCalledWith(
         'https://gitlab.com/gitlab-org/gitlab-ce/raw/master/.git-webhooks/rules.yml',
