@@ -3,7 +3,7 @@
 The `.git-webhooks/rules.yml` file contains all the rules you've configured.
 Check our example `rules.yml` file [here](./rulesExample.md).
 
-You can use our existing rules or adding yours. Rules are very simply to add.
+You can use our existing rules or adding yours. Rules are very simple to add.
 When you create your own rule, it must extends the `Rule` class (`src/rules/rule.class.ts`).
 
 ## Rule configuration
