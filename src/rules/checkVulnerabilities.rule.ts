@@ -3,6 +3,7 @@ import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
+import { logger } from '../logger/logger.service';
 
 interface CheckVulnerabilitiesOptions {
   packageUrl: string;
@@ -27,6 +28,7 @@ export class CheckVulnerabilitiesRule extends Rule {
 
       const execa = require('execa');
       const download = require('download');
+      const fs = require('fs-extra');
 
       let audit: any;
 
@@ -57,11 +59,15 @@ export class CheckVulnerabilitiesRule extends Rule {
       }
 
       // Delete folder
-      // DO NOT WORK ON WINDOWS
-      // UNCOMMENT IT IN A LINUX ENV
-      /*execa.shellSync(
-      `rm -rf packages/${webhook.getRemoteDirectory().split('/')[0]}`,
-    );*/
+      fs.remove(`packages/${webhook.getRemoteDirectory().split('/')[0]}`)
+        .then(() => {
+          logger.info(
+            `packages/${webhook.getRemoteDirectory().split('/')[0]} removed!`,
+          );
+        })
+        .catch(err => {
+          logger.error(err);
+        });
 
       resolve(ruleResult);
     });

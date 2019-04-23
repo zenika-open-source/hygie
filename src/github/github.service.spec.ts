@@ -364,7 +364,7 @@ describe('Github Service', () => {
 
   describe('setEnvironmentVariables', () => {
     it('should set the token and urlApi', () => {
-      const fs = require('fs');
+      const fs = require('fs-extra');
       jest.mock('fs');
 
       fs.readFileSync.mockReturnValue(

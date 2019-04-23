@@ -8,7 +8,7 @@ describe('Utils', () => {
 
   describe('loadEnv', () => {
     it('should call fs', () => {
-      const fs = require('fs');
+      const fs = require('fs-extra');
       jest.mock('fs');
 
       fs.readFileSync.mockReturnValue(
@@ -80,22 +80,4 @@ gitToken=azertyuiop`,
       ).toBe('DX-DeveloperExperience/git-webhooks');
     });
   });
-
-  /*
-  describe('writeFileSync', () => {
-    it('should do something', () => {
-      const fs = require('fs');
-      const path = require('path');
-      jest.clearAllMocks();
-      fs.promises.mkdir = jest.fn().mockImplementation(() => {
-        return Promise.resolve('ok');
-      });
-      fs.writeFileSync = jest.fn();
-
-      jest.mock('path');
-      Utils.writeFileSync('myFile.txt', 'my content...');
-      expect(fs.promises.mkdir).toBeCalledTimes(1);
-      expect(fs.writeFileSync).toBeCalledTimes(1);
-    });
-  });*/
 });

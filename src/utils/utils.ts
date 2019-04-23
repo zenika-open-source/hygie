@@ -10,7 +10,7 @@ export class Utils {
   }
 
   static loadEnv(filePath: string) {
-    const fs = require('fs');
+    const fs = require('fs-extra');
     const dotenv = require('dotenv');
     const envConfig = dotenv.parse(fs.readFileSync(filePath));
     // tslint:disable-next-line:forin
@@ -23,7 +23,7 @@ export class Utils {
     fileName: string,
     fileContent: string,
   ): Promise<boolean> {
-    const fs = require('fs');
+    const fs = require('fs-extra');
     const path = require('path');
     const util = require('util');
     const writeFile = util.promisify(fs.writeFile);

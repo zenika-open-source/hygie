@@ -22,22 +22,6 @@ describe('remote-config', () => {
     jest.clearAllMocks();
   });
 
-  /* describe('writeFileSync', () => {
-    it('should call fs.writeFileSync', () => {
-      const fs = require('fs');
-      jest.mock('fs');
-      fs.writeFileSync.mockReturnValue(true);
-
-      const spy = jest.spyOn(fs, 'writeFileSync');
-
-      RemoteConfigUtils.writeFileSync(
-        'remote-rules/DX-DeveloperExperience/git-webhooks/.git-webhooks/rules.yml',
-        'fileContent',
-      );
-      expect(spy).toBeCalled();
-    });
-  }); */
-
   describe('downloadRulesFile', () => {
     it('should call httpService.get method and return the good repo', async () => {
       const result: string = await RemoteConfigUtils.downloadRulesFile(

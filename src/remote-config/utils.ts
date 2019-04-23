@@ -3,7 +3,7 @@ import { HttpService, HttpException, HttpStatus } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
 
-const fs = require('fs');
+const fs = require('fs-extra');
 
 interface ConfigEnv {
   gitRepo: string;
