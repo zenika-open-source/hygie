@@ -9,7 +9,6 @@ import {
   MockGitlabService,
   MockGithubService,
 } from '../__mocks__/mocks';
-import { CommitMessageRule } from './commitMessage.rule';
 import { GitEventEnum, GitTypeEnum } from '../webhook/utils.enum';
 import { CheckAddedFilesRule } from './checkAddedFiles.rule';
 

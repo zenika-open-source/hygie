@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { NestSchedule, Cron } from '@dxdeveloperexperience/nest-schedule';
 import { logger } from '../logger/logger.service';
 import { Utils } from '../utils/utils';
-import { CronInterface } from './cron.interface';
+import { CronStandardClass } from './cron.interface';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
-import { PreconditionException } from '../exceptions/precondition.exception';
 import { Webhook } from '../webhook/webhook';
 import { RulesService } from '../rules/rules.service';
 
@@ -16,13 +15,13 @@ export class Schedule extends NestSchedule {
   readonly remoteRepository: string;
   readonly webhook: Webhook;
 
-  readonly cron: CronInterface;
+  readonly cron: CronStandardClass;
 
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
     private readonly rulesService: RulesService,
-    cron: CronInterface,
+    cron: CronStandardClass,
     remoteRepository: string,
   ) {
     super();

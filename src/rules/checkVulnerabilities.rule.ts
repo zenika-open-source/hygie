@@ -59,15 +59,11 @@ export class CheckVulnerabilitiesRule extends Rule {
       }
 
       // Delete folder
-      fs.remove(`packages/${webhook.getRemoteDirectory().split('/')[0]}`)
-        .then(() => {
-          logger.info(
-            `packages/${webhook.getRemoteDirectory().split('/')[0]} removed!`,
-          );
-        })
-        .catch(err => {
+      fs.remove(`packages/${webhook.getRemoteDirectory().split('/')[0]}`).catch(
+        err => {
           logger.error(err);
-        });
+        },
+      );
 
       resolve(ruleResult);
     });

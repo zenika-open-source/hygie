@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { NestSchedule } from '@dxdeveloperexperience/nest-schedule';
 import { Schedule } from './schedule';
-import { CronInterface } from './cron.interface';
+import { CronStandardClass } from './cron.interface';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { RulesService } from '../rules/rules.service';
+import { SchedulerException } from '../exceptions/scheduler.exception';
 
 @Injectable()
 export class ScheduleService {
@@ -20,7 +21,7 @@ export class ScheduleService {
   /**
    * Create a new Schedule and add it to the list if `MAX_SCHEDULES` is not reached
    */
-  createSchedule(cron: CronInterface, remoteRepository: string): boolean {
+  createSchedule(cron: CronStandardClass, remoteRepository: string): Schedule {
     if (this.schedules.length < this.MAX_SCHEDULES) {
       const newSchedule = new Schedule(
         this.githubService,
@@ -35,9 +36,10 @@ export class ScheduleService {
         : '*/2 * * * * *';
       newSchedule.updateCron(expression);
       this.addSchedule(newSchedule);
-      return true;
+      return newSchedule;
+    } else {
+      throw new SchedulerException('MAX_SCHEDULES reached!');
     }
-    return false;
   }
 
   addSchedule(schedule: NestSchedule): void {

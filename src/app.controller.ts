@@ -25,7 +25,12 @@ import { GithubService } from './github/github.service';
 import { RemoteConfigUtils } from './remote-config/utils';
 import { Utils } from './utils/utils';
 import { ScheduleService } from './scheduler/scheduler.service';
-import { CronInterface } from './scheduler/cron.interface';
+import {
+  CronType,
+  CronStandardClass,
+  convertCronType,
+} from './scheduler/cron.interface';
+import { Schedule } from './scheduler/schedule';
 
 @Controller()
 export class AppController {
@@ -122,23 +127,43 @@ export class AppController {
   }
 
   @Post('cron')
-  async cronJobs(@Body() cron: CronInterface, @Res() response): Promise<void> {
+  async cronJobs(@Body() cronType: CronType, @Res() response): Promise<void> {
     let remoteRepository: string;
-    // First, download the rules-cron.yml file
-    try {
-      remoteRepository = await RemoteConfigUtils.downloadRulesFile(
-        this.httpService,
-        cron.projectURL,
-        cron.filename,
-      );
-    } catch (e) {
-      response.send(e);
-    }
+    let responseString: string = '';
+    let schedule: Schedule;
+    const cronStandardArray: CronStandardClass[] = convertCronType(cronType);
 
-    if (this.scheduleService.createSchedule(cron, remoteRepository)) {
-      response.send('Schedule successfully created');
-    } else {
-      response.send('Cannot create Schedule...');
+    for (let index = 0; index < cronStandardArray.length; index++) {
+      // Need a for loop because Async/Wait does not work in ForEach
+
+      const cron = cronStandardArray[index];
+
+      // First, download the rules-cron.yml file
+      try {
+        remoteRepository = await RemoteConfigUtils.downloadRulesFile(
+          this.httpService,
+          cron.projectURL,
+          cron.filename,
+        ).catch(e => {
+          throw e;
+        });
+      } catch (e) {
+        response
+          .status(HttpStatus.NOT_FOUND)
+          .send(`${responseString}\n${e.message}`);
+        return;
+      }
+
+      try {
+        schedule = this.scheduleService.createSchedule(cron, remoteRepository);
+        responseString += `Schedule ${schedule.id} successfully created\n`;
+      } catch (e) {
+        response
+          .status(HttpStatus.UNAUTHORIZED)
+          .send(`${responseString}\n${e.message}`);
+        return;
+      }
     }
+    response.status(HttpStatus.OK).send(responseString);
   }
 }

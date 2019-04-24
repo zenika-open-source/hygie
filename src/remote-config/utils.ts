@@ -82,20 +82,16 @@ export class RemoteConfigUtils {
                 );
                 res(gitWebhooksFolder);
               } else {
-                throw new HttpException(
-                  `${filename} do not exist!`,
-                  HttpStatus.NOT_FOUND,
-                );
+                rej(`${filename} do not exist!`);
               }
+            }).catch(e => {
+              throw new Error(e);
             });
           });
         resolve(gitWebhooksFolder);
       } catch (e) {
-        if (e.getStatus() === HttpStatus.NOT_FOUND) {
-          throw e;
-        }
         logger.error(e);
-        resolve(gitWebhooksFolder);
+        reject(e);
       }
     });
   }
