@@ -1,5 +1,4 @@
 import { SchedulerException } from './scheduler.exception';
-import { exec } from 'shelljs';
 
 describe('Exceptions', () => {
   describe('Scheduler Exception', () => {

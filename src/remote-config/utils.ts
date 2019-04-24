@@ -1,5 +1,5 @@
 import { logger } from '../logger/logger.service';
-import { HttpService, HttpException, HttpStatus } from '@nestjs/common';
+import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
 

@@ -8,7 +8,6 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { logger } from '../logger/logger.service';
 
 interface DeleteFilesArgs {
   files: string[] | string;

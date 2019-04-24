@@ -8,7 +8,6 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { logger } from '../logger/logger.service';
 
 interface CreateIssueArgs {
   title: string;

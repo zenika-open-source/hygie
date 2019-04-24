@@ -9,7 +9,6 @@ import {
   MockGitlabService,
   MockGithubService,
 } from '../__mocks__/mocks';
-import { PullRequestCommentRule } from './pullRequestComment.rule';
 import { CheckPullRequestStatusRule } from './checkPullRequestStatus.rule';
 import { GitEventEnum } from '../webhook/utils.enum';
 

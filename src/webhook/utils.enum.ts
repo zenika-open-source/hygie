@@ -11,7 +11,7 @@ import { GitlabPREvent } from '../gitlab/gitlabPREvent';
 import { GithubIssuePRCommentEvent } from '../github/githubIssuePRCommentEvent';
 import { GitlabIssueCommentEvent } from '../gitlab/gitlabIssueCommentEvent';
 import { GitlabPRCommentEvent } from '../gitlab/gitlabPRCommentEvent';
-import { GitIssueInfos, IssuePRStateEnum } from '../git/gitIssueInfos';
+import { IssuePRStateEnum } from '../git/gitIssueInfos';
 
 export enum GitTypeEnum {
   Undefined = 'Undefined',

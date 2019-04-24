@@ -14,7 +14,6 @@ import {
 } from '../git/gitPRInfos';
 import { Observable, of } from 'rxjs';
 import { GitFileInfos } from '../git/gitFileInfos';
-import { logger } from '../logger/logger.service';
 
 describe('Github Service', () => {
   let app: TestingModule;
