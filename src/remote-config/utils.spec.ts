@@ -1,21 +1,36 @@
 import { TestingModule, Test } from '@nestjs/testing';
 import { HttpService } from '@nestjs/common';
-import { MockHttpService } from '../__mocks__/mocks';
+import {
+  MockHttpService,
+  MockGitlabService,
+  MockGithubService,
+} from '../__mocks__/mocks';
 import { RemoteConfigUtils } from './utils';
 import { Utils } from '../utils/utils';
+import { GithubService } from '../github/github.service';
+import { GitlabService } from '../gitlab/gitlab.service';
 
 describe('remote-config', () => {
   let app: TestingModule;
   let httpService: HttpService;
 
+  let githubService: GithubService;
+  let gitlabService: GitlabService;
+
   Utils.writeFileSync = jest.fn();
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
-      providers: [{ provide: HttpService, useClass: MockHttpService }],
+      providers: [
+        { provide: HttpService, useClass: MockHttpService },
+        { provide: GitlabService, useClass: MockGitlabService },
+        { provide: GithubService, useClass: MockGithubService },
+      ],
     }).compile();
 
     httpService = app.get(HttpService);
+    githubService = app.get(GithubService);
+    gitlabService = app.get(GitlabService);
   });
 
   beforeEach(() => {
@@ -58,7 +73,12 @@ describe('remote-config', () => {
         gitRepo: 'https://github.com/DX-DeveloperExperience/git-webhooks',
       };
 
-      RemoteConfigUtils.registerConfigEnv(configEnv);
+      RemoteConfigUtils.registerConfigEnv(
+        httpService,
+        githubService,
+        gitlabService,
+        configEnv,
+      );
 
       expect(Utils.writeFileSync).toHaveBeenCalledWith(
         'remote-envs/DX-DeveloperExperience/git-webhooks/config.env',

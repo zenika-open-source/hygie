@@ -51,13 +51,20 @@ export class AppController {
   }
 
   @Post('/config-env')
-  postConfigEnv(@Body() body: any, @Res() response): void {
+  async postConfigEnv(@Body() body: any, @Res() response): Promise<void> {
     const configEnv = {
       gitApi: body.gitApi,
       gitToken: body.gitToken,
       gitRepo: body.gitRepo,
     };
-    response.send(RemoteConfigUtils.registerConfigEnv(configEnv));
+    response.send(
+      await RemoteConfigUtils.registerConfigEnv(
+        this.httpService,
+        this.githubService,
+        this.gitlabService,
+        configEnv,
+      ),
+    );
   }
 
   @Get('/rules')

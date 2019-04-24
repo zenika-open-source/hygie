@@ -20,6 +20,9 @@ Go to [https://gitlab.com/profile/personal_access_tokens](https://gitlab.com/pro
 
 ## Registration
 
+Once the following form will be filled, a `Connected to Git-Webhooks!` issue will be created in your repository.
+If not, please check the provided token.
+
 <RegisterToken/>
 
 ::: tip

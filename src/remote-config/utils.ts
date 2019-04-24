@@ -4,6 +4,10 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
 import { catchError } from 'rxjs/operators';
 import { of, throwError } from 'rxjs';
+import { GithubService } from '../github/github.service';
+import { GitlabService } from '../gitlab/gitlab.service';
+import { GitApiInfos } from '../git/gitApiInfos';
+import { GitIssueInfos } from '../git/gitIssueInfos';
 
 const fs = require('fs-extra');
 
@@ -14,14 +18,6 @@ interface ConfigEnv {
 }
 
 export class RemoteConfigUtils {
-  private static getPath(splitedURL: string[]): string {
-    return (
-      splitedURL[splitedURL.length - 2] +
-      '/' +
-      splitedURL[splitedURL.length - 1].replace('.git', '')
-    );
-  }
-
   /**
    * Download the `rules.yml` from the repository associate to the `projectURL`.
    * @param projectURL
@@ -43,8 +39,8 @@ export class RemoteConfigUtils {
       let rulesFilePath: string;
       switch (whichGit) {
         case GitTypeEnum.Github:
-          rulesFilePath = `https://raw.githubusercontent.com/${this.getPath(
-            projectURL.split('/'),
+          rulesFilePath = `https://raw.githubusercontent.com/${Utils.getRepositoryFullName(
+            projectURL,
           )}/master/.git-webhooks/${filename}`;
           break;
         case GitTypeEnum.Gitlab:
@@ -57,7 +53,7 @@ export class RemoteConfigUtils {
 
       const gitWebhooksFolder: string =
         'remote-rules/' +
-        this.getPath(projectURL.split('/')) +
+        Utils.getRepositoryFullName(projectURL) +
         '/.git-webhooks';
 
       try {
@@ -86,8 +82,6 @@ export class RemoteConfigUtils {
             return gitWebhooksFolder;
           })
           .catch(err => {
-            logger.error('toto');
-            logger.error(err);
             throw new Error(err);
           });
         resolve(gitWebhooksFolder);
@@ -98,32 +92,79 @@ export class RemoteConfigUtils {
     });
   }
 
+  static async getGitlabProjectId(
+    httpService: HttpService,
+    gitApi: string,
+    repositoryFullName: string,
+  ): Promise<string> {
+    return httpService
+      .get(`${gitApi}/projects/${encodeURIComponent(repositoryFullName)}`)
+      .toPromise()
+      .then(response => response.data.id);
+  }
+
   /**
    * Create the `config.env` file with `gitApi` URL and the corresponding `gitToken`
    * @return an Object with the success status (true if registration succeed, false otherwise) and if the file already exist
    */
-  static registerConfigEnv(configEnv: ConfigEnv): any {
-    const result: any = {
-      succeed: true,
-      alreadyExist: false,
-    };
+  static async registerConfigEnv(
+    httpService: HttpService,
+    githubService: GithubService,
+    gitlabService: GitlabService,
+    configEnv: ConfigEnv,
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const result: any = {
+        succeed: true,
+        alreadyExist: false,
+      };
 
-    const configFile: string =
-      'remote-envs/' +
-      this.getPath(configEnv.gitRepo.split('/')) +
-      '/config.env';
+      const configFile: string =
+        'remote-envs/' +
+        Utils.getRepositoryFullName(configEnv.gitRepo) +
+        '/config.env';
 
-    const content: string = `gitApi=${configEnv.gitApi}
+      const content: string = `gitApi=${configEnv.gitApi}
 gitToken=${configEnv.gitToken}`;
 
-    const path = require('path');
+      if (fs.existsSync(configFile)) {
+        result.alreadyExist = true;
+      }
 
-    if (fs.existsSync(configFile)) {
-      result.alreadyExist = true;
-    }
+      await Utils.writeFileSync(configFile, content);
 
-    Utils.writeFileSync(configFile, content);
+      /**
+       * Check if Token is correct
+       */
+      githubService.setEnvironmentVariables(
+        Utils.getRepositoryFullName(configEnv.gitRepo),
+      );
+      gitlabService.setEnvironmentVariables(
+        Utils.getRepositoryFullName(configEnv.gitRepo),
+      );
 
-    return result;
+      const gitApiInfos: GitApiInfos = new GitApiInfos();
+      gitApiInfos.git = Utils.whichGitType(configEnv.gitRepo);
+      gitApiInfos.repositoryFullName = Utils.getRepositoryFullName(
+        configEnv.gitRepo,
+      );
+
+      const gitIssueInfos = new GitIssueInfos();
+      gitIssueInfos.title = 'Connected to Git-Webhooks!';
+
+      if (gitApiInfos.git === GitTypeEnum.Github) {
+        githubService.createIssue(gitApiInfos, gitIssueInfos);
+      } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
+        gitApiInfos.projectId = await this.getGitlabProjectId(
+          httpService,
+          configEnv.gitApi,
+          gitApiInfos.repositoryFullName,
+        );
+
+        gitlabService.createIssue(gitApiInfos, gitIssueInfos);
+      }
+
+      resolve(result);
+    });
   }
 }
