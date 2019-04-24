@@ -1,5 +1,6 @@
 import { existsSync } from 'fs';
 import { logger } from '../logger/logger.service';
+import { HttpService } from '@nestjs/common';
 
 /**
  * Check if the given file exit.
@@ -39,3 +40,17 @@ export function checkNeededFiles(filenames: string[]): boolean {
   });
   return allFilesOk;
 }
+
+export const checkInternet = async (httpService: HttpService) => {
+  return new Promise((resolve, reject) => {
+    httpService
+      .get('https://google.com')
+      .toPromise()
+      .then(() => {
+        resolve(true);
+      })
+      .catch(() => {
+        resolve(false);
+      });
+  });
+};

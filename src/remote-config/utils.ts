@@ -2,6 +2,8 @@ import { logger } from '../logger/logger.service';
 import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
+import { catchError } from 'rxjs/operators';
+import { of, throwError } from 'rxjs';
 
 const fs = require('fs-extra');
 
@@ -61,32 +63,32 @@ export class RemoteConfigUtils {
       try {
         await httpService
           .get(rulesFilePath)
+          .pipe(
+            catchError(err => {
+              if (filename === 'rules.yml') {
+                logger.warn(
+                  'No rules.yml file founded. Using the default one.',
+                );
+                return of({
+                  data: fs.readFileSync('src/rules/rules.yml'),
+                });
+              } else {
+                return throwError(`${filename} do not exist!`);
+              }
+            }),
+          )
           .toPromise()
-          .then(response => {
-            return new Promise(async (res, rej) => {
-              await Utils.writeFileSync(
-                `${gitWebhooksFolder}/${filename}`,
-                response.data,
-              );
-              res(gitWebhooksFolder);
-            });
+          .then(async response => {
+            await Utils.writeFileSync(
+              `${gitWebhooksFolder}/${filename}`,
+              response.data,
+            );
+            return gitWebhooksFolder;
           })
           .catch(err => {
-            return new Promise(async (res, rej) => {
-              logger.error(err);
-              if (filename === 'rules.yml') {
-                logger.warn('No rules.yml file found.\nUse the default one.');
-                await Utils.writeFileSync(
-                  `${gitWebhooksFolder}/rules.yml`,
-                  fs.readFileSync('src/rules/rules.yml'),
-                );
-                res(gitWebhooksFolder);
-              } else {
-                rej(`${filename} do not exist!`);
-              }
-            }).catch(e => {
-              throw new Error(e);
-            });
+            logger.error('toto');
+            logger.error(err);
+            throw new Error(err);
           });
         resolve(gitWebhooksFolder);
       } catch (e) {
