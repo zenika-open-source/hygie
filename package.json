@@ -4,7 +4,8 @@
   "description": "Git Webhooks is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJS API expose a set of customizable rules to automate your project's life cycle.",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && (cpx src/rules/rules.yml dist/rules/rules.yml) && (cpx config.env dist/config.env)",
+    "copyfiles": "cpx src/rules/rules.yml dist/rules/rules.yml && cpx config.env dist/config.env && cpx \"src/rules/*.rule.ts\" dist/rules && cpx src/rules/rules.options.ts dist/rules && cpx \"src/runnables/*.runnable.ts\" dist/runnables",
+    "build": "tsc -p tsconfig.build.json && npm run copyfiles",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "prettier-test": "prettier -l \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "ts-node --transpile-only -r tsconfig-paths/register src/main.ts",
@@ -72,7 +73,8 @@
     "typedoc": "0.14.2",
     "typescript": "3.3.3",
     "vuepress": "1.0.0-alpha.47",
-    "vuetify": "1.5.7"
+    "vuetify": "1.5.7",
+    "cpx": "1.5.0"
   },
   "jest": {
     "moduleFileExtensions": [
