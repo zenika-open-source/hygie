@@ -7,7 +7,13 @@ import { logger } from './logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(cors());
+
+  app.enableCors({
+    origin: '*',
+    methods: ['GET', 'POST'],
+    maxAge: 60,
+  });
+
   if (await checkInternet(app.get(HttpService))) {
     if (checkNeededFiles(['config.env', 'src/rules/rules.yml'])) {
       await app.listen(3000);
