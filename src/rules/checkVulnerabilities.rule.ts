@@ -4,10 +4,11 @@ import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { logger } from '../logger/logger.service';
+import { RemoteConfigUtils } from '../remote-config/utils';
 
 interface CheckVulnerabilitiesOptions {
-  packageUrl: string;
-  packageLockUrl: string;
+  packageUrl?: string;
+  packageLockUrl?: string;
 }
 
 /**
@@ -32,15 +33,32 @@ export class CheckVulnerabilitiesRule extends Rule {
 
       let audit: any;
 
+      let packageUrl: string;
+      let packageLockUrl: string;
+
+      if (
+        typeof ruleConfig.options !== 'undefined' &&
+        typeof ruleConfig.options.packageUrl !== 'undefined' &&
+        typeof ruleConfig.options.packageLockUrl !== 'undefined'
+      ) {
+        packageUrl = ruleConfig.options.packageUrl;
+        packageLockUrl = ruleConfig.options.packageLockUrl;
+      } else {
+        packageUrl = RemoteConfigUtils.getGitRawPath(
+          webhook.getGitType(),
+          webhook.getCloneURL(),
+          'package.json',
+        );
+        packageLockUrl = RemoteConfigUtils.getGitRawPath(
+          webhook.getGitType(),
+          webhook.getCloneURL(),
+          'package-lock.json',
+        );
+      }
+
       await Promise.all([
-        download(
-          ruleConfig.options.packageUrl,
-          `packages/${webhook.getRemoteDirectory()}`,
-        ),
-        download(
-          ruleConfig.options.packageLockUrl,
-          `packages/${webhook.getRemoteDirectory()}`,
-        ),
+        download(packageUrl, `packages/${webhook.getRemoteDirectory()}`),
+        download(packageLockUrl, `packages/${webhook.getRemoteDirectory()}`),
       ]);
 
       try {

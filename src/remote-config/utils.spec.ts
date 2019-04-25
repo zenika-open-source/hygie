@@ -9,6 +9,7 @@ import { RemoteConfigUtils } from './utils';
 import { Utils } from '../utils/utils';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
+import { GitTypeEnum } from '../webhook/utils.enum';
 
 describe('remote-config', () => {
   let app: TestingModule;
@@ -83,6 +84,47 @@ describe('remote-config', () => {
       expect(Utils.writeFileSync).toHaveBeenCalledWith(
         'remote-envs/DX-DeveloperExperience/git-webhooks/config.env',
         `gitApi=https://gitapi.com\ngitToken=azertyuiop`,
+      );
+    });
+  });
+
+  describe('RemoteConfigUtils', () => {
+    it('should return a Github URL path', () => {
+      expect(
+        RemoteConfigUtils.getGitRawPath(
+          GitTypeEnum.Github,
+          'https://github.com/DX-DeveloperExperience/git-webhooks',
+          'package.json',
+        ),
+      ).toBe(
+        'https://raw.githubusercontent.com/DX-DeveloperExperience/git-webhooks/master/package.json',
+      );
+    });
+  });
+  describe('RemoteConfigUtils', () => {
+    it('should return a Github URL path', () => {
+      expect(
+        RemoteConfigUtils.getGitRawPath(
+          GitTypeEnum.Github,
+          'https://github.com/bastienterrier/test-webhook',
+          '.git-webhooks/rules.yml',
+          'test',
+        ),
+      ).toBe(
+        'https://raw.githubusercontent.com/bastienterrier/test-webhook/test/.git-webhooks/rules.yml',
+      );
+    });
+  });
+  describe('RemoteConfigUtils', () => {
+    it('should return a Gitlab URL path', () => {
+      expect(
+        RemoteConfigUtils.getGitRawPath(
+          GitTypeEnum.Gitlab,
+          'https://gitlab.com/bastien.terrier/test_webhook',
+          '.git-webhooks/rules.yml',
+        ),
+      ).toBe(
+        'https://gitlab.com/bastien.terrier/test_webhook/raw/master/.git-webhooks/rules.yml',
       );
     });
   });

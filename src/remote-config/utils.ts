@@ -18,6 +18,26 @@ interface ConfigEnv {
 }
 
 export class RemoteConfigUtils {
+  static getGitRawPath(
+    whichGit: GitTypeEnum,
+    projectURL: string,
+    filePath: string,
+    branch: string = 'master',
+  ) {
+    let result: string = '';
+    switch (whichGit) {
+      case GitTypeEnum.Github:
+        result = `https://raw.githubusercontent.com/${Utils.getRepositoryFullName(
+          projectURL,
+        )}/${branch}/${filePath}`;
+        break;
+      case GitTypeEnum.Gitlab:
+        result = `${projectURL.replace('.git', '')}/raw/${branch}/${filePath}`;
+        break;
+    }
+    return result;
+  }
+
   /**
    * Download the `rules.yml` from the repository associate to the `projectURL`.
    * @param projectURL
@@ -36,20 +56,11 @@ export class RemoteConfigUtils {
           ? GitTypeEnum.Gitlab
           : GitTypeEnum.Undefined;
 
-      let rulesFilePath: string;
-      switch (whichGit) {
-        case GitTypeEnum.Github:
-          rulesFilePath = `https://raw.githubusercontent.com/${Utils.getRepositoryFullName(
-            projectURL,
-          )}/master/.git-webhooks/${filename}`;
-          break;
-        case GitTypeEnum.Gitlab:
-          rulesFilePath = `${projectURL.replace(
-            '.git',
-            '',
-          )}/raw/master/.git-webhooks/${filename}`;
-          break;
-      }
+      const rulesFilePath: string = this.getGitRawPath(
+        whichGit,
+        projectURL,
+        `.git-webhooks/${filename}`,
+      );
 
       const gitWebhooksFolder: string =
         'remote-rules/' +
