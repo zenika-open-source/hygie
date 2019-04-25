@@ -11,8 +11,8 @@ interface BranchesOptions {
 
 interface CommitMessageOptions {
   regexp: string;
-  maxLength: number;
-  branches: BranchesOptions;
+  maxLength?: number;
+  branches?: BranchesOptions;
 }
 
 export class CommitMatches {
