@@ -101,12 +101,29 @@ export class AppController {
       Utils.loadEnv('config.env');
       const getRemoteRules: string = process.env.ALLOW_REMOTE_CONFIG;
 
+      let rulesBranch: string = webhook.getDefaultBranchName();
+      if (GitEventEnum.Push === webhook.getGitEvent()) {
+        rulesBranch = webhook.getBranchName();
+      } else if (
+        [
+          GitEventEnum.ClosedPR,
+          GitEventEnum.MergedPR,
+          GitEventEnum.NewPR,
+          GitEventEnum.ReopenedPR,
+        ].find(e => e === webhook.getGitEvent())
+      ) {
+        rulesBranch = webhook.pullRequest.sourceBranch;
+      }
+
+      logger.warn('Rules Branch : ' + rulesBranch);
+
       const remoteRepository =
         getRemoteRules === 'true'
           ? await RemoteConfigUtils.downloadRulesFile(
               this.httpService,
               webhook.getCloneURL(),
               'rules.yml',
+              rulesBranch,
             )
           : 'src/rules';
 

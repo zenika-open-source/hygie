@@ -47,6 +47,7 @@ export class RemoteConfigUtils {
     httpService: HttpService,
     projectURL: string,
     filename: string,
+    branch: string = 'master',
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const whichGit: GitTypeEnum =
@@ -60,6 +61,7 @@ export class RemoteConfigUtils {
         whichGit,
         projectURL,
         `.git-webhooks/${filename}`,
+        branch,
       );
 
       const gitWebhooksFolder: string =

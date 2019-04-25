@@ -33,6 +33,7 @@ webhook.repository = {
   name: 'test_webhook',
   description: 'amazing project',
   cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
+  defaultBranchName: 'master',
 };
 webhook.pullRequest = {
   title: 'my PR for webhook',
@@ -78,6 +79,12 @@ describe('Webhook', () => {
   describe('getBranchName', () => {
     it('should return "features/fix"', () => {
       expect(webhook.getBranchName()).toBe('features/fix');
+    });
+  });
+
+  describe('getDefaultBranchName', () => {
+    it('should return "master"', () => {
+      expect(webhook.getDefaultBranchName()).toBe('master');
     });
   });
 
