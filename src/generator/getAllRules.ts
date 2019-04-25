@@ -26,6 +26,8 @@ export function getAllRules(): object {
 
     rule.runnables = [];
 
+    rule.enabled = true;
+
     const regexName = new RegExp(/@RuleDecorator\('(.*)'\)/);
     rule.name = contentFile.match(regexName)[1];
 
