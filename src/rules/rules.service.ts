@@ -93,14 +93,18 @@ export class RulesService {
                 webhook,
                 ruleConfig,
               );
-              results.push(ruleResult);
 
-              this.runnableService.executeRunnableFunctions(
-                ruleResult,
-                ruleConfig,
-              );
-              if (!rulesOptions.executeAllRules && !ruleResult.validated) {
-                throw BreakException;
+              // Some rules return `null` when there are enabled but ignored due to interne business rule
+              if (ruleResult !== null) {
+                results.push(ruleResult);
+
+                this.runnableService.executeRunnableFunctions(
+                  ruleResult,
+                  ruleConfig,
+                );
+                if (!rulesOptions.executeAllRules && !ruleResult.validated) {
+                  throw BreakException;
+                }
               }
             }
           }

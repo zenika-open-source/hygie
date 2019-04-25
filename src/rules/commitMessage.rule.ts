@@ -4,9 +4,15 @@ import { WebhookCommit, Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
 import { RuleDecorator } from './rule.decorator';
 
+interface BranchesOptions {
+  only: string[];
+  ignore: string[];
+}
+
 interface CommitMessageOptions {
   regexp: string;
   maxLength: number;
+  branches: BranchesOptions;
 }
 
 export class CommitMatches {
@@ -34,6 +40,23 @@ export class CommitMessageRule extends Rule {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const commits: WebhookCommit[] = webhook.getAllCommits();
     const commitRegExp = RegExp(ruleConfig.options.regexp);
+    const branchName = webhook.getBranchName();
+
+    // First, check if rule need to be processed
+    if (typeof ruleConfig.options.branches !== 'undefined') {
+      const ignore: string[] = ruleConfig.options.branches.ignore;
+      const only: string[] = ruleConfig.options.branches.only;
+      if (typeof ignore !== 'undefined') {
+        if (ignore.find(i => i === branchName)) {
+          return null;
+        }
+      }
+      if (typeof only !== 'undefined') {
+        if (!only.find(o => o === branchName)) {
+          return null;
+        }
+      }
+    }
 
     const commitsMatches: CommitMatches[] = new Array();
     let commitMatches: CommitMatches;
