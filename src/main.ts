@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { checkNeededFiles, checkInternet } from './check/utils';
-import * as cors from 'cors';
 import { HttpService } from '@nestjs/common';
 import { logger } from './logger/logger.service';
 

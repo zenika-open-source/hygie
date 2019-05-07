@@ -31,6 +31,7 @@ import {
   convertCronType,
 } from './scheduler/cron.interface';
 import { Schedule } from './scheduler/schedule';
+import { getYAMLSchema } from './generator/getYAMLSchema';
 
 @Controller()
 export class AppController {
@@ -65,6 +66,11 @@ export class AppController {
         configEnv,
       ),
     );
+  }
+
+  @Get('/schema')
+  getYAMLSchema(): object {
+    return getYAMLSchema();
   }
 
   @Get('/rules')

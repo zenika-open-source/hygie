@@ -4,15 +4,15 @@ import { WebhookCommit, Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
 import { RuleDecorator } from './rule.decorator';
 
+interface CommitMessageOptions {
+  regexp: string;
+  maxLength: number;
+  branches: BranchesOptions;
+}
+
 interface BranchesOptions {
   only: string[];
   ignore: string[];
-}
-
-interface CommitMessageOptions {
-  regexp: string;
-  maxLength?: number;
-  branches?: BranchesOptions;
 }
 
 export class CommitMatches {

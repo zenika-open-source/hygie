@@ -7,8 +7,8 @@ import { logger } from '../logger/logger.service';
 import { RemoteConfigUtils } from '../remote-config/utils';
 
 interface CheckVulnerabilitiesOptions {
-  packageUrl?: string;
-  packageLockUrl?: string;
+  packageUrl: string;
+  packageLockUrl: string;
 }
 
 /**
