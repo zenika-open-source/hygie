@@ -29,6 +29,7 @@ echo "> replace __DOCKER_TAG__"
 sed -i "s/__DOCKER_TAG__/${VERSION:1}/g" guide/gettingStarted.html
 
 echo "cd ../../.."
+cd ../../..
 echo "> build project"
 npm run build
 echo ">> ls"
