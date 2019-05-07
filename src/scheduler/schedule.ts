@@ -9,6 +9,7 @@ import { Webhook } from '../webhook/webhook';
 import { RulesService } from '../rules/rules.service';
 import { safeLoad } from 'js-yaml';
 import { RemoteConfigUtils } from '../remote-config/utils';
+import { checkCronExpression } from './utils';
 
 @Injectable()
 export class Schedule extends NestSchedule {
@@ -40,7 +41,7 @@ export class Schedule extends NestSchedule {
     this.webhook.setCronWebhook(cron);
   }
 
-  @Cron('*/30 * * * * *', {
+  @Cron('0 0 6-20/1 * * *', {
     startTime: new Date(),
     endTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
     tz: 'Europe/Paris',
@@ -81,7 +82,9 @@ export class Schedule extends NestSchedule {
     if (typeof options !== 'undefined') {
       const cronExpression = options.cron;
       if (typeof cronExpression !== 'undefined') {
-        this.updateCron(cronExpression);
+        if (checkCronExpression(cronExpression)) {
+          this.updateCron(cronExpression);
+        }
       }
     }
 

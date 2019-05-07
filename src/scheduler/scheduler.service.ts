@@ -6,6 +6,8 @@ import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { RulesService } from '../rules/rules.service';
 import { SchedulerException } from '../exceptions/scheduler.exception';
+import { checkCronExpression } from './utils';
+import { CronExpressionException } from '../exceptions/cronExpression.exception';
 
 @Injectable()
 export class ScheduleService {
@@ -24,6 +26,15 @@ export class ScheduleService {
    */
   createSchedule(cron: CronStandardClass, remoteRepository: string): Schedule {
     if (this.schedules.length < this.MAX_SCHEDULES) {
+      if (
+        typeof cron.expression !== 'undefined' &&
+        !checkCronExpression(cron.expression)
+      ) {
+        throw new CronExpressionException(
+          'Incorrect Cron Expression! You can not generate more than 1 cron job per hour.',
+        );
+      }
+
       const newSchedule = new Schedule(
         this.githubService,
         this.gitlabService,
@@ -35,7 +46,7 @@ export class ScheduleService {
 
       const expression: string = !!cron.expression
         ? cron.expression
-        : '*/30 * * * * *';
+        : '0 0 6-20/1 * * *';
       newSchedule.updateCron(expression);
       this.addSchedule(newSchedule);
       return newSchedule;
