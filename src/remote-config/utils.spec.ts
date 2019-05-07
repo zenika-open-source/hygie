@@ -10,6 +10,7 @@ import { Utils } from '../utils/utils';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
+import { of } from 'rxjs';
 
 describe('remote-config', () => {
   let app: TestingModule;
@@ -38,8 +39,33 @@ describe('remote-config', () => {
     jest.clearAllMocks();
   });
 
+  describe('checkDownloadSize', () => {
+    it('should call httpService.head method', async () => {
+      httpService.head = jest.fn().mockImplementationOnce(() => {
+        return of({
+          headers: {
+            'content-length': 500,
+          },
+        });
+      });
+      await RemoteConfigUtils.checkDownloadSize(
+        httpService,
+        'https://github.com',
+      );
+
+      expect(httpService.head).toBeCalledWith('https://github.com');
+    });
+  });
+
   describe('downloadRulesFile', () => {
     it('should call httpService.get method and return the good repo', async () => {
+      httpService.head = jest.fn().mockImplementationOnce(() => {
+        return of({
+          headers: {
+            'content-length': 500,
+          },
+        });
+      });
       const result: string = await RemoteConfigUtils.downloadRulesFile(
         httpService,
         'https://github.com/DX-DeveloperExperience/git-webhooks',
@@ -55,6 +81,13 @@ describe('remote-config', () => {
   });
   describe('downloadRulesFile', () => {
     it('should call httpService.get method and return the good repo', async () => {
+      httpService.head = jest.fn().mockImplementationOnce(() => {
+        return of({
+          headers: {
+            'content-length': 500,
+          },
+        });
+      });
       const result: string = await RemoteConfigUtils.downloadRulesFile(
         httpService,
         'https://gitlab.com/gitlab-org/gitlab-ce',

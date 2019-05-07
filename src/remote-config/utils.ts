@@ -8,6 +8,7 @@ import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
+import { FileSizeException } from '../exceptions/fileSize.exception';
 
 const fs = require('fs-extra');
 
@@ -18,6 +19,8 @@ interface ConfigEnv {
 }
 
 export class RemoteConfigUtils {
+  static MAX_SIZE: number = 1000000;
+
   static getGitRawPath(
     whichGit: GitTypeEnum,
     projectURL: string,
@@ -36,6 +39,25 @@ export class RemoteConfigUtils {
         break;
     }
     return result;
+  }
+
+  static async checkDownloadSize(
+    httpService: HttpService,
+    url: string,
+  ): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      const size: number = await httpService
+        .head(url)
+        .toPromise()
+        .then(response => {
+          return response.headers['content-length'];
+        })
+        .catch(err => reject(err));
+      if (size > this.MAX_SIZE) {
+        resolve(false);
+      }
+      resolve(true);
+    });
   }
 
   /**
@@ -70,6 +92,20 @@ export class RemoteConfigUtils {
         '/.git-webhooks';
 
       try {
+        // Check size
+        const checkSize: boolean = await RemoteConfigUtils.checkDownloadSize(
+          httpService,
+          rulesFilePath,
+        ).catch(err => {
+          throw new Error(err);
+        });
+        if (!checkSize) {
+          throw new FileSizeException(rulesFilePath);
+        } else {
+          logger.info('Size okkkk!');
+        }
+
+        // Download file
         await httpService
           .get(rulesFilePath)
           .pipe(
