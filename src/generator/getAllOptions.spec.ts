@@ -1,23 +1,77 @@
-import * as request from 'supertest';
-import { Test } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { AppModule } from '../app.module';
+import { getAllOptions } from './getAllOptions';
 
-describe('getAppOptions (e2e)', () => {
-  let app: INestApplication;
+const fs = require('fs-extra');
+jest.mock('fs-extra');
 
-  beforeAll(async () => {
-    const moduleFixture = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+beforeEach(() => {
+  jest.clearAllMocks();
+});
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
-  });
+describe('getAllOptions', () => {
+  it('should return an array of option objects', () => {
+    fs.readFileSync.mockReturnValue(`/**
+* Options supported in the \`rules.yml\` file
+*/
+export class RulesOptions {
+    /**
+     * Specify if the process continue when a rule does not succeed
+     */
+    executeAllRules: boolean = false;
+    /**
+     * Specify if rules will be processed
+     */
+    enableRules: boolean = true;
+    /**
+     * Specify if groups will be processed
+     */
+    enableGroups: boolean = true;
+    /**
+     * Specify if execute a runnable only once with the result of all rules
+     */
+    allRuleResultInOne: boolean = false;
 
-  it('/options (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/options')
-      .expect(200);
+    constructor(r?: RulesOptions) {
+    if (r !== undefined && r !== null) {
+        this.executeAllRules =
+        typeof r.executeAllRules === 'undefined'
+            ? this.executeAllRules
+            : r.executeAllRules;
+        this.enableRules =
+        typeof r.enableRules === 'undefined' ? this.enableRules : r.enableRules;
+        this.enableGroups =
+        typeof r.enableGroups === 'undefined'
+            ? this.enableGroups
+            : r.enableGroups;
+        this.allRuleResultInOne =
+        typeof r.allRuleResultInOne === 'undefined'
+            ? this.allRuleResultInOne
+            : r.allRuleResultInOne;
+    }
+    }
+}`);
+
+    expect(getAllOptions()).toEqual([
+      {
+        name: 'executeAllRules',
+        value: false,
+        tooltip: 'Specify if the process continue when a rule does not succeed',
+      },
+      {
+        name: 'enableRules',
+        value: true,
+        tooltip: 'Specify if rules will be processed',
+      },
+      {
+        name: 'enableGroups',
+        value: true,
+        tooltip: 'Specify if groups will be processed',
+      },
+      {
+        name: 'allRuleResultInOne',
+        value: false,
+        tooltip:
+          'Specify if execute a runnable only once with the result of all rules',
+      },
+    ]);
   });
 });

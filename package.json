@@ -22,7 +22,8 @@
     "ci": "jest --clearCache && npm-run-all prettier-test lint test",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "tsdoc": "typedoc --out tsdoc src"
+    "tsdoc": "typedoc --out tsdoc src",
+    "generate:schema": "ts-node --transpile-only src/generator/generateYAMLSchema.ts"
   },
   "husky": {
     "hooks": {

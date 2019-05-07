@@ -1,7 +1,7 @@
 import { RulesValues } from '../rules/rules.module';
-
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import { getAllComments } from './utils';
+
 export function getAllRules(): object {
   const path = require('path');
 
@@ -48,7 +48,7 @@ export function getAllRules(): object {
     rule.options = options.map(o => {
       const [name, type] = o.split(':');
       return {
-        name,
+        name: name.replace('?', ''),
         type,
         value: '',
       };

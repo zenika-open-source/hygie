@@ -9,7 +9,7 @@ describe('Utils', () => {
   describe('loadEnv', () => {
     it('should call fs', () => {
       const fs = require('fs-extra');
-      jest.mock('fs');
+      jest.mock('fs-extra');
 
       fs.readFileSync.mockReturnValue(
         `gitApi=https://gitapi.com

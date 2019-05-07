@@ -3,6 +3,7 @@ import {
   getAllYAMLRunnablesName,
   getAllYAMLRunnablesArgs,
 } from './getAllRunnables';
+import { getAllYAMLOptions } from './getAllOptions';
 
 // tslint:disable:quotemark
 // tslint:disable:max-line-length
@@ -16,10 +17,12 @@ export function getYAMLSchema(): object {
   );
   const runnablesName = getAllYAMLRunnablesName();
   const runnablesArgs = getAllYAMLRunnablesArgs();
+  const optionsName = getAllYAMLOptions();
   return {
     $schema: 'http://json-schema.org/schema#',
     title: 'YAML schema for rules*.yml files',
     properties: {
+      options: optionsName,
       rules: {
         description: 'All rules.',
         type: 'array',

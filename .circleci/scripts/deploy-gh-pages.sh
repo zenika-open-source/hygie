@@ -45,9 +45,6 @@ cp dist/generator/rules-schema.json docs/.vuepress/dist
 echo "> cd docs/.vuepress/dist"
 cd docs/.vuepress/dist
 
-echo "> ls "
-ls
-
 git init
 git add -A
 git commit -m "deploy $VERSION"

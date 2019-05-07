@@ -1,5 +1,5 @@
 import { RunnablesValues } from '../runnables/runnable.module';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import { getAllComments } from './utils';
 
 export function getAllRunnables(): object {
@@ -41,7 +41,7 @@ export function getAllRunnables(): object {
     runnable.args = args.map(a => {
       const [name, type] = a.split(':');
       return {
-        name,
+        name: name.replace('?', ''),
         type,
         value: '',
       };
