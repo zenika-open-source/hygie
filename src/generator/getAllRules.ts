@@ -124,14 +124,18 @@ export function getAllYAMLRulesOptions(): object {
 
     rule.options = options.map(o => {
       const [name, type] = o.split(':');
-      const realType: string = type.includes('[]')
-        ? 'array'
-        : ['boolean', 'string', 'number'].includes(type)
-        ? type
-        : 'object';
+      const allTypes: string[] = type.split('|');
+      const realTypes: string[] = allTypes.map(t => {
+        return t.includes('[]')
+          ? 'array'
+          : ['boolean', 'string', 'number'].includes(t)
+          ? t
+          : 'object';
+      });
+
       return {
         [name.replace('?', '')]: {
-          type: realType,
+          type: realTypes,
         },
       };
     });

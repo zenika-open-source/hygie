@@ -1,0 +1,938 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "title": "YAML schema for rules*.yml files",
+  "properties": {
+    "options": {
+      "type": "object",
+      "description": "All options for this rules file.",
+      "properties": {
+        "executeAllRules": {
+          "type": "boolean",
+          "description": "Specify if the process continue when a rule does not succeed"
+        },
+        "enableRules": {
+          "type": "boolean",
+          "description": "Specify if rules will be processed"
+        },
+        "enableGroups": {
+          "type": "boolean",
+          "description": "Specify if groups will be processed"
+        },
+        "allRuleResultInOne": {
+          "type": "boolean",
+          "description": "Specify if execute a runnable only once with the result of all rules"
+        }
+      }
+    },
+    "rules": {
+      "description": "All rules.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the rule.",
+            "oneOf": [
+              {
+                "enum": ["commitMessage"],
+                "description": "`CommitMessageRule` checks all commits title according to a regular expression and an optional max size."
+              },
+              {
+                "enum": ["oneCommitPerPR"],
+                "description": "`OneCommitPerPRRule` checks if there is only one commit in the current PR, MR or Push."
+              },
+              {
+                "enum": ["branchName"],
+                "description": "`BranchNameRule` checks the branch's name according to a regular expression."
+              },
+              {
+                "enum": ["issueTitle"],
+                "description": "`IssueTitleRule` checks the issue's title according to a regular expression."
+              },
+              {
+                "enum": ["pullRequestTitle"],
+                "description": "`PullRequestTitleRule` checks the PR or MR's title according to a regular expression."
+              },
+              {
+                "enum": ["issueComment"],
+                "description": "`IssueCommentRule` checks the new issue's comment according to a regular expression."
+              },
+              {
+                "enum": ["pullRequestComment"],
+                "description": "`PullRequestCommentRule` checks the new PR or MR's comment according to a regular expression."
+              },
+              {
+                "enum": ["checkVulnerabilities"],
+                "description": "`CheckVulnerabilitiesRule` will check if `package.json` and `package-lock.json` contain vulnerabilities thank's to `npm audit`."
+              },
+              {
+                "enum": ["checkAddedFiles"],
+                "description": "`CheckAddedFilesRule` checks all added filenames in commits according to a regular expression."
+              },
+              {
+                "enum": ["checkPullRequestStatus"],
+                "description": "`CheckPullRequestStatusRule` checks if the Pull Request event matchs."
+              }
+            ]
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Specify if the rule will be evaluated."
+          },
+          "events": {
+            "type": "array",
+            "description": "All events on which the rule will be tested.",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "onSuccess": {
+            "type": "array",
+            "description": "Array of Runnables to execute in case of Success.",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "callback": {
+                  "type": "string",
+                  "description": "The name of the Runnable.",
+                  "oneOf": [
+                    {
+                      "enum": ["CommentIssueRunnable"],
+                      "description": "`CommentIssueRunnable` comments the Issue processed by the previous rule.  @warn Be sure that the rule returned the `issueNumber` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["CommentPullRequestRunnable"],
+                      "description": "`CommentPullRequestRunnable` comments the PR or MR processed by the previous rule.   @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["CreatePullRequestRunnable"],
+                      "description": "`CreatePullRequestRunnable` creates a new PR or MR."
+                    },
+                    {
+                      "enum": ["LoggerRunnable"],
+                      "description": "`LoggerRunnable` logs informations in your terminal."
+                    },
+                    {
+                      "enum": ["SendEmailRunnable"],
+                      "description": "`SendEmailRunnable` allows you to send Email with the Gmail API.  @warn Be sure to have configured the Gmail API as explained in the documentation."
+                    },
+                    {
+                      "enum": ["UpdateCommitStatusRunnable"],
+                      "description": "`UpdateCommitStatusRunnable` updates the commits' status processed by the previous rule.  @warn Be sure that the previous rule returned the `commits` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["WebhookRunnable"],
+                      "description": "`WebhookRunnable` sends a POST request to the provided URL with custom `body` and `config`."
+                    },
+                    {
+                      "enum": ["DeleteBranchRunnable"],
+                      "description": "`DeleteBranchRunnable` delete a particular branch."
+                    },
+                    {
+                      "enum": ["UpdateIssueRunnable"],
+                      "description": "`UpdateIssueRunnable` update some issue's properties.   @warn Be sure that the rule returned the `issueNumber` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["CreateIssueRunnable"],
+                      "description": "`CreateIssueRunnable` create an issue the specified `CreateIssueArgs` params."
+                    },
+                    {
+                      "enum": ["DeleteFilesRunnable"],
+                      "description": "`DeleteFilesRunnable` delete a set of files."
+                    },
+                    {
+                      "enum": ["MergePullRequestRunnable"],
+                      "description": "`MergePullRequestRunnable` merge the PR or MR processed by the previous rule.   @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["UpdatePullRequestRunnable"],
+                      "description": "`UpdatePullRequestRunnable` update some PR's properties.   @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object."
+                    }
+                  ]
+                }
+              },
+              "required": ["callback"],
+              "anyOf": [
+                {
+                  "properties": {
+                    "callback": { "enum": ["CommentIssueRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "CommentIssueRunnable args",
+                      "properties": { "comment": { "type": ["string"] } }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["CommentPullRequestRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "CommentPullRequestRunnable args",
+                      "properties": { "comment": { "type": ["string"] } }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["CreatePullRequestRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "CreatePullRequestRunnable args",
+                      "properties": {
+                        "title": { "type": ["string"] },
+                        "description": { "type": ["string"] },
+                        "source": { "type": ["string"] },
+                        "target": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["LoggerRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "LoggerRunnable args",
+                      "properties": {
+                        "type": { "type": ["string"] },
+                        "message": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["SendEmailRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "SendEmailRunnable args",
+                      "properties": {
+                        "to": { "type": ["string"] },
+                        "subject": { "type": ["string"] },
+                        "message": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["UpdateCommitStatusRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "UpdateCommitStatusRunnable args",
+                      "properties": {
+                        "successTargetUrl": { "type": ["string"] },
+                        "failTargetUrl": { "type": ["string"] },
+                        "successDescriptionMessage": { "type": ["string"] },
+                        "failDescriptionMessage": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["WebhookRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "WebhookRunnable args",
+                      "properties": {
+                        "url": { "type": ["string"] },
+                        "data": { "type": ["object"] },
+                        "config": { "type": ["object"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["DeleteBranchRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "DeleteBranchRunnable args",
+                      "properties": { "branchName": { "type": ["string"] } }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["UpdateIssueRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "UpdateIssueRunnable args",
+                      "properties": {
+                        "state": { "type": ["string"] },
+                        "labels": { "type": ["array"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["CreateIssueRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "CreateIssueRunnable args",
+                      "properties": {
+                        "title": { "type": ["string"] },
+                        "description": { "type": ["string"] },
+                        "assignees": { "type": ["array"] },
+                        "labels": { "type": ["array"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["DeleteFilesRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "DeleteFilesRunnable args",
+                      "properties": {
+                        "files": { "type": ["array", "string"] },
+                        "message": { "type": ["string"] },
+                        "branch": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["MergePullRequestRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "MergePullRequestRunnable args",
+                      "properties": {
+                        "commitTitle": { "type": ["string"] },
+                        "commitMessage": { "type": ["string"] },
+                        "method": { "type": ["string"] },
+                        "sha": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["UpdatePullRequestRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "UpdatePullRequestRunnable args",
+                      "properties": {
+                        "target": { "type": ["string"] },
+                        "title": { "type": ["string"] },
+                        "state": { "type": ["string"] },
+                        "description": { "type": ["string"] }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "onError": {
+            "type": "array",
+            "description": "Array of Runnables to execute in case of Error.",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "callback": {
+                  "type": "string",
+                  "description": "The name of the Runnable.",
+                  "oneOf": [
+                    {
+                      "enum": ["CommentIssueRunnable"],
+                      "description": "`CommentIssueRunnable` comments the Issue processed by the previous rule.  @warn Be sure that the rule returned the `issueNumber` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["CommentPullRequestRunnable"],
+                      "description": "`CommentPullRequestRunnable` comments the PR or MR processed by the previous rule.   @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["CreatePullRequestRunnable"],
+                      "description": "`CreatePullRequestRunnable` creates a new PR or MR."
+                    },
+                    {
+                      "enum": ["LoggerRunnable"],
+                      "description": "`LoggerRunnable` logs informations in your terminal."
+                    },
+                    {
+                      "enum": ["SendEmailRunnable"],
+                      "description": "`SendEmailRunnable` allows you to send Email with the Gmail API.  @warn Be sure to have configured the Gmail API as explained in the documentation."
+                    },
+                    {
+                      "enum": ["UpdateCommitStatusRunnable"],
+                      "description": "`UpdateCommitStatusRunnable` updates the commits' status processed by the previous rule.  @warn Be sure that the previous rule returned the `commits` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["WebhookRunnable"],
+                      "description": "`WebhookRunnable` sends a POST request to the provided URL with custom `body` and `config`."
+                    },
+                    {
+                      "enum": ["DeleteBranchRunnable"],
+                      "description": "`DeleteBranchRunnable` delete a particular branch."
+                    },
+                    {
+                      "enum": ["UpdateIssueRunnable"],
+                      "description": "`UpdateIssueRunnable` update some issue's properties.   @warn Be sure that the rule returned the `issueNumber` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["CreateIssueRunnable"],
+                      "description": "`CreateIssueRunnable` create an issue the specified `CreateIssueArgs` params."
+                    },
+                    {
+                      "enum": ["DeleteFilesRunnable"],
+                      "description": "`DeleteFilesRunnable` delete a set of files."
+                    },
+                    {
+                      "enum": ["MergePullRequestRunnable"],
+                      "description": "`MergePullRequestRunnable` merge the PR or MR processed by the previous rule.   @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["UpdatePullRequestRunnable"],
+                      "description": "`UpdatePullRequestRunnable` update some PR's properties.   @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object."
+                    }
+                  ]
+                }
+              },
+              "required": ["callback"],
+              "anyOf": [
+                {
+                  "properties": {
+                    "callback": { "enum": ["CommentIssueRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "CommentIssueRunnable args",
+                      "properties": { "comment": { "type": ["string"] } }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["CommentPullRequestRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "CommentPullRequestRunnable args",
+                      "properties": { "comment": { "type": ["string"] } }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["CreatePullRequestRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "CreatePullRequestRunnable args",
+                      "properties": {
+                        "title": { "type": ["string"] },
+                        "description": { "type": ["string"] },
+                        "source": { "type": ["string"] },
+                        "target": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["LoggerRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "LoggerRunnable args",
+                      "properties": {
+                        "type": { "type": ["string"] },
+                        "message": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["SendEmailRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "SendEmailRunnable args",
+                      "properties": {
+                        "to": { "type": ["string"] },
+                        "subject": { "type": ["string"] },
+                        "message": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["UpdateCommitStatusRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "UpdateCommitStatusRunnable args",
+                      "properties": {
+                        "successTargetUrl": { "type": ["string"] },
+                        "failTargetUrl": { "type": ["string"] },
+                        "successDescriptionMessage": { "type": ["string"] },
+                        "failDescriptionMessage": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["WebhookRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "WebhookRunnable args",
+                      "properties": {
+                        "url": { "type": ["string"] },
+                        "data": { "type": ["object"] },
+                        "config": { "type": ["object"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["DeleteBranchRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "DeleteBranchRunnable args",
+                      "properties": { "branchName": { "type": ["string"] } }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["UpdateIssueRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "UpdateIssueRunnable args",
+                      "properties": {
+                        "state": { "type": ["string"] },
+                        "labels": { "type": ["array"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["CreateIssueRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "CreateIssueRunnable args",
+                      "properties": {
+                        "title": { "type": ["string"] },
+                        "description": { "type": ["string"] },
+                        "assignees": { "type": ["array"] },
+                        "labels": { "type": ["array"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["DeleteFilesRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "DeleteFilesRunnable args",
+                      "properties": {
+                        "files": { "type": ["array", "string"] },
+                        "message": { "type": ["string"] },
+                        "branch": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["MergePullRequestRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "MergePullRequestRunnable args",
+                      "properties": {
+                        "commitTitle": { "type": ["string"] },
+                        "commitMessage": { "type": ["string"] },
+                        "method": { "type": ["string"] },
+                        "sha": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["UpdatePullRequestRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "UpdatePullRequestRunnable args",
+                      "properties": {
+                        "target": { "type": ["string"] },
+                        "title": { "type": ["string"] },
+                        "state": { "type": ["string"] },
+                        "description": { "type": ["string"] }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "onBoth": {
+            "type": "array",
+            "description": "Array of Runnables to execute after the rule's evaluation.",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "callback": {
+                  "type": "string",
+                  "description": "The name of the Runnable.",
+                  "oneOf": [
+                    {
+                      "enum": ["CommentIssueRunnable"],
+                      "description": "`CommentIssueRunnable` comments the Issue processed by the previous rule.  @warn Be sure that the rule returned the `issueNumber` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["CommentPullRequestRunnable"],
+                      "description": "`CommentPullRequestRunnable` comments the PR or MR processed by the previous rule.   @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["CreatePullRequestRunnable"],
+                      "description": "`CreatePullRequestRunnable` creates a new PR or MR."
+                    },
+                    {
+                      "enum": ["LoggerRunnable"],
+                      "description": "`LoggerRunnable` logs informations in your terminal."
+                    },
+                    {
+                      "enum": ["SendEmailRunnable"],
+                      "description": "`SendEmailRunnable` allows you to send Email with the Gmail API.  @warn Be sure to have configured the Gmail API as explained in the documentation."
+                    },
+                    {
+                      "enum": ["UpdateCommitStatusRunnable"],
+                      "description": "`UpdateCommitStatusRunnable` updates the commits' status processed by the previous rule.  @warn Be sure that the previous rule returned the `commits` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["WebhookRunnable"],
+                      "description": "`WebhookRunnable` sends a POST request to the provided URL with custom `body` and `config`."
+                    },
+                    {
+                      "enum": ["DeleteBranchRunnable"],
+                      "description": "`DeleteBranchRunnable` delete a particular branch."
+                    },
+                    {
+                      "enum": ["UpdateIssueRunnable"],
+                      "description": "`UpdateIssueRunnable` update some issue's properties.   @warn Be sure that the rule returned the `issueNumber` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["CreateIssueRunnable"],
+                      "description": "`CreateIssueRunnable` create an issue the specified `CreateIssueArgs` params."
+                    },
+                    {
+                      "enum": ["DeleteFilesRunnable"],
+                      "description": "`DeleteFilesRunnable` delete a set of files."
+                    },
+                    {
+                      "enum": ["MergePullRequestRunnable"],
+                      "description": "`MergePullRequestRunnable` merge the PR or MR processed by the previous rule.   @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object."
+                    },
+                    {
+                      "enum": ["UpdatePullRequestRunnable"],
+                      "description": "`UpdatePullRequestRunnable` update some PR's properties.   @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object."
+                    }
+                  ]
+                }
+              },
+              "required": ["callback"],
+              "anyOf": [
+                {
+                  "properties": {
+                    "callback": { "enum": ["CommentIssueRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "CommentIssueRunnable args",
+                      "properties": { "comment": { "type": ["string"] } }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["CommentPullRequestRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "CommentPullRequestRunnable args",
+                      "properties": { "comment": { "type": ["string"] } }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["CreatePullRequestRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "CreatePullRequestRunnable args",
+                      "properties": {
+                        "title": { "type": ["string"] },
+                        "description": { "type": ["string"] },
+                        "source": { "type": ["string"] },
+                        "target": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["LoggerRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "LoggerRunnable args",
+                      "properties": {
+                        "type": { "type": ["string"] },
+                        "message": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["SendEmailRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "SendEmailRunnable args",
+                      "properties": {
+                        "to": { "type": ["string"] },
+                        "subject": { "type": ["string"] },
+                        "message": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["UpdateCommitStatusRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "UpdateCommitStatusRunnable args",
+                      "properties": {
+                        "successTargetUrl": { "type": ["string"] },
+                        "failTargetUrl": { "type": ["string"] },
+                        "successDescriptionMessage": { "type": ["string"] },
+                        "failDescriptionMessage": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["WebhookRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "WebhookRunnable args",
+                      "properties": {
+                        "url": { "type": ["string"] },
+                        "data": { "type": ["object"] },
+                        "config": { "type": ["object"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["DeleteBranchRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "DeleteBranchRunnable args",
+                      "properties": { "branchName": { "type": ["string"] } }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["UpdateIssueRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "UpdateIssueRunnable args",
+                      "properties": {
+                        "state": { "type": ["string"] },
+                        "labels": { "type": ["array"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["CreateIssueRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "CreateIssueRunnable args",
+                      "properties": {
+                        "title": { "type": ["string"] },
+                        "description": { "type": ["string"] },
+                        "assignees": { "type": ["array"] },
+                        "labels": { "type": ["array"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["DeleteFilesRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "DeleteFilesRunnable args",
+                      "properties": {
+                        "files": { "type": ["array", "string"] },
+                        "message": { "type": ["string"] },
+                        "branch": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["MergePullRequestRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "MergePullRequestRunnable args",
+                      "properties": {
+                        "commitTitle": { "type": ["string"] },
+                        "commitMessage": { "type": ["string"] },
+                        "method": { "type": ["string"] },
+                        "sha": { "type": ["string"] }
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "callback": { "enum": ["UpdatePullRequestRunnable"] },
+                    "args": {
+                      "type": "object",
+                      "description": "UpdatePullRequestRunnable args",
+                      "properties": {
+                        "target": { "type": ["string"] },
+                        "title": { "type": ["string"] },
+                        "state": { "type": ["string"] },
+                        "description": { "type": ["string"] }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "required": ["name"],
+        "anyOf": [
+          {
+            "properties": {
+              "name": { "enum": ["commitMessage"] },
+              "options": {
+                "type": "object",
+                "description": "commitMessage options",
+                "properties": {
+                  "regexp": { "type": ["string"] },
+                  "maxLength": { "type": ["number"] },
+                  "branches": { "type": ["object"] }
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "name": { "enum": ["oneCommitPerPR"] },
+              "options": {
+                "type": "object",
+                "description": "oneCommitPerPR options",
+                "properties": {}
+              }
+            }
+          },
+          {
+            "properties": {
+              "name": { "enum": ["branchName"] },
+              "options": {
+                "type": "object",
+                "description": "branchName options",
+                "properties": { "regexp": { "type": ["string"] } }
+              }
+            }
+          },
+          {
+            "properties": {
+              "name": { "enum": ["issueTitle"] },
+              "options": {
+                "type": "object",
+                "description": "issueTitle options",
+                "properties": { "regexp": { "type": ["string"] } }
+              }
+            }
+          },
+          {
+            "properties": {
+              "name": { "enum": ["pullRequestTitle"] },
+              "options": {
+                "type": "object",
+                "description": "pullRequestTitle options",
+                "properties": { "regexp": { "type": ["string"] } }
+              }
+            }
+          },
+          {
+            "properties": {
+              "name": { "enum": ["issueComment"] },
+              "options": {
+                "type": "object",
+                "description": "issueComment options",
+                "properties": { "regexp": { "type": ["string"] } }
+              }
+            }
+          },
+          {
+            "properties": {
+              "name": { "enum": ["pullRequestComment"] },
+              "options": {
+                "type": "object",
+                "description": "pullRequestComment options",
+                "properties": { "regexp": { "type": ["string"] } }
+              }
+            }
+          },
+          {
+            "properties": {
+              "name": { "enum": ["checkVulnerabilities"] },
+              "options": {
+                "type": "object",
+                "description": "checkVulnerabilities options",
+                "properties": {
+                  "packageUrl": { "type": ["string"] },
+                  "packageLockUrl": { "type": ["string"] }
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "name": { "enum": ["checkAddedFiles"] },
+              "options": {
+                "type": "object",
+                "description": "checkAddedFiles options",
+                "properties": { "regexp": { "type": ["string"] } }
+              }
+            }
+          },
+          {
+            "properties": {
+              "name": { "enum": ["checkPullRequestStatus"] },
+              "options": {
+                "type": "object",
+                "description": "checkPullRequestStatus options",
+                "properties": { "status": { "type": ["string"] } }
+              }
+            }
+          },
+          { "required": ["onSuccess"] },
+          { "required": ["onError"] },
+          { "required": ["onBoth"] }
+        ]
+      }
+    }
+  }
+}

@@ -109,6 +109,7 @@ export function getAllYAMLRunnablesArgs(): object {
     interfaceArgs = interfaceArgs.substr(0, interfaceArgs.indexOf('}'));
     interfaceArgs = interfaceArgs.substr(interfaceArgs.indexOf('\n'));
     interfaceArgs = interfaceArgs.replace(/( |\n|\r)/g, '');
+
     const args: string[] = interfaceArgs.split(';');
 
     // Remove last 'null' element
@@ -116,14 +117,18 @@ export function getAllYAMLRunnablesArgs(): object {
 
     runnable.args = args.map(a => {
       const [name, type] = a.split(':');
-      const realType: string = type.includes('[]')
-        ? 'array'
-        : ['boolean', 'string', 'number'].includes(type)
-        ? type
-        : 'object';
+      const allTypes: string[] = type.split('|');
+      const realTypes: string[] = allTypes.map(t => {
+        return t.includes('[]')
+          ? 'array'
+          : ['boolean', 'string', 'number'].includes(t)
+          ? t
+          : 'object';
+      });
+
       return {
         [name.replace('?', '')]: {
-          type: realType,
+          type: realTypes,
         },
       };
     });
