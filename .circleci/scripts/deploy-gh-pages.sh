@@ -28,6 +28,17 @@ cd docs/.vuepress/dist
 echo "> replace __DOCKER_TAG__"
 sed -i "s/__DOCKER_TAG__/${VERSION:1}/g" guide/gettingStarted.html
 
+echo "cd ../../.."
+echo "> build project"
+npm run build
+echo "> cp dist/generator/generateYAMLSchema.js docs/.vuepress/dist"
+cp dist/generator/generateYAMLSchema.js docs/.vuepress/dist
+
+echo "> cd docs/.vuepress/dist"
+cd docs/.vuepress/dist
+
+echo "> ls"
+ls
 
 git init
 git add -A
