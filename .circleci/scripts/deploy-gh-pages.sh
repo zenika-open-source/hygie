@@ -32,10 +32,13 @@ echo "cd ../../.."
 cd ../../..
 echo "> build project"
 npm run build
-echo ">> ls"
-ls
+
 echo "node dist/generator/generateYAMLSchema.js"
 node dist/generator/generateYAMLSchema.js
+
+echo "> ls dist/generator"
+ls dist/generator
+
 echo "> cp dist/generator/rules-schema.json docs/.vuepress/dist"
 cp dist/generator/rules-schema.json docs/.vuepress/dist
 
