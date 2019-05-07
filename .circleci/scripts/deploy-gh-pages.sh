@@ -37,7 +37,7 @@ cp dist/generator/generateYAMLSchema.js docs/.vuepress/dist
 echo "> cd docs/.vuepress/dist"
 cd docs/.vuepress/dist
 
-echo "> ls"
+echo "> ls "
 ls
 
 git init
