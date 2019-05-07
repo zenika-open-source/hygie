@@ -121,8 +121,6 @@ export class AppController {
         rulesBranch = webhook.pullRequest.sourceBranch;
       }
 
-      logger.warn('Rules Branch : ' + rulesBranch);
-
       const remoteRepository =
         getRemoteRules === 'true'
           ? await RemoteConfigUtils.downloadRulesFile(

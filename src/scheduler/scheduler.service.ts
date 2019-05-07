@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpService } from '@nestjs/common';
 import { NestSchedule } from '@dxdeveloperexperience/nest-schedule';
 import { Schedule } from './schedule';
 import { CronStandardClass } from './cron.interface';
@@ -16,6 +16,7 @@ export class ScheduleService {
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
     private readonly rulesService: RulesService,
+    private readonly httpService: HttpService,
   ) {}
 
   /**
@@ -27,13 +28,14 @@ export class ScheduleService {
         this.githubService,
         this.gitlabService,
         this.rulesService,
+        this.httpService,
         cron,
         remoteRepository,
       );
 
       const expression: string = !!cron.expression
         ? cron.expression
-        : '*/2 * * * * *';
+        : '*/30 * * * * *';
       newSchedule.updateCron(expression);
       this.addSchedule(newSchedule);
       return newSchedule;
