@@ -130,7 +130,7 @@ export function getAllYAMLRulesOptions(): object {
         ? type
         : 'object';
       return {
-        [name]: {
+        [name.replace('?', '')]: {
           type: realType,
         },
       };

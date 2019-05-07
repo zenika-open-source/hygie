@@ -122,7 +122,7 @@ export function getAllYAMLRunnablesArgs(): object {
         ? type
         : 'object';
       return {
-        [name]: {
+        [name.replace('?', '')]: {
           type: realType,
         },
       };

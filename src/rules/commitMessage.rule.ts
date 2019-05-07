@@ -6,8 +6,8 @@ import { RuleDecorator } from './rule.decorator';
 
 interface CommitMessageOptions {
   regexp: string;
-  maxLength: number;
-  branches: BranchesOptions;
+  maxLength?: number;
+  branches?: BranchesOptions;
 }
 
 interface BranchesOptions {
