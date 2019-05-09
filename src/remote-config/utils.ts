@@ -101,8 +101,6 @@ export class RemoteConfigUtils {
         });
         if (!checkSize) {
           throw new FileSizeException(rulesFilePath);
-        } else {
-          logger.info('Size okkkk!');
         }
 
         // Download file

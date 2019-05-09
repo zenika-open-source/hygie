@@ -35,6 +35,7 @@ module.exports = {
           '/guide/gettingStarted.md',
           '/guide/configGenerator.md',
           '/guide/registerToken.md',
+          '/guide/registerCron.md',
         ],
       },
       {

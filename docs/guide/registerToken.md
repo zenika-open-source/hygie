@@ -1,6 +1,6 @@
 # Register your Credentials
 
-## Obtain a access token
+## Obtain an access token
 
 This API allows you to interact with Github and Gitlab repositories. You can update commit status, add comments on issues or Pull Request/ Merge Request, etc.
 
