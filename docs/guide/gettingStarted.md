@@ -17,7 +17,7 @@ This folder will be fetched everytime you interact with our API.
 It contains the following files:
 
 - `.git-webhooks/rules.yml`: all the rules and post-actions you configured (see the [config generator](configGenerator.md)),
-- `.git-webhooks/rules-cron-*.yml`: all rules that will be evaluated in a cron job. Same as the `rules.yml` file, check out our [config generator](configGenerator.md). `*` is a wildchar; eg: `rules-cron-vulnerabilities.yml` or `rules-cron-1.yml`.
+- `.git-webhooks/rules-cron-*.yml`: all rules that will be evaluated in a cron job. Same as the `rules.yml` file, check out our [config generator](configGenerator.md). `*` is a wildcard; eg: `rules-cron-vulnerabilities.yml` or `rules-cron-1.yml`.
   ::: tip
   You can create as many Cron files as you want.
   :::
