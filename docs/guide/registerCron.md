@@ -7,7 +7,7 @@ CRON jobs files are rules files. Therefore, there are identical to the `rules.ym
 But be carefull, your `rules` will be executed periodically. There is no Webhook thrown.
 Consequently, only rules with `Cron` event are allowed inside your rule file.
 
-Check-out [all the available rules](./rules/existingRules.md) marked by
+Check-out [all the available rules](../rules/existingRules.md) marked by
 ::: tip
 Available in CRON jobs
 :::
