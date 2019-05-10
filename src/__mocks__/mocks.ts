@@ -16,6 +16,9 @@ export class MockHttpService {
   delete: jest.Mock = jest.fn(() => {
     return of([]);
   });
+  head: jest.Mock = jest.fn(() => {
+    return of([]);
+  });
 }
 
 export class MockGitlabService {

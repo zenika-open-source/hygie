@@ -42,7 +42,7 @@
             />
           </v-flex>
           <v-flex>
-            <v-btn @click="registerToken">Register Token</v-btn>
+            <v-btn @click="registerToken" color="green">Register Token</v-btn>
             <span v-html="responseMessage"></span>
           </v-flex>
         </v-form>
@@ -101,10 +101,6 @@ export default {
           gitApi: this.gitApi,
           gitRepo: this.gitRepo,
         })
-        .catch(err => {
-          this.responseMessage =
-            '<span class="warning">No response from server</span>';
-        })
         .then(response => {
           if (response.data.alreadyExist) {
             this.responseMessage =
@@ -113,6 +109,10 @@ export default {
             this.responseMessage =
               '<span class="success">Token stored successfully!</span>';
           }
+        })
+        .catch(err => {
+          this.responseMessage =
+            '<span class="warning">No response from server</span>';
         });
     },
   },

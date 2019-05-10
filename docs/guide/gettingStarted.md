@@ -7,18 +7,20 @@ If you want to use the `Git Webhooks` API, you need to create a `.git-webhooks` 
 This folder will be fetched everytime you interact with our API.
 
 ```
-
 .
 ├── .git-webhooks
-│	├── credentials.json
-│   └── rules.yml
+│  ├── rules.yml
+│  └── rules-cron-*.yml
 └── package.json
 ```
 
 It contains the following files:
 
 - `.git-webhooks/rules.yml`: all the rules and post-actions you configured (see the [config generator](configGenerator.md)),
-- `.git-webhooks/credentials.json`: [Google API](#google-api) credentials _[optional]_.
+- `.git-webhooks/rules-cron-*.yml`: all rules that will be evaluated in a cron job. Same as the `rules.yml` file, check out our [config generator](configGenerator.md). `*` is a wildcard; eg: `rules-cron-vulnerabilities.yml` or `rules-cron-1.yml`.
+  ::: tip
+  You can create as many Cron files as you want.
+  :::
 
 ## Repository registration
 
@@ -58,7 +60,7 @@ If you just want to test our project, without cloning it, you can run a containe
 You can simply run a container:
 
 ```
-docker run --name=webhook-container -v webhook-vol:/app -p 3000:3000 dxdeveloperexperience/git-webhooks:TAG
+docker run --name=webhook-container -v webhook-vol:/app -p 3000:3000 dxdeveloperexperience/git-webhooks:__DOCKER_TAG__
 ```
 
 ## Clone and extend it
@@ -81,12 +83,13 @@ cd git-webhooks
 Then, simply run :
 
 ```
+npm install
 npm run start
 ```
 
 The application is now running at [localhost:3000](localhost:3000)
 
-You can check if everything's alright, you sould get a welcome message.
+To check if everything's alright, you should get a welcome message.
 
 ### Build your own Docker image
 
@@ -152,7 +155,7 @@ But be aware, emails will be sent as **gitwebhooks@zenika.com**.
 ### In your own server
 
 If you want to use your own account, you have to deploy the project in your server.
-You need to create the `crendentials.json` file as describe [in the offical documentation](https://developers.google.com/gmail/api/quickstart/nodejs).
+You need to create the `crendentials.json` file as described [in the offical documentation](https://developers.google.com/gmail/api/quickstart/nodejs).
 
 You just have to follow `Step 1` to get your credentials.
 

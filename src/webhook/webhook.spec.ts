@@ -3,6 +3,7 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
 import { HttpService } from '@nestjs/common';
 import { GitEventEnum, GitTypeEnum, CommitStatusEnum } from './utils.enum';
+import { CronInterface } from '../scheduler/cron.interface';
 
 // INIT
 const gitlabService: GitlabService = new GitlabService(new HttpService());
@@ -32,6 +33,7 @@ webhook.repository = {
   name: 'test_webhook',
   description: 'amazing project',
   cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
+  defaultBranchName: 'master',
 };
 webhook.pullRequest = {
   title: 'my PR for webhook',
@@ -77,6 +79,12 @@ describe('Webhook', () => {
   describe('getBranchName', () => {
     it('should return "features/fix"', () => {
       expect(webhook.getBranchName()).toBe('features/fix');
+    });
+  });
+
+  describe('getDefaultBranchName', () => {
+    it('should return "master"', () => {
+      expect(webhook.getDefaultBranchName()).toBe('master');
     });
   });
 
@@ -157,6 +165,44 @@ describe('Webhook', () => {
         git: 'Gitlab',
         projectId: '1',
       });
+    });
+  });
+
+  describe('setCronWebhook', () => {
+    it('should create the Cron Webhook with Gitlab', () => {
+      const myWebhook: Webhook = new Webhook(gitlabService, githubService);
+      const cron: CronInterface = {
+        expression: '*/30 * * * * *',
+        filename: 'rules-cron-1.yml',
+        projectURL: 'https://gitlab.com/bastien.terrier/test_webhook',
+        gitlabProjectId: 10607595,
+      };
+      myWebhook.setCronWebhook(cron);
+      expect(myWebhook.gitType).toBe(GitTypeEnum.Gitlab);
+      expect(myWebhook.gitEvent).toBe(GitEventEnum.Cron);
+      expect(myWebhook.repository.cloneURL).toBe(
+        'https://gitlab.com/bastien.terrier/test_webhook',
+      );
+      expect(myWebhook.repository.fullName).toBe(undefined);
+      expect(myWebhook.projectId).toBe(10607595);
+    });
+    it('should create the Cron Webhook with Github', () => {
+      const myWebhook: Webhook = new Webhook(gitlabService, githubService);
+      const cron: CronInterface = {
+        expression: '*/30 * * * * *',
+        filename: 'rules-cron-1.yml',
+        projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+      };
+      myWebhook.setCronWebhook(cron);
+      expect(myWebhook.gitType).toBe(GitTypeEnum.Github);
+      expect(myWebhook.gitEvent).toBe(GitEventEnum.Cron);
+      expect(myWebhook.repository.cloneURL).toBe(
+        'https://github.com/DX-DeveloperExperience/git-webhooks',
+      );
+      expect(myWebhook.repository.fullName).toBe(
+        'DX-DeveloperExperience/git-webhooks',
+      );
+      expect(myWebhook.projectId).toBe(undefined);
     });
   });
 });

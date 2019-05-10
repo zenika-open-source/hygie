@@ -65,6 +65,10 @@ Checks if the Pull Request event matchs.
 
 Checks if `package.json` and `package-lock.json` contain vulnerabilities thank's to `npm audit`.
 
+::: tip
+Available in CRON jobs
+:::
+
 ### `ruleResult` object
 
 ```typescript

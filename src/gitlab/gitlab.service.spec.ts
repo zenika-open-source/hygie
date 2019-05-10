@@ -299,8 +299,8 @@ describe('Gitlab Service', () => {
 
   describe('setEnvironmentVariables', () => {
     it('should set the token and urlApi', () => {
-      const fs = require('fs');
-      jest.mock('fs');
+      const fs = require('fs-extra');
+      jest.mock('fs-extra');
 
       fs.readFileSync.mockReturnValue(
         `gitApi=https://mygitapi.com

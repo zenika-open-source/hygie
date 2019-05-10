@@ -9,7 +9,6 @@ import {
   UseFilters,
   Header,
   HttpService,
-  Param,
 } from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { WebhookInterceptor } from './webhook/webhook.interceptor';
@@ -25,6 +24,14 @@ import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
 import { RemoteConfigUtils } from './remote-config/utils';
 import { Utils } from './utils/utils';
+import { ScheduleService } from './scheduler/scheduler.service';
+import {
+  CronType,
+  CronStandardClass,
+  convertCronType,
+} from './scheduler/cron.interface';
+import { Schedule } from './scheduler/schedule';
+import { getYAMLSchema } from './generator/getYAMLSchema';
 
 @Controller()
 export class AppController {
@@ -33,6 +40,7 @@ export class AppController {
     private readonly rulesService: RulesService,
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
+    private readonly scheduleService: ScheduleService,
   ) {}
 
   @Get('/')
@@ -44,13 +52,25 @@ export class AppController {
   }
 
   @Post('/config-env')
-  postConfigEnv(@Body() body: any, @Res() response): void {
+  async postConfigEnv(@Body() body: any, @Res() response): Promise<void> {
     const configEnv = {
       gitApi: body.gitApi,
       gitToken: body.gitToken,
       gitRepo: body.gitRepo,
     };
-    response.send(RemoteConfigUtils.registerConfigEnv(configEnv));
+    response.send(
+      await RemoteConfigUtils.registerConfigEnv(
+        this.httpService,
+        this.githubService,
+        this.gitlabService,
+        configEnv,
+      ),
+    );
+  }
+
+  @Get('/schema')
+  getYAMLSchema(): object {
+    return getYAMLSchema();
   }
 
   @Get('/rules')
@@ -87,11 +107,27 @@ export class AppController {
       Utils.loadEnv('config.env');
       const getRemoteRules: string = process.env.ALLOW_REMOTE_CONFIG;
 
+      let rulesBranch: string = webhook.getDefaultBranchName();
+      if (GitEventEnum.Push === webhook.getGitEvent()) {
+        rulesBranch = webhook.getBranchName();
+      } else if (
+        [
+          GitEventEnum.ClosedPR,
+          GitEventEnum.MergedPR,
+          GitEventEnum.NewPR,
+          GitEventEnum.ReopenedPR,
+        ].find(e => e === webhook.getGitEvent())
+      ) {
+        rulesBranch = webhook.pullRequest.sourceBranch;
+      }
+
       const remoteRepository =
         getRemoteRules === 'true'
-          ? RemoteConfigUtils.downloadRulesFile(
+          ? await RemoteConfigUtils.downloadRulesFile(
               this.httpService,
               webhook.getCloneURL(),
+              'rules.yml',
+              rulesBranch,
             )
           : 'src/rules';
 
@@ -100,14 +136,9 @@ export class AppController {
         this.githubService.setEnvironmentVariables(remoteEnvs);
         this.gitlabService.setEnvironmentVariables(remoteEnvs);
       } catch (e) {
-        if (e instanceof PreconditionException) {
-          logger.error(
-            'There is no config.env file for the current git project',
-          );
-          return;
-        } else {
-          throw e;
-        }
+        logger.error(e);
+        logger.error('There is no config.env file for the current git project');
+        return;
       }
 
       logger.info(
@@ -117,8 +148,50 @@ export class AppController {
       const result = await this.rulesService.testRules(
         webhook,
         remoteRepository,
+        'rules.yml',
       );
       response.status(HttpStatus.ACCEPTED).send(result);
     }
+  }
+
+  @Post('cron')
+  async cronJobs(@Body() cronType: CronType, @Res() response): Promise<void> {
+    let remoteRepository: string;
+    let responseString: string = '';
+    let schedule: Schedule;
+    const cronStandardArray: CronStandardClass[] = convertCronType(cronType);
+
+    for (let index = 0; index < cronStandardArray.length; index++) {
+      // Need a for loop because Async/Wait does not work in ForEach
+
+      const cron = cronStandardArray[index];
+
+      // First, download the rules-cron.yml file
+      try {
+        remoteRepository = await RemoteConfigUtils.downloadRulesFile(
+          this.httpService,
+          cron.projectURL,
+          cron.filename,
+        ).catch(e => {
+          throw e;
+        });
+      } catch (e) {
+        response
+          .status(HttpStatus.NOT_FOUND)
+          .send(`${responseString}\n${e.message}`);
+        return;
+      }
+
+      try {
+        schedule = this.scheduleService.createSchedule(cron, remoteRepository);
+        responseString += `Schedule ${schedule.id} successfully created\n`;
+      } catch (e) {
+        response
+          .status(HttpStatus.UNAUTHORIZED)
+          .send(`${responseString}\n${e.message}`);
+        return;
+      }
+    }
+    response.status(HttpStatus.OK).send(responseString);
   }
 }

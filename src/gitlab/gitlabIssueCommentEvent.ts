@@ -1,9 +1,4 @@
-import {
-  GitlabIssue,
-  GitlabProject,
-  GitlabComment,
-  GitlabPR,
-} from './gitlab.interface';
+import { GitlabIssue, GitlabProject, GitlabComment } from './gitlab.interface';
 
 /**
  * GitlabIssueCommentEvent dto

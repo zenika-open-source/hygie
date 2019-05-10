@@ -25,6 +25,25 @@ cp .circleci/config.yml docs/.vuepress/dist/.circleci/config.yml
 echo "> cd docs/.vuepress/dist"
 cd docs/.vuepress/dist
 
+echo "> replace __DOCKER_TAG__"
+sed -i "s/__DOCKER_TAG__/${VERSION:1}/g" guide/gettingStarted.html
+
+echo "cd ../../.."
+cd ../../..
+echo "> build project"
+npm run build
+
+echo "node dist/generator/generateYAMLSchema.js"
+node dist/generator/generateYAMLSchema.js
+
+echo "> ls dist/generator"
+ls dist/generator
+
+echo "> cp dist/generator/rules-schema.json docs/.vuepress/dist"
+cp dist/generator/rules-schema.json docs/.vuepress/dist
+
+echo "> cd docs/.vuepress/dist"
+cd docs/.vuepress/dist
 
 git init
 git add -A

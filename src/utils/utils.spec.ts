@@ -1,4 +1,5 @@
 import { Utils } from './utils';
+import { GitTypeEnum } from '../webhook/utils.enum';
 
 describe('Utils', () => {
   beforeEach(() => {
@@ -7,8 +8,8 @@ describe('Utils', () => {
 
   describe('loadEnv', () => {
     it('should call fs', () => {
-      const fs = require('fs');
-      jest.mock('fs');
+      const fs = require('fs-extra');
+      jest.mock('fs-extra');
 
       fs.readFileSync.mockReturnValue(
         `gitApi=https://gitapi.com
@@ -52,21 +53,31 @@ gitToken=azertyuiop`,
     });
   });
 
-  /*
-  describe('writeFileSync', () => {
-    it('should do something', () => {
-      const fs = require('fs');
-      const path = require('path');
-      jest.clearAllMocks();
-      fs.promises.mkdir = jest.fn().mockImplementation(() => {
-        return Promise.resolve('ok');
-      });
-      fs.writeFileSync = jest.fn();
-
-      jest.mock('path');
-      Utils.writeFileSync('myFile.txt', 'my content...');
-      expect(fs.promises.mkdir).toBeCalledTimes(1);
-      expect(fs.writeFileSync).toBeCalledTimes(1);
+  describe('whichGitType', () => {
+    it('should return "Github"', () => {
+      expect(
+        Utils.whichGitType('https://github.com/bastienterrier/test-webhook'),
+      ).toBe(GitTypeEnum.Github);
     });
-  });*/
+    it('should return "Gitlab"', () => {
+      expect(
+        Utils.whichGitType('https://gitlab.com/bastien.terrier/test_webhook'),
+      ).toBe(GitTypeEnum.Gitlab);
+    });
+    it('should return "Undifined"', () => {
+      expect(Utils.whichGitType('https://google.com')).toBe(
+        GitTypeEnum.Undefined,
+      );
+    });
+  });
+
+  describe('getRepositoryFullName', () => {
+    it('should return "DX-DeveloperExperience/git-webhooks"', () => {
+      expect(
+        Utils.getRepositoryFullName(
+          'https://github.com/DX-DeveloperExperience/git-webhooks',
+        ),
+      ).toBe('DX-DeveloperExperience/git-webhooks');
+    });
+  });
 });

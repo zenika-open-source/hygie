@@ -12,10 +12,10 @@ Keywords : [#NestJs](), [#NodeJs](), [#TypeScript](), [#Docker](), [#Webhooks]()
 
 This API is available for [Github](https://github.com) and [Gitlab](https://about.gitlab.com/) repositories.
 
-Other Git version control systems will may be available in the future. Do not hesitate to ask for one of them.
+Other Git version control systems will maybe available in the future. Do not hesitate to ask for one of them.
 
 ## Contribution
 
-If you want to contribute to this project, fill free to ask for Pull Request.
+If you want to contribute to this project, fill free to create Pull Request.
 
-Every new rule or runnable is welcomed!
+Every new rule or runnable are welcomed!

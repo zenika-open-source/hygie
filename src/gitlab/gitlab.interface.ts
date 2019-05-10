@@ -34,6 +34,7 @@ export interface GitlabProject {
   id: number;
   name: string;
   git_http_url: string;
+  default_branch: string;
 }
 /**
  * GitlabComment dto

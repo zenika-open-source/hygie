@@ -14,7 +14,6 @@ import {
 } from '../git/gitPRInfos';
 import { Observable, of } from 'rxjs';
 import { GitFileInfos } from '../git/gitFileInfos';
-import { logger } from '../logger/logger.service';
 
 describe('Github Service', () => {
   let app: TestingModule;
@@ -364,8 +363,8 @@ describe('Github Service', () => {
 
   describe('setEnvironmentVariables', () => {
     it('should set the token and urlApi', () => {
-      const fs = require('fs');
-      jest.mock('fs');
+      const fs = require('fs-extra');
+      jest.mock('fs-extra');
 
       fs.readFileSync.mockReturnValue(
         `gitApi=https://mygitapi.com

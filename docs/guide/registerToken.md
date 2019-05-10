@@ -1,6 +1,6 @@
 # Register your Credentials
 
-## Obtain a access token
+## Obtain an access token
 
 This API allows you to interact with Github and Gitlab repositories. You can update commit status, add comments on issues or Pull Request/ Merge Request, etc.
 
@@ -19,6 +19,9 @@ Navigate to [https://github.com/settings/tokens](https://github.com/settings/tok
 Go to [https://gitlab.com/profile/personal_access_tokens](https://gitlab.com/profile/personal_access_tokens) and fill the `name` field with the name of your token, choose an expiration date and give it the `api` scope.
 
 ## Registration
+
+Once the following form will be filled, a `Connected to Git-Webhooks!` issue will be created in your repository.
+If not, please check the provided token.
 
 <RegisterToken/>
 

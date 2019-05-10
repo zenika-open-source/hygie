@@ -48,6 +48,7 @@ describe('RulesService', () => {
       name: 'test_webhook',
       description: 'amazing project',
       cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
+      defaultBranchName: 'master',
     };
     webhook.commits = [
       {
