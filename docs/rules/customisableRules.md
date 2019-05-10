@@ -64,7 +64,11 @@ For more examples, check out the [documentation](https://github.com/janl/mustach
 
 If you want to create a new type of rule, you can create your own class. This class must extend the abstract `Rule` class, and implement the `validate()` method. This method contains all your business logic.
 
+### CLI
+
 The easiest way to create it is to use our CLI: [git-webhooks-cli](https://github.com/DX-DeveloperExperience/git-webhooks-cli).
+
+Simple run : `npm run generate:rule RULENAME`.
 
 This CLI will create your rule file and add everything necessary in the project. You just have to focus on your business logic.
 

@@ -23,7 +23,9 @@
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "tsdoc": "typedoc --out tsdoc src",
-    "generate:schema": "ts-node --transpile-only src/generator/generateYAMLSchema.ts"
+    "generate:schema": "ts-node --transpile-only src/generator/generateYAMLSchema.ts",
+    "generate:rule": "nest generate -c @dxdeveloperexperience/git-webhooks-cli rule",
+    "generate:runnable": "nest generate -c @dxdeveloperexperience/git-webhooks-cli runnable"
   },
   "husky": {
     "hooks": {
