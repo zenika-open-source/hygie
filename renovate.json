@@ -1,5 +1,9 @@
 {
   "extends": ["config:base"],
-  "assignees": ["bastienterrier"],
-  "baseBranches": ["develop"]
+  "assignees": ["@bastienterrier"],
+  "baseBranches": ["develop"],
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "assignees": ["@bastienterrier"]
+  }
 }
