@@ -51,7 +51,7 @@ With these turnkey solutions, you can't create your custom rules, to do that, ch
 
 The easiest solution is to use directly our public API to getting started and discover our solution.
 
-Our API is currently running at : [_OUR_URL_](_OUR_URL_).
+Our API is currently running at : [--OUR_URL--](--OUR_URL--).
 
 ### Run our Docker image from DockerHub
 
@@ -60,7 +60,7 @@ If you just want to test our project, without cloning it, you can run a containe
 You can simply run a container:
 
 ```
-docker run --name=webhook-container -v webhook-vol:/app -p 3000:3000 dxdeveloperexperience/git-webhooks:_DOCKER_TAG_
+docker run --name=webhook-container -v webhook-vol:/app -p 3000:3000 dxdeveloperexperience/git-webhooks:--DOCKER_TAG--
 ```
 
 ## Clone and extend it
@@ -120,7 +120,7 @@ docker run --name webhook-container -d -p 3000:3000 my-webhook
 
 ## Github/Gitlab webhook configuration
 
-Once the API is running, you can add a webhook to your git repository with the url : `http://<url of your server>/webhook`. You can also select the events you want to receive, or select all of them.
+Once the API is running, you can add a webhook to your git repository with the url : `http://--OUR_URL--/webhook`. You can also select the events you want to receive, or select all of them.
 
 ::: tip
 You can use [ngrok](https://ngrok.com/) to convert localhost url to public url.

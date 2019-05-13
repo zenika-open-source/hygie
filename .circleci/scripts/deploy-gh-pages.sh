@@ -2,7 +2,7 @@
 set -e
 
 VERSION=$1
-URL="https://webhooks-sklnx3jldq-uc.a.run.app/"
+URL="https://webhooks-sklnx3jldq-uc.a.run.app"
 
 cd ../..
 
@@ -26,11 +26,11 @@ cp .circleci/config.yml docs/.vuepress/dist/.circleci/config.yml
 echo "> cd docs/.vuepress/dist"
 cd docs/.vuepress/dist
 
-echo "> replace _DOCKER_TAG_"
-sed -i "s/_DOCKER_TAG_/${VERSION:1}/g" guide/gettingStarted.html
+echo "> replace --DOCKER_TAG--"
+sed -i "s/--DOCKER_TAG--/${VERSION:1}/g" guide/gettingStarted.html
 
-echo "> replace _OUR_URL_"
-sed -i "s/_OUR_URL_/${URL}/g" guide/gettingStarted.html
+echo "> replace --OUR_URL--"
+sed -i "s,--OUR_URL--,${URL},g" guide/gettingStarted.html
 
 echo "cd ../../.."
 cd ../../..
