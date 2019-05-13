@@ -62,5 +62,5 @@ module.exports = {
       },
     ],
   },
-  gitwebhooksURL: 'http://localhost:3000',
+  gitwebhooksURL: 'https://webhooks-sklnx3jldq-uc.a.run.app',
 };

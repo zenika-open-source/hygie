@@ -51,7 +51,7 @@ With these turnkey solutions, you can't create your custom rules, to do that, ch
 
 The easiest solution is to use directly our public API to getting started and discover our solution.
 
-Our API is currently running at : [OUR URL]().
+Our API is currently running at : [_OUR_URL_](_OUR_URL_).
 
 ### Run our Docker image from DockerHub
 
@@ -60,7 +60,7 @@ If you just want to test our project, without cloning it, you can run a containe
 You can simply run a container:
 
 ```
-docker run --name=webhook-container -v webhook-vol:/app -p 3000:3000 dxdeveloperexperience/git-webhooks:__DOCKER_TAG__
+docker run --name=webhook-container -v webhook-vol:/app -p 3000:3000 dxdeveloperexperience/git-webhooks:_DOCKER_TAG_
 ```
 
 ## Clone and extend it
@@ -162,3 +162,10 @@ You just have to follow `Step 1` to get your credentials.
 ::: warning
 The chosen account will be the sender (email `from` field) of all emails sended through the `SendEmailRunnable`.
 :::
+
+## Others config
+
+If you're using your own server to host our solution, there's a few Environment Variables you can set:
+
+- `ALLOW_REMOTE_CONFIG`: true|false _[optional]_
+  > Specify if you allow to fetch the `.git-wehbooks/rules.yml` file from the received hook. Otherwise, it uses the local `src/rules/rules.yml`.

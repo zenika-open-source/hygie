@@ -26,7 +26,15 @@ If you don't find a suitable Post-Action for your needs, you can easily create y
 
 Your Runnable class must have a name and implement the `run()` method as said in the previous section.
 
+### CLI
+
 Same as Rules creation, the easiest way to create it is to use our CLI: [git-webhooks-cli](https://github.com/DX-DeveloperExperience/git-webhooks-cli).
+
+Simply run : `npm run generate:runnable RUNNABLENAME`.
+
+::: warning
+You need to have [`@nestjs/cli`](https://github.com/nestjs/nest-cli) install globally. Therefore, run `npm install -g @nestjs/cli`.
+:::
 
 This CLI will create your runnable file and add everything necessary in the project. You just have to focus on your business logic.
 
