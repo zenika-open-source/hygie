@@ -104,7 +104,6 @@ export class AppController {
     ) {
       throw new PreconditionException();
     } else {
-      Utils.loadEnv('config.env');
       const getRemoteRules: string = process.env.ALLOW_REMOTE_CONFIG;
 
       let rulesBranch: string = webhook.getDefaultBranchName();
@@ -122,14 +121,14 @@ export class AppController {
       }
 
       const remoteRepository =
-        getRemoteRules === 'true'
-          ? await RemoteConfigUtils.downloadRulesFile(
+        getRemoteRules === 'false'
+          ? 'src/rules'
+          : await RemoteConfigUtils.downloadRulesFile(
               this.httpService,
               webhook.getCloneURL(),
               'rules.yml',
               rulesBranch,
-            )
-          : 'src/rules';
+            );
 
       try {
         const remoteEnvs: string = webhook.getRemoteDirectory();

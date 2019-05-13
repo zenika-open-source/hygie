@@ -15,8 +15,6 @@ import { Observable } from 'rxjs';
 import { GitlabService } from './gitlab.service';
 import { GitFileInfos } from '../git/gitFileInfos';
 
-require('dotenv').config({ path: 'config.env' });
-
 describe('Gitlab Service', () => {
   let app: TestingModule;
   let gitlabService: GitlabService;
