@@ -16,7 +16,7 @@ module.exports = {
     'Rules:': ['rules'],
     'Post-Actions:': ['post actions'],
     'Cron Jobs': ['CRON'],
-    Documentation: ['documentation'],
-    'Others:': ['question', 'build', 'clean'],
+    'Documentation:': ['documentation'],
+    'Others:': ['question', 'build', 'clean', 'deploiement'],
   },
 };
