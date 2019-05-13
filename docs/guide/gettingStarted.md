@@ -120,7 +120,7 @@ docker run --name webhook-container -d -p 3000:3000 my-webhook
 
 ## Github/Gitlab webhook configuration
 
-Once the API is running, you can add a webhook to your git repository with the url : `http://--OUR_URL--/webhook`. You can also select the events you want to receive, or select all of them.
+Once the API is running, you can add a webhook to your git repository with the url : `--OUR_URL--/webhook`. You can also select the events you want to receive, or select all of them.
 
 ::: tip
 You can use [ngrok](https://ngrok.com/) to convert localhost url to public url.
