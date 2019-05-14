@@ -23,14 +23,17 @@ echo "> creating .circleci/config.yml file"
 mkdir docs/.vuepress/dist/.circleci
 cp .circleci/config.yml docs/.vuepress/dist/.circleci/config.yml
 
-echo "> cd docs/.vuepress/dist"
-cd docs/.vuepress/dist
+echo "> cd docs"
+cd docs
 
 echo "> replace --DOCKER_TAG--"
-sed -i "s/--DOCKER_TAG--/${VERSION:1}/g" guide/gettingStarted.html
+sed -i "s/--DOCKER_TAG--/${VERSION:1}/g" guide/gettingStarted.md
 
 echo "> replace --OUR_URL--"
-sed -i "s,--OUR_URL--,${URL},g" guide/gettingStarted.html
+sed -i "s,--OUR_URL--,${URL},g" guide/gettingStarted.md
+
+echo "> cd .vuepress/dist"
+cd .vuepress/dist
 
 echo "cd ../../.."
 cd ../../..
