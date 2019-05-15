@@ -80,4 +80,40 @@ gitToken=azertyuiop`,
       ).toBe('DX-DeveloperExperience/git-webhooks');
     });
   });
+
+  describe('JSONtoString', () => {
+    it('should return "gitApi=myAPI\ngitToken=myToken', () => {
+      expect(
+        Utils.JSONtoString({
+          gitApi: 'myAPI',
+          gitToken: 'myToken',
+        }),
+      ).toBe('gitApi=myAPI\ngitToken=myToken');
+    });
+    it('should return "gitApi=myAPI\ngitToken=myToken', () => {
+      expect(Utils.JSONtoString('gitApi=myAPI\ngitToken=myToken')).toBe(
+        'gitApi=myAPI\ngitToken=myToken',
+      );
+    });
+  });
+
+  describe('StringtoJSON', () => {
+    it('should return a JSON object', () => {
+      expect(Utils.StringtoJSON('gitApi=myAPI\ngitToken=myToken')).toEqual({
+        gitApi: 'myAPI',
+        gitToken: 'myToken',
+      });
+    });
+    it('should return a JSON object', () => {
+      expect(
+        Utils.StringtoJSON({
+          gitApi: 'myAPI',
+          gitToken: 'myToken',
+        }),
+      ).toEqual({
+        gitApi: 'myAPI',
+        gitToken: 'myToken',
+      });
+    });
+  });
 });

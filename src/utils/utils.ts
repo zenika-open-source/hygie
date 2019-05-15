@@ -1,4 +1,5 @@
 import { GitTypeEnum } from '../webhook/utils.enum';
+import 'array-flat-polyfill';
 
 export class Utils {
   static getObjectValue(obj: object): object {
@@ -13,6 +14,8 @@ export class Utils {
     const fs = require('fs-extra');
     const dotenv = require('dotenv');
     const envConfig = dotenv.parse(fs.readFileSync(filePath));
+    // tslint:disable-next-line:no-console
+    console.log(envConfig);
     // tslint:disable-next-line:forin
     for (const k in envConfig) {
       process.env[k] = envConfig[k];
@@ -64,5 +67,31 @@ export class Utils {
         .toString(36)
         .substr(2, 9)
     );
+  }
+
+  static JSONtoString(obj: any): string {
+    if (typeof obj === 'string') {
+      return obj;
+    }
+    return Object.entries(obj)
+      .map(e => e[0] + '=' + e[1])
+      .join('\n');
+  }
+
+  static StringtoJSON(str: any): object {
+    if (typeof str === 'object') {
+      return str;
+    }
+    const res =
+      '{' +
+      (str as string)
+        .split('\n')
+        .flatMap(e => {
+          const parts = e.split('=');
+          return '"' + parts[0] + '":"' + parts[1] + '"';
+        })
+        .toString() +
+      '}';
+    return JSON.parse(res);
   }
 }
