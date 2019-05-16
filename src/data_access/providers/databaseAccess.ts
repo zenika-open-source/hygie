@@ -22,7 +22,7 @@ export class DatabaseAccess implements DataAccessInterface {
   async setup(): Promise<void> {
     await Database.localdb
       .connection()
-      .then(res => logger.info('Connected to Database!'))
+      .then(_ => logger.info('Connected to Database!'))
       .catch(err => logger.error(err));
   }
 

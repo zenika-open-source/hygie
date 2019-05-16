@@ -34,9 +34,7 @@ describe('remote-config', () => {
         {
           provide: 'DataAccessInterface',
           useFactory() {
-            return process.env.DATA_ACCESS === 'file'
-              ? new FileAccess()
-              : new DatabaseAccess();
+            return new FileAccess();
           },
         },
       ],

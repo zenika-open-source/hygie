@@ -1,6 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { SourceEnum, DataAccessInterface } from './dataAccess.interface';
-import { logger } from '../logger/logger.service';
 
 @Injectable()
 export class DataAccessService {

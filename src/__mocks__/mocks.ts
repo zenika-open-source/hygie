@@ -1,4 +1,8 @@
 import { of } from 'rxjs';
+import {
+  DataAccessInterface,
+  SourceEnum,
+} from '../data_access/dataAccess.interface';
 
 export class MockHttpService {
   get: jest.Mock = jest.fn(() => {
@@ -98,10 +102,51 @@ export class MockDataAccessService {
     });
   checkIfEnvExist: jest.Mock = jest
     .fn()
-    .mockName('writeRule')
+    .mockName('checkIfEnvExist')
     .mockImplementation((...args) => {
       return new Promise((resolve, reject) => {
         resolve(true);
       });
     });
+
+  checkIfRuleExist: jest.Mock = jest
+    .fn()
+    .mockName('checkIfRuleExist')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve(true);
+      });
+    });
+
+  readEnv: jest.Mock = jest
+    .fn()
+    .mockName('readEnv')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve({ gitApi: 'myAPI', gitToken: 'myToken' });
+      });
+    });
+
+  readRule: jest.Mock = jest
+    .fn()
+    .mockName('readRule')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve('some rule content...');
+      });
+    });
+}
+
+export class MockDataAccess implements DataAccessInterface {
+  checkIfExist(source: SourceEnum, path: string): Promise<boolean> {
+    return Promise.resolve(true);
+  }
+
+  readData(source: SourceEnum, path: string): Promise<any> {
+    return Promise.resolve('some data');
+  }
+
+  writeData(source: SourceEnum, path: string, data: any): Promise<any> {
+    return Promise.resolve('ok');
+  }
 }
