@@ -15,9 +15,11 @@ export class DataAccessModule {
         {
           provide: 'DataAccessInterface',
           useFactory() {
+            // Use custom DataAccessInterface
             if (entity !== null) {
               return new entity();
             }
+            // Defaults
             return process.env.DATA_ACCESS === 'file'
               ? new FileAccess()
               : new DatabaseAccess();
