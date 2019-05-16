@@ -2,7 +2,6 @@ import { Module, DynamicModule } from '@nestjs/common';
 import { DataAccessService } from './dataAccess.service';
 import { FileAccess } from './providers/fileAccess';
 import { DatabaseAccess } from './providers/databaseAccess';
-import { logger } from '../logger/logger.service';
 
 @Module({
   providers: [DataAccessService],
@@ -10,8 +9,6 @@ import { logger } from '../logger/logger.service';
 })
 export class DataAccessModule {
   static forRoot(entity: any = null): DynamicModule {
-    logger.info('DataAccessModule forRoot');
-    logger.info(entity);
     return {
       module: DataAccessModule,
       providers: [
