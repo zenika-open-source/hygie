@@ -6,6 +6,7 @@ import { GitModule } from '../git/git.module';
 import { ScheduleService } from '../scheduler/scheduler.service';
 import { MockDataAccess } from './mocks';
 import { DataAccessService } from '../data_access/dataAccess.service';
+import { DataAccessModule } from '../data_access/dataAccess.module';
 
 @Module({
   providers: [
@@ -24,10 +25,9 @@ class MockDataAccessModule {}
 @Module({
   imports: [
     HttpModule,
-    RulesModule,
+    RulesModule.forRoot(MockDataAccess),
     RunnableModule,
     GitModule,
-    MockDataAccessModule,
   ],
   controllers: [AppController],
   providers: [ScheduleService],

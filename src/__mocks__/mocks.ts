@@ -138,6 +138,11 @@ export class MockDataAccessService {
 }
 
 export class MockDataAccess implements DataAccessInterface {
+  constructor() {
+    // tslint:disable-next-line:no-console
+    console.log('COUCOUCOUCOUCOUCOUCOUCOUCOUCOUCOUCOUCOUCOUCOUCOUCOU');
+  }
+
   checkIfExist(source: SourceEnum, path: string): Promise<boolean> {
     return Promise.resolve(true);
   }

@@ -157,7 +157,7 @@ export class RemoteConfigUtils {
    * @return an Object with the success status (true if registration succeed, false otherwise) and if the file already exist
    */
   static async registerConfigEnv(
-    dataAccess: DataAccessService,
+    dataAccessService: DataAccessService,
     httpService: HttpService,
     githubService: GithubService,
     gitlabService: GitlabService,
@@ -179,19 +179,21 @@ export class RemoteConfigUtils {
         gitToken: configEnv.gitToken,
       };
 
-      if (await dataAccess.checkIfEnvExist(configFile)) {
+      if (await dataAccessService.checkIfEnvExist(configFile)) {
         result.alreadyExist = true;
       }
 
-      await dataAccess.writeEnv(configFile, content);
+      await dataAccessService.writeEnv(configFile, content);
 
       /**
        * Check if Token is correct
        */
-      githubService.setEnvironmentVariables(
+      await githubService.setEnvironmentVariables(
+        dataAccessService,
         Utils.getRepositoryFullName(configEnv.gitRepo),
       );
-      gitlabService.setEnvironmentVariables(
+      await gitlabService.setEnvironmentVariables(
+        dataAccessService,
         Utils.getRepositoryFullName(configEnv.gitRepo),
       );
 
