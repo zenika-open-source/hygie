@@ -1,6 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpService } from '@nestjs/common';
-import { MockHttpService, MockObservable } from '../__mocks__/mocks';
+import {
+  MockHttpService,
+  MockObservable,
+  MockDataAccessService,
+} from '../__mocks__/mocks';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { CommitStatusEnum } from '../webhook/utils.enum';
@@ -14,12 +18,14 @@ import {
 import { Observable } from 'rxjs';
 import { GitlabService } from './gitlab.service';
 import { GitFileInfos } from '../git/gitFileInfos';
+import { DataAccessService } from '../data_access/dataAccess.service';
 
 describe('Gitlab Service', () => {
   let app: TestingModule;
   let gitlabService: GitlabService;
   let httpService: HttpService;
   let observable: Observable<any>;
+  let dataAccessService: DataAccessService;
 
   let gitApiInfos: GitApiInfos;
   let gitCommitStatusInfos: GitCommitStatusInfos;
@@ -31,6 +37,8 @@ describe('Gitlab Service', () => {
       providers: [
         { provide: HttpService, useClass: MockHttpService },
         { provide: Observable, useClass: MockObservable },
+        { provide: DataAccessService, useClass: MockDataAccessService },
+
         GitlabService,
       ],
     }).compile();
@@ -38,6 +46,7 @@ describe('Gitlab Service', () => {
     gitlabService = app.get(GitlabService);
     httpService = app.get(HttpService);
     observable = app.get(Observable);
+    dataAccessService = app.get(DataAccessService);
 
     gitApiInfos = new GitApiInfos();
     gitApiInfos.projectId = '1';
@@ -296,19 +305,19 @@ describe('Gitlab Service', () => {
   });
 
   describe('setEnvironmentVariables', () => {
-    it('should set the token and urlApi', () => {
-      const fs = require('fs-extra');
-      jest.mock('fs-extra');
+    it('should set the token and urlApi', async () => {
+      dataAccessService.readEnv = jest.fn().mockReturnValue({
+        gitApi: 'https://mygitlabapi.com',
+        gitToken: 'gitlabToken',
+      });
 
-      fs.readFileSync.mockReturnValue(
-        `gitApi=https://mygitapi.com
-      gitToken=qsdfghjklm`,
+      await gitlabService.setEnvironmentVariables(
+        dataAccessService,
+        'myFilePath',
       );
 
-      gitlabService.setEnvironmentVariables('myFilePath');
-
-      expect(gitlabService.token).toBe('qsdfghjklm');
-      expect(gitlabService.urlApi).toBe('https://mygitapi.com');
+      expect(gitlabService.token).toBe('gitlabToken');
+      expect(gitlabService.urlApi).toBe('https://mygitlabapi.com');
     });
   });
 });

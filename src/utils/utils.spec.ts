@@ -1,5 +1,19 @@
 import { Utils } from './utils';
 import { GitTypeEnum } from '../webhook/utils.enum';
+import { TestingModule, Test } from '@nestjs/testing';
+import { DataAccessService } from '../data_access/dataAccess.service';
+import { MockDataAccessService } from '../__mocks__/mocks';
+let app: TestingModule;
+
+let dataAccessService: DataAccessService;
+beforeAll(async () => {
+  app = await Test.createTestingModule({
+    providers: [
+      { provide: DataAccessService, useClass: MockDataAccessService },
+    ],
+  }).compile();
+  dataAccessService = app.get(DataAccessService);
+});
 
 describe('Utils', () => {
   beforeEach(() => {
@@ -7,19 +21,16 @@ describe('Utils', () => {
   });
 
   describe('loadEnv', () => {
-    it('should call fs', () => {
-      const fs = require('fs-extra');
-      jest.mock('fs-extra');
+    it('should call fs', async () => {
+      dataAccessService.readEnv = jest.fn().mockReturnValue({
+        gitApi: 'https://gitapi.com',
+        gitToken: 'myToken',
+      });
 
-      fs.readFileSync.mockReturnValue(
-        `gitApi=https://gitapi.com
-gitToken=azertyuiop`,
-      );
-
-      Utils.loadEnv('myFilePath');
+      await Utils.loadEnv(dataAccessService, 'myFilePath');
 
       expect(process.env.gitApi).toBe('https://gitapi.com');
-      expect(process.env.gitToken).toBe('azertyuiop');
+      expect(process.env.gitToken).toBe('myToken');
     });
   });
 

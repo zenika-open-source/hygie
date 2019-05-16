@@ -27,7 +27,7 @@ export class Schedule extends NestSchedule {
     private readonly gitlabService: GitlabService,
     private readonly rulesService: RulesService,
     private readonly httpService: HttpService,
-    private readonly dataAccess: DataAccessService,
+    private readonly dataAccessService: DataAccessService,
     cron: CronStandardClass,
     remoteRepository: string,
   ) {
@@ -79,8 +79,14 @@ export class Schedule extends NestSchedule {
   })
   async cronJob() {
     try {
-      this.githubService.setEnvironmentVariables(this.remoteEnvs);
-      this.gitlabService.setEnvironmentVariables(this.remoteEnvs);
+      this.githubService.setEnvironmentVariables(
+        this.dataAccessService,
+        this.remoteEnvs,
+      );
+      this.gitlabService.setEnvironmentVariables(
+        this.dataAccessService,
+        this.remoteEnvs,
+      );
     } catch (e) {
       logger.error(e);
       logger.error('There is no config.env file for the current git project');
@@ -92,7 +98,7 @@ export class Schedule extends NestSchedule {
 
     try {
       await RemoteConfigUtils.downloadRulesFile(
-        this.dataAccess,
+        this.dataAccessService,
         this.httpService,
         this.cron.projectURL,
         this.cron.filename,

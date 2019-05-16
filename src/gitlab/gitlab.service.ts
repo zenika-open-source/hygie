@@ -17,6 +17,7 @@ import {
 import { logger } from '../logger/logger.service';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { Utils } from '../utils/utils';
+import { DataAccessService } from '../data_access/dataAccess.service';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -36,8 +37,14 @@ export class GitlabService implements GitServiceInterface {
     this.urlApi = urlApi;
   }
 
-  setEnvironmentVariables(filePath: string): void {
-    Utils.loadEnv('remote-envs/' + filePath + '/config.env');
+  async setEnvironmentVariables(
+    dataAccessService: DataAccessService,
+    filePath: string,
+  ): Promise<void> {
+    await Utils.loadEnv(
+      dataAccessService,
+      'remote-envs/' + filePath + '/config.env',
+    );
 
     this.setToken(process.env.gitToken);
     this.setUrlApi(process.env.gitApi);

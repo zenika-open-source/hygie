@@ -1,5 +1,7 @@
 import { GitTypeEnum } from '../webhook/utils.enum';
 import 'array-flat-polyfill';
+import { logger } from '../logger/logger.service';
+import { DataAccessService } from '../data_access/dataAccess.service';
 
 export class Utils {
   static getObjectValue(obj: object): object {
@@ -10,10 +12,17 @@ export class Utils {
     return typeof str === 'undefined' ? '' : str;
   }
 
-  static loadEnv(filePath: string) {
-    const fs = require('fs-extra');
+  static async loadEnv(dataAccessService: DataAccessService, filePath: string) {
+    logger.info('LoadEnv');
+
     const dotenv = require('dotenv');
-    const envConfig = dotenv.parse(fs.readFileSync(filePath));
+    const envData = await dataAccessService.readEnv(filePath);
+
+    const envConfig = dotenv.parse(Utils.JSONtoString(envData));
+
+    // tslint:disable-next-line:no-console
+    console.log(envConfig);
+
     // tslint:disable-next-line:forin
     for (const k in envConfig) {
       process.env[k] = envConfig[k];
