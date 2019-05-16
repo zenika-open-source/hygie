@@ -11,6 +11,7 @@ import { safeLoad } from 'js-yaml';
 import { RemoteConfigUtils } from '../remote-config/utils';
 import { checkCronExpression } from './utils';
 import { GitTypeEnum } from '../webhook/utils.enum';
+import { DataAccessService } from '../data_access/dataAccess.service';
 
 @Injectable()
 export class Schedule extends NestSchedule {
@@ -26,6 +27,7 @@ export class Schedule extends NestSchedule {
     private readonly gitlabService: GitlabService,
     private readonly rulesService: RulesService,
     private readonly httpService: HttpService,
+    private readonly dataAccess: DataAccessService,
     cron: CronStandardClass,
     remoteRepository: string,
   ) {
@@ -90,6 +92,7 @@ export class Schedule extends NestSchedule {
 
     try {
       await RemoteConfigUtils.downloadRulesFile(
+        this.dataAccess,
         this.httpService,
         this.cron.projectURL,
         this.cron.filename,

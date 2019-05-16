@@ -78,3 +78,30 @@ export class MockObservable {
     return;
   });
 }
+
+export class MockDataAccessService {
+  writeEnv: jest.Mock = jest
+    .fn()
+    .mockName('writeEnv')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve();
+      });
+    });
+  writeRule: jest.Mock = jest
+    .fn()
+    .mockName('writeRule')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve();
+      });
+    });
+  checkIfEnvExist: jest.Mock = jest
+    .fn()
+    .mockName('writeRule')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve(true);
+      });
+    });
+}

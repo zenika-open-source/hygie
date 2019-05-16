@@ -14,8 +14,6 @@ export class Utils {
     const fs = require('fs-extra');
     const dotenv = require('dotenv');
     const envConfig = dotenv.parse(fs.readFileSync(filePath));
-    // tslint:disable-next-line:no-console
-    console.log(envConfig);
     // tslint:disable-next-line:forin
     for (const k in envConfig) {
       process.env[k] = envConfig[k];
