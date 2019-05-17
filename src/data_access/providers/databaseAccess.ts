@@ -46,7 +46,9 @@ export class DatabaseAccess implements DataAccessInterface {
     return await model
       .updateOne({ path }, { content: data })
       .then(async res => {
-        if (res.nModified === 0) {
+        // tslint:disable-next-line:no-console
+        console.log(res);
+        if (res.n === 0) {
           // Insert data
           return await model.insertMany([
             {
