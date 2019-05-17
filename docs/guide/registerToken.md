@@ -24,15 +24,3 @@ Once the following form will be filled, a `Connected to Git-Webhooks!` issue wil
 If not, please check the provided token.
 
 <RegisterToken/>
-
-::: tip
-If your Github or Gitlab repo is hosted in the official website, the Git API URL are the following:
-
-- Github: https://api.github.com
-- Gitlab: https://gitlab.com/api/v4
-
-:::
-
-::: warning
-Do not forget to change it if your repo is hosted on another server!
-:::
