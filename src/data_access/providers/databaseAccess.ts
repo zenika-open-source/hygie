@@ -38,11 +38,6 @@ export class DatabaseAccess implements DataAccessInterface {
   async writeData(source: SourceEnum, path: string, data: any): Promise<any> {
     const model = this.getModel(source);
 
-    /*return await model
-      .insertMany([{ path, content: data }])
-      .then(res => res)
-      .catch(err => err);*/
-
     return await model
       .updateOne({ path }, { content: data })
       .then(async res => {
