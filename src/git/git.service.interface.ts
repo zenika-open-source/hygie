@@ -3,6 +3,7 @@ import { GitApiInfos } from './gitApiInfos';
 import { GitIssueInfos } from './gitIssueInfos';
 import { GitCommentPRInfos, GitPRInfos, GitMergePRInfos } from './gitPRInfos';
 import { GitFileInfos } from './gitFileInfos';
+import { DataAccessService } from '../data_access/dataAccess.service';
 
 /**
  * Provide methods that must be implement by `GithubService` and `GitlabService` to interact with `git` repository
@@ -62,7 +63,10 @@ export interface GitServiceInterface {
    * Initialize `gitApi` and `gitToken` env. variables on new webhook
    * by reading the corresponding `config.env` file
    */
-  setEnvironmentVariables(filePath: string): void;
+  setEnvironmentVariables(
+    dataAccessService: DataAccessService,
+    filePath: string,
+  ): Promise<void>;
 
   /**
    * Remove a particular file describe in `gitFileInfos`

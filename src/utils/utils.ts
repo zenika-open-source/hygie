@@ -1,4 +1,6 @@
 import { GitTypeEnum } from '../webhook/utils.enum';
+import 'array-flat-polyfill';
+import { DataAccessService } from '../data_access/dataAccess.service';
 
 export class Utils {
   static getObjectValue(obj: object): object {
@@ -9,10 +11,12 @@ export class Utils {
     return typeof str === 'undefined' ? '' : str;
   }
 
-  static loadEnv(filePath: string) {
-    const fs = require('fs-extra');
+  static async loadEnv(dataAccessService: DataAccessService, filePath: string) {
     const dotenv = require('dotenv');
-    const envConfig = dotenv.parse(fs.readFileSync(filePath));
+    const envData = await dataAccessService.readEnv(filePath);
+
+    const envConfig = dotenv.parse(Utils.JSONtoString(envData));
+
     // tslint:disable-next-line:forin
     for (const k in envConfig) {
       process.env[k] = envConfig[k];
@@ -64,5 +68,31 @@ export class Utils {
         .toString(36)
         .substr(2, 9)
     );
+  }
+
+  static JSONtoString(obj: any): string {
+    if (typeof obj === 'string') {
+      return obj;
+    }
+    return Object.entries(obj)
+      .map(e => e[0] + '=' + e[1])
+      .join('\n');
+  }
+
+  static StringtoJSON(str: any): object {
+    if (typeof str === 'object') {
+      return str;
+    }
+    const res =
+      '{' +
+      (str as string)
+        .split('\n')
+        .flatMap(e => {
+          const parts = e.split('=');
+          return '"' + parts[0] + '":"' + parts[1] + '"';
+        })
+        .toString() +
+      '}';
+    return JSON.parse(res);
   }
 }

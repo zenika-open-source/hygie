@@ -23,7 +23,6 @@ import { getAllOptions } from './generator/getAllOptions';
 import { GitlabService } from './gitlab/gitlab.service';
 import { GithubService } from './github/github.service';
 import { RemoteConfigUtils } from './remote-config/utils';
-import { Utils } from './utils/utils';
 import { ScheduleService } from './scheduler/scheduler.service';
 import {
   CronType,
@@ -32,6 +31,7 @@ import {
 } from './scheduler/cron.interface';
 import { Schedule } from './scheduler/schedule';
 import { getYAMLSchema } from './generator/getYAMLSchema';
+import { DataAccessService } from './data_access/dataAccess.service';
 
 @Controller()
 export class AppController {
@@ -41,6 +41,7 @@ export class AppController {
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
     private readonly scheduleService: ScheduleService,
+    private readonly dataAccessService: DataAccessService,
   ) {}
 
   @Get('/')
@@ -60,6 +61,7 @@ export class AppController {
     };
     response.send(
       await RemoteConfigUtils.registerConfigEnv(
+        this.dataAccessService,
         this.httpService,
         this.githubService,
         this.gitlabService,
@@ -124,6 +126,7 @@ export class AppController {
         getRemoteRules === 'false'
           ? 'src/rules'
           : await RemoteConfigUtils.downloadRulesFile(
+              this.dataAccessService,
               this.httpService,
               webhook.getCloneURL(),
               'rules.yml',
@@ -132,8 +135,14 @@ export class AppController {
 
       try {
         const remoteEnvs: string = webhook.getRemoteDirectory();
-        this.githubService.setEnvironmentVariables(remoteEnvs);
-        this.gitlabService.setEnvironmentVariables(remoteEnvs);
+        await this.githubService.setEnvironmentVariables(
+          this.dataAccessService,
+          remoteEnvs,
+        );
+        await this.gitlabService.setEnvironmentVariables(
+          this.dataAccessService,
+          remoteEnvs,
+        );
       } catch (e) {
         logger.error(e);
         logger.error('There is no config.env file for the current git project');
@@ -168,6 +177,7 @@ export class AppController {
       // First, download the rules-cron.yml file
       try {
         remoteRepository = await RemoteConfigUtils.downloadRulesFile(
+          this.dataAccessService,
           this.httpService,
           cron.projectURL,
           cron.filename,

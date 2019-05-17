@@ -18,10 +18,11 @@
                 v-model="gitRepo"
                 :rules="urlRules"
                 required
+                @change="checkGitURL"
               />
             </label>
           </v-flex>
-          <v-flex class="padding">
+          <v-flex class="padding" :class="hiddenApiURL">
             <v-text-field
               type="text"
               placeholder="https://api.github.com"
@@ -52,6 +53,9 @@
 </template>
 
 <style>
+.hidden {
+  display: none;
+}
 .padding {
   padding-top: 5px;
   padding-bottom: 5px;
@@ -74,6 +78,7 @@ import configJS from '../config.js';
 export default {
   data: function() {
     return {
+      hiddenApiURL: 'hidden',
       valid: false,
       gitRepo: '',
       gitToken: '',
@@ -90,6 +95,20 @@ export default {
     };
   },
   methods: {
+    checkGitURL(url) {
+      const regexpGithub = new RegExp('^https://github.com/.*');
+      const regexpGitlab = new RegExp('^https://gitlab.com/.*');
+
+      if (regexpGithub.test(url)) {
+        this.gitApi = 'https://api.github.com';
+        this.hiddenApiURL = 'hidden';
+      } else if (regexpGitlab.test(url)) {
+        this.gitApi = 'https://gitlab.com/api/v4';
+        this.hiddenApiURL = 'hidden';
+      } else {
+        this.hiddenApiURL = '';
+      }
+    },
     registerToken() {
       if (!this.$refs.form.validate()) {
         return;

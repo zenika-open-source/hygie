@@ -4,9 +4,8 @@ import { RulesModule } from './rules/rules.module';
 import { RunnableModule } from './runnables/runnable.module';
 import { GitModule } from './git/git.module';
 import { ScheduleService } from './scheduler/scheduler.service';
-
 @Module({
-  imports: [HttpModule, RulesModule, RunnableModule, GitModule],
+  imports: [HttpModule, RulesModule.forRoot(), RunnableModule, GitModule],
   controllers: [AppController],
   providers: [ScheduleService],
 })

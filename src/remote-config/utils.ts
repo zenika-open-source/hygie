@@ -9,6 +9,7 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { FileSizeException } from '../exceptions/fileSize.exception';
+import { DataAccessService } from '../data_access/dataAccess.service';
 
 const fs = require('fs-extra');
 
@@ -66,6 +67,7 @@ export class RemoteConfigUtils {
    * @return the location of the `.git-webhooks` repo
    */
   static async downloadRulesFile(
+    dataAccess: DataAccessService,
     httpService: HttpService,
     projectURL: string,
     filename: string,
@@ -122,7 +124,7 @@ export class RemoteConfigUtils {
           )
           .toPromise()
           .then(async response => {
-            await Utils.writeFileSync(
+            await dataAccess.writeRule(
               `${gitWebhooksFolder}/${filename}`,
               response.data,
             );
@@ -155,6 +157,7 @@ export class RemoteConfigUtils {
    * @return an Object with the success status (true if registration succeed, false otherwise) and if the file already exist
    */
   static async registerConfigEnv(
+    dataAccessService: DataAccessService,
     httpService: HttpService,
     githubService: GithubService,
     gitlabService: GitlabService,
@@ -171,22 +174,26 @@ export class RemoteConfigUtils {
         Utils.getRepositoryFullName(configEnv.gitRepo) +
         '/config.env';
 
-      const content: string = `gitApi=${configEnv.gitApi}
-gitToken=${configEnv.gitToken}`;
+      const content = {
+        gitApi: configEnv.gitApi,
+        gitToken: configEnv.gitToken,
+      };
 
-      if (fs.existsSync(configFile)) {
+      if (await dataAccessService.checkIfEnvExist(configFile)) {
         result.alreadyExist = true;
       }
 
-      await Utils.writeFileSync(configFile, content);
+      await dataAccessService.writeEnv(configFile, content);
 
       /**
        * Check if Token is correct
        */
-      githubService.setEnvironmentVariables(
+      await githubService.setEnvironmentVariables(
+        dataAccessService,
         Utils.getRepositoryFullName(configEnv.gitRepo),
       );
-      gitlabService.setEnvironmentVariables(
+      await gitlabService.setEnvironmentVariables(
+        dataAccessService,
         Utils.getRepositoryFullName(configEnv.gitRepo),
       );
 

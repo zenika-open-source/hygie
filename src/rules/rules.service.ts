@@ -9,31 +9,31 @@ import { RulesOptions } from './rules.options';
 import { Group } from './group.class';
 import { logger } from '../logger/logger.service';
 import { GroupResult } from './groupResult';
+import { DataAccessService } from '../data_access/dataAccess.service';
 
 @Injectable()
 export class RulesService {
   constructor(
     private readonly runnableService: RunnablesService,
+    private readonly dataAccessService: DataAccessService,
     private readonly rulesClasses: Rule[] = [],
   ) {}
 
-  getConfiguration(remoteRepository: string, ruleFile: string): any {
-    const path = require('path');
-    return safeLoad(
-      readFileSync(
-        path.resolve(__dirname, `../../${remoteRepository}/${ruleFile}`),
-        'utf-8',
-      ),
+  async getConfiguration(
+    remoteRepository: string,
+    ruleFile: string,
+  ): Promise<any> {
+    return await safeLoad(
+      await this.dataAccessService.readRule(`${remoteRepository}/${ruleFile}`),
     );
   }
 
-  getRulesConfiguration(remoteRepository: string, ruleFile: string): Rule[] {
-    return this.getConfiguration(remoteRepository, ruleFile).rules || [];
+  getRulesConfiguration(configuration: any): Rule[] {
+    return configuration.rules || [];
   }
 
-  getGroupsConfiguration(remoteRepository: string, ruleFile: string): Group[] {
-    const groupsConfig =
-      this.getConfiguration(remoteRepository, ruleFile).groups || [];
+  getGroupsConfiguration(configuration: any): Group[] {
+    const groupsConfig = configuration.groups || [];
 
     return groupsConfig.map(g => {
       const group = new Group();
@@ -46,10 +46,8 @@ export class RulesService {
     });
   }
 
-  getRulesOptions(remoteRepository: string, ruleFile: string): RulesOptions {
-    return new RulesOptions(
-      this.getConfiguration(remoteRepository, ruleFile).options,
-    );
+  getRulesOptions(configuration: any): RulesOptions {
+    return new RulesOptions(configuration.options);
   }
 
   getRule(ruleConfig): Rule {
@@ -62,18 +60,13 @@ export class RulesService {
     ruleFile: string,
   ): Promise<RuleResult[]> {
     return new Promise(async (resolve, reject) => {
-      const rules: Rule[] = this.getRulesConfiguration(
+      const configuration = await this.getConfiguration(
         remoteRepository,
         ruleFile,
       );
-      const groups: Group[] = this.getGroupsConfiguration(
-        remoteRepository,
-        ruleFile,
-      );
-      const rulesOptions: RulesOptions = this.getRulesOptions(
-        remoteRepository,
-        ruleFile,
-      );
+      const rules: Rule[] = this.getRulesConfiguration(configuration);
+      const groups: Group[] = this.getGroupsConfiguration(configuration);
+      const rulesOptions: RulesOptions = this.getRulesOptions(configuration);
 
       const BreakException = {};
       const results: RuleResult[] = new Array();

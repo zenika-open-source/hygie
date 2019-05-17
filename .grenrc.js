@@ -17,6 +17,6 @@ module.exports = {
     'Post-Actions:': ['post actions'],
     'Cron Jobs': ['CRON'],
     'Documentation:': ['documentation'],
-    'Others:': ['question', 'build', 'clean', 'deployment'],
+    'Others:': ['question', 'build', 'clean', 'deployment', 'security'],
   },
 };
