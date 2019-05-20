@@ -28,12 +28,13 @@ cp .circleci/config.yml docs/.vuepress/dist/.circleci/config.yml
 echo "> cd docs/.vuepress/dist"
 cd docs/.vuepress/dist
 
-if [ $displayURL = true ]
-then
+
 echo "> replace --DOCKER_TAG--"
 sed -i "s/--DOCKER_TAG--/${VERSION:1}/g" guide/gettingStarted.html
 sed -i "s/--DOCKER_TAG--/${VERSION:1}/g" assets/js/*.js
 
+if [ $displayURL = true ]
+then
 echo "> replace --OUR_URL--"
 sed -i "s,--OUR_URL--,${URL},g" guide/gettingStarted.html
 sed -i "s,--OUR_URL--,${URL},g" assets/js/*.js
