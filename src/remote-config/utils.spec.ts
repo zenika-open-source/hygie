@@ -126,6 +126,7 @@ describe('remote-config', () => {
         githubService,
         gitlabService,
         configEnv,
+        'https://some.url.com',
       );
 
       expect(dataAccessService.checkIfEnvExist).toHaveBeenCalledWith(
@@ -177,6 +178,23 @@ describe('remote-config', () => {
       ).toBe(
         'https://gitlab.com/bastien.terrier/test_webhook/raw/master/.git-webhooks/rules.yml',
       );
+    });
+  });
+
+  describe('getAccessToken', () => {
+    it('shoud return the token part', () => {
+      expect(
+        RemoteConfigUtils.getAccessToken(
+          'access_token=e72e16c7e42f292c6912e7710c838347ae178b4a&token_type=bearer',
+        ),
+      ).toBe('e72e16c7e42f292c6912e7710c838347ae178b4a');
+    });
+    it('shoud return the token part', () => {
+      expect(
+        RemoteConfigUtils.getAccessToken(
+          'token_type=bearer&access_token=a72e16c7e42f292c6912e7710c838347ae178b4a',
+        ),
+      ).toBe('a72e16c7e42f292c6912e7710c838347ae178b4a');
     });
   });
 });

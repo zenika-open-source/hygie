@@ -338,6 +338,29 @@ describe('Github Service', () => {
     });
   });
 
+  describe('createWebhook', () => {
+    it('should emit a POST request with specific params', () => {
+      const webhookURL: string = 'https://some.url.com';
+
+      githubService.createWebhook(gitApiInfos, webhookURL);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/hooks`;
+
+      const expectedData = {
+        active: true,
+        config: { content_type: 'json', url: 'https://some.url.com' },
+        events: ['*'],
+        name: 'web',
+      };
+
+      expect(httpService.post).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
+    });
+  });
+
   // TESTS BEFORE
 
   describe('setToken', () => {

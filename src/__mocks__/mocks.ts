@@ -46,6 +46,7 @@ export class MockGitlabService {
   addIssueComment: jest.Mock = jest.fn().mockName('addIssueCommentGitlab');
   addPRComment: jest.Mock = jest.fn().mockName('addPRCommentGitlab');
   createPullRequest: jest.Mock = jest.fn().mockName('createPullRequestGitlab');
+  createWebhook: jest.Mock = jest.fn().mockName('createWebhookGitlab');
 }
 
 export class MockGithubService {
@@ -69,6 +70,7 @@ export class MockGithubService {
   addIssueComment: jest.Mock = jest.fn().mockName('addIssueCommentGithub');
   addPRComment: jest.Mock = jest.fn().mockName('addPRCommentGithub');
   createPullRequest: jest.Mock = jest.fn().mockName('createPullRequestGithub');
+  createWebhook: jest.Mock = jest.fn().mockName('createWebhookGithub');
 }
 
 export class MockSendEmailRunnable {

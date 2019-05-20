@@ -288,6 +288,33 @@ describe('Gitlab Service', () => {
     });
   });
 
+  describe('createWebhook', () => {
+    it('should emit a POST request with specific params', () => {
+      const webhookURL: string = 'https://some.url.com';
+
+      gitlabService.createWebhook(gitApiInfos, webhookURL);
+
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/hooks`;
+
+      expectedConfig.params = {
+        confidential_issues_events: true,
+        confidential_note_events: true,
+        enable_ssl_verification: true,
+        issues_events: true,
+        job_events: true,
+        merge_requests_events: true,
+        note_events: true,
+        pipeline_events: true,
+        push_events: true,
+        tag_push_events: true,
+        url: 'https://some.url.com',
+        wiki_page_events: true,
+      };
+
+      expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+  });
+
   // TESTS BEFORE
 
   describe('setToken', () => {

@@ -316,4 +316,22 @@ export class GithubService implements GitServiceInterface {
       )
       .subscribe(null, err => logger.error(err));
   }
+
+  createWebhook(gitApiInfos: GitApiInfos, webhookURL: string): void {
+    this.httpService
+      .post(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/hooks`,
+        {
+          name: 'web',
+          active: true,
+          events: ['*'],
+          config: {
+            url: `${webhookURL}`,
+            content_type: 'json',
+          },
+        },
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
 }

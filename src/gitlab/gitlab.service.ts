@@ -356,4 +356,36 @@ export class GitlabService implements GitServiceInterface {
       )
       .subscribe(null, err => logger.error(err));
   }
+
+  createWebhook(gitApiInfos: GitApiInfos, webhookURL: string): void {
+    // Data for GitLab
+    const dataGitLab = {};
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {
+        url: webhookURL,
+        push_events: true,
+        issues_events: true,
+        confidential_issues_events: true,
+        merge_requests_events: true,
+        tag_push_events: true,
+        note_events: true,
+        job_events: true,
+        pipeline_events: true,
+        wiki_page_events: true,
+        enable_ssl_verification: true,
+        confidential_note_events: true,
+      },
+    };
+
+    this.httpService
+      .post(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/hooks`,
+        dataGitLab,
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
 }

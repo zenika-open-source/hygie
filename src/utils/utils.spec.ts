@@ -127,4 +127,12 @@ describe('Utils', () => {
       });
     });
   });
+
+  describe('generateUniqueId', () => {
+    it('shoud return two differents ids', () => {
+      const id1 = Utils.generateUniqueId();
+      const id2 = Utils.generateUniqueId();
+      expect(id1).not.toBe(id2);
+    });
+  });
 });

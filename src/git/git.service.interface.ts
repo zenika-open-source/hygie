@@ -88,4 +88,9 @@ export interface GitServiceInterface {
    * Update a Pull Request partially
    */
   updatePullRequest(gitApiInfos: GitApiInfos, gitPRInfos: GitPRInfos): void;
+
+  /**
+   * Add a Webhook to the repository listening all events
+   */
+  createWebhook(gitApiInfos: GitApiInfos, webhookURL: string): void;
 }

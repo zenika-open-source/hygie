@@ -9,6 +9,7 @@ import {
   UseFilters,
   Header,
   HttpService,
+  Req,
 } from '@nestjs/common';
 import { Webhook } from './webhook/webhook';
 import { WebhookInterceptor } from './webhook/webhook.interceptor';
@@ -32,9 +33,17 @@ import {
 import { Schedule } from './scheduler/schedule';
 import { getYAMLSchema } from './generator/getYAMLSchema';
 import { DataAccessService } from './data_access/dataAccess.service';
+import { Utils } from './utils/utils';
 
 @Controller()
 export class AppController {
+  // For Registration
+  repoURL: string = '';
+  apiURL: string = '';
+  private readonly state: string;
+  private readonly applicationURL: string = 'http://ab7c27fc.ngrok.io';
+  //
+
   constructor(
     private readonly httpService: HttpService,
     private readonly rulesService: RulesService,
@@ -42,7 +51,9 @@ export class AppController {
     private readonly gitlabService: GitlabService,
     private readonly scheduleService: ScheduleService,
     private readonly dataAccessService: DataAccessService,
-  ) {}
+  ) {
+    this.state = Utils.generateUniqueId();
+  }
 
   @Get('/')
   welcome(): string {
@@ -50,6 +61,92 @@ export class AppController {
       '<p><b>Git Webhooks</b> is running!</p>' +
       '<p>Have a look at our <a href="https://dx-developerexperience.github.io/git-webhooks/">documentation</a> for more informations.</p>'
     );
+  }
+
+  @Get('/register/:data')
+  async register(@Req() request: any, @Res() response): Promise<any> {
+    const url = require('url');
+
+    let data = request.params.data;
+    data = data.split('&');
+    this.repoURL = data[0];
+    this.apiURL = data[1];
+
+    if (
+      typeof this.repoURL === 'undefined' ||
+      typeof this.apiURL === 'undefined'
+    ) {
+      response
+        .status(HttpStatus.PRECONDITION_FAILED)
+        .send('Missing parameters.');
+    }
+
+    response.redirect(
+      url.format({
+        pathname: 'https://github.com/login/oauth/authorize',
+        query: {
+          client_id: 'a3704ca33005858f2830',
+          scope: 'repo admin:repo_hook',
+          state: this.state,
+        },
+      }),
+    );
+  }
+
+  @Get('/register/login/callback')
+  async loginCallback(@Req() request: any, @Res() response): Promise<any> {
+    const query = request.query;
+    if (query.state !== this.state) {
+      response
+        .status(HttpStatus.UNAUTHORIZED)
+        .send('Third party created the request!<br>Aborting the process.');
+    }
+
+    const result = await this.httpService
+      .post(
+        'https://github.com/login/oauth/access_token',
+        {
+          client_id: 'a3704ca33005858f2830',
+          client_secret: '31e69ed89d7428783109575aaa39f8b3387c3ada',
+          code: query.code,
+          state: this.state,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .toPromise()
+      .then(res => res.data)
+      .catch(err => err);
+
+    const accessToken = RemoteConfigUtils.getAccessToken(result);
+
+    // Store data
+    const finalResult = await this.httpService
+      .post(this.applicationURL + '/config-env', {
+        gitToken: accessToken,
+        gitApi: this.apiURL,
+        gitRepo: this.repoURL,
+      })
+      .toPromise()
+      .then(res => res.data)
+      .catch(err => err);
+
+    let resultToDisplay: string = '';
+    if (finalResult.succeed) {
+      resultToDisplay +=
+        '<p style="color:green">Registration completed! Check-out if a <i>Connected to Git-Webhooks!</i> issue has been created.</p>';
+      if (finalResult.alreadyExist) {
+        resultToDisplay +=
+          '<p style="color:orange">A config file with your repository already exist. It has been overwrite with the present token and API URL.</p>';
+      }
+    } else {
+      resultToDisplay += '<p style="color:red">' + finalResult + '</p>'; // err
+    }
+
+    response.send(resultToDisplay);
   }
 
   @Post('/config-env')
@@ -66,6 +163,7 @@ export class AppController {
         this.githubService,
         this.gitlabService,
         configEnv,
+        this.applicationURL,
       ),
     );
   }

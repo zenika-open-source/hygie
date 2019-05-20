@@ -162,6 +162,7 @@ export class RemoteConfigUtils {
     githubService: GithubService,
     gitlabService: GitlabService,
     configEnv: ConfigEnv,
+    applicationURL: string,
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const result: any = {
@@ -203,11 +204,17 @@ export class RemoteConfigUtils {
         configEnv.gitRepo,
       );
 
+      /**
+       * Create a `Connected to Git-Webhooks!` issue
+       * and
+       * Create a Webhook
+       */
       const gitIssueInfos = new GitIssueInfos();
       gitIssueInfos.title = 'Connected to Git-Webhooks!';
 
       if (gitApiInfos.git === GitTypeEnum.Github) {
         githubService.createIssue(gitApiInfos, gitIssueInfos);
+        githubService.createWebhook(gitApiInfos, applicationURL + '/webhook');
       } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
         gitApiInfos.projectId = await this.getGitlabProjectId(
           httpService,
@@ -216,9 +223,22 @@ export class RemoteConfigUtils {
         );
 
         gitlabService.createIssue(gitApiInfos, gitIssueInfos);
+        gitlabService.createWebhook(gitApiInfos, applicationURL + '/webhook');
       }
 
       resolve(result);
     });
+  }
+
+  static getAccessToken(result: string) {
+    const from = result.indexOf('access_token=');
+    const size = 'access_token='.length;
+    result = result.substring(from + size);
+    let to = result.indexOf('&');
+    if (to === -1) {
+      to = result.length;
+    }
+    const accessToken = result.substring(0, to);
+    return accessToken;
   }
 }
