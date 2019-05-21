@@ -17,6 +17,7 @@ import {
 import { logger } from '../logger/logger.service';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { Utils } from '../utils/utils';
+import { DataAccessService } from '../data_access/dataAccess.service';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -36,8 +37,14 @@ export class GitlabService implements GitServiceInterface {
     this.urlApi = urlApi;
   }
 
-  setEnvironmentVariables(filePath: string): void {
-    Utils.loadEnv('remote-envs/' + filePath + '/config.env');
+  async setEnvironmentVariables(
+    dataAccessService: DataAccessService,
+    filePath: string,
+  ): Promise<void> {
+    await Utils.loadEnv(
+      dataAccessService,
+      'remote-envs/' + filePath + '/config.env',
+    );
 
     this.setToken(process.env.gitToken);
     this.setUrlApi(process.env.gitApi);
@@ -344,6 +351,38 @@ export class GitlabService implements GitServiceInterface {
         `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests/${
           gitPRInfos.number
         }`,
+        dataGitLab,
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  createWebhook(gitApiInfos: GitApiInfos, webhookURL: string): void {
+    // Data for GitLab
+    const dataGitLab = {};
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {
+        url: webhookURL,
+        push_events: true,
+        issues_events: true,
+        confidential_issues_events: true,
+        merge_requests_events: true,
+        tag_push_events: true,
+        note_events: true,
+        job_events: true,
+        pipeline_events: true,
+        wiki_page_events: true,
+        enable_ssl_verification: true,
+        confidential_note_events: true,
+      },
+    };
+
+    this.httpService
+      .post(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/hooks`,
         dataGitLab,
         configGitLab,
       )

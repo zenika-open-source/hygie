@@ -8,6 +8,7 @@ import { RulesService } from '../rules/rules.service';
 import { SchedulerException } from '../exceptions/scheduler.exception';
 import { checkCronExpression } from './utils';
 import { CronExpressionException } from '../exceptions/cronExpression.exception';
+import { DataAccessService } from '../data_access/dataAccess.service';
 
 @Injectable()
 export class ScheduleService {
@@ -19,6 +20,7 @@ export class ScheduleService {
     private readonly gitlabService: GitlabService,
     private readonly rulesService: RulesService,
     private readonly httpService: HttpService,
+    private readonly dataAccessService: DataAccessService,
   ) {}
 
   /**
@@ -40,6 +42,7 @@ export class ScheduleService {
         this.gitlabService,
         this.rulesService,
         this.httpService,
+        this.dataAccessService,
         cron,
         remoteRepository,
       );

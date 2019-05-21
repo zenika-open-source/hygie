@@ -1,6 +1,6 @@
 {
   "name": "@dxdeveloperexperience/git-webhooks",
-  "version": "0.10.1",
+  "version": "0.0.0",
   "description": "Git Webhooks is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJS API expose a set of customizable rules to automate your project's life cycle.",
   "license": "MIT",
   "scripts": {
@@ -33,6 +33,7 @@
     }
   },
   "dependencies": {
+    "@dxdeveloperexperience/git-webhooks-database": "0.1.2",
     "@dxdeveloperexperience/nest-schedule": "0.4.6",
     "@nestjs/common": "6.0.2",
     "@nestjs/core": "6.0.2",
@@ -53,6 +54,7 @@
     "reflect-metadata": "0.1.13",
     "rimraf": "2.6.3",
     "rxjs": "6.4.0",
+    "url": "0.11.0",
     "winston": "3.2.1"
   },
   "devDependencies": {

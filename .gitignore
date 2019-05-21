@@ -73,3 +73,7 @@ docs/.vuepress/dist/*
 remote-rules
 remote-envs
 packages
+
+internship-report
+
+oauthApp.json

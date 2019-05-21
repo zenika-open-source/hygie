@@ -18,6 +18,7 @@ import { logger } from '../logger/logger.service';
 import { PreconditionException } from '../exceptions/precondition.exception';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { Utils } from '../utils/utils';
+import { DataAccessService } from '../data_access/dataAccess.service';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -50,8 +51,14 @@ export class GithubService implements GitServiceInterface {
           };
   }
 
-  setEnvironmentVariables(filePath: string): void {
-    Utils.loadEnv('remote-envs/' + filePath + '/config.env');
+  async setEnvironmentVariables(
+    dataAccessService: DataAccessService,
+    filePath: string,
+  ): Promise<void> {
+    await Utils.loadEnv(
+      dataAccessService,
+      'remote-envs/' + filePath + '/config.env',
+    );
 
     if (
       process.env.gitToken === undefined ||
@@ -305,6 +312,24 @@ export class GithubService implements GitServiceInterface {
           gitPRInfos.number
         }`,
         dataGitHub,
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err));
+  }
+
+  createWebhook(gitApiInfos: GitApiInfos, webhookURL: string): void {
+    this.httpService
+      .post(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/hooks`,
+        {
+          name: 'web',
+          active: true,
+          events: ['*'],
+          config: {
+            url: `${webhookURL}`,
+            content_type: 'json',
+          },
+        },
         this.configGitHub,
       )
       .subscribe(null, err => logger.error(err));

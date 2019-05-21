@@ -18,10 +18,11 @@
                 v-model="gitRepo"
                 :rules="urlRules"
                 required
+                @change="checkGitURL"
               />
             </label>
           </v-flex>
-          <v-flex class="padding">
+          <v-flex class="padding" :hidden="hiddenApiURL">
             <v-text-field
               type="text"
               placeholder="https://api.github.com"
@@ -31,7 +32,7 @@
               required
             />
           </v-flex>
-          <v-flex class="padding">
+          <v-flex class="padding" :hidden="this.git!=='Gitlab'">
             <v-text-field
               type="text"
               placeholder="your personnal access token"
@@ -41,7 +42,11 @@
               required
             />
           </v-flex>
-          <v-flex>
+          <v-flex :hidden="this.git!=='Github'">
+            <a color="green" :href="urlRegistration" target="_blank">Register Token</a>
+            <span v-html="responseMessage"></span>
+          </v-flex>
+          <v-flex :hidden="this.git!=='Gitlab'">
             <v-btn @click="registerToken" color="green">Register Token</v-btn>
             <span v-html="responseMessage"></span>
           </v-flex>
@@ -52,6 +57,9 @@
 </template>
 
 <style>
+.hidden {
+  display: none;
+}
 .padding {
   padding-top: 5px;
   padding-bottom: 5px;
@@ -70,10 +78,14 @@
 <script>
 import axios from 'axios';
 import configJS from '../config.js';
+import { window } from 'rxjs/operators';
 
 export default {
+  props: ['git'], // Gitlab or Github
   data: function() {
     return {
+      urlRegistration: '',
+      hiddenApiURL: true,
       valid: false,
       gitRepo: '',
       gitToken: '',
@@ -90,6 +102,38 @@ export default {
     };
   },
   methods: {
+    checkGitURL(url) {
+      const regexpGithub = new RegExp('^https://github.com/.*');
+      const regexpGitlab = new RegExp('^https://gitlab.com/.*');
+
+      if (regexpGithub.test(url)) {
+        this.gitApi = 'https://api.github.com';
+        this.hiddenApiURL = true;
+      } else if (regexpGitlab.test(url)) {
+        this.gitApi = 'https://gitlab.com/api/v4';
+        this.hiddenApiURL = true;
+      } else {
+        this.hiddenApiURL = false;
+        this.gitApi = '';
+      }
+
+      if (
+        /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(
+          this.gitRepo,
+        ) &&
+        /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(
+          this.gitApi,
+        )
+      ) {
+        this.urlRegistration = `${
+          configJS.gitwebhooksURL
+        }/register/${encodeURIComponent(this.gitRepo)}&${encodeURIComponent(
+          this.gitApi,
+        )}`;
+      } else {
+        this.urlRegistration = '';
+      }
+    },
     registerToken() {
       if (!this.$refs.form.validate()) {
         return;

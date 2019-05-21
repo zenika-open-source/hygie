@@ -4,6 +4,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockDataAccessService,
 } from '../__mocks__/mocks';
 import { RemoteConfigUtils } from './utils';
 import { Utils } from '../utils/utils';
@@ -11,15 +12,17 @@ import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { of } from 'rxjs';
+import { DataAccessService } from '../data_access/dataAccess.service';
+import { FileAccess } from '../data_access/providers/fileAccess';
+import { DatabaseAccess } from '../data_access/providers/databaseAccess';
 
 describe('remote-config', () => {
   let app: TestingModule;
   let httpService: HttpService;
+  let dataAccessService: DataAccessService;
 
   let githubService: GithubService;
   let gitlabService: GitlabService;
-
-  Utils.writeFileSync = jest.fn();
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -27,12 +30,20 @@ describe('remote-config', () => {
         { provide: HttpService, useClass: MockHttpService },
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
+        { provide: DataAccessService, useClass: MockDataAccessService },
+        {
+          provide: 'DataAccessInterface',
+          useFactory() {
+            return new FileAccess();
+          },
+        },
       ],
     }).compile();
 
     httpService = app.get(HttpService);
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
+    dataAccessService = app.get(DataAccessService);
   });
 
   beforeEach(() => {
@@ -67,6 +78,7 @@ describe('remote-config', () => {
         });
       });
       const result: string = await RemoteConfigUtils.downloadRulesFile(
+        dataAccessService,
         httpService,
         'https://github.com/DX-DeveloperExperience/git-webhooks',
         'rules.yml',
@@ -89,6 +101,7 @@ describe('remote-config', () => {
         });
       });
       const result: string = await RemoteConfigUtils.downloadRulesFile(
+        dataAccessService,
         httpService,
         'https://gitlab.com/gitlab-org/gitlab-ce',
         'rules.yml',
@@ -100,23 +113,29 @@ describe('remote-config', () => {
     });
   });
   describe('registerConfigEnv', () => {
-    it('should call writeFileSync method this good args', () => {
+    it('should call writeEnv and checkIfEnvExist methods this good args', async () => {
       const configEnv = {
         gitApi: 'https://gitapi.com',
         gitToken: 'azertyuiop',
         gitRepo: 'https://github.com/DX-DeveloperExperience/git-webhooks',
       };
 
-      RemoteConfigUtils.registerConfigEnv(
+      await RemoteConfigUtils.registerConfigEnv(
+        dataAccessService,
         httpService,
         githubService,
         gitlabService,
         configEnv,
+        'https://some.url.com',
       );
 
-      expect(Utils.writeFileSync).toHaveBeenCalledWith(
+      expect(dataAccessService.checkIfEnvExist).toHaveBeenCalledWith(
         'remote-envs/DX-DeveloperExperience/git-webhooks/config.env',
-        `gitApi=https://gitapi.com\ngitToken=azertyuiop`,
+      );
+
+      expect(dataAccessService.writeEnv).toHaveBeenCalledWith(
+        'remote-envs/DX-DeveloperExperience/git-webhooks/config.env',
+        { gitApi: 'https://gitapi.com', gitToken: 'azertyuiop' },
       );
     });
   });
@@ -159,6 +178,23 @@ describe('remote-config', () => {
       ).toBe(
         'https://gitlab.com/bastien.terrier/test_webhook/raw/master/.git-webhooks/rules.yml',
       );
+    });
+  });
+
+  describe('getAccessToken', () => {
+    it('shoud return the token part', () => {
+      expect(
+        RemoteConfigUtils.getAccessToken(
+          'access_token=e72e16c7e42f292c6912e7710c838347ae178b4a&token_type=bearer',
+        ),
+      ).toBe('e72e16c7e42f292c6912e7710c838347ae178b4a');
+    });
+    it('shoud return the token part', () => {
+      expect(
+        RemoteConfigUtils.getAccessToken(
+          'token_type=bearer&access_token=a72e16c7e42f292c6912e7710c838347ae178b4a',
+        ),
+      ).toBe('a72e16c7e42f292c6912e7710c838347ae178b4a');
     });
   });
 });

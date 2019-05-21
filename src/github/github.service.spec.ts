@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GithubService } from '../github/github.service';
 import { HttpService } from '@nestjs/common';
-import { MockHttpService, MockObservable } from '../__mocks__/mocks';
+import {
+  MockHttpService,
+  MockObservable,
+  MockDataAccessService,
+} from '../__mocks__/mocks';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { CommitStatusEnum } from '../webhook/utils.enum';
@@ -14,11 +18,13 @@ import {
 } from '../git/gitPRInfos';
 import { Observable, of } from 'rxjs';
 import { GitFileInfos } from '../git/gitFileInfos';
+import { DataAccessService } from '../data_access/dataAccess.service';
 
 describe('Github Service', () => {
   let app: TestingModule;
   let githubService: GithubService;
   let httpService: HttpService;
+  let dataAccessService: DataAccessService;
 
   let gitApiInfos: GitApiInfos;
   let gitCommitStatusInfos: GitCommitStatusInfos;
@@ -30,12 +36,14 @@ describe('Github Service', () => {
       providers: [
         { provide: HttpService, useClass: MockHttpService },
         { provide: Observable, useClass: MockObservable },
+        { provide: DataAccessService, useClass: MockDataAccessService },
         GithubService,
       ],
     }).compile();
 
     githubService = app.get(GithubService);
     httpService = app.get(HttpService);
+    dataAccessService = app.get(DataAccessService);
 
     githubService.setToken('0123456789abcdef');
     githubService.setUrlApi('https://api.github.com');
@@ -330,6 +338,29 @@ describe('Github Service', () => {
     });
   });
 
+  describe('createWebhook', () => {
+    it('should emit a POST request with specific params', () => {
+      const webhookURL: string = 'https://some.url.com';
+
+      githubService.createWebhook(gitApiInfos, webhookURL);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/hooks`;
+
+      const expectedData = {
+        active: true,
+        config: { content_type: 'json', url: 'https://some.url.com' },
+        events: ['*'],
+        name: 'web',
+      };
+
+      expect(httpService.post).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
+    });
+  });
+
   // TESTS BEFORE
 
   describe('setToken', () => {
@@ -362,19 +393,19 @@ describe('Github Service', () => {
   });
 
   describe('setEnvironmentVariables', () => {
-    it('should set the token and urlApi', () => {
-      const fs = require('fs-extra');
-      jest.mock('fs-extra');
+    it('should set the token and urlApi', async () => {
+      dataAccessService.readEnv = jest.fn().mockReturnValue({
+        gitApi: 'https://mygithubapi.com',
+        gitToken: 'githubToken',
+      });
 
-      fs.readFileSync.mockReturnValue(
-        `gitApi=https://mygitapi.com
-      gitToken=qsdfghjklm`,
+      await githubService.setEnvironmentVariables(
+        dataAccessService,
+        'myFilePath',
       );
 
-      githubService.setEnvironmentVariables('myFilePath');
-
-      expect(githubService.token).toBe('qsdfghjklm');
-      expect(githubService.urlApi).toBe('https://mygitapi.com');
+      expect(githubService.token).toBe('githubToken');
+      expect(githubService.urlApi).toBe('https://mygithubapi.com');
     });
   });
 });

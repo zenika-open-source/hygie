@@ -169,3 +169,14 @@ If you're using your own server to host our solution, there's a few Environment 
 
 - `ALLOW_REMOTE_CONFIG`: true|false _[optional]_
   > Specify if you allow to fetch the `.git-wehbooks/rules.yml` file from the received hook. Otherwise, it uses the local `src/rules/rules.yml`.
+- `DATA_ACCESS`: "file" | undefined _[optional]_
+  > Specify the way you're accessing your data. By default, the app is fetching your mongo database.
+  > If you choose "file", it will store(and fetch) all users configurations into files.
+
+::: tip
+Setting Environment Variables:
+
+- Windows: `$env:DATA_ACCESS="file"`
+- Linux: `export DATA_ACCESS=file`
+
+:::
