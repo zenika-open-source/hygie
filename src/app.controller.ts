@@ -41,7 +41,7 @@ export class AppController {
   repoURL: string = '';
   apiURL: string = '';
   private readonly state: string;
-  private readonly applicationURL: string = 'http://ab7c27fc.ngrok.io';
+  private readonly applicationURL: string = process.env.applicationURL;
   //
 
   constructor(
