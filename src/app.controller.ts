@@ -220,17 +220,22 @@ export class AppController {
         rulesBranch = webhook.pullRequest.sourceBranch;
       }
 
-      const remoteRepository =
-        getRemoteRules === 'false'
-          ? 'src/rules'
-          : await RemoteConfigUtils.downloadRulesFile(
-              this.dataAccessService,
-              this.httpService,
-              webhook.getCloneURL(),
-              'rules.yml',
-              rulesBranch,
-            );
-
+      let remoteRepository: string;
+      try {
+        remoteRepository =
+          getRemoteRules === 'false'
+            ? 'src/rules'
+            : await RemoteConfigUtils.downloadRulesFile(
+                this.dataAccessService,
+                this.httpService,
+                webhook.getCloneURL(),
+                'rules.yml',
+                rulesBranch,
+              );
+      } catch (e) {
+        logger.error(e);
+        throw new PreconditionException();
+      }
       try {
         const remoteEnvs: string = webhook.getRemoteDirectory();
         await this.githubService.setEnvironmentVariables(
@@ -244,7 +249,7 @@ export class AppController {
       } catch (e) {
         logger.error(e);
         logger.error('There is no config.env file for the current git project');
-        return;
+        throw new PreconditionException();
       }
 
       logger.info(

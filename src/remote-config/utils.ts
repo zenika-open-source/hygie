@@ -93,51 +93,54 @@ export class RemoteConfigUtils {
         Utils.getRepositoryFullName(projectURL) +
         '/.git-webhooks';
 
+      // Check size
       try {
-        // Check size
         const checkSize: boolean = await RemoteConfigUtils.checkDownloadSize(
           httpService,
           rulesFilePath,
         ).catch(err => {
-          throw new Error(err);
+          if (err.response.status === 404) {
+            throw new Error(`${rulesFilePath} do not exist!`);
+          } else {
+            throw new Error(err);
+          }
         });
         if (!checkSize) {
           throw new FileSizeException(rulesFilePath);
         }
-
-        // Download file
-        await httpService
-          .get(rulesFilePath)
-          .pipe(
-            catchError(err => {
-              if (filename === 'rules.yml') {
-                logger.warn(
-                  'No rules.yml file founded. Using the default one.',
-                );
-                return of({
-                  data: fs.readFileSync('src/rules/rules.yml'),
-                });
-              } else {
-                return throwError(`${filename} do not exist!`);
-              }
-            }),
-          )
-          .toPromise()
-          .then(async response => {
-            await dataAccess.writeRule(
-              `${gitWebhooksFolder}/${filename}`,
-              response.data,
-            );
-            return gitWebhooksFolder;
-          })
-          .catch(err => {
-            throw new Error(err);
-          });
-        resolve(gitWebhooksFolder);
       } catch (e) {
-        logger.error(e);
         reject(e);
+        return;
       }
+
+      // Download file
+      await httpService
+        .get(rulesFilePath)
+        .pipe(
+          catchError(err => {
+            if (filename === 'rules.yml') {
+              logger.warn('No rules.yml file founded. Using the default one.');
+              return of({
+                data: fs.readFileSync('src/rules/rules.yml'),
+              });
+            } else {
+              return throwError(`${rulesFilePath} do not exist!`);
+            }
+          }),
+        )
+        .toPromise()
+        .then(async response => {
+          await dataAccess.writeRule(
+            `${gitWebhooksFolder}/${filename}`,
+            response.data,
+          );
+          return gitWebhooksFolder;
+        })
+        .catch(err => {
+          reject(err);
+          return;
+        });
+      resolve(gitWebhooksFolder);
     });
   }
 
