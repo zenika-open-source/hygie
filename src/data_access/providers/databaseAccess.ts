@@ -21,7 +21,7 @@ export class DatabaseAccess implements DataAccessInterface {
 
   async setup(): Promise<void> {
     await Database.localdb
-      .connection()
+      .connection(process.env.mongodbConnectionString)
       .then(_ => logger.info('Connected to Database!'))
       .catch(err => logger.error(err));
   }
