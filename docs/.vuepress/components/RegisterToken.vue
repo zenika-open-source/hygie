@@ -22,7 +22,7 @@
               />
             </label>
           </v-flex>
-          <v-flex class="padding" :class="hiddenApiURL">
+          <v-flex class="padding" :hidden="hiddenApiURL">
             <v-text-field
               type="text"
               placeholder="https://api.github.com"
@@ -85,7 +85,7 @@ export default {
   data: function() {
     return {
       urlRegistration: '',
-      hiddenApiURL: 'hidden',
+      hiddenApiURL: true,
       valid: false,
       gitRepo: '',
       gitToken: '',
@@ -108,12 +108,12 @@ export default {
 
       if (regexpGithub.test(url)) {
         this.gitApi = 'https://api.github.com';
-        this.hiddenApiURL = 'hidden';
+        this.hiddenApiURL = true;
       } else if (regexpGitlab.test(url)) {
         this.gitApi = 'https://gitlab.com/api/v4';
-        this.hiddenApiURL = 'hidden';
+        this.hiddenApiURL = true;
       } else {
-        this.hiddenApiURL = '';
+        this.hiddenApiURL = false;
         this.gitApi = '';
       }
 
