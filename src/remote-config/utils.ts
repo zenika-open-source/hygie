@@ -12,6 +12,7 @@ import { FileSizeException } from '../exceptions/fileSize.exception';
 import { DataAccessService } from '../data_access/dataAccess.service';
 
 const fs = require('fs-extra');
+const path = require('path');
 
 interface ConfigEnv {
   gitRepo: string;
@@ -121,7 +122,9 @@ export class RemoteConfigUtils {
             if (filename === 'rules.yml') {
               logger.warn('No rules.yml file founded. Using the default one.');
               return of({
-                data: fs.readFileSync('src/rules/rules.yml'),
+                data: fs.readFileSync(
+                  path.join(__dirname, '../rules/rules.yml'),
+                ),
               });
             } else {
               return throwError(`${rulesFilePath} do not exist!`);
