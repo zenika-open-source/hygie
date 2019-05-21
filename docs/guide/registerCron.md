@@ -2,7 +2,7 @@
 
 ## `rules-cron-*.yml` file
 
-CRON jobs files are rules files. Therefore, there are identical to the `rules.yml` file and can be generate thank's to our [config generator](configGenerator.md).
+CRON jobs files are rules files. Therefore, there are identical to the `.rulesrc` file and can be generate thank's to our [config generator](configGenerator.md).
 
 But be carefull, your `rules` will be executed periodically. There is no Webhook thrown.
 Consequently, only rules with `Cron` event are allowed inside your rule file.

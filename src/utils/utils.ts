@@ -92,4 +92,15 @@ export class Utils {
       '}';
     return JSON.parse(res);
   }
+
+  static async parseRuleFile(fileContent: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const jsyaml = require('js-yaml');
+      try {
+        resolve(JSON.parse(fileContent));
+      } catch (e) {
+        resolve(await jsyaml.safeLoad(fileContent));
+      }
+    });
+  }
 }

@@ -4,12 +4,12 @@ import { RunnablesService } from '../runnables/runnables.service';
 import { Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
 import { safeLoad } from 'js-yaml';
-import { readFileSync } from 'fs';
 import { RulesOptions } from './rules.options';
 import { Group } from './group.class';
 import { logger } from '../logger/logger.service';
 import { GroupResult } from './groupResult';
 import { DataAccessService } from '../data_access/dataAccess.service';
+import { Utils } from '../utils/utils';
 
 @Injectable()
 export class RulesService {
@@ -23,7 +23,7 @@ export class RulesService {
     remoteRepository: string,
     ruleFile: string,
   ): Promise<any> {
-    return await safeLoad(
+    return await Utils.parseRuleFile(
       await this.dataAccessService.readRule(`${remoteRepository}/${ruleFile}`),
     );
   }

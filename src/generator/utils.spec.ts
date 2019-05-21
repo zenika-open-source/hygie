@@ -4,7 +4,7 @@ describe('Utils', () => {
   it('should return a array of comments', () => {
     const result = getAllComments(`
 /**
- * Options supported in the rules.yml file
+ * Options supported in the .rulesrc file
  */
 export class RulesOptions {
   /**
@@ -37,7 +37,7 @@ export class RulesOptions {
 }`);
 
     expect(result).toEqual([
-      'Options supported in the rules.yml file',
+      'Options supported in the .rulesrc file',
       'Specify if the process continue when a rule does not succeed',
       'Specify if rules will be processed',
       'Specify if groups will be processed',

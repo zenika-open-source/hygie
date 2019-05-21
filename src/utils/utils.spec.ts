@@ -135,4 +135,368 @@ describe('Utils', () => {
       expect(id1).not.toBe(id2);
     });
   });
+
+  // tslint:disable:max-line-length
+  describe('parseRuleFile', () => {
+    it('shoud return a YAML parsed rules object', async () => {
+      const yamlFile: any = `---
+      groups:
+      - groupName: check pattern 1
+        onBoth:
+        - args:
+            message: blablabla...
+          callback: LoggerRunnable
+        - args:
+            data:
+              message: 'data : {{#data}}- {{name}} -{{/data}}'
+            url: https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8
+          callback: WebhookRunnable
+        rules:
+        - name: commitMessage
+          options:
+            regexp: "(feat|fix):s.*"
+        - name: oneCommitPerPR
+        - name: branchName
+          options:
+            regex: feature/.*
+      options:
+        allRuleResultInOne: true
+        enableGroups: false
+        enableRules: true
+        executeAllRules: false
+      rules:
+      - name: commitMessage
+        onBoth:
+        - args:
+            failDescriptionMessage: NOOOT good...
+            failTargetUrl: http://moogle.com/
+            successDescriptionMessage: good commit status!
+            successTargetUrl: http://www.google.com
+          callback: UpdateCommitStatusRunnable
+        onError:
+        - args:
+            message: 'pattern does not match, commit name must begin with : feat|fix|docs
+              and contains less than 100 numerals! Check your commit message: {{#data.commits}}
+              > {{message.commits}} (#{{sha}}) {{/data.commits}} '
+          callback: LoggerRunnable
+        onSuccess:
+        - args:
+            message: 'pattern match: branch: {{data.branch}} {{#data.commits}}{{sha}} =
+              {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}'
+          callback: LoggerRunnable
+        - args:
+            data:
+              content: "{{#data.commits}}{{sha}} = {{matches.1}} | Scope: {{matches.2}}
+                | Issue: {{matches.3}} {{/data.commits}}"
+              user: bastien terrier
+            url: https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8
+          callback: WebhookRunnable
+        options:
+          maxLength: 100
+          regexp: "(feat|fix|docs)(([a-z]+))?:s[^(]*((#[1-9][0-9]*(?:, #[1-9][0-9]*)*))?$"
+      `;
+
+      const expectedResult = {
+        groups: [
+          {
+            groupName: 'check pattern 1',
+            onBoth: [
+              {
+                args: {
+                  message: 'blablabla...',
+                },
+                callback: 'LoggerRunnable',
+              },
+              {
+                args: {
+                  data: {
+                    message: 'data : {{#data}}- {{name}} -{{/data}}',
+                  },
+                  url:
+                    'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8',
+                },
+                callback: 'WebhookRunnable',
+              },
+            ],
+            rules: [
+              {
+                name: 'commitMessage',
+                options: {
+                  regexp: '(feat|fix):s.*',
+                },
+              },
+              {
+                name: 'oneCommitPerPR',
+              },
+              {
+                name: 'branchName',
+                options: {
+                  regex: 'feature/.*',
+                },
+              },
+            ],
+          },
+        ],
+        options: {
+          allRuleResultInOne: true,
+          enableGroups: false,
+          enableRules: true,
+          executeAllRules: false,
+        },
+        rules: [
+          {
+            name: 'commitMessage',
+            onBoth: [
+              {
+                args: {
+                  failDescriptionMessage: 'NOOOT good...',
+                  failTargetUrl: 'http://moogle.com/',
+                  successDescriptionMessage: 'good commit status!',
+                  successTargetUrl: 'http://www.google.com',
+                },
+                callback: 'UpdateCommitStatusRunnable',
+              },
+            ],
+            onError: [
+              {
+                args: {
+                  message:
+                    'pattern does not match, commit name must begin with : feat|fix|docs and contains less than 100 numerals! Check your commit message: {{#data.commits}} > {{message.commits}} (#{{sha}}) {{/data.commits}} ',
+                },
+                callback: 'LoggerRunnable',
+              },
+            ],
+            onSuccess: [
+              {
+                args: {
+                  message:
+                    'pattern match: branch: {{data.branch}} {{#data.commits}}{{sha}} = {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}',
+                },
+                callback: 'LoggerRunnable',
+              },
+              {
+                args: {
+                  data: {
+                    content:
+                      '{{#data.commits}}{{sha}} = {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}',
+                    user: 'bastien terrier',
+                  },
+                  url:
+                    'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8',
+                },
+                callback: 'WebhookRunnable',
+              },
+            ],
+            options: {
+              maxLength: 100,
+              regexp:
+                '(feat|fix|docs)(([a-z]+))?:s[^(]*((#[1-9][0-9]*(?:, #[1-9][0-9]*)*))?$',
+            },
+          },
+        ],
+      };
+
+      const parsedYAML = await Utils.parseRuleFile(yamlFile);
+      expect(parsedYAML).toEqual(expectedResult);
+    });
+    it('shoud return a JSON parsed rules object', async () => {
+      const jsonFile: any = `{
+        "options": {
+          "executeAllRules": false,
+          "enableGroups": false,
+          "enableRules": true,
+          "allRuleResultInOne": true
+        },
+        "rules": [
+          {
+            "name": "commitMessage",
+            "options": {
+              "regexp": "(feat|fix|docs)(\([a-z]+\))?:\s[^(]*(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$",
+              "maxLength": 100
+            },
+            "onSuccess": [
+              {
+                "callback": "LoggerRunnable",
+                "args": {
+                  "message": "pattern match: branch: {{data.branch}} {{#data.commits}}{{sha}} = {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}"
+                }
+              },
+              {
+                "callback": "WebhookRunnable",
+                "args": {
+                  "url": "https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8",
+                  "data": {
+                    "user": "bastien terrier",
+                    "content": "{{#data.commits}}{{sha}} = {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}"
+                  }
+                }
+              }
+            ],
+            "onError": [
+              {
+                "callback": "LoggerRunnable",
+                "args": {
+                  "message": "pattern does not match, commit name must begin with : feat|fix|docs and contains less than 100 numerals! Check your commit message: {{#data.commits}} > {{message.commits}} (#{{sha}}) {{/data.commits}} "
+                }
+              }
+            ],
+            "onBoth": [
+              {
+                "callback": "UpdateCommitStatusRunnable",
+                "args": {
+                  "successTargetUrl": "http://www.google.com",
+                  "failTargetUrl": "http://moogle.com/",
+                  "successDescriptionMessage": "good commit status!",
+                  "failDescriptionMessage": "NOOOT good..."
+                }
+              }
+            ]
+          }
+        ],
+        "groups": [
+          {
+            "groupName": "check pattern 1",
+            "rules": [
+              {
+                "name": "commitMessage",
+                "options": {
+                  "regexp": "(feat|fix):\s.*"
+                }
+              },
+              {
+                "name": "oneCommitPerPR"
+              },
+              {
+                "name": "branchName",
+                "options": {
+                  "regex": "feature/.*"
+                }
+              }
+            ],
+            "onBoth": [
+              {
+                "callback": "LoggerRunnable",
+                "args": {
+                  "message": "blablabla..."
+                }
+              },
+              {
+                "callback": "WebhookRunnable",
+                "args": {
+                  "url": "https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8",
+                  "data": {
+                    "message": "data : {{#data}}- {{name}} -{{/data}}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+      `;
+
+      const expectedResult = {
+        groups: [
+          {
+            groupName: 'check pattern 1',
+            onBoth: [
+              {
+                args: {
+                  message: 'blablabla...',
+                },
+                callback: 'LoggerRunnable',
+              },
+              {
+                args: {
+                  data: {
+                    message: 'data : {{#data}}- {{name}} -{{/data}}',
+                  },
+                  url:
+                    'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8',
+                },
+                callback: 'WebhookRunnable',
+              },
+            ],
+            rules: [
+              {
+                name: 'commitMessage',
+                options: {
+                  regexp: '(feat|fix):s.*',
+                },
+              },
+              {
+                name: 'oneCommitPerPR',
+              },
+              {
+                name: 'branchName',
+                options: {
+                  regex: 'feature/.*',
+                },
+              },
+            ],
+          },
+        ],
+        options: {
+          allRuleResultInOne: true,
+          enableGroups: false,
+          enableRules: true,
+          executeAllRules: false,
+        },
+        rules: [
+          {
+            name: 'commitMessage',
+            onBoth: [
+              {
+                args: {
+                  failDescriptionMessage: 'NOOOT good...',
+                  failTargetUrl: 'http://moogle.com/',
+                  successDescriptionMessage: 'good commit status!',
+                  successTargetUrl: 'http://www.google.com',
+                },
+                callback: 'UpdateCommitStatusRunnable',
+              },
+            ],
+            onError: [
+              {
+                args: {
+                  message:
+                    'pattern does not match, commit name must begin with : feat|fix|docs and contains less than 100 numerals! Check your commit message: {{#data.commits}} > {{message.commits}} (#{{sha}}) {{/data.commits}} ',
+                },
+                callback: 'LoggerRunnable',
+              },
+            ],
+            onSuccess: [
+              {
+                args: {
+                  message:
+                    'pattern match: branch: {{data.branch}} {{#data.commits}}{{sha}} = {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}',
+                },
+                callback: 'LoggerRunnable',
+              },
+              {
+                args: {
+                  data: {
+                    content:
+                      '{{#data.commits}}{{sha}} = {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}',
+                    user: 'bastien terrier',
+                  },
+                  url:
+                    'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8',
+                },
+                callback: 'WebhookRunnable',
+              },
+            ],
+            options: {
+              maxLength: 100,
+              regexp:
+                '(feat|fix|docs)(([a-z]+))?:s[^(]*((#[1-9][0-9]*(?:, #[1-9][0-9]*)*))?$',
+            },
+          },
+        ],
+      };
+
+      const parsedJSON = await Utils.parseRuleFile(jsonFile);
+      expect(parsedJSON).toEqual(expectedResult);
+    });
+  });
 });

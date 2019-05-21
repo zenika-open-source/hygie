@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { checkNeededFiles, checkInternet } from './check/utils';
 import { HttpService } from '@nestjs/common';
 import { logger } from './logger/logger.service';
+import { Constants } from './utils/constants';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,7 +17,7 @@ async function bootstrap() {
   });
 
   if (await checkInternet(app.get(HttpService))) {
-    if (checkNeededFiles(['src/rules/rules.yml'])) {
+    if (checkNeededFiles([`src/rules/${Constants.rulesExtension}`])) {
       await app.listen(port);
     }
   } else {

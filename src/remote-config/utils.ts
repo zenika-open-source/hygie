@@ -10,6 +10,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { FileSizeException } from '../exceptions/fileSize.exception';
 import { DataAccessService } from '../data_access/dataAccess.service';
+import { Constants } from '../utils/constants';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -63,7 +64,7 @@ export class RemoteConfigUtils {
   }
 
   /**
-   * Download the `rules.yml` from the repository associate to the `projectURL`.
+   * Download the `.rulesrc` from the repository associate to the `projectURL`.
    * @param projectURL
    * @return the location of the `.git-webhooks` repo
    */
@@ -119,11 +120,15 @@ export class RemoteConfigUtils {
         .get(rulesFilePath)
         .pipe(
           catchError(err => {
-            if (filename === 'rules.yml') {
-              logger.warn('No rules.yml file founded. Using the default one.');
+            if (filename === Constants.rulesExtension) {
+              logger.warn(
+                `No ${
+                  Constants.rulesExtension
+                } file founded. Using the default one.`,
+              );
               return of({
                 data: fs.readFileSync(
-                  path.join(__dirname, '../rules/rules.yml'),
+                  path.join(__dirname, `../rules/${Constants.rulesExtension}`),
                 ),
               });
             } else {

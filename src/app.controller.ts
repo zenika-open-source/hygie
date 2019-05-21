@@ -34,6 +34,7 @@ import { Schedule } from './scheduler/schedule';
 import { getYAMLSchema } from './generator/getYAMLSchema';
 import { DataAccessService } from './data_access/dataAccess.service';
 import { Utils } from './utils/utils';
+import { Constants } from './utils/constants';
 
 @Controller()
 export class AppController {
@@ -229,7 +230,7 @@ export class AppController {
                 this.dataAccessService,
                 this.httpService,
                 webhook.getCloneURL(),
-                'rules.yml',
+                Constants.rulesExtension,
                 rulesBranch,
               );
       } catch (e) {
@@ -258,7 +259,7 @@ export class AppController {
       const result = await this.rulesService.testRules(
         webhook,
         remoteRepository,
-        'rules.yml',
+        Constants.rulesExtension,
       );
       response.status(HttpStatus.ACCEPTED).send(result);
     }

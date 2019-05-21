@@ -10,7 +10,7 @@ beforeEach(() => {
 describe('getAllOptions', () => {
   it('should return an array of option objects', () => {
     fs.readFileSync.mockReturnValue(`/**
-* Options supported in the \`rules.yml\` file
+* Options supported in the \`.rulesrc\` file
 */
 export class RulesOptions {
     /**

@@ -9,15 +9,15 @@ This folder will be fetched everytime you interact with our API.
 ```
 .
 ├── .git-webhooks
-│  ├── rules.yml
-│  └── rules-cron-*.yml
+│  ├── .rulesrc
+│  └── cron-*.rulesrc
 └── package.json
 ```
 
 It contains the following files:
 
-- `.git-webhooks/rules.yml`: all the rules and post-actions you configured (see the [config generator](configGenerator.md)),
-- `.git-webhooks/rules-cron-*.yml`: all rules that will be evaluated in a cron job. Same as the `rules.yml` file, check out our [config generator](configGenerator.md). `*` is a wildcard; eg: `rules-cron-vulnerabilities.yml` or `rules-cron-1.yml`.
+- `.git-webhooks/rulesrc`: all the rules and post-actions you configured (see the [config generator](configGenerator.md)),
+- `.git-webhooks/cron-*.rulesrc`: all rules that will be evaluated in a cron job. Same as the `rulesrc` file, check out our [config generator](configGenerator.md). `*` is a wildcard; eg: `cron-vulnerabilities.rulesrc` or `cron-1.rulesrc`.
   ::: tip
   You can create as many Cron files as you want.
   :::
@@ -168,7 +168,7 @@ The chosen account will be the sender (email `from` field) of all emails sended 
 If you're using your own server to host our solution, there's a few Environment Variables you can set:
 
 - `ALLOW_REMOTE_CONFIG`: true|false _[optional]_
-  > Specify if you allow to fetch the `.git-wehbooks/rules.yml` file from the received hook. Otherwise, it uses the local `src/rules/rules.yml`.
+  > Specify if you allow to fetch the `.git-wehbooks/.rulesrc` file from the received hook. Otherwise, it uses the local `src/rules/.rulesrc`.
 - `DATA_ACCESS`: "file" | undefined _[optional]_
   > Specify the way you're accessing your data. By default, the app is fetching your mongo database.
   > If you choose "file", it will store(and fetch) all users configurations into files.

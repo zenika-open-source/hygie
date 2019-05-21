@@ -2,4 +2,4 @@
 
 - [Customisable Rules](customisableRules.md)
 - [Existing Rules](existingRules.md)
-- [rules.yml example](rulesExample.md)
+- [.rulesrc example](rulesExample.md)
