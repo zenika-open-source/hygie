@@ -34,7 +34,6 @@ import { Schedule } from './scheduler/schedule';
 import { getYAMLSchema } from './generator/getYAMLSchema';
 import { DataAccessService } from './data_access/dataAccess.service';
 import { Utils } from './utils/utils';
-const OAuthApp = require('../oauthApp.json');
 
 @Controller()
 export class AppController {
@@ -86,7 +85,7 @@ export class AppController {
       url.format({
         pathname: 'https://github.com/login/oauth/authorize',
         query: {
-          client_id: OAuthApp.client_id,
+          client_id: process.env.client_id,
           scope: 'repo admin:repo_hook',
           state: this.state,
         },
@@ -107,8 +106,8 @@ export class AppController {
       .post(
         'https://github.com/login/oauth/access_token',
         {
-          client_id: OAuthApp.client_id,
-          client_secret: OAuthApp.client_secret,
+          client_id: process.env.client_id,
+          client_secret: process.env.client_secret,
           code: query.code,
           state: this.state,
         },
