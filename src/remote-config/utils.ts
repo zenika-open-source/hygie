@@ -99,10 +99,10 @@ export class RemoteConfigUtils {
           httpService,
           rulesFilePath,
         ).catch(err => {
-          if (err.response.status === 404) {
-            throw new Error(`${rulesFilePath} do not exist!`);
-          } else {
+          if (err.response.status !== 404) {
             throw new Error(err);
+          } else {
+            return true;
           }
         });
         if (!checkSize) {

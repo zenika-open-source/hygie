@@ -247,7 +247,6 @@ export class AppController {
           remoteEnvs,
         );
       } catch (e) {
-        logger.error(e);
         logger.error('There is no config.env file for the current git project');
         throw new PreconditionException();
       }
