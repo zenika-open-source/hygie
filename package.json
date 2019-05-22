@@ -54,7 +54,7 @@
     "mustache": "3.0.1",
     "reflect-metadata": "0.1.13",
     "rimraf": "2.6.3",
-    "rxjs": "6.4.0",
+    "rxjs": "6.5.2",
     "secure-compare": "3.0.1",
     "url": "0.11.0",
     "winston": "3.2.1"
