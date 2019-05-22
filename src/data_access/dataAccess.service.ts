@@ -57,4 +57,11 @@ export class DataAccessService {
   checkIfRuleExist(path: string): Promise<boolean> {
     return this.dataProvider.checkIfExist(SourceEnum.Rules, path);
   }
+
+  /**
+   * Connection with the dataProvider
+   */
+  connect(): Promise<boolean> {
+    return this.dataProvider.connect();
+  }
 }

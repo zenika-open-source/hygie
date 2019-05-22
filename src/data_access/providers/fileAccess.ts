@@ -23,4 +23,9 @@ export class FileAccess implements DataAccessInterface {
     const fs = require('fs-extra');
     return await fs.existsSync(path);
   }
+
+  // Nothing to do => return true
+  async connect(): Promise<boolean> {
+    return await true;
+  }
 }

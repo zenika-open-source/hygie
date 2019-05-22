@@ -31,4 +31,9 @@ export interface DataAccessInterface {
    * @param path data path
    */
   checkIfExist(source: SourceEnum, path: string): Promise<boolean>;
+
+  /**
+   * Open connection with the Data Storage
+   */
+  connect(): Promise<boolean>;
 }

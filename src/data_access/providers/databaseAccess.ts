@@ -11,19 +11,23 @@ export class DatabaseAccess implements DataAccessInterface {
   constructor() {
     this.remoteRules = Database.models.remoteRules;
     this.remoteEnvs = Database.models.remoteEnvs;
-
-    this.setup();
   }
 
   private getModel(source: SourceEnum) {
     return source === SourceEnum.Envs ? this.remoteEnvs : this.remoteRules;
   }
 
-  async setup(): Promise<void> {
-    await Database.localdb
+  async connect(): Promise<boolean> {
+    return await Database.localdb
       .connection(process.env.mongodbConnectionString)
-      .then(_ => logger.info('Connected to Database!'))
-      .catch(err => logger.error(err));
+      .then(_ => {
+        logger.info('Connected to Database!');
+        return true;
+      })
+      .catch(err => {
+        logger.error(err);
+        return false;
+      });
   }
 
   async readData(source: SourceEnum, path: string): Promise<any> {
