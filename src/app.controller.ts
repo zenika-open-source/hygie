@@ -270,7 +270,14 @@ export class AppController {
     let remoteRepository: string;
     let responseString: string = '';
     let schedule: Schedule;
-    const cronStandardArray: CronStandardClass[] = convertCronType(cronType);
+    let cronStandardArray: CronStandardClass[];
+
+    try {
+      cronStandardArray = convertCronType(cronType);
+    } catch (e) {
+      response.status(HttpStatus.PRECONDITION_FAILED).send(e.message);
+      return;
+    }
 
     for (let index = 0; index < cronStandardArray.length; index++) {
       // Need a for loop because Async/Wait does not work in ForEach

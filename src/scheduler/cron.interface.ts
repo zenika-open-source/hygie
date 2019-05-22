@@ -1,3 +1,5 @@
+import { CronFilenameException } from '../exceptions/cronFilename.exception';
+
 export type CronType = CronInterface | CronInterface[];
 
 export interface CronInterface {
@@ -21,6 +23,10 @@ export function isCronInterfaceArray(cron: CronType): cron is CronInterface[] {
   return Array.isArray(cron as CronInterface[]);
 }
 
+export function checkCronFilename(filename): boolean {
+  return /^cron-.*\.rulesrc$/.test(filename) ? true : false;
+}
+
 /**
  * Convert any CronType object into CronStandardInterface
  */
@@ -42,6 +48,13 @@ export function convertCronType(cron: CronType): CronStandardClass[] {
         cronStandardTpm.expression = c.expression;
         cronStandardTpm.projectURL = c.projectURL;
         cronStandardTpm.gitlabProjectId = c.gitlabProjectId;
+
+        if (!checkCronFilename(f)) {
+          throw new CronFilenameException(
+            'Filename must fit the pattern: `cron-*.rulesrc`',
+          );
+        }
+
         cronStandardTpm.filename = f;
         cronStandardInterfaces.push(cronStandardTpm);
       });
@@ -50,6 +63,12 @@ export function convertCronType(cron: CronType): CronStandardClass[] {
       cronStandardTpm.expression = c.expression;
       cronStandardTpm.projectURL = c.projectURL;
       cronStandardTpm.gitlabProjectId = c.gitlabProjectId;
+
+      if (!checkCronFilename(c.filename)) {
+        throw new CronFilenameException(
+          'Filename must fit the pattern: `cron-*.rulesrc`',
+        );
+      }
       cronStandardTpm.filename = c.filename;
       cronStandardInterfaces.push(cronStandardTpm);
     }

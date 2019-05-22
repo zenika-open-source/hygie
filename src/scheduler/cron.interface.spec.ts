@@ -7,46 +7,46 @@ import {
 
 const cron1: CronInterface[] = [
   {
-    filename: 'rules-cron-1-1.yml',
+    filename: 'cron-1-1.rulesrc',
     projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
   },
   {
-    filename: 'rules-cron-1-2.yml',
+    filename: 'cron-1-2.rulesrc',
     projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
   },
   {
-    filename: 'rules-cron-1-3.yml',
+    filename: 'cron-1-3.rulesrc',
     projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
   },
 ];
 const cron2: CronInterface[] = [
   {
     filename: [
-      'rules-cron-2-1-1.yml',
-      'rules-cron-2-1-2.yml',
-      'rules-cron-2-1-3.yml',
+      'cron-2-1-1.rulesrc',
+      'cron-2-1-2.rulesrc',
+      'cron-2-1-3.rulesrc',
     ],
     projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
   },
   {
-    filename: 'rules-cron-2-2.yml',
+    filename: 'cron-2-2.rulesrc',
     projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
   },
   {
-    filename: 'rules-cron-2-3.yml',
+    filename: 'cron-2-3.rulesrc',
     projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
   },
 ];
 const cron3: CronInterface = {
-  filename: [
-    'rules-cron-3-1-1.yml',
-    'rules-cron-3-1-2.yml',
-    'rules-cron-3-1-3.yml',
-  ],
+  filename: ['cron-3-1-1.rulesrc', 'cron-3-1-2.rulesrc', 'cron-3-1-3.rulesrc'],
   projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
 };
 const cron4: CronInterface = {
-  filename: 'rules-cron-4-1.yml',
+  filename: 'cron-4-1.rulesrc',
+  projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+};
+const cron5: CronInterface = {
+  filename: 'rule-cron-4-1.yml',
   projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
 };
 
@@ -85,19 +85,19 @@ describe('Cron Interfaces', () => {
       expect(convertCronType(cron1)).toEqual([
         {
           expression: undefined,
-          filename: 'rules-cron-1-1.yml',
+          filename: 'cron-1-1.rulesrc',
           gitlabProjectId: undefined,
           projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
         },
         {
           expression: undefined,
-          filename: 'rules-cron-1-2.yml',
+          filename: 'cron-1-2.rulesrc',
           gitlabProjectId: undefined,
           projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
         },
         {
           expression: undefined,
-          filename: 'rules-cron-1-3.yml',
+          filename: 'cron-1-3.rulesrc',
           gitlabProjectId: undefined,
           projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
         },
@@ -107,31 +107,31 @@ describe('Cron Interfaces', () => {
       expect(convertCronType(cron2)).toEqual([
         {
           expression: undefined,
-          filename: 'rules-cron-2-1-1.yml',
+          filename: 'cron-2-1-1.rulesrc',
           gitlabProjectId: undefined,
           projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
         },
         {
           expression: undefined,
-          filename: 'rules-cron-2-1-2.yml',
+          filename: 'cron-2-1-2.rulesrc',
           gitlabProjectId: undefined,
           projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
         },
         {
           expression: undefined,
-          filename: 'rules-cron-2-1-3.yml',
+          filename: 'cron-2-1-3.rulesrc',
           gitlabProjectId: undefined,
           projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
         },
         {
           expression: undefined,
-          filename: 'rules-cron-2-2.yml',
+          filename: 'cron-2-2.rulesrc',
           gitlabProjectId: undefined,
           projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
         },
         {
           expression: undefined,
-          filename: 'rules-cron-2-3.yml',
+          filename: 'cron-2-3.rulesrc',
           gitlabProjectId: undefined,
           projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
         },
@@ -141,19 +141,19 @@ describe('Cron Interfaces', () => {
       expect(convertCronType(cron3)).toEqual([
         {
           expression: undefined,
-          filename: 'rules-cron-3-1-1.yml',
+          filename: 'cron-3-1-1.rulesrc',
           gitlabProjectId: undefined,
           projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
         },
         {
           expression: undefined,
-          filename: 'rules-cron-3-1-2.yml',
+          filename: 'cron-3-1-2.rulesrc',
           gitlabProjectId: undefined,
           projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
         },
         {
           expression: undefined,
-          filename: 'rules-cron-3-1-3.yml',
+          filename: 'cron-3-1-3.rulesrc',
           gitlabProjectId: undefined,
           projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
         },
@@ -163,11 +163,17 @@ describe('Cron Interfaces', () => {
       expect(convertCronType(cron4)).toEqual([
         {
           expression: undefined,
-          filename: 'rules-cron-4-1.yml',
+          filename: 'cron-4-1.rulesrc',
           gitlabProjectId: undefined,
           projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
         },
       ]);
+    });
+    it('cron5 should throw an exception', () => {
+      function myFunc() {
+        return convertCronType(cron5);
+      }
+      expect(myFunc).toThrowError();
     });
   });
 });
