@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { INestApplication, HttpCode, HttpStatus } from '@nestjs/common';
 import { MockAppModule } from '../__mocks__/mock.app.module';
 
-describe('webhook Interceptor (e2e)', () => {
+describe('Interceptors (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
