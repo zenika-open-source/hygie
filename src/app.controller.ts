@@ -34,6 +34,8 @@ import { Schedule } from './scheduler/schedule';
 import { getYAMLSchema } from './generator/getYAMLSchema';
 import { DataAccessService } from './data_access/dataAccess.service';
 import { Utils } from './utils/utils';
+import { Constants } from './utils/constants';
+import { WhiteListInterceptor } from './webhook/whiteList.interceptor';
 
 @Controller()
 export class AppController {
@@ -41,7 +43,7 @@ export class AppController {
   repoURL: string = '';
   apiURL: string = '';
   private readonly state: string;
-  private readonly applicationURL: string = 'http://ab7c27fc.ngrok.io';
+  private readonly applicationURL: string = process.env.applicationURL;
   //
 
   constructor(
@@ -193,6 +195,7 @@ export class AppController {
 
   @Post('/webhook')
   @UseInterceptors(WebhookInterceptor)
+  @UseInterceptors(WhiteListInterceptor)
   @UseFilters(AllExceptionsFilter)
   async processWebhook(
     @Body() webhook: Webhook,
@@ -220,17 +223,22 @@ export class AppController {
         rulesBranch = webhook.pullRequest.sourceBranch;
       }
 
-      const remoteRepository =
-        getRemoteRules === 'false'
-          ? 'src/rules'
-          : await RemoteConfigUtils.downloadRulesFile(
-              this.dataAccessService,
-              this.httpService,
-              webhook.getCloneURL(),
-              'rules.yml',
-              rulesBranch,
-            );
-
+      let remoteRepository: string;
+      try {
+        remoteRepository =
+          getRemoteRules === 'false'
+            ? 'src/rules'
+            : await RemoteConfigUtils.downloadRulesFile(
+                this.dataAccessService,
+                this.httpService,
+                webhook.getCloneURL(),
+                Constants.rulesExtension,
+                rulesBranch,
+              );
+      } catch (e) {
+        logger.error(e);
+        throw new PreconditionException();
+      }
       try {
         const remoteEnvs: string = webhook.getRemoteDirectory();
         await this.githubService.setEnvironmentVariables(
@@ -242,9 +250,8 @@ export class AppController {
           remoteEnvs,
         );
       } catch (e) {
-        logger.error(e);
         logger.error('There is no config.env file for the current git project');
-        return;
+        throw new PreconditionException();
       }
 
       logger.info(
@@ -254,7 +261,7 @@ export class AppController {
       const result = await this.rulesService.testRules(
         webhook,
         remoteRepository,
-        'rules.yml',
+        Constants.rulesExtension,
       );
       response.status(HttpStatus.ACCEPTED).send(result);
     }
@@ -265,7 +272,14 @@ export class AppController {
     let remoteRepository: string;
     let responseString: string = '';
     let schedule: Schedule;
-    const cronStandardArray: CronStandardClass[] = convertCronType(cronType);
+    let cronStandardArray: CronStandardClass[];
+
+    try {
+      cronStandardArray = convertCronType(cronType);
+    } catch (e) {
+      response.status(HttpStatus.PRECONDITION_FAILED).send(e.message);
+      return;
+    }
 
     for (let index = 0; index < cronStandardArray.length; index++) {
       // Need a for loop because Async/Wait does not work in ForEach

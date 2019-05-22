@@ -1,4 +1,4 @@
-# `rules.yml` example
+# `.rulesrc` example
 
 ```yaml
 --- # Rules config file

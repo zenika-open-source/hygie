@@ -1,5 +1,5 @@
 /**
- * Options supported in the `rules.yml` file
+ * Options supported in the `.rulesrc` file
  */
 export class RulesOptions {
   /**

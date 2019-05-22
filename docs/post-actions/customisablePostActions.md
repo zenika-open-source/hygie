@@ -12,7 +12,7 @@ You can:
 
 ## How does it work?
 
-In your `rules.yml` config file, you can add `callback` functions that will be called if the rule succeeds or not.
+In your `.rulesrc` config file, you can add `callback` functions that will be called if the rule succeeds or not.
 
 These `callback`s are `Runnable` classes, that implementing the `Runnable` abstract class.
 The `Runnable` class will have a `run()` method with `callbackType`, `RuleResult` and `args` as arguments.

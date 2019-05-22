@@ -15,6 +15,7 @@ import { of } from 'rxjs';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { FileAccess } from '../data_access/providers/fileAccess';
 import { DatabaseAccess } from '../data_access/providers/databaseAccess';
+import { Constants } from '../utils/constants';
 
 describe('remote-config', () => {
   let app: TestingModule;
@@ -81,10 +82,12 @@ describe('remote-config', () => {
         dataAccessService,
         httpService,
         'https://github.com/DX-DeveloperExperience/git-webhooks',
-        'rules.yml',
+        Constants.rulesExtension,
       );
       expect(httpService.get).toBeCalledWith(
-        'https://raw.githubusercontent.com/DX-DeveloperExperience/git-webhooks/master/.git-webhooks/rules.yml',
+        `https://raw.githubusercontent.com/DX-DeveloperExperience/git-webhooks/master/.git-webhooks/${
+          Constants.rulesExtension
+        }`,
       );
       expect(result).toBe(
         'remote-rules/DX-DeveloperExperience/git-webhooks/.git-webhooks',
@@ -104,10 +107,12 @@ describe('remote-config', () => {
         dataAccessService,
         httpService,
         'https://gitlab.com/gitlab-org/gitlab-ce',
-        'rules.yml',
+        Constants.rulesExtension,
       );
       expect(httpService.get).toBeCalledWith(
-        'https://gitlab.com/gitlab-org/gitlab-ce/raw/master/.git-webhooks/rules.yml',
+        `https://gitlab.com/gitlab-org/gitlab-ce/raw/master/.git-webhooks/${
+          Constants.rulesExtension
+        }`,
       );
       expect(result).toBe('remote-rules/gitlab-org/gitlab-ce/.git-webhooks');
     });
@@ -159,11 +164,13 @@ describe('remote-config', () => {
         RemoteConfigUtils.getGitRawPath(
           GitTypeEnum.Github,
           'https://github.com/bastienterrier/test-webhook',
-          '.git-webhooks/rules.yml',
+          `.git-webhooks/${Constants.rulesExtension}`,
           'test',
         ),
       ).toBe(
-        'https://raw.githubusercontent.com/bastienterrier/test-webhook/test/.git-webhooks/rules.yml',
+        `https://raw.githubusercontent.com/bastienterrier/test-webhook/test/.git-webhooks/${
+          Constants.rulesExtension
+        }`,
       );
     });
   });
@@ -173,10 +180,12 @@ describe('remote-config', () => {
         RemoteConfigUtils.getGitRawPath(
           GitTypeEnum.Gitlab,
           'https://gitlab.com/bastien.terrier/test_webhook',
-          '.git-webhooks/rules.yml',
+          `.git-webhooks/${Constants.rulesExtension}`,
         ),
       ).toBe(
-        'https://gitlab.com/bastien.terrier/test_webhook/raw/master/.git-webhooks/rules.yml',
+        `https://gitlab.com/bastien.terrier/test_webhook/raw/master/.git-webhooks/${
+          Constants.rulesExtension
+        }`,
       );
     });
   });

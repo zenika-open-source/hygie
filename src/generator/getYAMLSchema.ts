@@ -20,7 +20,7 @@ export function getYAMLSchema(): object {
   const optionsName = getAllYAMLOptions();
   return {
     $schema: 'http://json-schema.org/schema#',
-    title: 'YAML schema for rules*.yml files',
+    title: 'Schema for YAML and JSON *.rulesrc files',
     properties: {
       options: optionsName,
       rules: {

@@ -3,9 +3,12 @@ import { Test } from '@nestjs/testing';
 import { INestApplication, HttpStatus } from '@nestjs/common';
 import { MockAppModule } from '../__mocks__/mock.app.module';
 import { WhiteListInterceptor } from './whiteList.interceptor';
-import { MockWhiteListInterceptorNext } from '../__mocks__/mock.whiteList.interceptor';
+import {
+  MockWhiteListInterceptorNext,
+  MockWhiteListInterceptorBlock,
+} from '../__mocks__/mock.whiteList.interceptor';
 
-describe('/webhook (POST) - In WhiteList', () => {
+describe('/webhook (POST) - Not in WhiteList', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -13,16 +16,16 @@ describe('/webhook (POST) - In WhiteList', () => {
       imports: [MockAppModule],
     })
       .overrideInterceptor(WhiteListInterceptor)
-      .useClass(MockWhiteListInterceptorNext)
+      .useClass(MockWhiteListInterceptorBlock)
       .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
   });
 
-  it('should return PRECONDITION_FAILED', () => {
+  it('shoud return UNAUTHORIZED', () => {
     return request(app.getHttpServer())
       .post('/webhook')
-      .expect(HttpStatus.PRECONDITION_FAILED);
+      .expect(HttpStatus.UNAUTHORIZED);
   });
 });

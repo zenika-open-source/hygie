@@ -18,7 +18,7 @@ Be sure that the rule returned the `issueNumber` property in the `RuleResult` ob
 
 This Post-Action only needs a string message. This string can contain _mustache_ templating.
 
-To use the `CommentIssueRunnable`, add the `callback` on your `rules.yml` config file.
+To use the `CommentIssueRunnable`, add the `callback` on your `.rulesrc` config file.
 
 ```yaml
 # ...
@@ -42,7 +42,7 @@ Be sure that the rule returned the `pullRequestNumber` property in the `RuleResu
 
 This Post-Action only needs a string message. This string can contain _mustache_ templating.
 
-To use the `CommentPullRequestRunnable`, add the `callback` on your `rules.yml` config file.
+To use the `CommentPullRequestRunnable`, add the `callback` on your `.rulesrc` config file.
 
 ```yaml
 # ...
@@ -73,7 +73,7 @@ This Post-Action need the following args:
   current branch return by the `data.branch` attribute of the previous `RuleResult`.
   :::
 
-To use the `CreatePullRequestRunnable`, add the `callback` on your `rules.yml` config file.
+To use the `CreatePullRequestRunnable`, add the `callback` on your `.rulesrc` config file.
 
 ```yaml
 # ...
@@ -99,7 +99,7 @@ This Post-Action has one optionnal arg:
   If no branch name is provide, it will be set to `data.branch` returned by the previous rule.
   :::
 
-To use the `DeleteBranchRunnable`, simply add the `callback` on your `rules.yml` config file.
+To use the `DeleteBranchRunnable`, simply add the `callback` on your `.rulesrc` config file.
 
 ```yaml
 # ...
@@ -129,7 +129,7 @@ This Post-Action need the following args:
   If no branch name is provide, it will be set to `data.branch` returned by the previous rule if exist, `master` otherwise.
   :::
 
-To use the `DeleteFilesRunnable`, simply add the `callback` on your `rules.yml` config file.
+To use the `DeleteFilesRunnable`, simply add the `callback` on your `.rulesrc` config file.
 
 ```yaml
 # ...
@@ -164,7 +164,7 @@ This Post-Action need two args:
   :::
 - `message`: a string that can contain _mustache_ templating.
 
-To use the `LoggerRunnable`, simply add the `callback` on your `rules.yml` config file.
+To use the `LoggerRunnable`, simply add the `callback` on your `.rulesrc` config file.
 
 ```yaml
 # ...
@@ -203,7 +203,7 @@ This Post-Action need the following args:
   `rebase` does not exist on Gitlab
   :::
 
-To use the `MergePullRequestRunnable`, simply add the `callback` on your `rules.yml` config file.
+To use the `MergePullRequestRunnable`, simply add the `callback` on your `.rulesrc` config file.
 
 ```yaml
 # ...
@@ -238,7 +238,7 @@ This Post-Action need the following args:
 `subject` and `message` support HTML.
 :::
 
-To use the `SendEmailRunnable`, add the `callback` on your `rules.yml` config file.
+To use the `SendEmailRunnable`, add the `callback` on your `.rulesrc` config file.
 
 ```yaml
 # ...
@@ -269,7 +269,7 @@ This Post-Action need the following args:
 - `successDescriptionMessage`: the shown message on success,
 - `failDescriptionMessage`: the shown message on failure.
 
-To use the `UpdateCommitStatusRunnable`, add the `callback` on your `rules.yml` config file.
+To use the `UpdateCommitStatusRunnable`, add the `callback` on your `.rulesrc` config file.
 
 ```yaml
 # ...
@@ -302,7 +302,7 @@ This Post-Action need the following args:
   :::
 - `state`: open|close _[optional]_.
 
-To use the `UpdateIssueRunnable`, simply add the `callback` on your `rules.yml` config file.
+To use the `UpdateIssueRunnable`, simply add the `callback` on your `.rulesrc` config file.
 
 ```yaml
 # ...
@@ -334,7 +334,7 @@ This Post-Action need the following args:
 - `state`: open|close _[optional]_,
 - `description`: the PR description _[optional]_.
 
-To use the `UpdatePullRequestRunnable`, simply add the `callback` on your `rules.yml` config file.
+To use the `UpdatePullRequestRunnable`, simply add the `callback` on your `.rulesrc` config file.
 
 ```yaml
 # ...
@@ -363,7 +363,7 @@ This Post-Action need the following args:
 
 All of these parameters can contain _mustache_ templating.
 
-To use the `WebhookRunnable`, simply add the `callback` on your `rules.yml` config file.
+To use the `WebhookRunnable`, simply add the `callback` on your `.rulesrc` config file.
 
 ```yaml
 # ...
