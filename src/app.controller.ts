@@ -35,6 +35,7 @@ import { getYAMLSchema } from './generator/getYAMLSchema';
 import { DataAccessService } from './data_access/dataAccess.service';
 import { Utils } from './utils/utils';
 import { Constants } from './utils/constants';
+import { WhiteListInterceptor } from './webhook/white-list.interceptor';
 
 @Controller()
 export class AppController {
@@ -194,6 +195,7 @@ export class AppController {
 
   @Post('/webhook')
   @UseInterceptors(WebhookInterceptor)
+  @UseInterceptors(WhiteListInterceptor)
   @UseFilters(AllExceptionsFilter)
   async processWebhook(
     @Body() webhook: Webhook,
