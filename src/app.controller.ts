@@ -35,7 +35,7 @@ import { getYAMLSchema } from './generator/getYAMLSchema';
 import { DataAccessService } from './data_access/dataAccess.service';
 import { Utils } from './utils/utils';
 import { Constants } from './utils/constants';
-import { WhiteListInterceptor } from './webhook/white-list.interceptor';
+import { WhiteListInterceptor } from './webhook/whiteList.interceptor';
 
 @Controller()
 export class AppController {

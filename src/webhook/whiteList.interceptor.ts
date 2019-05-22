@@ -17,6 +17,9 @@ export class WhiteListInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
 
+    // tslint:disable-next-line:no-console
+    console.log(request);
+
     const bodyRequest: any = request.body;
     try {
       const githubSignature: string = request.headers['x-hub-signature'];
