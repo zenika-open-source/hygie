@@ -151,4 +151,8 @@ export class MockDataAccess implements DataAccessInterface {
   writeData(source: SourceEnum, path: string, data: any): Promise<any> {
     return Promise.resolve('ok');
   }
+
+  connect(): Promise<boolean> {
+    return Promise.resolve(true);
+  }
 }

@@ -26,6 +26,6 @@ export class FileAccess implements DataAccessInterface {
 
   // Nothing to do => return true
   async connect(): Promise<boolean> {
-    return await true;
+    return Promise.resolve(true);
   }
 }
