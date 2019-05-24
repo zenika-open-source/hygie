@@ -420,8 +420,10 @@ export class Webhook {
     this.repository.cloneURL = cron.projectURL;
 
     if (this.gitType === GitTypeEnum.Github) {
+      this.gitService = this.githubService;
       this.repository.fullName = Utils.getRepositoryFullName(cron.projectURL);
     } else if (this.gitType === GitTypeEnum.Gitlab) {
+      this.gitService = this.gitlabService;
       this.projectId = cron.gitlabProjectId;
     }
   }

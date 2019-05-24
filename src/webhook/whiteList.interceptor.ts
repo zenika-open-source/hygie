@@ -18,8 +18,20 @@ export class WhiteListInterceptor implements NestInterceptor {
     const response = context.switchToHttp().getResponse();
 
     const bodyRequest: any = request.body;
+
     try {
-      const githubSignature: string = request.headers['x-hub-signature'];
+      let gitSignature: string;
+      if (typeof request.headers['x-hub-signature'] !== 'undefined') {
+        gitSignature = request.headers['x-hub-signature'];
+      } else if (
+        request.headers['x-gitlab-token'] === process.env.WEBHOOK_SECRET
+      ) {
+        return next.handle();
+      } else {
+        response.status(HttpStatus.UNAUTHORIZED).send('Secret token required.');
+        return of([]);
+      }
+
       const signature: string =
         'sha1=' +
         CryptoJS.HmacSHA1(
@@ -27,7 +39,7 @@ export class WhiteListInterceptor implements NestInterceptor {
           process.env.WEBHOOK_SECRET,
         ).toString();
 
-      if (Compare(signature, githubSignature)) {
+      if (Compare(signature, gitSignature)) {
         return next.handle();
       } else {
         response.status(HttpStatus.UNAUTHORIZED).send('Beta access required.');

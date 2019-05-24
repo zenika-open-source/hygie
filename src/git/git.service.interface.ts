@@ -1,6 +1,10 @@
 import { GitCommitStatusInfos } from './gitCommitStatusInfos';
 import { GitApiInfos } from './gitApiInfos';
-import { GitIssueInfos } from './gitIssueInfos';
+import {
+  GitIssueInfos,
+  GitIssuePRSearch,
+  IssueSearchResult,
+} from './gitIssueInfos';
 import { GitCommentPRInfos, GitPRInfos, GitMergePRInfos } from './gitPRInfos';
 import { GitFileInfos } from './gitFileInfos';
 import { DataAccessService } from '../data_access/dataAccess.service';
@@ -93,4 +97,12 @@ export interface GitServiceInterface {
    * Add a Webhook to the repository listening all events
    */
   createWebhook(gitApiInfos: GitApiInfos, webhookURL: string): void;
+
+  /**
+   * Get Issues
+   */
+  getIssues(
+    gitApiInfos: GitApiInfos,
+    gitIssueSearch: GitIssuePRSearch,
+  ): Promise<IssueSearchResult[]>;
 }

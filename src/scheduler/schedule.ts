@@ -53,12 +53,15 @@ export class Schedule extends NestSchedule {
         this.webhook.gitType === GitTypeEnum.Gitlab &&
         typeof this.webhook.projectId === 'undefined'
       ) {
+        await this.gitlabService.setEnvironmentVariables(
+          this.dataAccessService,
+          this.remoteEnvs,
+        );
         const urlApi: string = this.gitlabService.urlApi;
         let url = `${urlApi}/projects/${Utils.getRepositoryFullName(
           this.cron.projectURL,
         )}`;
         url = url.replace(/\/([^\/]*)$/, '%2F' + '$1');
-        logger.error(url);
         const gitlabProjectId = await this.httpService
           .get(url)
           .toPromise()
@@ -66,7 +69,6 @@ export class Schedule extends NestSchedule {
             return response.data.id;
           });
         this.webhook.projectId = gitlabProjectId;
-        logger.error('projectId: ' + gitlabProjectId);
       }
       resolve();
     });
@@ -111,14 +113,14 @@ export class Schedule extends NestSchedule {
 
     logger.info(`${this.cron.filename} downloaded. Processing...`);
 
-    // Update CRON Expression if defined in the rules-cron file
-    const fs = require('fs-extra');
-    const options = safeLoad(
-      fs.readFileSync(
-        this.remoteRepository + '/' + this.cron.filename,
-        'utf-8',
+    // Update CRON Expression if defined in the cron-*.rulesrc file
+    const conf = await Utils.parseRuleFile(
+      await this.dataAccessService.readRule(
+        `${this.remoteRepository}/${this.cron.filename}`,
       ),
-    ).options;
+    );
+    const options = conf.options;
+
     if (typeof options !== 'undefined') {
       const cronExpression = options.cron;
       if (typeof cronExpression !== 'undefined') {

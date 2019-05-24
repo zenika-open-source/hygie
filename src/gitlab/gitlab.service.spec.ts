@@ -8,7 +8,12 @@ import {
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { CommitStatusEnum } from '../webhook/utils.enum';
-import { GitIssueInfos, IssuePRStateEnum } from '../git/gitIssueInfos';
+import {
+  GitIssueInfos,
+  IssuePRStateEnum,
+  GitIssuePRSearch,
+  IssueSortEnum,
+} from '../git/gitIssueInfos';
 import {
   GitPRInfos,
   GitCommentPRInfos,
@@ -312,6 +317,27 @@ describe('Gitlab Service', () => {
       };
 
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+  });
+
+  describe('getIssues', () => {
+    it('should emit a GET request with specific params', () => {
+      const gitIssueSearch: GitIssuePRSearch = new GitIssuePRSearch();
+      gitIssueSearch.state = IssuePRStateEnum.Open;
+      gitIssueSearch.sort = IssueSortEnum.Asc;
+
+      httpService.get = jest.fn().mockRejectedValueOnce({ data: [] });
+
+      gitlabService.getIssues(gitApiInfos, gitIssueSearch);
+
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/issues`;
+
+      expectedConfig.params = {
+        sort: 'asc',
+        state: 'opened',
+      };
+
+      expect(httpService.get).toBeCalledWith(expectedUrl, expectedConfig);
     });
   });
 

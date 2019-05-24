@@ -4,10 +4,15 @@ import {
   GitTypeEnum,
   convertCommitStatus,
   convertIssueState,
+  convertIssueSearchState,
 } from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { GitIssueInfos } from '../git/gitIssueInfos';
+import {
+  GitIssueInfos,
+  GitIssuePRSearch,
+  IssueSearchResult,
+} from '../git/gitIssueInfos';
 import {
   GitCommentPRInfos,
   GitPRInfos,
@@ -333,5 +338,40 @@ export class GithubService implements GitServiceInterface {
         this.configGitHub,
       )
       .subscribe(null, err => logger.error(err));
+  }
+
+  async getIssues(
+    gitApiInfos: GitApiInfos,
+    gitIssueSearch: GitIssuePRSearch,
+  ): Promise<IssueSearchResult[]> {
+    const customGithubConfig = JSON.parse(JSON.stringify(this.configGitHub));
+    customGithubConfig.params = {};
+    if (typeof gitIssueSearch.sort !== 'undefined') {
+      customGithubConfig.params.direction = gitIssueSearch.sort.toLowerCase();
+    }
+    if (typeof gitIssueSearch.state !== 'undefined') {
+      customGithubConfig.params.state = convertIssueSearchState(
+        GitTypeEnum.Github,
+        gitIssueSearch.state,
+      );
+    }
+
+    return await this.httpService
+      .get(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues`,
+        customGithubConfig,
+      )
+      .toPromise()
+      .then(res => {
+        return res.data.map(d => {
+          if (typeof d.pull_request === 'undefined') {
+            const issueSearchResult = new IssueSearchResult();
+            issueSearchResult.updatedAt = d.updated_at;
+            issueSearchResult.number = d.number;
+            return issueSearchResult;
+          }
+        });
+      })
+      .catch(err => logger.error(err));
   }
 }

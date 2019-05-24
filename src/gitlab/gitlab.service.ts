@@ -4,10 +4,15 @@ import {
   convertCommitStatus,
   GitTypeEnum,
   convertIssueState,
+  convertIssueSearchState,
 } from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { GitIssueInfos } from '../git/gitIssueInfos';
+import {
+  GitIssueInfos,
+  GitIssuePRSearch,
+  IssueSearchResult,
+} from '../git/gitIssueInfos';
 import {
   GitCommentPRInfos,
   GitPRInfos,
@@ -387,5 +392,44 @@ export class GitlabService implements GitServiceInterface {
         configGitLab,
       )
       .subscribe(null, err => logger.error(err));
+  }
+
+  async getIssues(
+    gitApiInfos: GitApiInfos,
+    gitIssueSearch: GitIssuePRSearch,
+  ): Promise<IssueSearchResult[]> {
+    // Data for GitLab
+    const dataGitLab = {};
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {},
+    };
+    if (typeof gitIssueSearch.sort !== 'undefined') {
+      configGitLab.params.sort = gitIssueSearch.sort.toLowerCase();
+    }
+    if (typeof gitIssueSearch.state !== 'undefined') {
+      configGitLab.params.state = convertIssueSearchState(
+        GitTypeEnum.Gitlab,
+        gitIssueSearch.state,
+      );
+    }
+
+    return await this.httpService
+      .get(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/issues`,
+        configGitLab,
+      )
+      .toPromise()
+      .then(res => {
+        return res.data.map(d => {
+          const issueSearchResult = new IssueSearchResult();
+          issueSearchResult.updatedAt = d.updated_at;
+          issueSearchResult.number = d.iid;
+          return issueSearchResult;
+        });
+      })
+      .catch(err => logger.error(err));
   }
 }

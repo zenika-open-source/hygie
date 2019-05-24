@@ -77,6 +77,27 @@ export function convertIssueState(
   return IssueState[gitType][issueStateEnum];
 }
 
+export function convertIssueSearchState(
+  gitType: GitTypeEnum,
+  issueStateEnum: IssuePRStateEnum,
+): string {
+  // tslint:disable-next-line:one-variable-per-declaration
+  const IssueState = {
+    [GitTypeEnum.Github]: {
+      [IssuePRStateEnum.Open]: 'open',
+      [IssuePRStateEnum.Close]: 'closed',
+      [IssuePRStateEnum.All]: 'all',
+    },
+    [GitTypeEnum.Gitlab]: {
+      [IssuePRStateEnum.Open]: 'opened',
+      [IssuePRStateEnum.Close]: 'closed',
+      [IssuePRStateEnum.All]: 'all',
+    },
+  };
+
+  return IssueState[gitType][issueStateEnum];
+}
+
 export function isGitlabPushEvent(
   git: GitlabEvent | GithubEvent,
 ): git is GitlabPushEvent {
