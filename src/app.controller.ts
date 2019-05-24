@@ -55,6 +55,20 @@ export class AppController {
     private readonly dataAccessService: DataAccessService,
   ) {
     this.state = Utils.generateUniqueId();
+
+    this.loadCronJobs();
+  }
+
+  /**
+   * Reload all Cron Jobs when application restart
+   */
+  private async loadCronJobs(): Promise<any> {
+    const CronStandardClassArray: CronType = await this.dataAccessService.getAllCrons();
+    if (this.dataAccessService.removeAllCrons()) {
+      this.cronJobs(CronStandardClassArray, null);
+    } else {
+      logger.error('Can not remove old cron jobs');
+    }
   }
 
   @Get('/')
@@ -313,6 +327,8 @@ export class AppController {
         return;
       }
     }
-    response.status(HttpStatus.OK).send(responseString);
+    if (response !== null) {
+      response.status(HttpStatus.OK).send(responseString);
+    }
   }
 }

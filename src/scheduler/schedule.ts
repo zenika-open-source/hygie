@@ -42,6 +42,9 @@ export class Schedule extends NestSchedule {
     // Init Webhook
     this.webhook = new Webhook(this.gitlabService, this.githubService);
     this.webhook.setCronWebhook(cron);
+
+    // Store CRON
+    this.dataAccessService.writeCron(`remote-crons/${this.id}`, this.cron);
   }
 
   /**

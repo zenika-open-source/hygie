@@ -5,6 +5,7 @@
 export enum SourceEnum {
   Envs = 'Envs',
   Rules = 'Rules',
+  Crons = 'Crons',
 }
 
 /**
@@ -31,6 +32,20 @@ export interface DataAccessInterface {
    * @param path data path
    */
   checkIfExist(source: SourceEnum, path: string): Promise<boolean>;
+
+  /**
+   * Read all collection data from the Data Storage
+   * @param source data source (env, rules, ...)
+   * @param path collection path
+   */
+  readCollection(source: SourceEnum, path: string): Promise<any>;
+
+  /**
+   * Remove all collection data from the Data Storage
+   * @param source data source (env, rules, ...)
+   * @param path collection path
+   */
+  removeCollection(source: SourceEnum, path: string): Promise<boolean>;
 
   /**
    * Open connection with the Data Storage

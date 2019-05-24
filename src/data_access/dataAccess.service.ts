@@ -25,6 +25,22 @@ export class DataAccessService {
   }
 
   /**
+   * Read Cron object
+   * @param path path location (file system)/key (database)/etc
+   */
+  readCron(path: string): Promise<any> {
+    return this.dataProvider.readData(SourceEnum.Crons, path);
+  }
+
+  getAllCrons(): Promise<any> {
+    return this.dataProvider.readCollection(SourceEnum.Crons, 'remote-crons');
+  }
+
+  removeAllCrons(): Promise<boolean> {
+    return this.dataProvider.removeCollection(SourceEnum.Crons, 'remote-crons');
+  }
+
+  /**
    * Write Env object
    * @param path path location (file system)/key (database)/etc
    * @param data Env object
@@ -40,6 +56,15 @@ export class DataAccessService {
    */
   writeRule(path: string, data: any): Promise<any> {
     return this.dataProvider.writeData(SourceEnum.Rules, path, data);
+  }
+
+  /**
+   * Write Cron object
+   * @param path path location (file system)/key (database)/etc
+   * @param data Rule object
+   */
+  writeCron(path: string, data: any): Promise<any> {
+    return this.dataProvider.writeData(SourceEnum.Crons, path, data);
   }
 
   /**
