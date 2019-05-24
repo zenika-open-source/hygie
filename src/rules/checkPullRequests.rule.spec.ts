@@ -10,8 +10,9 @@ import {
   MockGithubService,
 } from '../__mocks__/mocks';
 import { CheckIssuesRule } from './checkIssues.rule';
-import { Observable } from 'rxjs';
+import { empty, of, Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
+import { CheckPullRequestsRule } from './checkPullRequests.rule';
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -40,26 +41,26 @@ describe('RulesService', () => {
     jest.clearAllMocks();
   });
 
-  // CheckIssues Rule
-  describe('checkIssues Rule', () => {
+  // CheckPullRequests Rule
+  describe('CheckPullRequests Rule', () => {
     it('should return false + empty data', async () => {
-      githubService.getIssues = jest
+      githubService.getPullRequests = jest
         .fn()
-        .mockImplementationOnce((...args) => []); // no issue
+        .mockImplementationOnce((...args) => []); // no pull request
       httpService.get = jest.fn().mockImplementation((...args) => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkIssuesRule = new CheckIssuesRule();
-      checkIssuesRule.options = {
+      const checkPullRequestsRule = new CheckPullRequestsRule();
+      checkPullRequestsRule.options = {
         notUpdatedSinceXDays: 7,
         state: 'open',
       };
-      jest.spyOn(checkIssuesRule, 'validate');
+      jest.spyOn(checkPullRequestsRule, 'validate');
 
-      const result: RuleResult = await checkIssuesRule.validate(
+      const result: RuleResult = await checkPullRequestsRule.validate(
         webhook,
-        checkIssuesRule,
+        checkPullRequestsRule,
       );
       jest.fn().mockReset();
 
@@ -68,40 +69,42 @@ describe('RulesService', () => {
       expect(result.validated).toBe(false);
       expect(result.data).toEqual(expectedResult);
     });
-    it('should return true + array of issue number', async () => {
-      githubService.getIssues = jest.fn().mockImplementationOnce((...args) => [
-        {
-          number: 1,
-          updatedAt: '2019-03-25T05:50:47Z',
-        },
-        {
-          number: 2,
-          updatedAt: '2019-03-25T05:50:47Z',
-        },
-        {
-          number: 3,
-          updatedAt: '2019-03-25T05:50:47Z',
-        },
-      ]);
+    it('should return true + array of pull request number', async () => {
+      githubService.getPullRequests = jest
+        .fn()
+        .mockImplementationOnce((...args) => [
+          {
+            number: 1,
+            updatedAt: '2019-03-25T05:50:47Z',
+          },
+          {
+            number: 2,
+            updatedAt: '2019-03-25T05:50:47Z',
+          },
+          {
+            number: 3,
+            updatedAt: '2019-03-25T05:50:47Z',
+          },
+        ]);
       httpService.get = jest.fn().mockImplementation((...args) => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkIssuesRule = new CheckIssuesRule();
-      checkIssuesRule.options = {
+      const checkPullRequestsRule = new CheckPullRequestsRule();
+      checkPullRequestsRule.options = {
         notUpdatedSinceXDays: 0, // for testing
         state: 'open',
       };
-      jest.spyOn(checkIssuesRule, 'validate');
+      jest.spyOn(checkPullRequestsRule, 'validate');
 
-      const result: RuleResult = await checkIssuesRule.validate(
+      const result: RuleResult = await checkPullRequestsRule.validate(
         webhook,
-        checkIssuesRule,
+        checkPullRequestsRule,
       );
 
       jest.fn().mockReset();
 
-      const expectedResult = { issueNumber: [1, 2, 3] };
+      const expectedResult = { pullRequestNumber: [1, 2, 3] };
 
       expect(result.validated).toBe(true);
       expect(result.data).toEqual(expectedResult);

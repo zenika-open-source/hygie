@@ -4,7 +4,7 @@ import {
   convertCommitStatus,
   GitTypeEnum,
   convertIssueState,
-  convertIssueSearchState,
+  convertIssuePRSearchState,
 } from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
@@ -18,6 +18,7 @@ import {
   GitPRInfos,
   GitMergePRInfos,
   PRMethodsEnum,
+  PRSearchResult,
 } from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
 import { GitFileInfos } from '../git/gitFileInfos';
@@ -398,8 +399,6 @@ export class GitlabService implements GitServiceInterface {
     gitApiInfos: GitApiInfos,
     gitIssueSearch: GitIssuePRSearch,
   ): Promise<IssueSearchResult[]> {
-    // Data for GitLab
-    const dataGitLab = {};
     const configGitLab: any = {
       headers: {
         'PRIVATE-TOKEN': this.token,
@@ -410,7 +409,7 @@ export class GitlabService implements GitServiceInterface {
       configGitLab.params.sort = gitIssueSearch.sort.toLowerCase();
     }
     if (typeof gitIssueSearch.state !== 'undefined') {
-      configGitLab.params.state = convertIssueSearchState(
+      configGitLab.params.state = convertIssuePRSearchState(
         GitTypeEnum.Gitlab,
         gitIssueSearch.state,
       );
@@ -428,6 +427,43 @@ export class GitlabService implements GitServiceInterface {
           issueSearchResult.updatedAt = d.updated_at;
           issueSearchResult.number = d.iid;
           return issueSearchResult;
+        });
+      })
+      .catch(err => logger.error(err));
+  }
+
+  async getPullRequests(
+    gitApiInfos: GitApiInfos,
+    gitIssueSearch: GitIssuePRSearch,
+  ): Promise<PRSearchResult[]> {
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {},
+    };
+    if (typeof gitIssueSearch.sort !== 'undefined') {
+      configGitLab.params.sort = gitIssueSearch.sort.toLowerCase();
+    }
+    if (typeof gitIssueSearch.state !== 'undefined') {
+      configGitLab.params.state = convertIssuePRSearchState(
+        GitTypeEnum.Gitlab,
+        gitIssueSearch.state,
+      );
+    }
+
+    return await this.httpService
+      .get(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests`,
+        configGitLab,
+      )
+      .toPromise()
+      .then(res => {
+        return res.data.map(d => {
+          const prSearchResult = new PRSearchResult();
+          prSearchResult.updatedAt = d.updated_at;
+          prSearchResult.number = d.iid;
+          return prSearchResult;
         });
       })
       .catch(err => logger.error(err));

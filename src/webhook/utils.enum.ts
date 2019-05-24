@@ -77,7 +77,7 @@ export function convertIssueState(
   return IssueState[gitType][issueStateEnum];
 }
 
-export function convertIssueSearchState(
+export function convertIssuePRSearchState(
   gitType: GitTypeEnum,
   issueStateEnum: IssuePRStateEnum,
 ): string {

@@ -48,6 +48,7 @@ export class MockGitlabService {
   createPullRequest: jest.Mock = jest.fn().mockName('createPullRequestGitlab');
   createWebhook: jest.Mock = jest.fn().mockName('createWebhookGitlab');
   getIssues: jest.Mock = jest.fn().mockName('getIssuesGitlab');
+  getPullRequests: jest.Mock = jest.fn().mockName('getPullRequestsGitlab');
 }
 
 export class MockGithubService {
@@ -73,6 +74,7 @@ export class MockGithubService {
   createPullRequest: jest.Mock = jest.fn().mockName('createPullRequestGithub');
   createWebhook: jest.Mock = jest.fn().mockName('createWebhookGithub');
   getIssues: jest.Mock = jest.fn().mockName('getIssuesGithub');
+  getPullRequests: jest.Mock = jest.fn().mockName('getPullRequestsGithub');
 }
 
 export class MockSendEmailRunnable {

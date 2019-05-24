@@ -1,75 +1,72 @@
 import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
-import { GitEventEnum, convertIssuePRSearchState } from '../webhook/utils.enum';
+import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
-import {
-  GitIssuePRSearch,
-  IssuePRStateEnum,
-  IssueSearchResult,
-} from '../git/gitIssueInfos';
+import { GitIssuePRSearch, IssuePRStateEnum } from '../git/gitIssueInfos';
+import { PRSearchResult } from '../git/gitPRInfos';
 import { Utils } from './utils';
 
-interface CheckIssuesOptions {
+interface CheckPullRequestsOptions {
   updatedWithinXDays?: number;
   notUpdatedSinceXDays?: number;
   state?: string;
 }
 
 /**
- * `checkIssues` .
- * @return return a `RuleResult` object with all matching issues
+ * `CheckPullRequestsRule` DESCRIPTION.
+ * @return return a `RuleResult` object
  */
-@RuleDecorator('checkIssues')
-export class CheckIssuesRule extends Rule {
-  options: CheckIssuesOptions;
+@RuleDecorator('checkPullRequests')
+export class CheckPullRequestsRule extends Rule {
+  options: CheckPullRequestsOptions;
   events = [GitEventEnum.Cron];
 
   async validate(
     webhook: Webhook,
-    ruleConfig: CheckIssuesRule,
+    ruleConfig: CheckPullRequestsRule,
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
 
-    const gitIssueSearch: GitIssuePRSearch = new GitIssuePRSearch();
+    const gitPRSearch: GitIssuePRSearch = new GitIssuePRSearch();
     if (typeof ruleConfig.options.state !== 'undefined') {
       if (ruleConfig.options.state.toLowerCase() === 'open') {
-        gitIssueSearch.state = IssuePRStateEnum.Open;
+        gitPRSearch.state = IssuePRStateEnum.Open;
       } else if (ruleConfig.options.state.toLowerCase() === 'close') {
-        gitIssueSearch.state = IssuePRStateEnum.Close;
+        gitPRSearch.state = IssuePRStateEnum.Close;
       } else if (ruleConfig.options.state.toLowerCase() === 'all') {
-        gitIssueSearch.state = IssuePRStateEnum.All;
+        gitPRSearch.state = IssuePRStateEnum.All;
       }
     }
 
-    const issues: IssueSearchResult[] = await webhook.gitService.getIssues(
+    const pullRequests: PRSearchResult[] = await webhook.gitService.getPullRequests(
       webhook.getGitApiInfos(),
-      gitIssueSearch,
+      gitPRSearch,
     );
 
-    const issuesToUpdate = issues
-      .filter(issue => {
+    const PRToUpdate = pullRequests
+      .filter(PR => {
         if (typeof ruleConfig.options.notUpdatedSinceXDays !== 'undefined') {
           return !Utils.checkTime(
-            issue.updatedAt,
+            PR.updatedAt,
             ruleConfig.options.notUpdatedSinceXDays,
           );
         } else if (
           typeof ruleConfig.options.updatedWithinXDays !== 'undefined'
         ) {
           return Utils.checkTime(
-            issue.updatedAt,
+            PR.updatedAt,
             ruleConfig.options.updatedWithinXDays,
           );
         }
       })
-      .map(issue => issue.number);
+      .map(pr => pr.number);
 
-    ruleResult.validated = issuesToUpdate.length > 0;
+    ruleResult.validated = PRToUpdate.length > 0;
 
     if (ruleResult.validated) {
       ruleResult.data = {
-        issueNumber: issuesToUpdate,
+        pullRequestNumber: PRToUpdate,
       };
     } else {
       ruleResult.data = {};

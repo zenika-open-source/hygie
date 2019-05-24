@@ -4,7 +4,7 @@ import {
   GitTypeEnum,
   convertCommitStatus,
   convertIssueState,
-  convertIssueSearchState,
+  convertIssuePRSearchState,
 } from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
@@ -18,6 +18,7 @@ import {
   GitPRInfos,
   GitMergePRInfos,
   PRMethodsEnum,
+  PRSearchResult,
 } from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
 import { PreconditionException } from '../exceptions/precondition.exception';
@@ -350,7 +351,7 @@ export class GithubService implements GitServiceInterface {
       customGithubConfig.params.direction = gitIssueSearch.sort.toLowerCase();
     }
     if (typeof gitIssueSearch.state !== 'undefined') {
-      customGithubConfig.params.state = convertIssueSearchState(
+      customGithubConfig.params.state = convertIssuePRSearchState(
         GitTypeEnum.Github,
         gitIssueSearch.state,
       );
@@ -365,11 +366,45 @@ export class GithubService implements GitServiceInterface {
       .then(res => {
         return res.data.map(d => {
           if (typeof d.pull_request === 'undefined') {
+            // Pull Requests are considered as Issues
             const issueSearchResult = new IssueSearchResult();
             issueSearchResult.updatedAt = d.updated_at;
             issueSearchResult.number = d.number;
             return issueSearchResult;
           }
+        });
+      })
+      .catch(err => logger.error(err));
+  }
+
+  async getPullRequests(
+    gitApiInfos: GitApiInfos,
+    gitIssueSearch: GitIssuePRSearch,
+  ): Promise<PRSearchResult[]> {
+    const customGithubConfig = JSON.parse(JSON.stringify(this.configGitHub));
+    customGithubConfig.params = {};
+    if (typeof gitIssueSearch.sort !== 'undefined') {
+      customGithubConfig.params.direction = gitIssueSearch.sort.toLowerCase();
+    }
+    if (typeof gitIssueSearch.state !== 'undefined') {
+      customGithubConfig.params.state = convertIssuePRSearchState(
+        GitTypeEnum.Github,
+        gitIssueSearch.state,
+      );
+    }
+
+    return await this.httpService
+      .get(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls`,
+        customGithubConfig,
+      )
+      .toPromise()
+      .then(res => {
+        return res.data.map(d => {
+          const prSearchResult = new PRSearchResult();
+          prSearchResult.updatedAt = d.updated_at;
+          prSearchResult.number = d.number;
+          return prSearchResult;
         });
       })
       .catch(err => logger.error(err));

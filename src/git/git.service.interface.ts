@@ -5,7 +5,12 @@ import {
   GitIssuePRSearch,
   IssueSearchResult,
 } from './gitIssueInfos';
-import { GitCommentPRInfos, GitPRInfos, GitMergePRInfos } from './gitPRInfos';
+import {
+  GitCommentPRInfos,
+  GitPRInfos,
+  GitMergePRInfos,
+  PRSearchResult,
+} from './gitPRInfos';
 import { GitFileInfos } from './gitFileInfos';
 import { DataAccessService } from '../data_access/dataAccess.service';
 
@@ -99,10 +104,18 @@ export interface GitServiceInterface {
   createWebhook(gitApiInfos: GitApiInfos, webhookURL: string): void;
 
   /**
-   * Get Issues
+   * Get Issues with custom filters
    */
   getIssues(
     gitApiInfos: GitApiInfos,
     gitIssueSearch: GitIssuePRSearch,
   ): Promise<IssueSearchResult[]>;
+
+  /**
+   * Get Pull Requests with custom filters
+   */
+  getPullRequests(
+    gitApiInfos: GitApiInfos,
+    gitIssueSearch: GitIssuePRSearch,
+  ): Promise<PRSearchResult[]>;
 }

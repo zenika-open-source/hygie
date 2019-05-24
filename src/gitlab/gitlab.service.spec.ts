@@ -326,11 +326,36 @@ describe('Gitlab Service', () => {
       gitIssueSearch.state = IssuePRStateEnum.Open;
       gitIssueSearch.sort = IssueSortEnum.Asc;
 
-      httpService.get = jest.fn().mockRejectedValueOnce({ data: [] });
+      httpService.get = jest.fn().mockImplementationOnce((...args) => {
+        return new Observable(observer => observer.next({ data: [] }));
+      });
 
       gitlabService.getIssues(gitApiInfos, gitIssueSearch);
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/issues`;
+
+      expectedConfig.params = {
+        sort: 'asc',
+        state: 'opened',
+      };
+
+      expect(httpService.get).toBeCalledWith(expectedUrl, expectedConfig);
+    });
+  });
+
+  describe('getPullRequests', () => {
+    it('should emit a GET request with specific params', () => {
+      const gitIssueSearch: GitIssuePRSearch = new GitIssuePRSearch();
+      gitIssueSearch.state = IssuePRStateEnum.Open;
+      gitIssueSearch.sort = IssueSortEnum.Asc;
+
+      httpService.get = jest.fn().mockImplementationOnce((...args) => {
+        return new Observable(observer => observer.next({ data: [] }));
+      });
+
+      gitlabService.getPullRequests(gitApiInfos, gitIssueSearch);
+
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/merge_requests`;
 
       expectedConfig.params = {
         sort: 'asc',

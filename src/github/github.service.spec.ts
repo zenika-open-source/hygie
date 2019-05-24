@@ -372,10 +372,35 @@ describe('Github Service', () => {
       gitIssueSearch.state = IssuePRStateEnum.Open;
       gitIssueSearch.sort = IssueSortEnum.Asc;
 
-      httpService.get = jest.fn().mockRejectedValueOnce({ data: [] });
+      httpService.get = jest.fn().mockImplementationOnce((...args) => {
+        return new Observable(observer => observer.next({ data: [] }));
+      });
 
       githubService.getIssues(gitApiInfos, gitIssueSearch);
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues`;
+
+      const expectedConfig2 = JSON.parse(JSON.stringify(expectedConfig));
+      expectedConfig2.params = {
+        direction: 'asc',
+        state: 'open',
+      };
+
+      expect(httpService.get).toBeCalledWith(expectedUrl, expectedConfig2);
+    });
+  });
+
+  describe('getPullRequests', () => {
+    it('should emit a GET request with specific params', () => {
+      const gitIssueSearch: GitIssuePRSearch = new GitIssuePRSearch();
+      gitIssueSearch.state = IssuePRStateEnum.Open;
+      gitIssueSearch.sort = IssueSortEnum.Asc;
+
+      httpService.get = jest.fn().mockImplementationOnce((...args) => {
+        return new Observable(observer => observer.next({ data: [] }));
+      });
+
+      githubService.getPullRequests(gitApiInfos, gitIssueSearch);
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/pulls`;
 
       const expectedConfig2 = JSON.parse(JSON.stringify(expectedConfig));
       expectedConfig2.params = {
