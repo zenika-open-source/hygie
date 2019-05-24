@@ -33,7 +33,7 @@
     }
   },
   "dependencies": {
-    "@dxdeveloperexperience/git-webhooks-database": "0.1.2",
+    "@dxdeveloperexperience/git-webhooks-database": "0.1.4",
     "@dxdeveloperexperience/nest-schedule": "0.4.6",
     "@nestjs/common": "6.0.2",
     "@nestjs/core": "6.0.2",
