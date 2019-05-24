@@ -159,4 +159,12 @@ export class MockDataAccess implements DataAccessInterface {
   connect(): Promise<boolean> {
     return Promise.resolve(true);
   }
+
+  readCollection(source: SourceEnum, path: string): Promise<any> {
+    return Promise.resolve([{}]);
+  }
+
+  removeCollection(source: SourceEnum, path: string): Promise<boolean> {
+    return Promise.resolve(true);
+  }
 }

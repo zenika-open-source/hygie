@@ -65,7 +65,7 @@ export class AppController {
   private async loadCronJobs(): Promise<any> {
     const CronStandardClassArray: CronType = await this.dataAccessService.getAllCrons();
     if (this.dataAccessService.removeAllCrons()) {
-      this.cronJobs(CronStandardClassArray, null);
+      this.cronJobs(CronStandardClassArray);
     } else {
       logger.error('Can not remove old cron jobs');
     }
@@ -282,7 +282,7 @@ export class AppController {
   }
 
   @Post('cron')
-  async cronJobs(@Body() cronType: CronType, @Res() response): Promise<void> {
+  async cronJobs(@Body() cronType: CronType, @Res() response?): Promise<void> {
     let remoteRepository: string;
     let responseString: string = '';
     let schedule: Schedule;
@@ -291,7 +291,9 @@ export class AppController {
     try {
       cronStandardArray = convertCronType(cronType);
     } catch (e) {
-      response.status(HttpStatus.PRECONDITION_FAILED).send(e.message);
+      if (typeof response !== 'undefined') {
+        response.status(HttpStatus.PRECONDITION_FAILED).send(e.message);
+      }
       return;
     }
 
@@ -311,9 +313,11 @@ export class AppController {
           throw e;
         });
       } catch (e) {
-        response
-          .status(HttpStatus.NOT_FOUND)
-          .send(`${responseString}\n${e.message}`);
+        if (typeof response !== 'undefined') {
+          response
+            .status(HttpStatus.NOT_FOUND)
+            .send(`${responseString}\n${e.message}`);
+        }
         return;
       }
 
@@ -321,13 +325,15 @@ export class AppController {
         schedule = this.scheduleService.createSchedule(cron, remoteRepository);
         responseString += `Schedule ${schedule.id} successfully created\n`;
       } catch (e) {
-        response
-          .status(HttpStatus.UNAUTHORIZED)
-          .send(`${responseString}\n${e.message}`);
+        if (typeof response !== 'undefined') {
+          response
+            .status(HttpStatus.UNAUTHORIZED)
+            .send(`${responseString}\n${e.message}`);
+        }
         return;
       }
     }
-    if (response !== null) {
+    if (typeof response !== 'undefined') {
       response.status(HttpStatus.OK).send(responseString);
     }
   }
