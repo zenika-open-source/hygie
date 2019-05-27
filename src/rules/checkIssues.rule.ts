@@ -1,6 +1,6 @@
 import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
-import { GitEventEnum, convertIssuePRSearchState } from '../webhook/utils.enum';
+import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import {
@@ -17,7 +17,7 @@ interface CheckIssuesOptions {
 }
 
 /**
- * `checkIssues` .
+ * `checkIssues` will return all Issues matching the filters options.
  * @return return a `RuleResult` object with all matching issues
  */
 @RuleDecorator('checkIssues')

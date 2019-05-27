@@ -1,0 +1,137 @@
+import {
+  Controller,
+  Body,
+  Post,
+  Get,
+  Res,
+  HttpStatus,
+  HttpService,
+  Req,
+} from '@nestjs/common';
+import { GitlabService } from '../gitlab/gitlab.service';
+import { GithubService } from '../github/github.service';
+import { RemoteConfigUtils } from '../remote-config/utils';
+import { DataAccessService } from '../data_access/dataAccess.service';
+import { Utils } from '../utils/utils';
+
+@Controller('register')
+export class RegisterController {
+  repoURL: string = '';
+  apiURL: string = '';
+  private readonly state: string;
+  private readonly applicationURL: string = process.env.applicationURL;
+
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly githubService: GithubService,
+    private readonly gitlabService: GitlabService,
+    private readonly dataAccessService: DataAccessService,
+  ) {
+    this.state = Utils.generateUniqueId();
+  }
+
+  @Get('/:data')
+  async register(@Req() request: any, @Res() response): Promise<any> {
+    const url = require('url');
+
+    let data = request.params.data;
+    data = data.split('&');
+    this.repoURL = data[0];
+    this.apiURL = data[1];
+
+    if (
+      typeof this.repoURL === 'undefined' ||
+      typeof this.apiURL === 'undefined'
+    ) {
+      response
+        .status(HttpStatus.PRECONDITION_FAILED)
+        .send('Missing parameters.');
+    }
+
+    response.redirect(
+      url.format({
+        pathname: 'https://github.com/login/oauth/authorize',
+        query: {
+          client_id: process.env.client_id,
+          scope: 'repo admin:repo_hook',
+          state: this.state,
+        },
+      }),
+    );
+  }
+
+  @Get('/login/callback')
+  async loginCallback(@Req() request: any, @Res() response): Promise<any> {
+    const query = request.query;
+    if (query.state !== this.state) {
+      response
+        .status(HttpStatus.UNAUTHORIZED)
+        .send('Third party created the request!<br>Aborting the process.');
+    }
+
+    const result = await this.httpService
+      .post(
+        'https://github.com/login/oauth/access_token',
+        {
+          client_id: process.env.client_id,
+          client_secret: process.env.client_secret,
+          code: query.code,
+          state: this.state,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .toPromise()
+      .then(res => res.data)
+      .catch(err => err);
+
+    const accessToken = RemoteConfigUtils.getAccessToken(result);
+
+    // Store data
+    const finalResult = await this.httpService
+      .post(this.applicationURL + '/config-env', {
+        gitToken: accessToken,
+        gitApi: this.apiURL,
+        gitRepo: this.repoURL,
+      })
+      .toPromise()
+      .then(res => res.data)
+      .catch(err => err);
+
+    let resultToDisplay: string = '';
+    if (finalResult.succeed) {
+      resultToDisplay +=
+        '<p style="color:green">Registration completed! Check-out if a <i>Connected to Git-Webhooks!</i> issue has been created.</p>';
+      if (finalResult.alreadyExist) {
+        resultToDisplay +=
+          '<p style="color:orange">A config file with your repository already exist. It has been overwrite with the present token and API URL.</p>';
+      }
+    } else {
+      resultToDisplay += '<p style="color:red">' + finalResult + '</p>'; // err
+    }
+
+    response.send(resultToDisplay);
+  }
+
+  @Post('/config-env')
+  async postConfigEnv(@Body() body: any, @Res() response): Promise<void> {
+    const configEnv = {
+      gitApi: body.gitApi,
+      gitToken: body.gitToken,
+      gitRepo: body.gitRepo,
+    };
+    response.send(
+      await RemoteConfigUtils.registerConfigEnv(
+        this.dataAccessService,
+        this.httpService,
+        this.githubService,
+        this.gitlabService,
+        configEnv,
+        this.applicationURL,
+      ),
+    );
+  }
+}

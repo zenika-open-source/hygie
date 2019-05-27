@@ -16,11 +16,11 @@ describe('getAppRules (e2e)', () => {
     await app.init();
   });
 
-  it('/config-env (POST)', () => {
+  it('/register/config-env (POST)', () => {
     RemoteConfigUtils.registerConfigEnv = jest.fn();
 
     return request(app.getHttpServer())
-      .post('/config-env')
+      .post('/register/config-env')
       .send({
         gitApi: 'body.gitApi',
         gitToken: 'body.gitToken',

@@ -138,7 +138,7 @@ export default {
       if (!this.$refs.form.validate()) {
         return;
       }
-      const serverURL = configJS.gitwebhooksURL + '/config-env';
+      const serverURL = configJS.gitwebhooksURL + '/register/config-env';
       axios
         .post(serverURL, {
           gitToken: this.gitToken,

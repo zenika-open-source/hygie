@@ -3,10 +3,7 @@ import { Test } from '@nestjs/testing';
 import { INestApplication, HttpStatus } from '@nestjs/common';
 import { MockAppModule } from '../__mocks__/mock.app.module';
 import { WhiteListInterceptor } from './whiteList.interceptor';
-import {
-  MockWhiteListInterceptorNext,
-  MockWhiteListInterceptorBlock,
-} from '../__mocks__/mock.whiteList.interceptor';
+import { MockWhiteListInterceptorBlock } from '../__mocks__/mock.whiteList.interceptor';
 
 describe('/webhook (POST) - Not in WhiteList', () => {
   let app: INestApplication;

@@ -1,10 +1,14 @@
 import { Module, HttpModule } from '@nestjs/common';
-import { AppController } from '../app.controller';
 import { RulesModule } from '../rules/rules.module';
 import { RunnableModule } from '../runnables/runnable.module';
 import { GitModule } from '../git/git.module';
 import { ScheduleService } from '../scheduler/scheduler.service';
 import { MockDataAccess } from './mocks';
+import { CronController } from '../controllers/cron.controller';
+import { DocumentationController } from '../controllers/documentation.controller';
+import { RegisterController } from '../controllers/register.controller';
+import { WebhookController } from '../controllers/webhook.controller';
+import { AppplicationController } from '../controllers/application.controller';
 
 @Module({
   imports: [
@@ -13,7 +17,13 @@ import { MockDataAccess } from './mocks';
     RunnableModule,
     GitModule,
   ],
-  controllers: [AppController],
+  controllers: [
+    AppplicationController,
+    CronController,
+    DocumentationController,
+    RegisterController,
+    WebhookController,
+  ],
   providers: [ScheduleService],
 })
 export class MockAppModule {}
