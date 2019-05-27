@@ -106,6 +106,14 @@ export class MockDataAccessService {
         resolve();
       });
     });
+  writeCron: jest.Mock = jest
+    .fn()
+    .mockName('writeCron')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve();
+      });
+    });
   checkIfEnvExist: jest.Mock = jest
     .fn()
     .mockName('checkIfEnvExist')
@@ -139,6 +147,35 @@ export class MockDataAccessService {
     .mockImplementation((...args) => {
       return new Promise((resolve, reject) => {
         resolve('some rule content...');
+      });
+    });
+
+  readCron: jest.Mock = jest
+    .fn()
+    .mockName('readCron')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve('some cron content...');
+      });
+    });
+
+  connect: jest.Mock = jest.fn().mockName('connect');
+
+  getAllCrons: jest.Mock = jest
+    .fn()
+    .mockName('getAllCrons')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve('all cron content...');
+      });
+    });
+
+  removeAllCrons: jest.Mock = jest
+    .fn()
+    .mockName('removeAllCrons')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve(true);
       });
     });
 }
