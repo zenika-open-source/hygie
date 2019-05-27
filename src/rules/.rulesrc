@@ -1,26 +1,48 @@
 --- # Rules config file
+
 options:
-  executeAllRules: false
-  enableGroups: false
+  executeAllRules: true
   enableRules: true
-  allRuleResultInOne: true
+  enableGroups: false
+  allRuleResultInOne: false
+
 rules:
-  - name: commitMessage
+  
+  # BRANCH
+  - name: branchName
     options:
-      regexp: '(feat|fix|docs)(\([a-z]+\))?:\s[^(]*(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
-      maxLength: 100
-    onSuccess:
+      regexp: '^(fix|feature)/.*'
+    onError:
+      - callback: DeleteBranchRunnable #CAUTION!
       - callback: LoggerRunnable
         args:
-          message: 'pattern match: branch: {{data.branch}}
-            {{#data.commits}}{{sha}} =
-            Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
-            {{/data.commits}}'
-      - callback : WebhookRunnable
+          message: 'Branch {{data.branch}} has been deleted because it does not begin with fix or feature.'
+    onSuccess:
+      - callback: CreatePullRequestRunnable
         args:
-          url: 'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8'
+          title: 'WIP: {{data.branch}}'
+          description: 'Work in Progress Pull Request'
+
+  # PULL REQUESTS
+  - name: pullRequestTitle
+    options:
+      regexp: '^(WIP|FIX)\s:.*'
+    onError:
+      - callback: CommentPullRequestRunnable
+        args:
+          comment: 'ping @bastienterrier'
+
+  # COMMITS
+  - name: commitMessage
+    options:
+      regexp: '^(feat|fix|docs)(\([a-z]+\))?:\s[^(]*(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
+      maxLength: 50
+    onSuccess:
+      - callback : WebhookRunnable  
+        args:
+          url: 'https://webhook.site/0123-4567-89ab-cdef'
           data: {
-            user: 'bastien terrier',
+            user: 'bot',
             content: '{{#data.commits}}{{sha}} =
             Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
             {{/data.commits}}'
@@ -28,133 +50,20 @@ rules:
     onError:
       - callback: LoggerRunnable
         args:
-          message: 'pattern does not match, commit name must begin with : "feat|fix|docs" and contains less than 100 numerals! Check your commit message:
-            {{#data.commits}}
-              > {{message}} (#{{sha}})
-            {{/data.commits}}
-          '
+          message: 'Caution, commit(s): {{#data.commits}}{{sha}},{{/data.commits}} do not respect Good Practices!'
     onBoth:
       - callback: UpdateCommitStatusRunnable
         args:
-          successTargetUrl: 'http://www.google.com'
-          failTargetUrl: 'http://moogle.com/'
-          successDescriptionMessage: 'good commit status!'
-          failDescriptionMessage: 'NOOOT good...'
-  - name: branchName
+          failTargetUrl: 'https://gist.github.com/stephenparish/9941e89d80e2bc58a153#examples'
+          successDescriptionMessage: 'Commit message matches the Good Practices!'
+          failDescriptionMessage: 'Caution, your commit message do not matches the Good Practices!'
+  - name: checkAddedFiles
     options:
-      regexp: (feature|fix)\/.*
+      regexp: '*.exe$'
     onSuccess:
-      - callback: LoggerRunnable
+      - callback: DeleteFilesRunnable
         args:
-          message: '{{data.branch}} is a good name!'
-      - callback: CreatePullRequestRunnable
-        args:
-          title: 'WIP: {{data.branchSplit.1}}'
-          description: 'this is the description'
-    onError:
-      - callback: LoggerRunnable
-        args:
-          message: 'pattern does not match, branch name must begin with : "feature|fix"!'
-  - name: oneCommitPerPR
-    onSuccess:
-      - callback: LoggerRunnable
-        args:
-          message: 'there is only on commit in this PR/MR/Push, ok'
-    onError:
-      - callback: LoggerRunnable
-        args:
-          message: 'more than one commit! A notification will be sent to the maintainer.'
-      - callback : WebhookRunnable
-        args:
-          url: 'https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8'
-          data: {
-            user: 'bastien terrier',
-            content: 'More than one commmit !',
-            commits: '{{#data.commits}}
-              {{message}} (#{{id}})
-            {{/data.commits}}
-            ',
-          }
-          config: {
-            headers: {
-              Authorization: 'token 1234567890abcdef'
-            }
-          }
+          message: 'removing .exe file'
+
+  #ISSUES
   - name: issueTitle
-    options:
-      regexp: (add|fix)\s.*
-    onSuccess:
-      - callback: LoggerRunnable
-        args:
-          message: '{{data.issueTitle}} is a correct issue title'
-      - callback: SendEmailRunnable
-        args:
-          to: bastien.terrier@gmail.com
-          subject: 'New issue (#{{data.issueNumber}}) '
-          message: '<b>{{data.issueTitle}}</b> has been created!'
-    onError:
-      - callback: LoggerRunnable
-        args:
-          message: '{{data.issueTitle}} is not a correct issue title'
-      - callback: CommentIssueRunnable
-        args:
-          comment: 'ping @bastienterrier'
-  - name: pullRequestTitle
-    options:
-      regexp: (WIP|FIX):\s.*
-    onSuccess:
-      - callback: LoggerRunnable
-        args:
-          message: '{{data.pullRequestTitle}} is a correct pull request title : {{data.pullRequestDescription}} (#{{data.pullRequestNumber}})'
-    onError:
-      - callback: LoggerRunnable
-        args:
-          message: '{{data.pullRequestTitle}} is not a correct pull request title : {{data.pullRequestDescription}} (#{{data.pullRequestNumber}})'
-      - callback: CommentPullRequestRunnable
-        args:
-          comment: 'ping @bastienterrier'
-
-
-groups:
-  - groupName: "check pattern 1"
-    rules:
-      - name: commitMessage
-        options:
-          regexp: '(feat|fix):\s.*'
-      - name: oneCommitPerPR
-      - name: branchName
-        options:
-          regex: "feature/.*"
-    onBoth:
-      - callback: LoggerRunnable
-        args:
-          message: "blablabla..."
-      - callback: WebhookRunnable
-        args:
-          url: "https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8"
-          data: { message: "data : {{#data}}- {{name}} -{{/data}}" }
-
-  - groupName: "check pattern 2"
-    rules:
-      - name: issueTitle
-        options:
-          regexp: '(add|fix):\s.*'
-      - name: pullRequestTitle
-        options:
-          regex: 'WIP:\s.*'
-    onSuccess:
-      - callback: LoggerRunnable
-        args:
-          message: "Pattern match! 22"
-      - callback: WebhookRunnable
-        args:
-          url: "https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8"
-          data: { message: "Pattern match! 22" }
-    onError:
-      - callback: LoggerRunnable
-        args:
-          message: "Pattern do not match... 22"
-      - callback: WebhookRunnable
-        args:
-          url: "https://webhook.site/0de43177-4119-448b-bcfe-e2f6a2845ce8"
-          data: { message: "Pattern do not match... 22" }
