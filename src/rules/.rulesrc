@@ -31,6 +31,23 @@ rules:
       - callback: CommentPullRequestRunnable
         args:
           comment: 'ping @bastienterrier'
+  - name: checkPullRequestStatus
+    options:
+      status: reopened
+    onSuccess:
+      - callback: SendEmailRunnable
+        args:
+          to: bastien.terrier@gmail.com
+          subject: 'Pull Request #{{data.pullRequestNumber}} reopened '
+          message: '<b>{{data.pullRequestTitle}}</b> has been reopened, please pay attention!'
+  - name: pullRequestComment
+    options:
+      regexp: '^ping @bastienterrier$'
+    onSuccess:
+      - callback: LoggerRunnable
+        args:
+          type: warn
+          message: 'Someone ping you!'
 
   # COMMITS
   - name: commitMessage
@@ -67,3 +84,19 @@ rules:
 
   #ISSUES
   - name: issueTitle
+    options:
+      regexp: '(fix|Fix)\s.*'
+    onSuccess:
+      - callback: SendEmailRunnable
+        args:
+          to: bastien.terrier@gmail.com
+          subject: 'New issue (#{{data.issueNumber}}) '
+          message: '<b>{{data.issueTitle}}</b> has been created!'
+  - name: issueComment
+    options:
+      regexp: '^ping @bastienterrier$'
+    onSuccess:
+      - callback: LoggerRunnable
+        args:
+          type: warn
+          message: 'Someone ping you!'

@@ -10,6 +10,7 @@ interface CheckPullRequestStatusOptions {
 
 /**
  * `CheckPullRequestStatusRule` checks if the Pull Request event matchs.
+ * @params status: new, merged, closed, reopened
  * @return return a `RuleResult` object
  */
 @RuleDecorator('checkPullRequestStatus')
@@ -21,20 +22,22 @@ export class CheckPullRequestStatusRule extends Rule {
     GitEventEnum.MergedPR,
     GitEventEnum.ReopenedPR,
   ];
+
+  getEvent(event: GitEventEnum): string {
+    return event.toLowerCase().substring(0, event.length - 2);
+  }
+
   async validate(
     webhook: Webhook,
     ruleConfig: CheckPullRequestStatusRule,
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
-
+    const gitEvent = this.getEvent(webhook.gitEvent);
     ruleResult.validated =
-      webhook.gitEvent.toLowerCase() ===
-      ruleConfig.options.status.toLocaleLowerCase()
-        ? true
-        : false;
+      gitEvent === ruleConfig.options.status.toLocaleLowerCase() ? true : false;
 
     ruleResult.data = {
-      pullRequestEvent: webhook.gitEvent,
+      pullRequestEvent: gitEvent,
       pullRequestTitle: webhook.getPullRequestTitle(),
       pullRequestNumber: webhook.getPullRequestNumber(),
       pullRequestDescription: webhook.getPullRequestDescription(),

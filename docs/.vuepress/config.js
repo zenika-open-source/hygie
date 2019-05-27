@@ -63,4 +63,7 @@ module.exports = {
     ],
   },
   gitwebhooksURL: 'https://webhooks-sklnx3jldq-uc.a.run.app',
+  markdown: {
+    toc: { includeLevel: [2, 2] },
+  },
 };
