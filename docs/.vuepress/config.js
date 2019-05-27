@@ -58,7 +58,7 @@ module.exports = {
       {
         title: 'Others',
         collapsable: false,
-        children: ['/others/events.md'],
+        children: ['/others/events.md', '/others/dataAccess.md'],
       },
     ],
   },
