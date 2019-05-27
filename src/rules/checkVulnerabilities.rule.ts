@@ -20,6 +20,17 @@ export class CheckVulnerabilitiesRule extends Rule {
   options: CheckVulnerabilitiesOptions;
   events = [GitEventEnum.Push, GitEventEnum.Cron];
 
+  getNumberOfVulnerabilities(data: any): number {
+    const vulnerabilities = data.metadata.vulnerabilities;
+    return (
+      vulnerabilities.info +
+      vulnerabilities.low +
+      vulnerabilities.moderate +
+      vulnerabilities.high +
+      vulnerabilities.critical
+    );
+  }
+
   async validate(
     webhook: Webhook,
     ruleConfig: CheckVulnerabilitiesRule,
@@ -65,13 +76,16 @@ export class CheckVulnerabilitiesRule extends Rule {
         audit = execa.shellSync(
           `cd packages/${webhook.getRemoteDirectory()} & npm audit --json`,
         );
+
         ruleResult.data = {
           vulnerabilities: JSON.parse(audit.stdout),
         };
         ruleResult.validated = true;
       } catch (e) {
+        const data = JSON.parse(e.stdout);
         ruleResult.data = {
-          vulnerabilities: JSON.parse(e.stdout),
+          number: this.getNumberOfVulnerabilities(data),
+          vulnerabilities: JSON.stringify(data),
         };
         ruleResult.validated = false;
       }

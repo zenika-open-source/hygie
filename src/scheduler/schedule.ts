@@ -7,7 +7,6 @@ import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { Webhook } from '../webhook/webhook';
 import { RulesService } from '../rules/rules.service';
-import { safeLoad } from 'js-yaml';
 import { RemoteConfigUtils } from '../remote-config/utils';
 import { checkCronExpression } from './utils';
 import { GitTypeEnum } from '../webhook/utils.enum';
