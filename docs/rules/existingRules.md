@@ -10,6 +10,10 @@ This section describes each existing rules: what's its goal and the `ruleResult`
 
 Checks the branch's name according to a regular expression.
 
+### Options
+
+- `regexp`: string
+
 ### `ruleResult` object
 
 ```typescript
@@ -46,6 +50,10 @@ Checks the branch's name according to a regular expression.
 
 Checks all added filenames in commits according to a regular expression.
 
+### Options
+
+- `regexp`: string
+
 ### `ruleResult` object
 
 ```typescript
@@ -78,6 +86,12 @@ Return all Issues matching the filters options.
 ::: tip
 Available in CRON jobs
 :::
+
+### Options
+
+- `updatedWithinXDays`: number
+- `notUpdatedSinceXDays`: number
+- `state`: open|close|all
 
 ### `ruleResult` object
 
@@ -122,6 +136,12 @@ Return all Pull Requests matching the filters options
 Available in CRON jobs
 :::
 
+### Options
+
+- `updatedWithinXDays`: number
+- `notUpdatedSinceXDays`: number
+- `state`: open|close|all
+
 ### `ruleResult` object
 
 ```typescript
@@ -136,7 +156,7 @@ Available in CRON jobs
 ### Usage
 
 ```yaml
-- name: checkIssues
+- name: checkPullRequests
   options:
     state: open
     notUpdatedSinceXDays: 7
@@ -144,15 +164,15 @@ Available in CRON jobs
     - callback: LoggerRunnable
       args:
         type: warn
-        message: '{{data.issueNumber.length}} deserted Issue(s) founded. They will be closed. '
-    - callback: UpdateIssueRunnable
+        message: '{{data.pullRequestNumber.length}} deserted Pull Request(s) founded. They will be closed.'
+    - callback: UpdatePullRequestRunnable
       args:
         state: close
   onError:
     - callback: LoggerRunnable
       args:
         type: info
-        message: 'No deserted Issue founded.'
+        message: 'No deserted Pull Request founded.'
 ```
 
 ## CheckPullRequestStatusRule
@@ -160,6 +180,10 @@ Available in CRON jobs
 ### Goal
 
 Checks if the Pull Request event matchs.
+
+### Options
+
+- `state`: new|merged|closed|reopened
 
 ### `ruleResult` object
 
@@ -198,6 +222,11 @@ Checks if `package.json` and `package-lock.json` contain vulnerabilities thank's
 ::: tip
 Available in CRON jobs
 :::
+
+### Options
+
+- `packageUrl`: url of your RAW package.json file
+- `packageLockUrl`: url of your RAW package-lock.json file
 
 ### `ruleResult` object
 
@@ -240,6 +269,17 @@ Available in CRON jobs
 
 Checks all commits title according to a regular expression and an optional max size.
 
+### Options
+
+- `regexp`: string
+- `maxLength`: number
+- `branches`:
+
+```
+only: string[];
+ignore: string[]
+```
+
 ### `ruleResult` object
 
 ```typescript
@@ -263,6 +303,10 @@ Checks all commits title according to a regular expression and an optional max s
   options:
     regexp: '^(feat|fix|docs)(\([a-z]+\))?:\s[^(]*(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
     maxLength: 50
+    branches:
+      ignore:
+        - gh-pages
+        - features
   onSuccess:
     - callback : WebhookRunnable
       args:
@@ -290,6 +334,10 @@ Checks all commits title according to a regular expression and an optional max s
 ### Goal
 
 Checks the new issue's comment according to a regular expression.
+
+### Options
+
+- `regexp`: string
 
 ### `ruleResult` object
 
@@ -324,6 +372,10 @@ Checks the new issue's comment according to a regular expression.
 
 Checks the issue's title according to a regular expression.
 
+### Options
+
+- `regexp`: string
+
 ### `ruleResult` object
 
 ```typescript
@@ -355,6 +407,10 @@ Checks the issue's title according to a regular expression.
 ### Goal
 
 Checks if there is only one commit in the current PR, MR or Push.
+
+### Options
+
+None.
 
 ### `ruleResult` object
 
@@ -397,6 +453,10 @@ Checks if there is only one commit in the current PR, MR or Push.
 
 Checks the new PR or MR's comment according to a regular expression.
 
+### Options
+
+- `regexp`: string
+
 ### `ruleResult` object
 
 ```typescript
@@ -430,6 +490,10 @@ Checks the new PR or MR's comment according to a regular expression.
 ### Goal
 
 Checks the PR or MR's title according to a regular expression.
+
+### Options
+
+- `regexp`: string
 
 ### `ruleResult` object
 

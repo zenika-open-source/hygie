@@ -18,6 +18,7 @@ interface CheckIssuesOptions {
 
 /**
  * `checkIssues` will return all Issues matching the filters options.
+ * @param state open|close|all
  * @return return a `RuleResult` object with all matching issues
  */
 @RuleDecorator('checkIssues')

@@ -10,7 +10,7 @@ interface CheckPullRequestStatusOptions {
 
 /**
  * `CheckPullRequestStatusRule` checks if the Pull Request event matchs.
- * @params status: new, merged, closed, reopened
+ * @param status new|merged|closed|reopened
  * @return return a `RuleResult` object
  */
 @RuleDecorator('checkPullRequestStatus')

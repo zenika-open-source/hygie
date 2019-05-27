@@ -15,6 +15,7 @@ interface CheckPullRequestsOptions {
 
 /**
  * `CheckPullRequestsRule` will return all Pull Requests matching the filters options.
+ * @param state open|close|all
  * @return return a `RuleResult` object
  */
 @RuleDecorator('checkPullRequests')
