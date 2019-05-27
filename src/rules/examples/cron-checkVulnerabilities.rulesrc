@@ -1,0 +1,24 @@
+--- # Rules config file
+options:
+  executeAllRules: false
+  enableGroups: false
+  enableRules: true
+  allRuleResultInOne: false
+rules:
+  - name: checkVulnerabilities
+    onSuccess:
+      - callback: LoggerRunnable
+        args:
+          message: 'No vulnerability founded!'
+    onError:  
+      - callback: LoggerRunnable
+        args:
+          message: '{{data.number}} vulnerabilities founded!'
+      - callback: WebhookRunnable
+        args:
+          url: 'https://webhook.site/0123-4567-89ab-cdef'
+          data: {
+            user: 'cron bot',
+            number: '{{data.number}}',
+            vulnerabilities: '{{{data.vulnerabilities}}}'
+          }

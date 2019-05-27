@@ -1,0 +1,24 @@
+--- # Rules config file
+options:
+  executeAllRules: false
+  enableGroups: false
+  enableRules: true
+  allRuleResultInOne: false
+rules:
+  - name: checkPullRequests
+    options:
+      state: open
+      notUpdatedSinceXDays: 7
+    onSuccess: 
+      - callback: LoggerRunnable
+        args:
+          type: warn
+          message: '{{data.pullRequestNumber.length}} deserted Pull Request(s) founded. They will be closed. '
+      - callback: UpdatePullRequestRunnable
+        args:
+          state: close
+    onError:
+      - callback: LoggerRunnable
+        args:
+          type: info
+          message: 'No deserted Pull Request founded.'
