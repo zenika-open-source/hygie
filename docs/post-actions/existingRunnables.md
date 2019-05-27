@@ -302,10 +302,10 @@ To use the `UpdateCommitStatusRunnable`, add the `callback` on your `.rulesrc` c
 onBoth:
   - callback: UpdateCommitStatusRunnable
     args:
-      successTargetUrl: 'http://www.ok.com'
-      failTargetUrl: 'http://www.ko.com/'
-      successDescriptionMessage: 'Good commit message!'
-      failDescriptionMessage: 'Not good...'
+      successTargetUrl: 'https://gist.github.com/stephenparish/9941e89d80e2bc58a153#examples'
+      failTargetUrl: 'https://gist.github.com/stephenparish/9941e89d80e2bc58a153#examples'
+      successDescriptionMessage: 'Commit message matches the Good Practices!'
+      failDescriptionMessage: 'Caution, your commit message do not matches the Good Practices!'
 ```
 
 ## UpdateIssueRunnable
