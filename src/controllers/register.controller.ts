@@ -19,7 +19,7 @@ export class RegisterController {
   repoURL: string = '';
   apiURL: string = '';
   private readonly state: string;
-  private readonly applicationURL: string = process.env.applicationURL;
+  private readonly applicationURL: string = process.env.APPLICATION_URL;
 
   constructor(
     private readonly httpService: HttpService,
@@ -52,7 +52,7 @@ export class RegisterController {
       url.format({
         pathname: 'https://github.com/login/oauth/authorize',
         query: {
-          client_id: process.env.client_id,
+          client_id: process.env.CLIENT_ID,
           scope: 'repo admin:repo_hook',
           state: this.state,
         },
@@ -73,8 +73,8 @@ export class RegisterController {
       .post(
         'https://github.com/login/oauth/access_token',
         {
-          client_id: process.env.client_id,
-          client_secret: process.env.client_secret,
+          client_id: process.env.CLIENT_ID,
+          client_secret: process.env.CLIENT_SECRET,
           code: query.code,
           state: this.state,
         },

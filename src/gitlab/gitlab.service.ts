@@ -24,6 +24,8 @@ import { logger } from '../logger/logger.service';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { Utils } from '../utils/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
+import { GitEnv } from '../git/gitEnv.interface';
+import { PreconditionException } from '../exceptions/precondition.exception';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -47,13 +49,17 @@ export class GitlabService implements GitServiceInterface {
     dataAccessService: DataAccessService,
     filePath: string,
   ): Promise<void> {
-    await Utils.loadEnv(
+    const gitEnv: GitEnv = await Utils.getGitEnv(
       dataAccessService,
       'remote-envs/' + filePath + '/config.env',
-    );
+    )
+      .then(res => res)
+      .catch(e => {
+        throw new PreconditionException();
+      });
 
-    this.setToken(process.env.gitToken);
-    this.setUrlApi(process.env.gitApi);
+    this.setToken(gitEnv.gitToken);
+    this.setUrlApi(gitEnv.gitApi);
   }
 
   updateCommitStatus(

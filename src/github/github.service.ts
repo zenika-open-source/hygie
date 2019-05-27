@@ -25,6 +25,7 @@ import { PreconditionException } from '../exceptions/precondition.exception';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { Utils } from '../utils/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
+import { GitEnv } from '../git/gitEnv.interface';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -61,21 +62,17 @@ export class GithubService implements GitServiceInterface {
     dataAccessService: DataAccessService,
     filePath: string,
   ): Promise<void> {
-    await Utils.loadEnv(
+    const gitEnv: GitEnv = await Utils.getGitEnv(
       dataAccessService,
       'remote-envs/' + filePath + '/config.env',
-    );
+    )
+      .then(res => res)
+      .catch(e => {
+        throw new PreconditionException();
+      });
 
-    if (
-      process.env.gitToken === undefined ||
-      process.env.gitToken === '' ||
-      process.env.gitApi === undefined ||
-      process.env.gitToken === ''
-    ) {
-      throw new PreconditionException();
-    }
-    this.setToken(process.env.gitToken);
-    this.setUrlApi(process.env.gitApi);
+    this.setToken(gitEnv.gitToken);
+    this.setUrlApi(gitEnv.gitApi);
     this.setConfigGitHub();
   }
 

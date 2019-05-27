@@ -5,11 +5,11 @@ import { logger } from '../../logger/logger.service';
 
 @Injectable()
 export class FileAccess implements DataAccessInterface {
-  async readData(source: SourceEnum, path: string): Promise<string> {
+  async readData(source: SourceEnum, path: string): Promise<any> {
     const fs = require('fs-extra');
     return await fs
       .readFile(path)
-      .then(res => res.toString())
+      .then(res => Utils.StringtoJSON(res.toString()))
       .catch(err => err);
   }
 

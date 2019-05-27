@@ -1,6 +1,7 @@
 import { GitTypeEnum } from '../webhook/utils.enum';
 import 'array-flat-polyfill';
 import { DataAccessService } from '../data_access/dataAccess.service';
+import { GitEnv } from '../git/gitEnv.interface';
 
 export class Utils {
   static getObjectValue(obj: object): object {
@@ -11,16 +12,24 @@ export class Utils {
     return typeof str === 'undefined' ? '' : str;
   }
 
-  static async loadEnv(dataAccessService: DataAccessService, filePath: string) {
-    const dotenv = require('dotenv');
-    const envData = await dataAccessService.readEnv(filePath);
+  static async getGitEnv(
+    dataAccessService: DataAccessService,
+    filePath: string,
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const envData: GitEnv = await dataAccessService.readEnv(filePath);
 
-    const envConfig = dotenv.parse(Utils.JSONtoString(envData));
-
-    // tslint:disable-next-line:forin
-    for (const k in envConfig) {
-      process.env[k] = envConfig[k];
-    }
+      if (
+        envData.gitApi !== '' &&
+        typeof envData.gitApi !== 'undefined' &&
+        envData.gitToken !== '' &&
+        typeof envData.gitToken !== 'undefined'
+      ) {
+        resolve(envData);
+      } else {
+        reject('envData object has empty properties');
+      }
+    });
   }
 
   static async writeFileSync(

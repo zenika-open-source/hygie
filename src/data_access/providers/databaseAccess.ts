@@ -30,7 +30,7 @@ export class DatabaseAccess implements DataAccessInterface {
 
   async connect(): Promise<boolean> {
     return await Database.localdb
-      .connection(process.env.mongodbConnectionString)
+      .connection(process.env.MONGODB_CONNECTION_STRING)
       .then(_ => {
         logger.info('Connected to Database!');
         return true;
