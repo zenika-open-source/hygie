@@ -2,7 +2,7 @@
 
 This section describes each existing runnables: what's its goal and how to use it.
 
-<TOC :include-level="[2, 2]"/>
+[[toc]]
 
 ## CommentIssueRunnable
 
@@ -50,6 +50,32 @@ onError:
   - callback: CommentPullRequestRunnable
     args:
       comment: 'ping @bastienterrier'
+```
+
+## CreateIssueRunnable
+
+### Goal
+
+`CreateIssueRunnable` create an issue with the specified `CreateIssueArgs` params.
+
+### Usage
+
+This Post-Action need the following args:
+
+- `title`: the title of your issue,
+- `description`: the description _[optional]_,
+- `assignees`: an array of users _[optional]_,
+- `labels`: an array of labels _[optional]_,
+
+To use the `CreateIssueRunnable`, add the `callback` on your `.rulesrc` config file.
+
+```yaml
+# ...
+onError:
+  - callback: CreateIssueRunnable
+    args:
+      title: 'Add a README'
+      description: 'We should create a README.md file to provide project's description to our users.'
 ```
 
 ## CreatePullRequestRunnable

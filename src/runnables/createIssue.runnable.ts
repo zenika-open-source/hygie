@@ -17,7 +17,7 @@ interface CreateIssueArgs {
 }
 
 /**
- * `CreateIssueRunnable` create an issue the specified `CreateIssueArgs` params.
+ * `CreateIssueRunnable` create an issue with the specified `CreateIssueArgs` params.
  */
 @RunnableDecorator('CreateIssueRunnable')
 export class CreateIssueRunnable extends Runnable {
