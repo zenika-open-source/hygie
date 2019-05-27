@@ -92,7 +92,7 @@ export class RegisterController {
 
     // Store data
     const finalResult = await this.httpService
-      .post(this.applicationURL + '/config-env', {
+      .post(this.applicationURL + '/register/config-env', {
         gitToken: accessToken,
         gitApi: this.apiURL,
         gitRepo: this.repoURL,
