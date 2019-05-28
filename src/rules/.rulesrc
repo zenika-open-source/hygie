@@ -13,10 +13,9 @@ rules:
     options:
       regexp: '^(fix|feature)/.*'
     onError:
-      - callback: DeleteBranchRunnable #CAUTION!
       - callback: LoggerRunnable
         args:
-          message: 'Branch {{data.branch}} has been deleted because it does not begin with fix or feature.'
+          message: 'Branch {{data.branch}} does not begin with fix or feature.'
     onSuccess:
       - callback: CreatePullRequestRunnable
         args:
@@ -76,7 +75,7 @@ rules:
           failDescriptionMessage: 'Caution, your commit message do not matches the Good Practices!'
   - name: checkAddedFiles
     options:
-      regexp: '*.exe$'
+      regexp: '.*\.exe$'
     onSuccess:
       - callback: DeleteFilesRunnable
         args:
