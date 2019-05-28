@@ -2,7 +2,7 @@
 
 This section describes each existing runnables: what's its goal and how to use it.
 
-<TOC :include-level="[2, 2]"/>
+[[toc]]
 
 ## CommentIssueRunnable
 
@@ -50,6 +50,32 @@ onError:
   - callback: CommentPullRequestRunnable
     args:
       comment: 'ping @bastienterrier'
+```
+
+## CreateIssueRunnable
+
+### Goal
+
+`CreateIssueRunnable` create an issue with the specified `CreateIssueArgs` params.
+
+### Usage
+
+This Post-Action need the following args:
+
+- `title`: the title of your issue,
+- `description`: the description _[optional]_,
+- `assignees`: an array of users _[optional]_,
+- `labels`: an array of labels _[optional]_,
+
+To use the `CreateIssueRunnable`, add the `callback` on your `.rulesrc` config file.
+
+```yaml
+# ...
+onError:
+  - callback: CreateIssueRunnable
+    args:
+      title: 'Add a README'
+      description: 'We should create a README.md file to provide project's description to our users.'
 ```
 
 ## CreatePullRequestRunnable
@@ -276,10 +302,10 @@ To use the `UpdateCommitStatusRunnable`, add the `callback` on your `.rulesrc` c
 onBoth:
   - callback: UpdateCommitStatusRunnable
     args:
-      successTargetUrl: 'http://www.ok.com'
-      failTargetUrl: 'http://www.ko.com/'
-      successDescriptionMessage: 'Good commit message!'
-      failDescriptionMessage: 'Not good...'
+      successTargetUrl: 'https://gist.github.com/stephenparish/9941e89d80e2bc58a153#examples'
+      failTargetUrl: 'https://gist.github.com/stephenparish/9941e89d80e2bc58a153#examples'
+      successDescriptionMessage: 'Commit message matches the Good Practices!'
+      failDescriptionMessage: 'Caution, your commit message do not matches the Good Practices!'
 ```
 
 ## UpdateIssueRunnable

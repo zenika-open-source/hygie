@@ -13,7 +13,7 @@ import { DataAccessService } from '../data_access/dataAccess.service';
 @Injectable()
 export class ScheduleService {
   schedules: NestSchedule[] = new Array<NestSchedule>();
-  readonly MAX_SCHEDULES: number = 3;
+  readonly MAX_SCHEDULES: number = 10;
 
   constructor(
     private readonly githubService: GithubService,

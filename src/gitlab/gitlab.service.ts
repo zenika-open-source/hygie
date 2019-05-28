@@ -4,20 +4,28 @@ import {
   convertCommitStatus,
   GitTypeEnum,
   convertIssueState,
+  convertIssuePRSearchState,
 } from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { GitIssueInfos } from '../git/gitIssueInfos';
+import {
+  GitIssueInfos,
+  GitIssuePRSearch,
+  IssueSearchResult,
+} from '../git/gitIssueInfos';
 import {
   GitCommentPRInfos,
   GitPRInfos,
   GitMergePRInfos,
   PRMethodsEnum,
+  PRSearchResult,
 } from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { Utils } from '../utils/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
+import { GitEnv } from '../git/gitEnv.interface';
+import { PreconditionException } from '../exceptions/precondition.exception';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -41,13 +49,17 @@ export class GitlabService implements GitServiceInterface {
     dataAccessService: DataAccessService,
     filePath: string,
   ): Promise<void> {
-    await Utils.loadEnv(
+    const gitEnv: GitEnv = await Utils.getGitEnv(
       dataAccessService,
       'remote-envs/' + filePath + '/config.env',
-    );
+    )
+      .then(res => res)
+      .catch(e => {
+        throw new PreconditionException();
+      });
 
-    this.setToken(process.env.gitToken);
-    this.setUrlApi(process.env.gitApi);
+    this.setToken(gitEnv.gitToken);
+    this.setUrlApi(gitEnv.gitApi);
   }
 
   updateCommitStatus(
@@ -387,5 +399,79 @@ export class GitlabService implements GitServiceInterface {
         configGitLab,
       )
       .subscribe(null, err => logger.error(err));
+  }
+
+  async getIssues(
+    gitApiInfos: GitApiInfos,
+    gitIssueSearch: GitIssuePRSearch,
+  ): Promise<IssueSearchResult[]> {
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {},
+    };
+    if (typeof gitIssueSearch.sort !== 'undefined') {
+      configGitLab.params.sort = gitIssueSearch.sort.toLowerCase();
+    }
+    if (typeof gitIssueSearch.state !== 'undefined') {
+      configGitLab.params.state = convertIssuePRSearchState(
+        GitTypeEnum.Gitlab,
+        gitIssueSearch.state,
+      );
+    }
+
+    return await this.httpService
+      .get(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/issues`,
+        configGitLab,
+      )
+      .toPromise()
+      .then(res => {
+        return res.data.map(d => {
+          const issueSearchResult = new IssueSearchResult();
+          issueSearchResult.updatedAt = d.updated_at;
+          issueSearchResult.number = d.iid;
+          return issueSearchResult;
+        });
+      })
+      .catch(err => logger.error(err));
+  }
+
+  async getPullRequests(
+    gitApiInfos: GitApiInfos,
+    gitIssueSearch: GitIssuePRSearch,
+  ): Promise<PRSearchResult[]> {
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {},
+    };
+    if (typeof gitIssueSearch.sort !== 'undefined') {
+      configGitLab.params.sort = gitIssueSearch.sort.toLowerCase();
+    }
+    if (typeof gitIssueSearch.state !== 'undefined') {
+      configGitLab.params.state = convertIssuePRSearchState(
+        GitTypeEnum.Gitlab,
+        gitIssueSearch.state,
+      );
+    }
+
+    return await this.httpService
+      .get(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests`,
+        configGitLab,
+      )
+      .toPromise()
+      .then(res => {
+        return res.data.map(d => {
+          const prSearchResult = new PRSearchResult();
+          prSearchResult.updatedAt = d.updated_at;
+          prSearchResult.number = d.iid;
+          return prSearchResult;
+        });
+      })
+      .catch(err => logger.error(err));
   }
 }

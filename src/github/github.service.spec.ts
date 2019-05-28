@@ -9,7 +9,12 @@ import {
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { CommitStatusEnum } from '../webhook/utils.enum';
-import { GitIssueInfos, IssuePRStateEnum } from '../git/gitIssueInfos';
+import {
+  GitIssueInfos,
+  IssuePRStateEnum,
+  GitIssuePRSearch,
+  IssueSortEnum,
+} from '../git/gitIssueInfos';
 import {
   GitPRInfos,
   GitCommentPRInfos,
@@ -358,6 +363,52 @@ describe('Github Service', () => {
         expectedData,
         expectedConfig,
       );
+    });
+  });
+
+  describe('getIssues', () => {
+    it('should emit a GET request with specific params', () => {
+      const gitIssueSearch: GitIssuePRSearch = new GitIssuePRSearch();
+      gitIssueSearch.state = IssuePRStateEnum.Open;
+      gitIssueSearch.sort = IssueSortEnum.Asc;
+
+      httpService.get = jest.fn().mockImplementationOnce((...args) => {
+        return new Observable(observer => observer.next({ data: [] }));
+      });
+
+      githubService.getIssues(gitApiInfos, gitIssueSearch);
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues`;
+
+      const expectedConfig2 = JSON.parse(JSON.stringify(expectedConfig));
+      expectedConfig2.params = {
+        direction: 'asc',
+        state: 'open',
+      };
+
+      expect(httpService.get).toBeCalledWith(expectedUrl, expectedConfig2);
+    });
+  });
+
+  describe('getPullRequests', () => {
+    it('should emit a GET request with specific params', () => {
+      const gitIssueSearch: GitIssuePRSearch = new GitIssuePRSearch();
+      gitIssueSearch.state = IssuePRStateEnum.Open;
+      gitIssueSearch.sort = IssueSortEnum.Asc;
+
+      httpService.get = jest.fn().mockImplementationOnce((...args) => {
+        return new Observable(observer => observer.next({ data: [] }));
+      });
+
+      githubService.getPullRequests(gitApiInfos, gitIssueSearch);
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/pulls`;
+
+      const expectedConfig2 = JSON.parse(JSON.stringify(expectedConfig));
+      expectedConfig2.params = {
+        direction: 'asc',
+        state: 'open',
+      };
+
+      expect(httpService.get).toBeCalledWith(expectedUrl, expectedConfig2);
     });
   });
 

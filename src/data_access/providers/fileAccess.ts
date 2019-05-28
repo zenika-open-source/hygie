@@ -1,14 +1,15 @@
 import { DataAccessInterface, SourceEnum } from '../dataAccess.interface';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '../../utils/utils';
+import { logger } from '../../logger/logger.service';
 
 @Injectable()
 export class FileAccess implements DataAccessInterface {
-  async readData(source: SourceEnum, path: string): Promise<string> {
+  async readData(source: SourceEnum, path: string): Promise<any> {
     const fs = require('fs-extra');
     return await fs
       .readFile(path)
-      .then(res => res.toString())
+      .then(res => Utils.StringtoJSON(res.toString()))
       .catch(err => err);
   }
 
@@ -27,5 +28,15 @@ export class FileAccess implements DataAccessInterface {
   // Nothing to do => return true
   async connect(): Promise<boolean> {
     return Promise.resolve(true);
+  }
+
+  async readCollection(source: SourceEnum, path: string): Promise<any> {
+    logger.warn('not implemented yet.');
+    return await {};
+  }
+
+  async removeCollection(source: SourceEnum, path: string): Promise<boolean> {
+    logger.warn('not implemented yet.');
+    return await true;
   }
 }

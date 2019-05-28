@@ -47,6 +47,8 @@ export class MockGitlabService {
   addPRComment: jest.Mock = jest.fn().mockName('addPRCommentGitlab');
   createPullRequest: jest.Mock = jest.fn().mockName('createPullRequestGitlab');
   createWebhook: jest.Mock = jest.fn().mockName('createWebhookGitlab');
+  getIssues: jest.Mock = jest.fn().mockName('getIssuesGitlab');
+  getPullRequests: jest.Mock = jest.fn().mockName('getPullRequestsGitlab');
 }
 
 export class MockGithubService {
@@ -71,6 +73,8 @@ export class MockGithubService {
   addPRComment: jest.Mock = jest.fn().mockName('addPRCommentGithub');
   createPullRequest: jest.Mock = jest.fn().mockName('createPullRequestGithub');
   createWebhook: jest.Mock = jest.fn().mockName('createWebhookGithub');
+  getIssues: jest.Mock = jest.fn().mockName('getIssuesGithub');
+  getPullRequests: jest.Mock = jest.fn().mockName('getPullRequestsGithub');
 }
 
 export class MockSendEmailRunnable {
@@ -97,6 +101,14 @@ export class MockDataAccessService {
   writeRule: jest.Mock = jest
     .fn()
     .mockName('writeRule')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve();
+      });
+    });
+  writeCron: jest.Mock = jest
+    .fn()
+    .mockName('writeCron')
     .mockImplementation((...args) => {
       return new Promise((resolve, reject) => {
         resolve();
@@ -137,6 +149,35 @@ export class MockDataAccessService {
         resolve('some rule content...');
       });
     });
+
+  readCron: jest.Mock = jest
+    .fn()
+    .mockName('readCron')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve('some cron content...');
+      });
+    });
+
+  connect: jest.Mock = jest.fn().mockName('connect');
+
+  getAllCrons: jest.Mock = jest
+    .fn()
+    .mockName('getAllCrons')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve('all cron content...');
+      });
+    });
+
+  removeAllCrons: jest.Mock = jest
+    .fn()
+    .mockName('removeAllCrons')
+    .mockImplementation((...args) => {
+      return new Promise((resolve, reject) => {
+        resolve(true);
+      });
+    });
 }
 
 export class MockDataAccess implements DataAccessInterface {
@@ -153,6 +194,14 @@ export class MockDataAccess implements DataAccessInterface {
   }
 
   connect(): Promise<boolean> {
+    return Promise.resolve(true);
+  }
+
+  readCollection(source: SourceEnum, path: string): Promise<any> {
+    return Promise.resolve([{}]);
+  }
+
+  removeCollection(source: SourceEnum, path: string): Promise<boolean> {
     return Promise.resolve(true);
   }
 }

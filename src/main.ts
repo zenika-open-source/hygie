@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { checkNeededFiles, checkInternet } from './check/utils';
 import { HttpService } from '@nestjs/common';
 import { logger } from './logger/logger.service';
 import { Constants } from './utils/constants';
 import { DataAccessService } from './data_access/dataAccess.service';
+import { Check } from './check/utils';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,8 +17,8 @@ async function bootstrap() {
     maxAge: 60,
   });
 
-  if (await checkInternet(app.get(HttpService))) {
-    if (checkNeededFiles([`src/rules/${Constants.rulesExtension}`])) {
+  if (await Check.checkInternet(app.get(HttpService))) {
+    if (Check.checkNeededFiles([`src/rules/${Constants.rulesExtension}`])) {
       await app.get(DataAccessService).connect();
 
       await app.listen(port);

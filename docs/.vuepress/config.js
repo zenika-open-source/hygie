@@ -58,9 +58,12 @@ module.exports = {
       {
         title: 'Others',
         collapsable: false,
-        children: ['/others/events.md'],
+        children: ['/others/events.md', '/others/dataAccess.md'],
       },
     ],
   },
   gitwebhooksURL: 'https://webhooks-sklnx3jldq-uc.a.run.app',
+  markdown: {
+    toc: { includeLevel: [2, 2] },
+  },
 };

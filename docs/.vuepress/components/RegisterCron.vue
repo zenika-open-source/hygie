@@ -50,7 +50,7 @@ export default {
       isCorrectJSON: true,
       jsonData: JSON.stringify(
         JSON.parse(
-          '{"filename": "rules-cron-*.yml", "projectURL": "https://github.com/DX-DeveloperExperience/git-webhooks", "expression": "0 0 6-20/1 * * *"}',
+          '{"filename": "cron-*.rulesrc", "projectURL": "https://github.com/DX-DeveloperExperience/git-webhooks", "expression": "0 0 6-20/1 * * *"}',
         ),
         undefined,
         4,
@@ -68,6 +68,7 @@ export default {
       }
     },
     registerCRON() {
+      this.responseMessage = '';
       const serverURL = configJS.gitwebhooksURL + '/cron';
       axios
         .post(serverURL, JSON.parse(this.jsonData))

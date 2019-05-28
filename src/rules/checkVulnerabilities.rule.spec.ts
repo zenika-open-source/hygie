@@ -98,4 +98,23 @@ describe('RulesService', () => {
       expect(result.data).toEqual({ vulnerabilities: {} });
     });
   });
+
+  describe('getNumberOfVulnerabilities', () => {
+    it('should return 17', () => {
+      const data = {
+        metadata: {
+          vulnerabilities: {
+            info: 0,
+            low: 1,
+            moderate: 2,
+            high: 14,
+            critical: 0,
+          },
+        },
+      };
+      expect(checkVulnerabilitiesRule.getNumberOfVulnerabilities(data)).toBe(
+        17,
+      );
+    });
+  });
 });

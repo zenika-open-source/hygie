@@ -1,9 +1,9 @@
 import * as request from 'supertest';
+import { INestApplication, HttpStatus } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { MockAppModule } from '../src/__mocks__/mock.app.module';
+import { MockAppModule } from '../__mocks__/mock.app.module';
 
-describe('AppController (e2e)', () => {
+describe('CronController', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -15,10 +15,9 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('/ (POST) should return 412 status code', () => {
     return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+      .post('/cron')
+      .expect(HttpStatus.PRECONDITION_FAILED);
   });
 });

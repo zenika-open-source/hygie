@@ -8,3 +8,5 @@ export { PullRequestCommentRule } from './pullRequestComment.rule';
 export { CheckVulnerabilitiesRule } from './checkVulnerabilities.rule';
 export { CheckAddedFilesRule } from './checkAddedFiles.rule';
 export { CheckPullRequestStatusRule } from './checkPullRequestStatus.rule';
+export { CheckIssuesRule } from './checkIssues.rule';
+export { CheckPullRequestsRule } from './checkPullRequests.rule';

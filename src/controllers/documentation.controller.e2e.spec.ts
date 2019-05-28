@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { MockAppModule } from '../__mocks__/mock.app.module';
 
-describe('getAllOptions (e2e)', () => {
+describe('/doc (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -15,9 +15,27 @@ describe('getAllOptions (e2e)', () => {
     await app.init();
   });
 
-  it('/options (GET)', () => {
+  it('/doc/options (GET)', () => {
     return request(app.getHttpServer())
-      .get('/options')
+      .get('/doc/options')
+      .expect(200);
+  });
+
+  it('/doc/runnables (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/doc/runnables')
+      .expect(200);
+  });
+
+  it('/doc/rules (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/doc/rules')
+      .expect(200);
+  });
+
+  it('/doc/schema (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/doc/schema')
       .expect(200);
   });
 });

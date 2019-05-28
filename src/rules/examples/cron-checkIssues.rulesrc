@@ -1,0 +1,24 @@
+--- # Rules config file
+options:
+  executeAllRules: false
+  enableGroups: false
+  enableRules: true
+  allRuleResultInOne: false
+rules:
+  - name: checkIssues
+    options:
+      state: open
+      notUpdatedSinceXDays: 7
+    onSuccess: 
+      - callback: LoggerRunnable
+        args:
+          type: warn
+          message: '{{data.issueNumber.length}} deserted Issue(s) founded. They will be closed. '
+      - callback: UpdateIssueRunnable
+        args:
+          state: close
+    onError:
+      - callback: LoggerRunnable
+        args:
+          type: info
+          message: 'No deserted Issue founded.'

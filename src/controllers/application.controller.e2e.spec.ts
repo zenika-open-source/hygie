@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { MockAppModule } from '../__mocks__/mock.app.module';
 
-describe('getAppRules (e2e)', () => {
+describe('ApplicationController (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -15,9 +15,13 @@ describe('getAppRules (e2e)', () => {
     await app.init();
   });
 
-  it('/rules (GET)', () => {
+  it('/ (GET) should return 200 success code', () => {
     return request(app.getHttpServer())
-      .get('/rules')
-      .expect(200);
+      .get('/')
+      .expect(200)
+      .expect(
+        '<p><b>Git Webhooks</b> is running!</p>' +
+          '<p>Have a look at our <a href="https://dx-developerexperience.github.io/git-webhooks/">documentation</a> for more informations.</p>',
+      );
   });
 });

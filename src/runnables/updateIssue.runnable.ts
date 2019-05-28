@@ -34,25 +34,35 @@ export class UpdateIssueRunnable extends Runnable {
     const data = ruleResult.data as any;
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
-    gitIssueInfos.number = data.issueNumber;
+    let arrayOfIssueNumber: number[] = new Array();
 
-    if (typeof args.state !== 'undefined') {
-      gitIssueInfos.state =
-        args.state.toLowerCase() === 'open'
-          ? IssuePRStateEnum.Open
-          : args.state.toLowerCase() === 'close'
-          ? IssuePRStateEnum.Close
-          : IssuePRStateEnum.Undefined;
+    if (typeof data.issueNumber === 'number') {
+      arrayOfIssueNumber.push(data.issueNumber);
+    } else {
+      arrayOfIssueNumber = data.issueNumber;
     }
 
-    if (typeof args.labels !== 'undefined') {
-      gitIssueInfos.labels = args.labels;
-    }
+    arrayOfIssueNumber.forEach(issueNumber => {
+      gitIssueInfos.number = issueNumber.toString();
 
-    if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.updateIssue(gitApiInfos, gitIssueInfos);
-    } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
-    }
+      if (typeof args.state !== 'undefined') {
+        gitIssueInfos.state =
+          args.state.toLowerCase() === 'open'
+            ? IssuePRStateEnum.Open
+            : args.state.toLowerCase() === 'close'
+            ? IssuePRStateEnum.Close
+            : IssuePRStateEnum.Undefined;
+      }
+
+      if (typeof args.labels !== 'undefined') {
+        gitIssueInfos.labels = args.labels;
+      }
+
+      if (gitApiInfos.git === GitTypeEnum.Github) {
+        this.githubService.updateIssue(gitApiInfos, gitIssueInfos);
+      } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
+        this.gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
+      }
+    });
   }
 }

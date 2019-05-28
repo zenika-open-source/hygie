@@ -49,7 +49,7 @@ describe('RulesService', () => {
   describe('checkPullRequestStatus Rule', () => {
     it('should return false', async () => {
       checkPullRequestStatus.options = {
-        status: 'ReopenedPR',
+        status: 'reopened',
       };
       const result: RuleResult = await checkPullRequestStatus.validate(
         webhook,
@@ -58,7 +58,7 @@ describe('RulesService', () => {
       expect(result.validated).toBe(false);
       expect(result.data).toEqual({
         pullRequestDescription: 'my desc',
-        pullRequestEvent: 'ClosedPR',
+        pullRequestEvent: 'closed',
         pullRequestNumber: 22,
         pullRequestTitle: 'my PR for webhook',
       });
@@ -67,7 +67,7 @@ describe('RulesService', () => {
   describe('checkPullRequestStatus Rule', () => {
     it('should return true', async () => {
       checkPullRequestStatus.options = {
-        status: 'ClosedPR',
+        status: 'closed',
       };
       const result: RuleResult = await checkPullRequestStatus.validate(
         webhook,
@@ -76,10 +76,31 @@ describe('RulesService', () => {
       expect(result.validated).toBe(true);
       expect(result.data).toEqual({
         pullRequestDescription: 'my desc',
-        pullRequestEvent: 'ClosedPR',
+        pullRequestEvent: 'closed',
         pullRequestNumber: 22,
         pullRequestTitle: 'my PR for webhook',
       });
+    });
+  });
+
+  describe('checkPullRequestStatus getEvent', () => {
+    it('should return "new"', () => {
+      webhook.gitEvent = GitEventEnum.NewPR;
+      expect(checkPullRequestStatus.getEvent(webhook.gitEvent)).toBe('new');
+    });
+    it('should return "reopened"', () => {
+      webhook.gitEvent = GitEventEnum.ReopenedPR;
+      expect(checkPullRequestStatus.getEvent(webhook.gitEvent)).toBe(
+        'reopened',
+      );
+    });
+    it('should return "merged"', () => {
+      webhook.gitEvent = GitEventEnum.MergedPR;
+      expect(checkPullRequestStatus.getEvent(webhook.gitEvent)).toBe('merged');
+    });
+    it('should return "closed"', () => {
+      webhook.gitEvent = GitEventEnum.ClosedPR;
+      expect(checkPullRequestStatus.getEvent(webhook.gitEvent)).toBe('closed');
     });
   });
 });

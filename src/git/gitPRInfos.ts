@@ -18,13 +18,6 @@ export class GitPRInfos {
   target: string;
   state?: IssuePRStateEnum;
   number?: number;
-
-  constructor() {
-    this.title = '';
-    this.description = '';
-    this.source = '';
-    this.description = '';
-  }
 }
 
 /**
@@ -45,4 +38,9 @@ export class GitMergePRInfos {
   commitMessage: string;
   method: PRMethodsEnum;
   sha: string;
+}
+
+export class PRSearchResult {
+  number: number;
+  updatedAt: string;
 }

@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { SourceEnum, DataAccessInterface } from './dataAccess.interface';
+import { GitEnv } from '../git/gitEnv.interface';
 
 @Injectable()
 export class DataAccessService {
@@ -12,7 +13,7 @@ export class DataAccessService {
    * Read Env object
    * @param path path location (file system)/key (database)/etc
    */
-  readEnv(path: string): Promise<any> {
+  readEnv(path: string): Promise<GitEnv> {
     return this.dataProvider.readData(SourceEnum.Envs, path);
   }
 
@@ -22,6 +23,22 @@ export class DataAccessService {
    */
   readRule(path: string): Promise<any> {
     return this.dataProvider.readData(SourceEnum.Rules, path);
+  }
+
+  /**
+   * Read Cron object
+   * @param path path location (file system)/key (database)/etc
+   */
+  readCron(path: string): Promise<any> {
+    return this.dataProvider.readData(SourceEnum.Crons, path);
+  }
+
+  getAllCrons(): Promise<any> {
+    return this.dataProvider.readCollection(SourceEnum.Crons, 'remote-crons');
+  }
+
+  removeAllCrons(): Promise<boolean> {
+    return this.dataProvider.removeCollection(SourceEnum.Crons, 'remote-crons');
   }
 
   /**
@@ -40,6 +57,15 @@ export class DataAccessService {
    */
   writeRule(path: string, data: any): Promise<any> {
     return this.dataProvider.writeData(SourceEnum.Rules, path, data);
+  }
+
+  /**
+   * Write Cron object
+   * @param path path location (file system)/key (database)/etc
+   * @param data Rule object
+   */
+  writeCron(path: string, data: any): Promise<any> {
+    return this.dataProvider.writeData(SourceEnum.Crons, path, data);
   }
 
   /**

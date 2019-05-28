@@ -3,6 +3,7 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { TestingModule, Test } from '@nestjs/testing';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { MockDataAccessService } from '../__mocks__/mocks';
+import { GitEnv } from '../git/gitEnv.interface';
 let app: TestingModule;
 
 let dataAccessService: DataAccessService;
@@ -20,17 +21,22 @@ describe('Utils', () => {
     jest.clearAllMocks();
   });
 
-  describe('loadEnv', () => {
-    it('should call fs', async () => {
+  describe('getGitEnv', () => {
+    it('should return a GitEnv object', async () => {
       dataAccessService.readEnv = jest.fn().mockReturnValue({
         gitApi: 'https://gitapi.com',
         gitToken: 'myToken',
       });
 
-      await Utils.loadEnv(dataAccessService, 'myFilePath');
+      const result: GitEnv = await Utils.getGitEnv(
+        dataAccessService,
+        'myFilePath',
+      );
 
-      expect(process.env.gitApi).toBe('https://gitapi.com');
-      expect(process.env.gitToken).toBe('myToken');
+      expect(result).toEqual({
+        gitApi: 'https://gitapi.com',
+        gitToken: 'myToken',
+      });
     });
   });
 

@@ -4,21 +4,28 @@ import {
   GitTypeEnum,
   convertCommitStatus,
   convertIssueState,
+  convertIssuePRSearchState,
 } from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { GitIssueInfos } from '../git/gitIssueInfos';
+import {
+  GitIssueInfos,
+  GitIssuePRSearch,
+  IssueSearchResult,
+} from '../git/gitIssueInfos';
 import {
   GitCommentPRInfos,
   GitPRInfos,
   GitMergePRInfos,
   PRMethodsEnum,
+  PRSearchResult,
 } from '../git/gitPRInfos';
 import { logger } from '../logger/logger.service';
 import { PreconditionException } from '../exceptions/precondition.exception';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { Utils } from '../utils/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
+import { GitEnv } from '../git/gitEnv.interface';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -55,21 +62,17 @@ export class GithubService implements GitServiceInterface {
     dataAccessService: DataAccessService,
     filePath: string,
   ): Promise<void> {
-    await Utils.loadEnv(
+    const gitEnv: GitEnv = await Utils.getGitEnv(
       dataAccessService,
       'remote-envs/' + filePath + '/config.env',
-    );
+    )
+      .then(res => res)
+      .catch(e => {
+        throw new PreconditionException();
+      });
 
-    if (
-      process.env.gitToken === undefined ||
-      process.env.gitToken === '' ||
-      process.env.gitApi === undefined ||
-      process.env.gitToken === ''
-    ) {
-      throw new PreconditionException();
-    }
-    this.setToken(process.env.gitToken);
-    this.setUrlApi(process.env.gitApi);
+    this.setToken(gitEnv.gitToken);
+    this.setUrlApi(gitEnv.gitApi);
     this.setConfigGitHub();
   }
 
@@ -333,5 +336,74 @@ export class GithubService implements GitServiceInterface {
         this.configGitHub,
       )
       .subscribe(null, err => logger.error(err));
+  }
+
+  async getIssues(
+    gitApiInfos: GitApiInfos,
+    gitIssueSearch: GitIssuePRSearch,
+  ): Promise<IssueSearchResult[]> {
+    const customGithubConfig = JSON.parse(JSON.stringify(this.configGitHub));
+    customGithubConfig.params = {};
+    if (typeof gitIssueSearch.sort !== 'undefined') {
+      customGithubConfig.params.direction = gitIssueSearch.sort.toLowerCase();
+    }
+    if (typeof gitIssueSearch.state !== 'undefined') {
+      customGithubConfig.params.state = convertIssuePRSearchState(
+        GitTypeEnum.Github,
+        gitIssueSearch.state,
+      );
+    }
+
+    return await this.httpService
+      .get(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues`,
+        customGithubConfig,
+      )
+      .toPromise()
+      .then(res => {
+        return res.data.map(d => {
+          if (typeof d.pull_request === 'undefined') {
+            // Pull Requests are considered as Issues
+            const issueSearchResult = new IssueSearchResult();
+            issueSearchResult.updatedAt = d.updated_at;
+            issueSearchResult.number = d.number;
+            return issueSearchResult;
+          }
+        });
+      })
+      .catch(err => logger.error(err));
+  }
+
+  async getPullRequests(
+    gitApiInfos: GitApiInfos,
+    gitIssueSearch: GitIssuePRSearch,
+  ): Promise<PRSearchResult[]> {
+    const customGithubConfig = JSON.parse(JSON.stringify(this.configGitHub));
+    customGithubConfig.params = {};
+    if (typeof gitIssueSearch.sort !== 'undefined') {
+      customGithubConfig.params.direction = gitIssueSearch.sort.toLowerCase();
+    }
+    if (typeof gitIssueSearch.state !== 'undefined') {
+      customGithubConfig.params.state = convertIssuePRSearchState(
+        GitTypeEnum.Github,
+        gitIssueSearch.state,
+      );
+    }
+
+    return await this.httpService
+      .get(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls`,
+        customGithubConfig,
+      )
+      .toPromise()
+      .then(res => {
+        return res.data.map(d => {
+          const prSearchResult = new PRSearchResult();
+          prSearchResult.updatedAt = d.updated_at;
+          prSearchResult.number = d.number;
+          return prSearchResult;
+        });
+      })
+      .catch(err => logger.error(err));
   }
 }
