@@ -63,6 +63,14 @@ export class RemoteConfigUtils {
     });
   }
 
+  static getGitType(url: string): GitTypeEnum {
+    return url.indexOf('github.com') > -1
+      ? GitTypeEnum.Github
+      : url.indexOf('gitlab.com') > -1
+      ? GitTypeEnum.Gitlab
+      : GitTypeEnum.Undefined;
+  }
+
   /**
    * Download the `.rulesrc` from the repository associate to the `projectURL`.
    * @param projectURL
@@ -76,12 +84,7 @@ export class RemoteConfigUtils {
     branch: string = 'master',
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const whichGit: GitTypeEnum =
-        projectURL.indexOf('github.com') > -1
-          ? GitTypeEnum.Github
-          : projectURL.indexOf('gitlab.com') > -1
-          ? GitTypeEnum.Gitlab
-          : GitTypeEnum.Undefined;
+      const whichGit: GitTypeEnum = this.getGitType(projectURL);
 
       const rulesFilePath: string = this.getGitRawPath(
         whichGit,

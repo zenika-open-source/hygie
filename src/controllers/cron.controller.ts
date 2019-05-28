@@ -16,6 +16,8 @@ import {
 import { Schedule } from '../scheduler/schedule';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { logger } from '../logger/logger.service';
+import { Utils } from '../utils/utils';
+import { GitTypeEnum } from '../webhook/utils.enum';
 
 @Controller('cron')
 export class CronController {
@@ -42,6 +44,7 @@ export class CronController {
   @Post('/')
   async cronJobs(@Body() cronType: CronType, @Res() response?): Promise<void> {
     let remoteRepository: string;
+    let fileURL: string;
     let responseString: string = '';
     let schedule: Schedule;
     let cronStandardArray: CronStandardClass[];
@@ -60,22 +63,34 @@ export class CronController {
 
       const cron = cronStandardArray[index];
 
-      // First, download the cron-*.rulesrcs file
+      remoteRepository =
+        'remote-rules/' +
+        Utils.getRepositoryFullName(cron.projectURL) +
+        '/.git-webhooks';
+
+      const whichGit: GitTypeEnum = RemoteConfigUtils.getGitType(
+        cron.projectURL,
+      );
+
+      fileURL = RemoteConfigUtils.getGitRawPath(
+        whichGit,
+        cron.projectURL,
+        `.git-webhooks/${cron.filename}`,
+      );
+
+      // Check the cron-*.rulesrc file exist
+
       try {
-        remoteRepository = await RemoteConfigUtils.downloadRulesFile(
-          this.dataAccessService,
-          this.httpService,
-          cron.projectURL,
-          cron.filename,
-        ).catch(e => {
-          throw e;
-        });
+        await this.httpService
+          .head(fileURL)
+          .toPromise()
+          .catch(err => {
+            throw err;
+          });
       } catch (e) {
-        if (typeof response !== 'undefined') {
-          response
-            .status(HttpStatus.NOT_FOUND)
-            .send(`${responseString}\n${e.message}`);
-        }
+        response
+          .status(HttpStatus.NOT_FOUND)
+          .send(`${responseString}\n${cron.filename} does not exist.`);
         return;
       }
 
