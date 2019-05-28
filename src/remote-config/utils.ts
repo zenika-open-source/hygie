@@ -128,6 +128,7 @@ export class RemoteConfigUtils {
                 `No ${
                   Constants.rulesExtension
                 } file founded. Using the default one.`,
+                { project: projectURL, location: 'downloadRulesFile' },
               );
               return of({
                 data: fs.readFileSync(

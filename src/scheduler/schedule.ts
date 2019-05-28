@@ -33,7 +33,10 @@ export class Schedule extends NestSchedule {
     super();
     this.id = Utils.generateUniqueId();
     this.cron = cron;
-    logger.info(`Schedule ${this.id} (${cron.filename}) created.`);
+    logger.info(`Schedule ${this.id} (${cron.filename}) created.`, {
+      project: this.cron.projectURL,
+      location: 'ScheduleService',
+    });
 
     this.remoteEnvs = Utils.getRepositoryFullName(this.cron.projectURL);
     this.remoteRepository = remoteRepository;
@@ -92,13 +95,18 @@ export class Schedule extends NestSchedule {
         this.remoteEnvs,
       );
     } catch (e) {
-      logger.error(e);
-      logger.error('There is no config.env file for the current git project');
+      logger.error('There is no config.env file for the current git project', {
+        project: this.cron.projectURL,
+        location: 'ScheduleService',
+      });
     }
 
     await this.setGitlabProjectId();
 
-    logger.info(`${this.id}: downloading ${this.cron.filename}...`);
+    logger.info(`${this.id}: processing '${this.cron.filename}'`, {
+      project: this.cron.projectURL,
+      location: 'ScheduleService',
+    });
 
     try {
       await RemoteConfigUtils.downloadRulesFile(
@@ -110,10 +118,11 @@ export class Schedule extends NestSchedule {
         throw e;
       });
     } catch (e) {
-      logger.error(e);
+      logger.error(e, {
+        project: this.cron.projectURL,
+        location: 'ScheduleService',
+      });
     }
-
-    logger.info(`${this.cron.filename} downloaded. Processing...`);
 
     // Update CRON Expression if defined in the cron-*.rulesrc file
     const conf = await Utils.parseRuleFile(

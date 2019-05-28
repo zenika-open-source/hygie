@@ -37,7 +37,9 @@ export class CronController {
     if (this.dataAccessService.removeAllCrons()) {
       this.cronJobs(CronStandardClassArray);
     } else {
-      logger.error('Can not remove old cron jobs');
+      logger.error('Can not remove old cron jobs', {
+        location: 'CronController',
+      });
     }
   }
 

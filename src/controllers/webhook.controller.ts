@@ -75,7 +75,10 @@ export class WebhookController {
                 rulesBranch,
               );
       } catch (e) {
-        logger.error(e);
+        logger.error(e, {
+          project: webhook.getCloneURL(),
+          location: 'processWebhook',
+        });
         throw new PreconditionException();
       }
       try {
@@ -89,12 +92,16 @@ export class WebhookController {
           remoteEnvs,
         );
       } catch (e) {
-        logger.error('There is no config.env file for the current git project');
+        logger.error(
+          'There is no config.env file for the current git project',
+          { project: webhook.getCloneURL(), location: 'processWebhook' },
+        );
         throw new PreconditionException();
       }
 
       logger.info(
         `\n\n=== processWebhook - ${webhook.getGitType()} - ${webhook.getGitEvent()} ===\n`,
+        { project: webhook.getCloneURL(), location: 'processWebhook' },
       );
 
       const result = await this.rulesService.testRules(

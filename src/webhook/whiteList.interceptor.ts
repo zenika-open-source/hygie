@@ -46,7 +46,9 @@ export class WhiteListInterceptor implements NestInterceptor {
         return of([]);
       }
     } catch (e) {
-      logger.error(e);
+      logger.error(e, {
+        location: 'WhiteListInterceptor',
+      });
       return of([]);
     }
   }

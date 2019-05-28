@@ -93,7 +93,7 @@ export class CheckVulnerabilitiesRule extends Rule {
       // Delete folder
       fs.remove(`packages/${webhook.getRemoteDirectory().split('/')[0]}`).catch(
         err => {
-          logger.error(err);
+          logger.error(err, { location: 'checkVulnerabilities' });
         },
       );
 
