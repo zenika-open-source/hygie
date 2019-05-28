@@ -60,7 +60,7 @@ export class CronController {
 
       const cron = cronStandardArray[index];
 
-      // First, download the rules-cron.yml file
+      // First, download the cron-*.rulesrcs file
       try {
         remoteRepository = await RemoteConfigUtils.downloadRulesFile(
           this.dataAccessService,
