@@ -13,6 +13,7 @@ import {
 } from './gitPRInfos';
 import { GitFileInfos } from './gitFileInfos';
 import { DataAccessService } from '../data_access/dataAccess.service';
+import { GitRelease } from './gitRelease';
 
 /**
  * Provide methods that must be implement by `GithubService` and `GitlabService` to interact with `git` repository
@@ -118,4 +119,6 @@ export interface GitServiceInterface {
     gitApiInfos: GitApiInfos,
     gitIssueSearch: GitIssuePRSearch,
   ): Promise<PRSearchResult[]>;
+
+  createRelease(gitApiInfos: GitApiInfos, gitRelease: GitRelease): void;
 }

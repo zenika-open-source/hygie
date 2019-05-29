@@ -26,6 +26,7 @@ import { GitFileInfos } from '../git/gitFileInfos';
 import { Utils } from '../utils/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitEnv } from '../git/gitEnv.interface';
+import { GitRelease } from '../git/gitRelease';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -406,5 +407,26 @@ export class GithubService implements GitServiceInterface {
         });
       })
       .catch(err => logger.error(err));
+  }
+
+  createRelease(gitApiInfos: GitApiInfos, gitRelease: GitRelease): void {
+    const dataGithub: any = {};
+    dataGithub.tag_name = gitRelease.tag;
+    if (typeof gitRelease.ref !== 'undefined') {
+      dataGithub.target_commitish = gitRelease.ref;
+    }
+    if (typeof gitRelease.name !== 'undefined') {
+      dataGithub.name = gitRelease.name;
+    }
+    if (typeof gitRelease.description !== 'undefined') {
+      dataGithub.body = gitRelease.description;
+    }
+    this.httpService
+      .post(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/releases`,
+        dataGithub,
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err));
   }
 }
