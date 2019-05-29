@@ -8,7 +8,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 import { DeleteFilesRunnable } from './deleteFiles.runnable';
 
-describe('RunnableService', () => {
+describe('DeleteFilesRunnable', () => {
   let app: TestingModule;
 
   let githubService: GithubService;

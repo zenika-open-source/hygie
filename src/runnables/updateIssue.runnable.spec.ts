@@ -8,7 +8,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 import { UpdateIssueRunnable } from './updateIssue.runnable';
 
-describe('RunnableService', () => {
+describe('UpdateIssueRunnable', () => {
   let app: TestingModule;
 
   let githubService: GithubService;

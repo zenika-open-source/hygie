@@ -7,7 +7,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { MockHttpService } from '../__mocks__/mocks';
 import { WebhookRunnable } from './webhook.runnable';
 
-describe('RunnableService', () => {
+describe('WebhookRunnable', () => {
   let app: TestingModule;
 
   let httpService: HttpService;

@@ -6,7 +6,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { LoggerRunnable } from './logger.runnable';
 
-describe('RunnableService', () => {
+describe('LoggerRunnable', () => {
   let app: TestingModule;
   let loggerRunnable: LoggerRunnable;
 

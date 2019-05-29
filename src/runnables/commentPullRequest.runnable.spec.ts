@@ -8,7 +8,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 import { CommentPullRequestRunnable } from './commentPullRequest.runnable';
 
-describe('RunnableService', () => {
+describe('CommentPullRequestRunnable', () => {
   let app: TestingModule;
 
   let githubService: GithubService;

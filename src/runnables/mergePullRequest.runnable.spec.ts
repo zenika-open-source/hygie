@@ -8,7 +8,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 import { MergePullRequestRunnable } from './mergePullRequest.runnable';
 
-describe('RunnableService', () => {
+describe('MergePullRequestRunnable', () => {
   let app: TestingModule;
 
   let githubService: GithubService;

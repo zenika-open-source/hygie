@@ -1,23 +1,8 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Runnable } from './runnable.class';
-import { LoggerRunnable } from './logger.runnable';
 import { Rule } from '../rules/rule.class';
-import { WebhookRunnable } from './webhook.runnable';
 import { RuleResult } from '../rules/ruleResult';
-import { CommentIssueRunnable } from './commentIssue.runnable';
-import { GithubService } from '../github/github.service';
-import { GitlabService } from '../gitlab/gitlab.service';
-import { CommentPullRequestRunnable } from './commentPullRequest.runnable';
-import { SendEmailRunnable } from './sendEmail.runnable';
-import { CreatePullRequestRunnable } from './createPullRequest.runnable';
 import { Group } from '../rules/group.class';
-import { UpdateCommitStatusRunnable } from './updateCommitStatus.runnable';
-import { DeleteBranchRunnable } from './deleteBranch.runnable';
-import { UpdateIssueRunnable } from './updateIssue.runnable';
-import { CreateIssueRunnable } from './createIssue.runnable';
-import { DeleteFilesRunnable } from './deleteFiles.runnable';
-import { MergePullRequestRunnable } from './mergePullRequest.runnable';
-import { UpdatePullRequestRunnable } from './updatePullRequest.runnable';
 
 export enum CallbackType {
   Success = 'Success',
@@ -61,7 +46,6 @@ export class RunnablesService {
       });
       return Promise.resolve(false);
     }
-
     return Promise.resolve(false);
   }
 }
