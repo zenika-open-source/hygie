@@ -1,17 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
-import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { RunnablesService } from './runnables.service';
+import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockHttpService,
-  MockGitlabService,
-  MockGithubService,
-} from '../__mocks__/mocks';
-import { BranchNameRule } from '../rules';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import { CreatePullRequestRunnable } from './createPullRequest.runnable';
 
 describe('RunnableService', () => {
   let app: TestingModule;
@@ -19,16 +14,15 @@ describe('RunnableService', () => {
   let githubService: GithubService;
   let gitlabService: GitlabService;
 
-  let runnableService: RunnablesService;
+  let createPullRequestRunnable: CreatePullRequestRunnable;
 
-  let branchNameRule: BranchNameRule;
+  let args: any;
   let ruleResultBranchName: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
       providers: [
-        RunnablesService,
-        { provide: HttpService, useClass: MockHttpService },
+        CreatePullRequestRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
       ],
@@ -36,32 +30,17 @@ describe('RunnableService', () => {
 
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
-    runnableService = app.get(RunnablesService);
+    createPullRequestRunnable = app.get(CreatePullRequestRunnable);
 
     const myGitApiInfos = new GitApiInfos();
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    // branchNameRule initialisation
-    branchNameRule = new BranchNameRule();
-    branchNameRule.onSuccess = [
-      {
-        callback: 'CreatePullRequestRunnable',
-        args: {
-          title: 'WIP: {{data.branchSplit.1}}',
-          description: 'this is the description',
-        },
-      },
-    ];
-    branchNameRule.onError = [
-      {
-        callback: 'CreatePullRequestRunnable',
-        args: {
-          title: 'WIP: {{data.branchSplit.1}}',
-          description: 'this is the description',
-        },
-      },
-    ];
+    args = {
+      title: 'WIP: {{data.branchSplit.1}}',
+      description: 'this is the description',
+    };
+
     // ruleResultBranchName initialisation
     ruleResultBranchName = new RuleResult(myGitApiInfos);
     ruleResultBranchName.validated = true;
@@ -79,10 +58,12 @@ describe('RunnableService', () => {
   describe('createPullRequest Runnable', () => {
     it('should not call the createPullRequest Github nor Gitlab service', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Undefined;
-      runnableService.executeRunnableFunctions(
+      createPullRequestRunnable.run(
+        CallbackType.Both,
         ruleResultBranchName,
-        branchNameRule,
+        args,
       );
+
       expect(githubService.createPullRequest).not.toBeCalled();
       expect(gitlabService.createPullRequest).not.toBeCalled();
     });
@@ -90,10 +71,12 @@ describe('RunnableService', () => {
   describe('createPullRequest Runnable', () => {
     it('should call the createPullRequest Github service', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Github;
-      runnableService.executeRunnableFunctions(
+      createPullRequestRunnable.run(
+        CallbackType.Both,
         ruleResultBranchName,
-        branchNameRule,
+        args,
       );
+
       expect(githubService.createPullRequest).toBeCalled();
       expect(gitlabService.createPullRequest).not.toBeCalled();
     });
@@ -101,10 +84,12 @@ describe('RunnableService', () => {
   describe('createPullRequest Runnable', () => {
     it('should call the createPullRequest Gitlab service', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Gitlab;
-      runnableService.executeRunnableFunctions(
+      createPullRequestRunnable.run(
+        CallbackType.Both,
         ruleResultBranchName,
-        branchNameRule,
+        args,
       );
+
       expect(githubService.createPullRequest).not.toBeCalled();
       expect(gitlabService.createPullRequest).toBeCalled();
     });

@@ -1,7 +1,7 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
 import { render } from 'mustache';
-import { readFile, writeFile } from 'fs';
+import { readFile, writeFile } from 'fs-extra';
 import { createInterface } from 'readline';
 import { google } from 'googleapis';
 import { logger } from '../logger/logger.service';
@@ -132,17 +132,18 @@ export class SendEmailRunnable extends Runnable {
     ruleResult: RuleResult,
     args: SendEmailArgs,
   ): Promise<void> {
-    readFile('credentials.json', (err, content) => {
-      if (err) {
-        return logger.error('Error loading credentials.json:', err);
-      }
-      // Authorize a client with credentials, then call the Gmail API.
-      this.authorize(
-        JSON.parse(content.toString()),
-        this.sendMessage,
-        ruleResult,
-        args,
-      );
-    });
+    readFile('credentials.json')
+      .then(content => {
+        // Authorize a client with credentials, then call the Gmail API.
+        this.authorize(
+          JSON.parse(content.toString()),
+          this.sendMessage,
+          ruleResult,
+          args,
+        );
+      })
+      .catch(err => {
+        logger.error('Error loading credentials.json:', err);
+      });
   }
 }

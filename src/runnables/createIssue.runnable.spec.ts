@@ -1,17 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
-import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { RunnablesService } from './runnables.service';
+import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockHttpService,
-  MockGitlabService,
-  MockGithubService,
-} from '../__mocks__/mocks';
-import { CommitMessageRule } from '../rules';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import { CreateIssueRunnable } from './createIssue.runnable';
 
 describe('RunnableService', () => {
   let app: TestingModule;
@@ -19,16 +14,15 @@ describe('RunnableService', () => {
   let githubService: GithubService;
   let gitlabService: GitlabService;
 
-  let runnableService: RunnablesService;
+  let createIssueRunnable: CreateIssueRunnable;
 
-  let commitMessageRule: CommitMessageRule;
+  let args: any;
   let ruleResultCommitMessage: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
       providers: [
-        RunnablesService,
-        { provide: HttpService, useClass: MockHttpService },
+        CreateIssueRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
       ],
@@ -36,26 +30,17 @@ describe('RunnableService', () => {
 
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
-    runnableService = app.get(RunnablesService);
+    createIssueRunnable = app.get(CreateIssueRunnable);
 
     const myGitApiInfos = new GitApiInfos();
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    // issueTitleRule initialisation
-    commitMessageRule = new CommitMessageRule();
-    commitMessageRule.onSuccess = [
-      {
-        callback: 'CreateIssueRunnable',
-        args: {
-          title: 'new issue',
-          description:
-            '{{data.branch}} as a new commit which failed, find why.',
-          labels: ['bug', 'urgent'],
-        },
-      },
-    ];
-
+    args = {
+      title: 'new issue',
+      description: '{{data.branch}} as a new commit which failed, find why.',
+      labels: ['bug', 'urgent'],
+    };
     // ruleResultIssueTitle initialisation
     ruleResultCommitMessage = new RuleResult(myGitApiInfos);
     ruleResultCommitMessage.validated = true;
@@ -93,10 +78,7 @@ describe('RunnableService', () => {
 
   describe('CreateIssue Runnable', () => {
     it('should not call the createIssue Github nor Gitlab service', () => {
-      runnableService.executeRunnableFunctions(
-        ruleResultCommitMessage,
-        commitMessageRule,
-      );
+      createIssueRunnable.run(CallbackType.Both, ruleResultCommitMessage, args);
       expect(githubService.createIssue).not.toBeCalled();
       expect(gitlabService.createIssue).not.toBeCalled();
     });
@@ -104,10 +86,8 @@ describe('RunnableService', () => {
   describe('CreateIssue Runnable', () => {
     it('should call the createIssue Github service', () => {
       ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Github;
-      runnableService.executeRunnableFunctions(
-        ruleResultCommitMessage,
-        commitMessageRule,
-      );
+      createIssueRunnable.run(CallbackType.Both, ruleResultCommitMessage, args);
+
       expect(githubService.createIssue).toBeCalledWith(
         { git: 'Github', repositoryFullName: 'bastienterrier/test_webhook' },
         {
@@ -122,10 +102,8 @@ describe('RunnableService', () => {
   describe('CreateIssue Runnable', () => {
     it('should call the createIssue Gitlab service', () => {
       ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Gitlab;
-      runnableService.executeRunnableFunctions(
-        ruleResultCommitMessage,
-        commitMessageRule,
-      );
+      createIssueRunnable.run(CallbackType.Both, ruleResultCommitMessage, args);
+
       expect(githubService.createIssue).not.toBeCalled();
       expect(gitlabService.createIssue).toBeCalledWith(
         { git: 'Gitlab', repositoryFullName: 'bastienterrier/test_webhook' },

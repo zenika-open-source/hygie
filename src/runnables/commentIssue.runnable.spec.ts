@@ -1,18 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
-import { Webhook } from '../webhook/webhook';
-import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { RunnablesService } from './runnables.service';
-import { IssueTitleRule } from '../rules/issueTitle.rule';
+import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockHttpService,
-  MockGitlabService,
-  MockGithubService,
-} from '../__mocks__/mocks';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import { CommentIssueRunnable } from './commentIssue.runnable';
 
 describe('RunnableService', () => {
   let app: TestingModule;
@@ -20,16 +14,15 @@ describe('RunnableService', () => {
   let githubService: GithubService;
   let gitlabService: GitlabService;
 
-  let runnableService: RunnablesService;
+  let commentIssueRunnable: CommentIssueRunnable;
 
-  let issueTitleRule: IssueTitleRule;
+  let args: any;
   let ruleResultIssueTitle: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
       providers: [
-        RunnablesService,
-        { provide: HttpService, useClass: MockHttpService },
+        CommentIssueRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
       ],
@@ -37,26 +30,14 @@ describe('RunnableService', () => {
 
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
-    runnableService = app.get(RunnablesService);
+    commentIssueRunnable = app.get(CommentIssueRunnable);
 
     const myGitApiInfos = new GitApiInfos();
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    // issueTitleRule initialisation
-    issueTitleRule = new IssueTitleRule();
-    issueTitleRule.onSuccess = [
-      {
-        callback: 'CommentIssueRunnable',
-        args: { comment: 'ping @bastienterrier' },
-      },
-    ];
-    issueTitleRule.onError = [
-      {
-        callback: 'CommentIssueRunnable',
-        args: { comment: 'ping @bastienterrier' },
-      },
-    ];
+    args = { comment: 'ping @bastienterrier' };
+
     // ruleResultIssueTitle initialisation
     ruleResultIssueTitle = new RuleResult(myGitApiInfos);
     ruleResultIssueTitle.validated = true;
@@ -71,10 +52,7 @@ describe('RunnableService', () => {
 
   describe('commentIssue Runnable', () => {
     it('should not call the addIssueComment Github nor Gitlab service', () => {
-      runnableService.executeRunnableFunctions(
-        ruleResultIssueTitle,
-        issueTitleRule,
-      );
+      commentIssueRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
       expect(githubService.addIssueComment).not.toBeCalled();
       expect(gitlabService.addIssueComment).not.toBeCalled();
     });
@@ -82,10 +60,8 @@ describe('RunnableService', () => {
   describe('commentIssue Runnable', () => {
     it('should call the addIssueComment Github service', () => {
       ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Github;
-      runnableService.executeRunnableFunctions(
-        ruleResultIssueTitle,
-        issueTitleRule,
-      );
+      commentIssueRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
+
       expect(githubService.addIssueComment).toBeCalled();
       expect(gitlabService.addIssueComment).not.toBeCalled();
     });
@@ -93,10 +69,8 @@ describe('RunnableService', () => {
   describe('commentIssue Runnable', () => {
     it('should call the addIssueComment Gitlab service', () => {
       ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
-      runnableService.executeRunnableFunctions(
-        ruleResultIssueTitle,
-        issueTitleRule,
-      );
+      commentIssueRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
+
       expect(githubService.addIssueComment).not.toBeCalled();
       expect(gitlabService.addIssueComment).toBeCalled();
     });

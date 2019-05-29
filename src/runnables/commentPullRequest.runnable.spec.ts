@@ -1,17 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
-import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { RunnablesService } from './runnables.service';
+import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockHttpService,
-  MockGitlabService,
-  MockGithubService,
-} from '../__mocks__/mocks';
-import { PullRequestTitleRule } from '../rules';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import { CommentPullRequestRunnable } from './commentPullRequest.runnable';
 
 describe('RunnableService', () => {
   let app: TestingModule;
@@ -19,16 +14,15 @@ describe('RunnableService', () => {
   let githubService: GithubService;
   let gitlabService: GitlabService;
 
-  let runnableService: RunnablesService;
+  let commentPullRequestRunnable: CommentPullRequestRunnable;
 
-  let pullRequestTitleRule: PullRequestTitleRule;
+  let args: any;
   let ruleResultPullRequestTitle: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
       providers: [
-        RunnablesService,
-        { provide: HttpService, useClass: MockHttpService },
+        CommentPullRequestRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
       ],
@@ -36,26 +30,14 @@ describe('RunnableService', () => {
 
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
-    runnableService = app.get(RunnablesService);
+    commentPullRequestRunnable = app.get(CommentPullRequestRunnable);
 
     const myGitApiInfos = new GitApiInfos();
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    // pullRequestTitleRule initialisation
-    pullRequestTitleRule = new PullRequestTitleRule();
-    pullRequestTitleRule.onSuccess = [
-      {
-        callback: 'CommentPullRequestRunnable',
-        args: { comment: 'ping @bastienterrier' },
-      },
-    ];
-    pullRequestTitleRule.onError = [
-      {
-        callback: 'CommentPullRequestRunnable',
-        args: { comment: 'ping @bastienterrier' },
-      },
-    ];
+    args = { comment: 'ping @bastienterrier' };
+
     // ruleResultPullRequestTitle initialisation
     ruleResultPullRequestTitle = new RuleResult(myGitApiInfos);
     ruleResultPullRequestTitle.validated = true;
@@ -73,10 +55,12 @@ describe('RunnableService', () => {
   describe('commentPullRequest Runnable', () => {
     it('should not call the addPRComment Github nor Gitlab service', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Undefined;
-      runnableService.executeRunnableFunctions(
+      commentPullRequestRunnable.run(
+        CallbackType.Both,
         ruleResultPullRequestTitle,
-        pullRequestTitleRule,
+        args,
       );
+
       expect(githubService.addPRComment).not.toBeCalled();
       expect(gitlabService.addPRComment).not.toBeCalled();
     });
@@ -84,9 +68,10 @@ describe('RunnableService', () => {
   describe('commentPullRequest Runnable', () => {
     it('should call the addPRComment Githubservice', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Github;
-      runnableService.executeRunnableFunctions(
+      commentPullRequestRunnable.run(
+        CallbackType.Both,
         ruleResultPullRequestTitle,
-        pullRequestTitleRule,
+        args,
       );
       expect(githubService.addPRComment).toBeCalled();
       expect(gitlabService.addPRComment).not.toBeCalled();
@@ -95,9 +80,10 @@ describe('RunnableService', () => {
   describe('commentPullRequest Runnable', () => {
     it('should call the addPRComment Gitlab service', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
-      runnableService.executeRunnableFunctions(
+      commentPullRequestRunnable.run(
+        CallbackType.Both,
         ruleResultPullRequestTitle,
-        pullRequestTitleRule,
+        args,
       );
       expect(githubService.addPRComment).not.toBeCalled();
       expect(gitlabService.addPRComment).toBeCalled();
