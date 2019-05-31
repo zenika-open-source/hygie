@@ -21,6 +21,7 @@ export class CheckAddedFilesRule extends Rule {
   async validate(
     webhook: Webhook,
     ruleConfig: CheckAddedFilesRule,
+    ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const commits: WebhookCommit[] = webhook.getAllCommits();

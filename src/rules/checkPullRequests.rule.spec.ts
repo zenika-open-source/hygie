@@ -9,8 +9,7 @@ import {
   MockGitlabService,
   MockGithubService,
 } from '../__mocks__/mocks';
-import { CheckIssuesRule } from './checkIssues.rule';
-import { empty, of, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { CheckPullRequestsRule } from './checkPullRequests.rule';
 

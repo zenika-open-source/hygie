@@ -29,6 +29,7 @@ export class CheckIssuesRule extends Rule {
   async validate(
     webhook: Webhook,
     ruleConfig: CheckIssuesRule,
+    ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
 

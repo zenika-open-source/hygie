@@ -3,7 +3,6 @@ import { Rule } from './rule.class';
 import { RunnablesService } from '../runnables/runnables.service';
 import { Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
-import { safeLoad } from 'js-yaml';
 import { RulesOptions } from './rules.options';
 import { Group } from './group.class';
 import { logger } from '../logger/logger.service';
@@ -87,6 +86,7 @@ export class RulesService {
               const ruleResult: RuleResult = await r.validate(
                 webhook,
                 ruleConfig,
+                results,
               );
 
               // Some rules return `null` when there are enabled but ignored due to interne business rule

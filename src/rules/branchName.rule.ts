@@ -20,6 +20,7 @@ export class BranchNameRule extends Rule {
   async validate(
     webhook: Webhook,
     ruleConfig: BranchNameRule,
+    ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const branchName = webhook.getBranchName();

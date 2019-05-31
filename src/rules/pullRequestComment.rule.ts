@@ -20,6 +20,7 @@ export class PullRequestCommentRule extends Rule {
   async validate(
     webhook: Webhook,
     ruleConfig: PullRequestCommentRule,
+    ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
 

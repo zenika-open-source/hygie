@@ -15,6 +15,7 @@ export class OneCommitPerPRRule extends Rule {
   async validate(
     webhook: Webhook,
     ruleConfig: OneCommitPerPRRule,
+    ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     ruleResult.validated = webhook.getAllCommits().length === 1 ? true : false;

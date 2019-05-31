@@ -7,4 +7,8 @@ export class Utils {
 
     return today - updatedAt <= interval;
   }
+
+  static getLastItem(array: any[]) {
+    return array[array.length - 1];
+  }
 }

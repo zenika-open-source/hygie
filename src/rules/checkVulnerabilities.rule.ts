@@ -34,6 +34,7 @@ export class CheckVulnerabilitiesRule extends Rule {
   async validate(
     webhook: Webhook,
     ruleConfig: CheckVulnerabilitiesRule,
+    ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     return new Promise(async (resolve, reject) => {
       const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
