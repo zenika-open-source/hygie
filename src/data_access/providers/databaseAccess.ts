@@ -32,11 +32,13 @@ export class DatabaseAccess implements DataAccessInterface {
     return await Database.localdb
       .connection(process.env.MONGODB_CONNECTION_STRING)
       .then(_ => {
-        logger.info('Connected to Database!');
+        logger.info('Connected to Mongodb!', {
+          location: 'databaseAccess',
+        });
         return true;
       })
       .catch(err => {
-        logger.error(err);
+        logger.error(err, { location: 'databaseAccess' });
         return false;
       });
   }

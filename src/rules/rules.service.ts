@@ -3,7 +3,6 @@ import { Rule } from './rule.class';
 import { RunnablesService } from '../runnables/runnables.service';
 import { Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
-import { safeLoad } from 'js-yaml';
 import { RulesOptions } from './rules.options';
 import { Group } from './group.class';
 import { logger } from '../logger/logger.service';
@@ -74,7 +73,9 @@ export class RulesService {
       // Individual rules
       if (rulesOptions.enableRules) {
         try {
-          logger.info('### TRY RULES ###');
+          logger.info('### TRY RULES ###', {
+            project: webhook.getCloneURL(),
+          });
 
           for (let index = 0; index < rules.length; index++) {
             // Need a for loop because Async/Wait does not work in ForEach
@@ -85,6 +86,7 @@ export class RulesService {
               const ruleResult: RuleResult = await r.validate(
                 webhook,
                 ruleConfig,
+                results,
               );
 
               // Some rules return `null` when there are enabled but ignored due to interne business rule
@@ -103,7 +105,10 @@ export class RulesService {
           }
         } catch (e) {
           if (e !== BreakException) {
-            logger.error(e);
+            logger.error(e, {
+              project: webhook.getCloneURL(),
+              location: 'RulesService',
+            });
           }
         }
       }
@@ -111,7 +116,9 @@ export class RulesService {
       // Grouped rules
       if (rulesOptions.enableGroups) {
         try {
-          logger.info('### TRY GROUPS ###');
+          logger.info('### TRY GROUPS ###', {
+            project: webhook.getCloneURL(),
+          });
 
           for (let indexGroup = 0; indexGroup < groups.length; indexGroup++) {
             // Need a for loop because Async/Wait does not work in ForEach
@@ -167,7 +174,10 @@ export class RulesService {
             }
           }
         } catch (e) {
-          logger.error(e);
+          logger.error(e, {
+            project: webhook.getCloneURL(),
+            location: 'RulesService',
+          });
         }
       }
 

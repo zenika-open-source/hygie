@@ -173,7 +173,7 @@ describe('Cron Interfaces', () => {
       function myFunc() {
         return convertCronType(cron5);
       }
-      expect(myFunc).toThrowError();
+      expect(myFunc).toThrow('Filename must fit the pattern: `cron-*.rulesrc`');
     });
   });
 });

@@ -1,34 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
-import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { RunnablesService } from './runnables.service';
+import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockHttpService,
-  MockGitlabService,
-  MockGithubService,
-} from '../__mocks__/mocks';
-import { CheckAddedFilesRule } from '../rules';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import { DeleteFilesRunnable } from './deleteFiles.runnable';
 
-describe('RunnableService', () => {
+describe('DeleteFilesRunnable', () => {
   let app: TestingModule;
 
   let githubService: GithubService;
   let gitlabService: GitlabService;
 
-  let runnableService: RunnablesService;
+  let deleteFilesRunnable: DeleteFilesRunnable;
 
-  let checkAddedFilesRule: CheckAddedFilesRule;
+  let args: any;
   let ruleResultCheckAddedFiles: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
       providers: [
-        RunnablesService,
-        { provide: HttpService, useClass: MockHttpService },
+        DeleteFilesRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
       ],
@@ -36,23 +30,16 @@ describe('RunnableService', () => {
 
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
-    runnableService = app.get(RunnablesService);
+    deleteFilesRunnable = app.get(DeleteFilesRunnable);
 
     const myGitApiInfos = new GitApiInfos();
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    // branchNameRule initialisation
-    checkAddedFilesRule = new CheckAddedFilesRule();
-    checkAddedFilesRule.onSuccess = [
-      {
-        callback: 'DeleteFilesRunnable',
-        args: {
-          message: 'delete files',
-          files: 'a.exe,b.exe',
-        },
-      },
-    ];
+    args = {
+      message: 'delete files',
+      files: 'a.exe,b.exe',
+    };
     // ruleResultBranchName initialisation
     ruleResultCheckAddedFiles = new RuleResult(myGitApiInfos);
     ruleResultCheckAddedFiles.validated = true;
@@ -66,14 +53,15 @@ describe('RunnableService', () => {
     jest.clearAllMocks();
   });
 
-  // DeleteBranch Runnable
   describe('deleteFiles Runnable', () => {
     it('should not call the deleteFile Github nor Gitlab service', () => {
       ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Undefined;
-      runnableService.executeRunnableFunctions(
+      deleteFilesRunnable.run(
+        CallbackType.Both,
         ruleResultCheckAddedFiles,
-        checkAddedFilesRule,
+        args,
       );
+
       expect(githubService.deleteFile).not.toBeCalled();
       expect(gitlabService.deleteFile).not.toBeCalled();
     });
@@ -81,10 +69,12 @@ describe('RunnableService', () => {
   describe('deleteFiles Runnable', () => {
     it('should call the deleteFile Github service', async () => {
       ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Github;
-      await runnableService.executeRunnableFunctions(
+      await deleteFilesRunnable.run(
+        CallbackType.Both,
         ruleResultCheckAddedFiles,
-        checkAddedFilesRule,
+        args,
       );
+
       expect(githubService.deleteFile).toHaveBeenNthCalledWith(
         1,
         {
@@ -115,10 +105,12 @@ describe('RunnableService', () => {
   describe('deleteFiles Runnable', () => {
     it('should call the deleteFile Gitlab service', async () => {
       ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Gitlab;
-      await runnableService.executeRunnableFunctions(
+      await deleteFilesRunnable.run(
+        CallbackType.Both,
         ruleResultCheckAddedFiles,
-        checkAddedFilesRule,
+        args,
       );
+
       expect(githubService.deleteFile).not.toBeCalled();
       expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
         1,
@@ -148,19 +140,16 @@ describe('RunnableService', () => {
   });
   describe('deleteFiles Runnable', () => {
     it('should call the deleteFile Github service', async () => {
-      checkAddedFilesRule.onSuccess = [
-        {
-          callback: 'DeleteFilesRunnable',
-          args: {
-            message: 'delete files',
-          },
-        },
-      ];
+      args = {
+        message: 'delete files',
+      };
       ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Github;
-      await runnableService.executeRunnableFunctions(
+      await deleteFilesRunnable.run(
+        CallbackType.Both,
         ruleResultCheckAddedFiles,
-        checkAddedFilesRule,
+        args,
       );
+
       expect(githubService.deleteFile).toHaveBeenNthCalledWith(
         1,
         {
@@ -191,10 +180,12 @@ describe('RunnableService', () => {
   describe('deleteFiles Runnable', () => {
     it('should call the deleteFile Gitlab service', async () => {
       ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Gitlab;
-      await runnableService.executeRunnableFunctions(
+      await deleteFilesRunnable.run(
+        CallbackType.Both,
         ruleResultCheckAddedFiles,
-        checkAddedFilesRule,
+        args,
       );
+
       expect(githubService.deleteFile).not.toBeCalled();
       expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
         1,
@@ -224,20 +215,17 @@ describe('RunnableService', () => {
   });
   describe('deleteFiles Runnable', () => {
     it('should call the deleteFile Github service', async () => {
-      checkAddedFilesRule.onSuccess = [
-        {
-          callback: 'DeleteFilesRunnable',
-          args: {
-            message: 'delete files',
-            files: ['c.exe', 'd.exe'],
-          },
-        },
-      ];
+      args = {
+        message: 'delete files',
+        files: ['c.exe', 'd.exe'],
+      };
       ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Github;
-      await runnableService.executeRunnableFunctions(
+      await deleteFilesRunnable.run(
+        CallbackType.Both,
         ruleResultCheckAddedFiles,
-        checkAddedFilesRule,
+        args,
       );
+
       expect(githubService.deleteFile).toHaveBeenNthCalledWith(
         1,
         {
@@ -268,10 +256,12 @@ describe('RunnableService', () => {
   describe('deleteFiles Runnable', () => {
     it('should call the deleteFile Gitlab service', async () => {
       ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Gitlab;
-      await runnableService.executeRunnableFunctions(
+      await deleteFilesRunnable.run(
+        CallbackType.Both,
         ruleResultCheckAddedFiles,
-        checkAddedFilesRule,
+        args,
       );
+
       expect(githubService.deleteFile).not.toBeCalled();
       expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
         1,

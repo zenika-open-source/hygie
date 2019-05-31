@@ -206,4 +206,24 @@ describe('remote-config', () => {
       ).toBe('a72e16c7e42f292c6912e7710c838347ae178b4a');
     });
   });
+
+  describe('getGitType', () => {
+    it('should return a Github', () => {
+      expect(
+        RemoteConfigUtils.getGitType(
+          'https://github.com/DX-DeveloperExperience/git-webhooks',
+        ),
+      ).toBe(GitTypeEnum.Github);
+    });
+    it('should return a Gitlab', () => {
+      expect(
+        RemoteConfigUtils.getGitType('https://gitlab.com/gitlab-org/gitlab-ce'),
+      ).toBe(GitTypeEnum.Gitlab);
+    });
+    it('should return a Undefined', () => {
+      expect(RemoteConfigUtils.getGitType('https://facebook.com')).toBe(
+        GitTypeEnum.Undefined,
+      );
+    });
+  });
 });

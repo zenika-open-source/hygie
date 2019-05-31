@@ -20,6 +20,7 @@ export class PullRequestTitleRule extends Rule {
   async validate(
     webhook: Webhook,
     ruleConfig: PullRequestTitleRule,
+    ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const titlePullRequest = webhook.getPullRequestTitle();

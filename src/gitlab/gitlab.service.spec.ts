@@ -24,6 +24,7 @@ import { Observable } from 'rxjs';
 import { GitlabService } from './gitlab.service';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { DataAccessService } from '../data_access/dataAccess.service';
+import { GitRelease } from '../git/gitRelease';
 
 describe('Gitlab Service', () => {
   let app: TestingModule;
@@ -83,6 +84,7 @@ describe('Gitlab Service', () => {
       const expectedUrl = `${gitlabService.urlApi}/projects/1/statuses/1`;
 
       expectedConfig.params = {
+        context: process.env.APPLICATION_NAME,
         state: 'success',
         target_url: 'https://www.zenika.com',
         description: 'Well done',
@@ -363,6 +365,27 @@ describe('Gitlab Service', () => {
       };
 
       expect(httpService.get).toBeCalledWith(expectedUrl, expectedConfig);
+    });
+  });
+
+  describe('createRelease', () => {
+    it('should emit a POST request with specific params', () => {
+      const gitRelease = new GitRelease();
+      gitRelease.name = 'v0.0.1';
+      gitRelease.tag = 'v0.0.1';
+      gitRelease.description = 'this is the first release';
+
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/releases`;
+
+      expectedConfig.params = {
+        name: 'v0.0.1',
+        tag_name: 'v0.0.1',
+        description: 'this is the first release',
+      };
+
+      gitlabService.createRelease(gitApiInfos, gitRelease);
+
+      expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
     });
   });
 

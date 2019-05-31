@@ -38,11 +38,6 @@ You need to have [`@nestjs/cli`](https://github.com/nestjs/nest-cli) install glo
 
 This CLI will create your runnable file and add everything necessary in the project. You just have to focus on your business logic.
 
-::: warning
-The CLI do not inject the service you add, you still have to inject them yourself.
-See the next section for more informations.
-:::
-
 ### Use of services
 
 It you need particular Services, you have to declare them in your constructor.
@@ -53,30 +48,7 @@ For example:
 constructor(private readonly myService: MyService)
 ```
 
-You also have to add it in the `Runnable` constructor:
-
-```typescript
-constructor(
-    private readonly httpService: HttpService,
-    private readonly githubService: GithubService,
-    private readonly gitlabService: GitlabService,
-    private readonly myService: MyService,
-) {}
-```
-
-Finally, you must add the needed service in the module `imports`, and your new `Runnable` in the `exports`:
-
-```typescript
-@Module({
-  imports: [HttpModule, GitModule, MyService],
-  providers: [CommentIssueRunnable, WebhookRunnable],
-  exports: [CommentIssueRunnable, WebhookRunnable, MyRunnable],
-})
-```
-
-::: tip
-All these boring modifications should be automate quickly.
-:::
+NestJs dependency injection will handle everything.
 
 ### _mustache_ templating
 

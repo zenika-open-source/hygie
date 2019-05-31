@@ -26,6 +26,7 @@ export class CheckPullRequestsRule extends Rule {
   async validate(
     webhook: Webhook,
     ruleConfig: CheckPullRequestsRule,
+    ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
 

@@ -20,6 +20,7 @@ export class IssueCommentRule extends Rule {
   async validate(
     webhook: Webhook,
     ruleConfig: IssueCommentRule,
+    ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
 

@@ -26,6 +26,7 @@ import { Utils } from '../utils/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitEnv } from '../git/gitEnv.interface';
 import { PreconditionException } from '../exceptions/precondition.exception';
+import { GitRelease } from '../git/gitRelease';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -78,6 +79,7 @@ export class GitlabService implements GitServiceInterface {
         ),
         target_url: gitCommitStatusInfos.targetUrl,
         description: gitCommitStatusInfos.descriptionMessage,
+        context: process.env.APPLICATION_NAME,
       },
     };
 
@@ -473,5 +475,33 @@ export class GitlabService implements GitServiceInterface {
         });
       })
       .catch(err => logger.error(err));
+  }
+
+  createRelease(gitApiInfos: GitApiInfos, gitRelease: GitRelease): void {
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {},
+    };
+
+    configGitLab.params.tag_name = gitRelease.tag;
+    if (typeof gitRelease.ref !== 'undefined') {
+      configGitLab.params.ref = gitRelease.ref;
+    }
+    if (typeof gitRelease.name !== 'undefined') {
+      configGitLab.params.name = gitRelease.name;
+    }
+    if (typeof gitRelease.description !== 'undefined') {
+      configGitLab.params.description = gitRelease.description;
+    }
+
+    this.httpService
+      .post(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/releases`,
+        {},
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err));
   }
 }

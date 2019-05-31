@@ -65,5 +65,6 @@ export abstract class Rule {
   abstract async validate(
     webhook: Webhook,
     ruleConfig: Rule,
+    ruleResults?: RuleResult[],
   ): Promise<RuleResult>;
 }

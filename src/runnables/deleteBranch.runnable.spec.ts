@@ -1,34 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
-import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { RunnablesService } from './runnables.service';
+import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockHttpService,
-  MockGitlabService,
-  MockGithubService,
-} from '../__mocks__/mocks';
-import { BranchNameRule } from '../rules';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import { DeleteBranchRunnable } from './deleteBranch.runnable';
 
-describe('RunnableService', () => {
+describe('DeleteBranchRunnable', () => {
   let app: TestingModule;
 
   let githubService: GithubService;
   let gitlabService: GitlabService;
 
-  let runnableService: RunnablesService;
+  let deleteBranchRunnable: DeleteBranchRunnable;
 
-  let branchNameRule: BranchNameRule;
+  let args: any;
   let ruleResultBranchName: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
       providers: [
-        RunnablesService,
-        { provide: HttpService, useClass: MockHttpService },
+        DeleteBranchRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
       ],
@@ -36,22 +30,15 @@ describe('RunnableService', () => {
 
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
-    runnableService = app.get(RunnablesService);
+    deleteBranchRunnable = app.get(DeleteBranchRunnable);
 
     const myGitApiInfos = new GitApiInfos();
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    // branchNameRule initialisation
-    branchNameRule = new BranchNameRule();
-    branchNameRule.onError = [
-      {
-        callback: 'DeleteBranchRunnable',
-        args: {
-          branchName: '{{data.branch}}',
-        },
-      },
-    ];
+    args = {
+      branchName: '{{data.branch}}',
+    };
     // ruleResultBranchName initialisation
     ruleResultBranchName = new RuleResult(myGitApiInfos);
     ruleResultBranchName.validated = false;
@@ -69,10 +56,8 @@ describe('RunnableService', () => {
   describe('deleteBranch Runnable', () => {
     it('should not call the deleteBranch Github nor Gitlab service', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Undefined;
-      runnableService.executeRunnableFunctions(
-        ruleResultBranchName,
-        branchNameRule,
-      );
+      deleteBranchRunnable.run(CallbackType.Both, ruleResultBranchName, args);
+
       expect(githubService.deleteBranch).not.toBeCalled();
       expect(gitlabService.deleteBranch).not.toBeCalled();
     });
@@ -80,10 +65,8 @@ describe('RunnableService', () => {
   describe('deleteBranch Runnable', () => {
     it('should call the deleteBranch Github service', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Github;
-      runnableService.executeRunnableFunctions(
-        ruleResultBranchName,
-        branchNameRule,
-      );
+      deleteBranchRunnable.run(CallbackType.Both, ruleResultBranchName, args);
+
       expect(githubService.deleteBranch).toBeCalledWith(
         { git: 'Github', repositoryFullName: 'bastienterrier/test_webhook' },
         'test&#x2F;webhook',
@@ -94,10 +77,8 @@ describe('RunnableService', () => {
   describe('deleteBranch Runnable', () => {
     it('should call the deleteBranch Gitlab service', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Gitlab;
-      runnableService.executeRunnableFunctions(
-        ruleResultBranchName,
-        branchNameRule,
-      );
+      deleteBranchRunnable.run(CallbackType.Both, ruleResultBranchName, args);
+
       expect(githubService.deleteBranch).not.toBeCalled();
       expect(gitlabService.deleteBranch).toBeCalledWith(
         { git: 'Gitlab', repositoryFullName: 'bastienterrier/test_webhook' },

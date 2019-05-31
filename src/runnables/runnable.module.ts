@@ -1,6 +1,4 @@
-import { Module, HttpModule } from '@nestjs/common';
-import { WebhookRunnable } from './webhook.runnable';
-import { CommentIssueRunnable } from './commentIssue.runnable';
+import { Module, HttpModule, HttpService } from '@nestjs/common';
 import { GitModule } from '../git/git.module';
 import { RunnablesService } from './runnables.service';
 import { Runnable } from './runnable.class';
@@ -8,9 +6,24 @@ import { Runnable } from './runnable.class';
 export const RunnablesValues = Object.values(require('./index')).map(
   runnable => runnable as Runnable,
 );
+
+const RunnablesProviders: any = RunnablesValues.map(runnable => ({
+  provide: runnable,
+  useClass: runnable as any,
+}));
+
 @Module({
   imports: [HttpModule, GitModule],
-  providers: [CommentIssueRunnable, WebhookRunnable, RunnablesService],
-  exports: [CommentIssueRunnable, WebhookRunnable, RunnablesService],
+  providers: [
+    {
+      provide: RunnablesService,
+      useFactory(...runnables) {
+        return new RunnablesService(runnables);
+      },
+      inject: [...RunnablesValues],
+    },
+    ...RunnablesProviders,
+  ],
+  exports: [RunnablesService],
 })
 export class RunnableModule {}

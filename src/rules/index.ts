@@ -10,3 +10,4 @@ export { CheckAddedFilesRule } from './checkAddedFiles.rule';
 export { CheckPullRequestStatusRule } from './checkPullRequestStatus.rule';
 export { CheckIssuesRule } from './checkIssues.rule';
 export { CheckPullRequestsRule } from './checkPullRequests.rule';
+export { CheckCoverageRule } from './checkCoverage.rule';

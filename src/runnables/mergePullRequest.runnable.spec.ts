@@ -1,34 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
-import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { RunnablesService } from './runnables.service';
+import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockHttpService,
-  MockGitlabService,
-  MockGithubService,
-} from '../__mocks__/mocks';
-import { PullRequestTitleRule } from '../rules';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import { MergePullRequestRunnable } from './mergePullRequest.runnable';
 
-describe('RunnableService', () => {
+describe('MergePullRequestRunnable', () => {
   let app: TestingModule;
 
   let githubService: GithubService;
   let gitlabService: GitlabService;
 
-  let runnableService: RunnablesService;
+  let mergePullRequestRunnable: MergePullRequestRunnable;
 
-  let pullRequestTitleRule: PullRequestTitleRule;
+  let args: any;
   let ruleResultPullRequestTitle: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
       providers: [
-        RunnablesService,
-        { provide: HttpService, useClass: MockHttpService },
+        MergePullRequestRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
       ],
@@ -36,20 +30,14 @@ describe('RunnableService', () => {
 
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
-    runnableService = app.get(RunnablesService);
+    mergePullRequestRunnable = app.get(MergePullRequestRunnable);
 
     const myGitApiInfos = new GitApiInfos();
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    // pullRequestTitleRule initialisation
-    pullRequestTitleRule = new PullRequestTitleRule();
-    pullRequestTitleRule.onSuccess = [
-      {
-        callback: 'MergePullRequestRunnable',
-        // args: { commitTitle: 'merging the PR...' },
-      },
-    ];
+    args = { commitTitle: 'merging the PR...' };
+
     // ruleResultPullRequestTitle initialisation
     ruleResultPullRequestTitle = new RuleResult(myGitApiInfos);
     ruleResultPullRequestTitle.validated = true;
@@ -67,10 +55,12 @@ describe('RunnableService', () => {
   describe('mergePullRequest Runnable', () => {
     it('should not call the mergePullRequest Github nor Gitlab service', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Undefined;
-      runnableService.executeRunnableFunctions(
+      mergePullRequestRunnable.run(
+        CallbackType.Both,
         ruleResultPullRequestTitle,
-        pullRequestTitleRule,
+        args,
       );
+
       expect(githubService.mergePullRequest).not.toBeCalled();
       expect(gitlabService.mergePullRequest).not.toBeCalled();
     });
@@ -78,10 +68,12 @@ describe('RunnableService', () => {
   describe('mergePullRequest Runnable', () => {
     it('should call the mergePullRequest Githubservice', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Github;
-      runnableService.executeRunnableFunctions(
+      mergePullRequestRunnable.run(
+        CallbackType.Both,
         ruleResultPullRequestTitle,
-        pullRequestTitleRule,
+        args,
       );
+
       expect(githubService.mergePullRequest).toBeCalled();
       expect(gitlabService.mergePullRequest).not.toBeCalled();
     });
@@ -89,10 +81,12 @@ describe('RunnableService', () => {
   describe('mergePullRequest Runnable', () => {
     it('should call the mergePullRequest Gitlab service', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
-      runnableService.executeRunnableFunctions(
+      mergePullRequestRunnable.run(
+        CallbackType.Both,
         ruleResultPullRequestTitle,
-        pullRequestTitleRule,
+        args,
       );
+
       expect(githubService.mergePullRequest).not.toBeCalled();
       expect(gitlabService.mergePullRequest).toBeCalled();
     });

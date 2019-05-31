@@ -36,6 +36,7 @@ export class CommitMessageRule extends Rule {
   async validate(
     webhook: Webhook,
     ruleConfig: CommitMessageRule,
+    ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const commits: WebhookCommit[] = webhook.getAllCommits();

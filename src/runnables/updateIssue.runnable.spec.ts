@@ -1,34 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
-import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { RunnablesService } from './runnables.service';
-import { IssueTitleRule } from '../rules/issueTitle.rule';
+import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockHttpService,
-  MockGitlabService,
-  MockGithubService,
-} from '../__mocks__/mocks';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import { UpdateIssueRunnable } from './updateIssue.runnable';
 
-describe('RunnableService', () => {
+describe('UpdateIssueRunnable', () => {
   let app: TestingModule;
 
   let githubService: GithubService;
   let gitlabService: GitlabService;
 
-  let runnableService: RunnablesService;
+  let updateIssueRunnable: UpdateIssueRunnable;
 
-  let issueTitleRule: IssueTitleRule;
+  let args: any;
   let ruleResultIssueTitle: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
       providers: [
-        RunnablesService,
-        { provide: HttpService, useClass: MockHttpService },
+        UpdateIssueRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
       ],
@@ -36,20 +30,14 @@ describe('RunnableService', () => {
 
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
-    runnableService = app.get(RunnablesService);
+    updateIssueRunnable = app.get(UpdateIssueRunnable);
 
     const myGitApiInfos = new GitApiInfos();
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    // issueTitleRule initialisation
-    issueTitleRule = new IssueTitleRule();
-    issueTitleRule.onError = [
-      {
-        callback: 'UpdateIssueRunnable',
-        args: { state: 'close' },
-      },
-    ];
+    args = { state: 'close' };
+
     // ruleResultIssueTitle initialisation
     ruleResultIssueTitle = new RuleResult(myGitApiInfos);
     ruleResultIssueTitle.validated = false;
@@ -64,10 +52,7 @@ describe('RunnableService', () => {
 
   describe('updateIssue Runnable', () => {
     it('should not call the updateIssue Github nor Gitlab service', () => {
-      runnableService.executeRunnableFunctions(
-        ruleResultIssueTitle,
-        issueTitleRule,
-      );
+      updateIssueRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
       expect(githubService.updateIssue).not.toBeCalled();
       expect(gitlabService.updateIssue).not.toBeCalled();
     });
@@ -75,10 +60,8 @@ describe('RunnableService', () => {
   describe('updateIssue Runnable', () => {
     it('should call the updateIssue Github service', () => {
       ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Github;
-      runnableService.executeRunnableFunctions(
-        ruleResultIssueTitle,
-        issueTitleRule,
-      );
+      updateIssueRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
+
       expect(githubService.updateIssue).toBeCalled();
       expect(gitlabService.updateIssue).not.toBeCalled();
     });
@@ -86,10 +69,8 @@ describe('RunnableService', () => {
   describe('updateIssue Runnable', () => {
     it('should call the updateIssue Gitlab service', () => {
       ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
-      runnableService.executeRunnableFunctions(
-        ruleResultIssueTitle,
-        issueTitleRule,
-      );
+      updateIssueRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
+
       expect(githubService.updateIssue).not.toBeCalled();
       expect(gitlabService.updateIssue).toBeCalled();
     });

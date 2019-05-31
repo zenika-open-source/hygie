@@ -1,23 +1,8 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Runnable } from './runnable.class';
-import { LoggerRunnable } from './logger.runnable';
 import { Rule } from '../rules/rule.class';
-import { WebhookRunnable } from './webhook.runnable';
 import { RuleResult } from '../rules/ruleResult';
-import { CommentIssueRunnable } from './commentIssue.runnable';
-import { GithubService } from '../github/github.service';
-import { GitlabService } from '../gitlab/gitlab.service';
-import { CommentPullRequestRunnable } from './commentPullRequest.runnable';
-import { SendEmailRunnable } from './sendEmail.runnable';
-import { CreatePullRequestRunnable } from './createPullRequest.runnable';
 import { Group } from '../rules/group.class';
-import { UpdateCommitStatusRunnable } from './updateCommitStatus.runnable';
-import { DeleteBranchRunnable } from './deleteBranch.runnable';
-import { UpdateIssueRunnable } from './updateIssue.runnable';
-import { CreateIssueRunnable } from './createIssue.runnable';
-import { DeleteFilesRunnable } from './deleteFiles.runnable';
-import { MergePullRequestRunnable } from './mergePullRequest.runnable';
-import { UpdatePullRequestRunnable } from './updatePullRequest.runnable';
 
 export enum CallbackType {
   Success = 'Success',
@@ -27,88 +12,11 @@ export enum CallbackType {
 
 @Injectable()
 export class RunnablesService {
-  constructor(
-    private readonly httpService: HttpService,
-    private readonly githubService: GithubService,
-    private readonly gitlabService: GitlabService,
-  ) {}
+  constructor(private readonly runnablesClasses: Runnable[] = []) {}
 
   getRunnable(name: string): Runnable {
-    let runnable: Runnable;
-    switch (name) {
-      case 'LoggerRunnable':
-        runnable = new LoggerRunnable();
-        break;
-      case 'WebhookRunnable':
-        runnable = new WebhookRunnable(this.httpService);
-        break;
-      case 'CommentIssueRunnable':
-        runnable = new CommentIssueRunnable(
-          this.githubService,
-          this.gitlabService,
-        );
-        break;
-      case 'CommentPullRequestRunnable':
-        runnable = new CommentPullRequestRunnable(
-          this.githubService,
-          this.gitlabService,
-        );
-        break;
-      case 'CreatePullRequestRunnable':
-        runnable = new CreatePullRequestRunnable(
-          this.githubService,
-          this.gitlabService,
-        );
-        break;
-      case 'SendEmailRunnable':
-        runnable = new SendEmailRunnable();
-        break;
-      case 'UpdateCommitStatusRunnable':
-        runnable = new UpdateCommitStatusRunnable(
-          this.githubService,
-          this.gitlabService,
-        );
-        break;
-      case 'DeleteBranchRunnable':
-        runnable = new DeleteBranchRunnable(
-          this.githubService,
-          this.gitlabService,
-        );
-        break;
-      case 'UpdateIssueRunnable':
-        runnable = new UpdateIssueRunnable(
-          this.githubService,
-          this.gitlabService,
-        );
-        break;
-      case 'CreateIssueRunnable':
-        runnable = new CreateIssueRunnable(
-          this.githubService,
-          this.gitlabService,
-        );
-        break;
-      case 'DeleteFilesRunnable':
-        runnable = new DeleteFilesRunnable(
-          this.githubService,
-          this.gitlabService,
-        );
-        break;
-      case 'MergePullRequestRunnable':
-        runnable = new MergePullRequestRunnable(
-          this.githubService,
-          this.gitlabService,
-        );
-        break;
-      case 'UpdatePullRequestRunnable':
-        runnable = new UpdatePullRequestRunnable(
-          this.githubService,
-          this.gitlabService,
-        );
-        break;
-    }
-    return runnable;
+    return this.runnablesClasses.find(r => r.name === name);
   }
-
   async executeRunnableFunctions(
     ruleResult: RuleResult,
     ruleOrGroup: Rule | Group,
@@ -138,7 +46,6 @@ export class RunnablesService {
       });
       return Promise.resolve(false);
     }
-
     return Promise.resolve(false);
   }
 }

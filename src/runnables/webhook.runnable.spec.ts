@@ -1,63 +1,44 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GithubService } from '../github/github.service';
-import { GitlabService } from '../gitlab/gitlab.service';
 import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { RunnablesService } from './runnables.service';
+import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockHttpService,
-  MockGitlabService,
-  MockGithubService,
-} from '../__mocks__/mocks';
-import { CommitMessageRule } from '../rules';
+import { MockHttpService } from '../__mocks__/mocks';
+import { WebhookRunnable } from './webhook.runnable';
 
-describe('RunnableService', () => {
+describe('WebhookRunnable', () => {
   let app: TestingModule;
 
-  let githubService: GithubService;
-  let gitlabService: GitlabService;
   let httpService: HttpService;
 
-  let runnableService: RunnablesService;
+  let webhookRunnable: WebhookRunnable;
 
-  let commitMessageRule: CommitMessageRule;
+  let args: any;
   let ruleResultCommitMessage: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
       providers: [
-        RunnablesService,
+        WebhookRunnable,
         { provide: HttpService, useClass: MockHttpService },
-        { provide: GitlabService, useClass: MockGitlabService },
-        { provide: GithubService, useClass: MockGithubService },
       ],
     }).compile();
 
-    githubService = app.get(GithubService);
-    gitlabService = app.get(GitlabService);
     httpService = app.get(HttpService);
-    runnableService = app.get(RunnablesService);
+    webhookRunnable = app.get(WebhookRunnable);
 
     const myGitApiInfos = new GitApiInfos();
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    // branchNameRule initialisation
-    commitMessageRule = new CommitMessageRule();
-    commitMessageRule.onBoth = [
-      {
-        callback: 'WebhookRunnable',
-        args: {
-          url: 'https://webhook.site/abcdef',
-          data: {
-            user: 'my name',
-            content: 'my content',
-          },
-        },
+    args = {
+      url: 'https://webhook.site/abcdef',
+      data: {
+        user: 'my name',
+        content: 'my content',
       },
-    ];
+    };
 
     // ruleResultBranchName initialisation
     ruleResultCommitMessage = new RuleResult(myGitApiInfos);
@@ -82,11 +63,8 @@ describe('RunnableService', () => {
 
   describe('webhook Runnable', () => {
     it('should send a post request with specific url and data ', () => {
-      ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Undefined;
-      runnableService.executeRunnableFunctions(
-        ruleResultCommitMessage,
-        commitMessageRule,
-      );
+      webhookRunnable.run(CallbackType.Both, ruleResultCommitMessage, args);
+
       expect(httpService.post).toBeCalledWith(
         'https://webhook.site/abcdef',
         JSON.stringify({

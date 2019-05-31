@@ -1,34 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
-import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { RunnablesService } from './runnables.service';
+import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockHttpService,
-  MockGitlabService,
-  MockGithubService,
-} from '../__mocks__/mocks';
-import { BranchNameRule, CommitMessageRule } from '../rules';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import { UpdateCommitStatusRunnable } from './updateCommitStatus.runnable';
 
-describe('RunnableService', () => {
+describe('UpdateCommitStatusRunnable', () => {
   let app: TestingModule;
 
   let githubService: GithubService;
   let gitlabService: GitlabService;
 
-  let runnableService: RunnablesService;
+  let updateCommitStatus: UpdateCommitStatusRunnable;
 
-  let commitMessageRule: CommitMessageRule;
+  let args: any;
   let ruleResultCommitMessage: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
       providers: [
-        RunnablesService,
-        { provide: HttpService, useClass: MockHttpService },
+        UpdateCommitStatusRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
       ],
@@ -36,27 +30,12 @@ describe('RunnableService', () => {
 
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
-    runnableService = app.get(RunnablesService);
+    updateCommitStatus = app.get(UpdateCommitStatusRunnable);
 
     const myGitApiInfos = new GitApiInfos();
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    // branchNameRule initialisation
-    commitMessageRule = new CommitMessageRule();
-    commitMessageRule.onBoth = [
-      {
-        callback: 'UpdateCommitStatusRunnable',
-        args: {
-          uccessTargetUrl: 'http://www.google.com',
-          failTargetUrl: 'http://moogle.com/',
-          successDescriptionMessage: 'good commit status!',
-          failDescriptionMessage: 'NOOOT good...',
-        },
-      },
-    ];
-
-    // ruleResultBranchName initialisation
     ruleResultCommitMessage = new RuleResult(myGitApiInfos);
     ruleResultCommitMessage.validated = true;
     ruleResultCommitMessage.data = {
@@ -85,6 +64,12 @@ describe('RunnableService', () => {
         },
       ],
     };
+    args = {
+      successTargetUrl: 'http://www.google.com',
+      failTargetUrl: 'http://moogle.com/',
+      successDescriptionMessage: 'good commit status!',
+      failDescriptionMessage: 'NOOOT good...',
+    };
   });
 
   beforeEach(() => {
@@ -93,11 +78,7 @@ describe('RunnableService', () => {
 
   describe('updateCommitMessage Runnable', () => {
     it('should not call the updateCommitStatus Github nor Gitlab service', () => {
-      ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Undefined;
-      runnableService.executeRunnableFunctions(
-        ruleResultCommitMessage,
-        commitMessageRule,
-      );
+      updateCommitStatus.run(CallbackType.Both, ruleResultCommitMessage, args);
       expect(githubService.updateCommitStatus).not.toBeCalled();
       expect(gitlabService.updateCommitStatus).not.toBeCalled();
     });
@@ -105,10 +86,8 @@ describe('RunnableService', () => {
   describe('updateCommitMessage Runnable', () => {
     it('should call the updateCommitStatus Github service 3 times', () => {
       ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Github;
-      runnableService.executeRunnableFunctions(
-        ruleResultCommitMessage,
-        commitMessageRule,
-      );
+      updateCommitStatus.run(CallbackType.Both, ruleResultCommitMessage, args);
+
       expect(githubService.updateCommitStatus).toBeCalledTimes(3);
       expect(gitlabService.updateCommitStatus).not.toBeCalled();
     });
@@ -116,10 +95,8 @@ describe('RunnableService', () => {
   describe('updateCommitMessage Runnable', () => {
     it('should call the updateCommitStatus Gitlab service 3 times', () => {
       ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Gitlab;
-      runnableService.executeRunnableFunctions(
-        ruleResultCommitMessage,
-        commitMessageRule,
-      );
+      updateCommitStatus.run(CallbackType.Both, ruleResultCommitMessage, args);
+
       expect(githubService.updateCommitStatus).not.toBeCalled();
       expect(gitlabService.updateCommitStatus).toBeCalledTimes(3);
     });

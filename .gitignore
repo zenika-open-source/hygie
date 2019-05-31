@@ -77,3 +77,6 @@ packages
 internship-report
 
 oauthApp.json
+
+
+*.ps1
