@@ -24,6 +24,7 @@ import {
 import { Observable, of } from 'rxjs';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { DataAccessService } from '../data_access/dataAccess.service';
+import { GitRelease } from '../git/gitRelease';
 
 describe('Github Service', () => {
   let app: TestingModule;
@@ -409,6 +410,31 @@ describe('Github Service', () => {
       };
 
       expect(httpService.get).toBeCalledWith(expectedUrl, expectedConfig2);
+    });
+  });
+
+  describe('createRelease', () => {
+    it('should emit a POST request with specific params', () => {
+      const gitRelease = new GitRelease();
+      gitRelease.name = 'v0.0.1';
+      gitRelease.tag = 'v0.0.1';
+      gitRelease.description = 'this is the first release';
+
+      githubService.createRelease(gitApiInfos, gitRelease);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/releases`;
+
+      const expectedData = {
+        body: 'this is the first release',
+        tag_name: 'v0.0.1',
+        name: 'v0.0.1',
+      };
+
+      expect(httpService.post).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
     });
   });
 
