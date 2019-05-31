@@ -68,6 +68,8 @@ describe('RulesService', () => {
       expect(result.validated).toBe(false);
       expect(result.data).toEqual(expectedResult);
     });
+  });
+  describe('checkIssues Rule', () => {
     it('should return true + array of issue number', async () => {
       githubService.getIssues = jest.fn().mockImplementationOnce((...args) => [
         {
@@ -90,7 +92,47 @@ describe('RulesService', () => {
       const checkIssuesRule = new CheckIssuesRule();
       checkIssuesRule.options = {
         notUpdatedSinceXDays: 0, // for testing
-        state: 'open',
+        state: 'close',
+      };
+      jest.spyOn(checkIssuesRule, 'validate');
+
+      const result: RuleResult = await checkIssuesRule.validate(
+        webhook,
+        checkIssuesRule,
+      );
+
+      jest.fn().mockReset();
+
+      const expectedResult = { issueNumber: [1, 2, 3] };
+
+      expect(result.validated).toBe(true);
+      expect(result.data).toEqual(expectedResult);
+    });
+  });
+  describe('checkIssues Rule', () => {
+    it('should return true + array of issue number', async () => {
+      githubService.getIssues = jest.fn().mockImplementationOnce((...args) => [
+        {
+          number: 1,
+          updatedAt: '2019-03-25T05:50:47Z',
+        },
+        {
+          number: 2,
+          updatedAt: '2019-03-25T05:50:47Z',
+        },
+        {
+          number: 3,
+          updatedAt: '2019-03-25T05:50:47Z',
+        },
+      ]);
+      httpService.get = jest.fn().mockImplementation((...args) => {
+        return new Observable<AxiosResponse<any>>();
+      });
+
+      const checkIssuesRule = new CheckIssuesRule();
+      checkIssuesRule.options = {
+        notUpdatedSinceXDays: 0, // for testing
+        state: 'all',
       };
       jest.spyOn(checkIssuesRule, 'validate');
 
