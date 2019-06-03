@@ -153,6 +153,21 @@ describe('Utils', () => {
     });
   });
 
+  describe('splitDirectoryPath', () => {
+    it('shoud return two paths', () => {
+      const { base, name } = Utils.splitDirectoryPath(
+        'docs/getting_started/steps',
+      );
+      expect(base).toBe('docs/getting_started');
+      expect(name).toBe('steps');
+    });
+    it('shoud return two paths', () => {
+      const { base, name } = Utils.splitDirectoryPath('docs');
+      expect(base).toBe('');
+      expect(name).toBe('docs');
+    });
+  });
+
   // tslint:disable:max-line-length
   describe('parseRuleFile', () => {
     it('shoud return a YAML parsed rules object', async () => {

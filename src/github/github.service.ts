@@ -27,6 +27,9 @@ import { Utils } from '../utils/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitEnv } from '../git/gitEnv.interface';
 import { GitRelease } from '../git/gitRelease';
+import { GitContent } from '../git/gitContent';
+import { GitCommit } from '../git/gitCommit';
+import { GitRef } from '../git/gitRef';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -428,5 +431,118 @@ export class GithubService implements GitServiceInterface {
         this.configGitHub,
       )
       .subscribe(null, err => logger.error(err));
+  }
+
+  async getContent(
+    gitApiInfos: GitApiInfos,
+    folder: string,
+  ): Promise<GitContent[]> {
+    return await this.httpService
+      .get(
+        `${this.urlApi}/repos/${
+          gitApiInfos.repositoryFullName
+        }/contents/${folder}`,
+        this.configGitHub,
+      )
+      .toPromise()
+      .then(response => {
+        return response.data.map(o => {
+          const { type, mode } = Utils.getTypeAndMode(o.type);
+          return {
+            path: o.path,
+            type,
+            mode,
+            sha: o.sha,
+          };
+        });
+      })
+      .catch(err => logger.error(err, { location: 'getContent' }));
+  }
+
+  async createTree(
+    gitApiInfos: GitApiInfos,
+    content: GitContent[],
+  ): Promise<string> {
+    const data: any = {
+      tree: content,
+    };
+    return await this.httpService
+      .post(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/trees`,
+        data,
+        this.configGitHub,
+      )
+      .toPromise()
+      .then(response => {
+        return response.data.tree[0].sha;
+      })
+      .catch(err => logger.error(err, { location: 'createTree' }));
+  }
+
+  async getTree(
+    gitApiInfos: GitApiInfos,
+    directoryPath: string,
+  ): Promise<string> {
+    const { base, name } = Utils.splitDirectoryPath(directoryPath);
+    return await this.httpService
+      .get(
+        `${this.urlApi}/repos/${
+          gitApiInfos.repositoryFullName
+        }/contents/${base}`,
+        this.configGitHub,
+      )
+      .toPromise()
+      .then(response => {
+        return response.data.find(e => e.name === name).sha;
+      })
+      .catch(err => logger.error(err, { location: 'getTree' }));
+  }
+
+  async getLastCommit(
+    gitApiInfos: GitApiInfos,
+    branch: string = 'master',
+  ): Promise<string> {
+    return this.httpService
+      .get(
+        `${this.urlApi}/repos/${
+          gitApiInfos.repositoryFullName
+        }/git/refs/heads/${branch}`,
+        this.configGitHub,
+      )
+      .toPromise()
+      .then(response => response.data.object.sha)
+      .catch(err => logger.error(err, { location: 'updateRef' }));
+  }
+
+  async createCommit(
+    gitApiInfos: GitApiInfos,
+    gitCommit: GitCommit,
+  ): Promise<string> {
+    return await this.httpService
+      .post(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/commits`,
+        gitCommit,
+        this.configGitHub,
+      )
+      .toPromise()
+      .then(response => {
+        return response.data.sha;
+      })
+      .catch(err => logger.error(err, { location: 'createCommit' }));
+  }
+
+  updateRef(gitApiInfos: GitApiInfos, gitRef: GitRef): void {
+    this.httpService
+      .patch(
+        `${this.urlApi}/repos/${
+          gitApiInfos.repositoryFullName
+        }/git/refs/heads/${gitRef.branch}`,
+        {
+          sha: gitRef.sha,
+          force: gitRef.force,
+        },
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err, { location: 'updateRef' }));
   }
 }

@@ -12,3 +12,4 @@ export { DeleteFilesRunnable } from './deleteFiles.runnable';
 export { MergePullRequestRunnable } from './mergePullRequest.runnable';
 export { UpdatePullRequestRunnable } from './updatePullRequest.runnable';
 export { CreateReleaseRunnable } from './createRelease.runnable';
+export { DeployFolderRunnable } from './deployFolder.runnable';

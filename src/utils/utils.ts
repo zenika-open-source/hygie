@@ -3,6 +3,11 @@ import 'array-flat-polyfill';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitEnv } from '../git/gitEnv.interface';
 
+interface SplittedDirectory {
+  base: string;
+  name: string;
+}
+
 export class Utils {
   static getObjectValue(obj: object): object {
     return typeof obj === 'undefined' ? {} : obj;
@@ -111,5 +116,24 @@ export class Utils {
         resolve(await jsyaml.safeLoad(fileContent));
       }
     });
+  }
+
+  static getTypeAndMode(str: string): any {
+    switch (str) {
+      case 'dir':
+        return { type: 'tree', mode: '040000' };
+      case 'file':
+        return { type: 'blob', mode: '100644' };
+    }
+  }
+
+  static splitDirectoryPath(str: string): SplittedDirectory {
+    const index = str.lastIndexOf('/');
+    const base = str.substring(0, index);
+    const name = str.substring(index + 1);
+    return {
+      base,
+      name,
+    };
   }
 }
