@@ -30,6 +30,7 @@ import { GitRelease } from '../git/gitRelease';
 import { GitContent } from '../git/gitContent';
 import { GitCommit } from '../git/gitCommit';
 import { GitRef } from '../git/gitRef';
+import { GitTag } from '../git/gitTag';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -534,9 +535,9 @@ export class GithubService implements GitServiceInterface {
   updateRef(gitApiInfos: GitApiInfos, gitRef: GitRef): void {
     this.httpService
       .patch(
-        `${this.urlApi}/repos/${
-          gitApiInfos.repositoryFullName
-        }/git/refs/heads/${gitRef.branch}`,
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/${
+          gitRef.refName
+        }`,
         {
           sha: gitRef.sha,
           force: gitRef.force,
@@ -544,5 +545,35 @@ export class GithubService implements GitServiceInterface {
         this.configGitHub,
       )
       .subscribe(null, err => logger.error(err, { location: 'updateRef' }));
+  }
+
+  createRef(gitApiInfos: GitApiInfos, gitRef: GitRef): void {
+    this.httpService
+      .post(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/refs`,
+        {
+          sha: gitRef.sha,
+          ref: gitRef.refName,
+        },
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err, { location: 'createRef' }));
+  }
+
+  async createTag(gitApiInfos: GitApiInfos, gitTag: GitTag): Promise<string> {
+    return await this.httpService
+      .post(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/tags`,
+        {
+          tag: gitTag.tag,
+          message: gitTag.message,
+          object: gitTag.sha,
+          type: gitTag.type,
+        },
+        this.configGitHub,
+      )
+      .toPromise()
+      .then(response => response.data.sha)
+      .catch(err => logger.error(err, { location: 'createTag' }));
   }
 }

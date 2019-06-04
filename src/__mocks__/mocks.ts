@@ -52,6 +52,7 @@ export class MockGitlabService {
   createRelease: jest.Mock = jest.fn().mockName('createReleaseGitlab');
   getTree: jest.Mock = jest.fn().mockName('getTreeGitlab');
   getLastCommit: jest.Mock = jest.fn().mockName('getLastCommitGitlab');
+  createTag: jest.Mock = jest.fn().mockName('createTagGitlab');
 }
 
 export class MockGithubService {
@@ -100,6 +101,12 @@ export class MockGithubService {
     .mockResolvedValue('createdCommit');
 
   updateRef: jest.Mock = jest.fn().mockName('updateRefGithub');
+  createTag: jest.Mock = jest
+    .fn()
+    .mockName('createTagGithub')
+    .mockResolvedValue('tag');
+
+  createRef: jest.Mock = jest.fn().mockName('createRefGithub');
 }
 
 export class MockSendEmailRunnable {

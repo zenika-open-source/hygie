@@ -40,6 +40,9 @@ export class CommitMessageRule extends Rule {
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const commits: WebhookCommit[] = webhook.getAllCommits();
+    if (commits.length === 0) {
+      return null;
+    }
     const commitRegExp = RegExp(ruleConfig.options.regexp);
     const branchName = webhook.getBranchName();
 
@@ -95,6 +98,7 @@ export class CommitMessageRule extends Rule {
       branch: webhook.getBranchName(),
       commits: commitsMatches,
     };
+
     return Promise.resolve(ruleResult);
   }
 }

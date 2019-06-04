@@ -132,6 +132,7 @@ export function isGitlabBranchEvent(
   git: GitlabEvent | GithubEvent,
 ): git is GitlabPushEvent {
   return (
+    (git as GitlabPushEvent).object_kind === 'push' &&
     (git as GitlabPushEvent).project_id !== undefined &&
     (git as GitlabPushEvent).before ===
       '0000000000000000000000000000000000000000'

@@ -31,7 +31,6 @@ export class DeployFolderRunnable extends Runnable {
     ruleResult: RuleResult,
     args: DeployFolderArgs,
   ): Promise<void> {
-    const data = ruleResult.data as any;
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
@@ -56,7 +55,7 @@ export class DeployFolderRunnable extends Runnable {
         gitCommit,
       );
       const gitRef = new GitRef();
-      gitRef.branch = branch;
+      gitRef.refName = 'refs/heads/' + branch;
       gitRef.sha = commitSha;
       gitRef.force = false;
       this.githubService.updateRef(gitApiInfos, gitRef);

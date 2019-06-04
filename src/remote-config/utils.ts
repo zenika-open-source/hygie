@@ -84,8 +84,6 @@ export class RemoteConfigUtils {
     branch: string = 'master',
     defaultBranch?: string,
   ): Promise<string> {
-    logger.info(branch + ' - ' + defaultBranch);
-
     return new Promise(async (resolve, reject) => {
       const whichGit: GitTypeEnum = this.getGitType(projectURL);
 

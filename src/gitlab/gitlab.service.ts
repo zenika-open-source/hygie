@@ -27,6 +27,7 @@ import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitEnv } from '../git/gitEnv.interface';
 import { PreconditionException } from '../exceptions/precondition.exception';
 import { GitRelease } from '../git/gitRelease';
+import { GitTag } from '../git/gitTag';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -503,6 +504,27 @@ export class GitlabService implements GitServiceInterface {
         configGitLab,
       )
       .subscribe(null, err => logger.error(err));
+  }
+
+  createTag(gitApiInfos: GitApiInfos, gitTag: GitTag): void {
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {
+        tag_name: gitTag.tag,
+        ref: gitTag.sha,
+        message: gitTag.message,
+      },
+    };
+
+    this.httpService
+      .post(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/repository/tags`,
+        {},
+        configGitLab,
+      )
+      .subscribe(null, err => logger.error(err, { location: 'createTag' }));
   }
 
   async getTree(

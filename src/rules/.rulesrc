@@ -84,6 +84,14 @@ rules:
         args:
           folder: docs 
           branch: gh-pages
+  - name: commitMessage
+    options:
+      regexp: '#(v.*)#'
+    onSuccess:
+      - callback : CreateTagRunnable
+        args:
+          tag: '{{data.commits.0.matches.1}}'
+          message: 'new version !'
   - name: checkAddedFiles
     options:
       regexp: '.*\.exe$'
