@@ -21,6 +21,45 @@ describe('Utils', () => {
     jest.clearAllMocks();
   });
 
+  describe('transformToArray', () => {
+    it('should return ["a", "b", "c"]', () => {
+      expect(Utils.transformToArray('a,b,c', {})).toEqual(['a', 'b', 'c']);
+    });
+    it('should return ["a", "b", "c"]', () => {
+      expect(Utils.transformToArray(['a', 'b', 'c'], {})).toEqual([
+        'a',
+        'b',
+        'c',
+      ]);
+    });
+    it('should return ["a", "b", "c"]', () => {
+      expect(
+        Utils.transformToArray(
+          '{{data.a}}-{{data.b}}-{{data.c}}',
+          {
+            data: {
+              a: 'a',
+              b: 'b',
+              c: 'c',
+            },
+          },
+          '-',
+        ),
+      ).toEqual(['a', 'b', 'c']);
+    });
+    it('should return ["a", "b", "c"]', () => {
+      expect(
+        Utils.transformToArray(['{{data.a}}', '{{data.b}}', '{{data.c}}'], {
+          data: {
+            a: 'a',
+            b: 'b',
+            c: 'c',
+          },
+        }),
+      ).toEqual(['a', 'b', 'c']);
+    });
+  });
+
   describe('getGitEnv', () => {
     it('should return a GitEnv object', async () => {
       dataAccessService.readEnv = jest.fn().mockReturnValue({

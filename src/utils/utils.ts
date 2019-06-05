@@ -2,6 +2,7 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import 'array-flat-polyfill';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitEnv } from '../git/gitEnv.interface';
+import { render } from 'mustache';
 
 interface SplittedDirectory {
   base: string;
@@ -9,6 +10,27 @@ interface SplittedDirectory {
 }
 
 export class Utils {
+  /**
+   *
+   * @param input string x-separated or string[]
+   * @param data datasource for templating
+   * @param separator comma by default
+   */
+  static transformToArray(
+    input: string | string[],
+    data: any,
+    separator: string = ',',
+  ): string[] {
+    if (typeof input === 'string') {
+      return render(input, data)
+        .split(separator)
+        .filter(f => f !== '');
+    }
+    return render(input.toString(), data)
+      .split(',') // default toString() method separator
+      .filter(f => f !== '');
+  }
+
   static getObjectValue(obj: object): object {
     return typeof obj === 'undefined' ? {} : obj;
   }

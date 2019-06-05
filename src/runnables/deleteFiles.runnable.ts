@@ -8,6 +8,7 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
+import { Utils } from '../utils/utils';
 
 interface DeleteFilesArgs {
   files: string[] | string;
@@ -42,12 +43,9 @@ export class DeleteFilesRunnable extends Runnable {
     }
 
     if (typeof args !== 'undefined' && typeof args.files !== 'undefined') {
-      if (typeof args.files === 'string') {
-        filesList = render(args.files, ruleResult);
-      } else {
-        filesList = args.files;
-      }
+      filesList = Utils.transformToArray(args.files, ruleResult);
 
+      // Replace slash hexa value
       filesList = filesList
         .toString()
         .replace(/&#x2F;/g, '/')

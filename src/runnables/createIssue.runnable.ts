@@ -8,12 +8,13 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
+import { Utils } from '../utils/utils';
 
 interface CreateIssueArgs {
   title: string;
   description: string;
-  assignees: string[];
-  labels: string[];
+  assignees: string | string[];
+  labels: string | string[];
 }
 
 /**
@@ -41,11 +42,14 @@ export class CreateIssueRunnable extends Runnable {
     }
 
     if (typeof args.labels !== 'undefined') {
-      gitIssueInfos.labels = args.labels;
+      gitIssueInfos.labels = Utils.transformToArray(args.labels, ruleResult);
     }
 
     if (typeof args.assignees !== 'undefined') {
-      gitIssueInfos.assignees = args.assignees;
+      gitIssueInfos.assignees = Utils.transformToArray(
+        args.assignees,
+        ruleResult,
+      );
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
