@@ -8,7 +8,7 @@ import { Utils } from './utils';
 
 interface CommitMessageOptions {
   regexp: string;
-  users: UsersOptions;
+  users?: UsersOptions;
   maxLength?: number;
   branches?: BranchesOptions;
 }

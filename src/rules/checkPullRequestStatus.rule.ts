@@ -8,7 +8,7 @@ import { Utils } from './utils';
 
 interface CheckPullRequestStatusOptions {
   status: string;
-  users: UsersOptions;
+  users?: UsersOptions;
 }
 
 /**
