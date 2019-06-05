@@ -36,7 +36,7 @@ describe('createRelease Runnable', () => {
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    args = { some: 'arg' };
+    args = { tag: 'v0.0.1' };
 
     ruleResult = new RuleResult(myGitApiInfos);
     ruleResult.validated = false;
