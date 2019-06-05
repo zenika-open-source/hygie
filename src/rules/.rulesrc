@@ -82,7 +82,7 @@ rules:
     onSuccess:
       - callback : DeployFolderRunnable
         args:
-          folder: docs 
+          folder: docs
           branch: gh-pages
   - name: commitMessage
     options:

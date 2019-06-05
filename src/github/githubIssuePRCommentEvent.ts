@@ -2,6 +2,7 @@ import {
   GithubIssue,
   GithubRepository,
   GithubComment,
+  GithubSender,
 } from './github.interface';
 
 /**
@@ -12,4 +13,5 @@ export interface GithubIssuePRCommentEvent {
   issue: GithubIssue;
   repository: GithubRepository;
   comment: GithubComment;
+  sender: GithubSender;
 }

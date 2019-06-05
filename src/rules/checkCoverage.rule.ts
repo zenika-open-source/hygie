@@ -19,13 +19,13 @@ interface CheckCoverageOptions {
 }
 
 /**
- * `CheckCoverageRule` DESCRIPTION.
+ * `CheckCoverageRule` checks if coverage fulfill the options.
  * @return return a `RuleResult` object
  */
 @RuleDecorator('checkCoverage')
 export class CheckCoverageRule extends Rule {
   options: CheckCoverageOptions;
-  events = [GitEventEnum.Push];
+  events = [GitEventEnum.Cron];
 
   constructor(private readonly httpService: HttpService) {
     super();

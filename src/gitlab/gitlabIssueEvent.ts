@@ -1,4 +1,4 @@
-import { GitlabIssue, GitlabProject } from './gitlab.interface';
+import { GitlabIssue, GitlabProject, GitlabUser } from './gitlab.interface';
 
 /**
  * GitlabIssueEvent dto
@@ -8,4 +8,5 @@ export interface GitlabIssueEvent {
   event_type: string;
   object_attributes: GitlabIssue;
   project: GitlabProject;
+  user: GitlabUser;
 }

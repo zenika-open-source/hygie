@@ -119,46 +119,43 @@ export class RemoteConfigUtils {
         return;
       }
 
-      // TEMPORARY
-      let data: string = '';
-      try {
-        const defaultFilePath: string = this.getGitRawPath(
-          whichGit,
-          projectURL,
-          `.git-webhooks/${filename}`,
-          defaultBranch,
-        );
-        data = await httpService
-          .get(defaultFilePath)
-          .toPromise()
-          .then(response => response.data)
-          .catch(error => {
-            throw new Error(error);
-          });
-      } catch (e) {
-        data = '';
-      }
+      const defaultFilePath: string = this.getGitRawPath(
+        whichGit,
+        projectURL,
+        `.git-webhooks/${filename}`,
+        defaultBranch,
+      );
 
       // Download file
       await httpService
         .get(rulesFilePath)
         .pipe(
-          catchError(err => {
+          catchError(() => {
             if (filename === Constants.rulesExtension) {
-              if (defaultBranch !== branch && data !== '') {
-                return of({ data });
-              }
+              const getDefaultBranchConfigFile =
+                defaultBranch !== branch
+                  ? httpService.get(defaultFilePath)
+                  : throwError('');
 
-              logger.warn(
-                `No ${
-                  Constants.rulesExtension
-                } file founded. Using the default one.`,
-                { project: projectURL, location: 'downloadRulesFile' },
+              return getDefaultBranchConfigFile.pipe(
+                catchError(() => {
+                  logger.warn(
+                    `No ${
+                      Constants.rulesExtension
+                    } file founded. Using the default one.`,
+                    { project: projectURL, location: 'downloadRulesFile' },
+                  );
+
+                  return of({
+                    data: fs.readFileSync(
+                      path.join(
+                        __dirname,
+                        `../rules/${Constants.rulesExtension}`,
+                      ),
+                    ),
+                  });
+                }),
               );
-              data = fs.readFileSync(
-                path.join(__dirname, `../rules/${Constants.rulesExtension}`),
-              );
-              return of({ data });
             } else {
               return throwError(`${rulesFilePath} do not exist!`);
             }

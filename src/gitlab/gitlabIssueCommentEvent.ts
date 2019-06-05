@@ -1,4 +1,9 @@
-import { GitlabIssue, GitlabProject, GitlabComment } from './gitlab.interface';
+import {
+  GitlabIssue,
+  GitlabProject,
+  GitlabComment,
+  GitlabUser,
+} from './gitlab.interface';
 
 /**
  * GitlabIssueCommentEvent dto
@@ -9,4 +14,5 @@ export interface GitlabIssueCommentEvent {
   issue: GitlabIssue;
   project: GitlabProject;
   object_attributes: GitlabComment;
+  user: GitlabUser;
 }

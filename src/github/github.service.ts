@@ -434,52 +434,6 @@ export class GithubService implements GitServiceInterface {
       .subscribe(null, err => logger.error(err));
   }
 
-  async getContent(
-    gitApiInfos: GitApiInfos,
-    folder: string,
-  ): Promise<GitContent[]> {
-    return await this.httpService
-      .get(
-        `${this.urlApi}/repos/${
-          gitApiInfos.repositoryFullName
-        }/contents/${folder}`,
-        this.configGitHub,
-      )
-      .toPromise()
-      .then(response => {
-        return response.data.map(o => {
-          const { type, mode } = Utils.getTypeAndMode(o.type);
-          return {
-            path: o.path,
-            type,
-            mode,
-            sha: o.sha,
-          };
-        });
-      })
-      .catch(err => logger.error(err, { location: 'getContent' }));
-  }
-
-  async createTree(
-    gitApiInfos: GitApiInfos,
-    content: GitContent[],
-  ): Promise<string> {
-    const data: any = {
-      tree: content,
-    };
-    return await this.httpService
-      .post(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/trees`,
-        data,
-        this.configGitHub,
-      )
-      .toPromise()
-      .then(response => {
-        return response.data.tree[0].sha;
-      })
-      .catch(err => logger.error(err, { location: 'createTree' }));
-  }
-
   async getTree(
     gitApiInfos: GitApiInfos,
     directoryPath: string,

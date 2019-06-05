@@ -124,6 +124,8 @@ export class Utils {
         return { type: 'tree', mode: '040000' };
       case 'file':
         return { type: 'blob', mode: '100644' };
+      default:
+        return {};
     }
   }
 

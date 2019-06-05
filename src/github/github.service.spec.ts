@@ -25,6 +25,9 @@ import { Observable, of } from 'rxjs';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitRelease } from '../git/gitRelease';
+import { GitCommit } from '../git/gitCommit';
+import { GitRef } from '../git/gitRef';
+import { GitTag } from '../git/gitTag';
 
 describe('Github Service', () => {
   let app: TestingModule;
@@ -428,6 +431,141 @@ describe('Github Service', () => {
         body: 'this is the first release',
         tag_name: 'v0.0.1',
         name: 'v0.0.1',
+      };
+
+      expect(httpService.post).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
+    });
+  });
+
+  describe('getTree', () => {
+    it('should emit a GET request with specific params', () => {
+      httpService.get = jest.fn().mockImplementationOnce(() => {
+        return of({
+          data: [{ name: 'path', sha: 'sha' }],
+        });
+      });
+      githubService.getTree(gitApiInfos, 'your/folder/path');
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/contents/your/folder`;
+
+      expect(httpService.get).toBeCalledWith(expectedUrl, expectedConfig);
+    });
+  });
+
+  describe('getLastCommit', () => {
+    it('should emit a GET request with specific params', async () => {
+      httpService.get = jest.fn().mockImplementationOnce((...args) => {
+        return of({ data: { object: { sha: '0123456789abcdef' } } });
+      });
+
+      await githubService.getLastCommit(gitApiInfos, 'develop');
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/refs/heads/develop`;
+
+      expect(httpService.get).toBeCalledWith(expectedUrl, expectedConfig);
+    });
+  });
+  describe('createCommit', () => {
+    it('should emit a POST request with specific params', () => {
+      const gitCommit = new GitCommit();
+      gitCommit.message = 'commit message';
+      gitCommit.parents = ['1'];
+      gitCommit.tree = 'treesha';
+
+      httpService.post = jest.fn().mockImplementationOnce((...args) => {
+        return new Observable(observer => observer.next({ data: [] }));
+      });
+
+      githubService.createCommit(gitApiInfos, gitCommit);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/commits`;
+
+      const expectedData = {
+        message: 'commit message',
+        parents: ['1'],
+        tree: 'treesha',
+      };
+
+      expect(httpService.post).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
+    });
+  });
+
+  describe('updateRef', () => {
+    it('should emit a PATCH request with specific params', () => {
+      const gitRef = new GitRef();
+      gitRef.refName = 'refs/heads/develop';
+      gitRef.sha = 'sha';
+      githubService.updateRef(gitApiInfos, gitRef);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/refs/heads/develop`;
+
+      const expectedData = {
+        sha: 'sha',
+      };
+
+      expect(httpService.patch).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
+    });
+  });
+
+  describe('createRef', () => {
+    it('should emit a POST request with specific params', () => {
+      const gitRef = new GitRef();
+      gitRef.refName = 'refs/heads/develop';
+      gitRef.sha = 'sha';
+
+      httpService.post = jest.fn().mockImplementationOnce((...args) => {
+        return new Observable(observer => observer.next({ data: [] }));
+      });
+
+      githubService.createRef(gitApiInfos, gitRef);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/refs`;
+
+      const expectedData = {
+        sha: 'sha',
+        ref: 'refs/heads/develop',
+      };
+
+      expect(httpService.post).toBeCalledWith(
+        expectedUrl,
+        expectedData,
+        expectedConfig,
+      );
+    });
+  });
+  describe('createTag', () => {
+    it('should emit a POST request with specific params', () => {
+      httpService.post = jest.fn().mockImplementationOnce((...args) => {
+        return of({ data: { sha: 'sha' } });
+      });
+
+      const gitTag = new GitTag();
+      gitTag.sha = '1';
+      gitTag.tag = 'v0.0.1';
+      gitTag.type = 'commit';
+      gitTag.message = 'new tag';
+
+      githubService.createTag(gitApiInfos, gitTag);
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/tags`;
+
+      const expectedData = {
+        tag: gitTag.tag,
+        message: gitTag.message,
+        object: gitTag.sha,
+        type: gitTag.type,
       };
 
       expect(httpService.post).toBeCalledWith(

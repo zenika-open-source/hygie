@@ -168,6 +168,21 @@ describe('Utils', () => {
     });
   });
 
+  describe('getTypeAndMode', () => {
+    it('shoud return tree', () => {
+      const result = Utils.getTypeAndMode('dir');
+      expect(result).toEqual({ type: 'tree', mode: '040000' });
+    });
+    it('shoud return blob', () => {
+      const result = Utils.getTypeAndMode('file');
+      expect(result).toEqual({ type: 'blob', mode: '100644' });
+    });
+    it('shoud return nothing', () => {
+      const result = Utils.getTypeAndMode('');
+      expect(result).toEqual({});
+    });
+  });
+
   // tslint:disable:max-line-length
   describe('parseRuleFile', () => {
     it('shoud return a YAML parsed rules object', async () => {

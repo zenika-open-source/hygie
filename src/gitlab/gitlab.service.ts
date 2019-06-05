@@ -527,30 +527,6 @@ export class GitlabService implements GitServiceInterface {
       .subscribe(null, err => logger.error(err, { location: 'createTag' }));
   }
 
-  async getTree(
-    gitApiInfos: GitApiInfos,
-    directoryPath: string,
-  ): Promise<string> {
-    const configGitLab: any = {
-      headers: {
-        'PRIVATE-TOKEN': this.token,
-      },
-      params: {},
-    };
-    const { base, name } = Utils.splitDirectoryPath(directoryPath);
-    configGitLab.params.path = base;
-    return await this.httpService
-      .get(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/repository/tree`,
-        configGitLab,
-      )
-      .toPromise()
-      .then(response => {
-        return response.data.find(e => e.name === name).id;
-      })
-      .catch(err => logger.error(err, { location: 'getTree' }));
-  }
-
   async getLastCommit(
     gitApiInfos: GitApiInfos,
     branch: string = 'master',

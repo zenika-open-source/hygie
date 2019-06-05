@@ -1,4 +1,9 @@
-import { GitlabProject, GitlabComment, GitlabPR } from './gitlab.interface';
+import {
+  GitlabProject,
+  GitlabComment,
+  GitlabPR,
+  GitlabUser,
+} from './gitlab.interface';
 
 /**
  * GitlabPRCommentEvent dto
@@ -9,4 +14,5 @@ export interface GitlabPRCommentEvent {
   merge_request: GitlabPR;
   project: GitlabProject;
   object_attributes: GitlabComment;
+  user: GitlabUser;
 }
