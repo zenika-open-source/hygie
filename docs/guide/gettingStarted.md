@@ -149,7 +149,7 @@ The `SendEmailRunnable` makes use of Google API to send mails.
 
 If you're using **Git Webhooks** through our API, you do not have any configuration to do.
 ::: warning
-But be aware, emails will be sent as **gitwebhooks@zenika.com**.
+But be aware, emails will be sent as **dx.developer.experience@gmail.com**.
 :::
 
 ### In your own server
