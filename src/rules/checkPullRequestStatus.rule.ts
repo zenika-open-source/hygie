@@ -3,9 +3,12 @@ import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
+import { UsersOptions } from './common.interface';
+import { Utils } from './utils';
 
 interface CheckPullRequestStatusOptions {
   status: string;
+  users: UsersOptions;
 }
 
 /**
@@ -34,6 +37,12 @@ export class CheckPullRequestStatusRule extends Rule {
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const gitEvent = this.getEvent(webhook.gitEvent);
+
+    // First, check if rule need to be processed
+    if (!Utils.checkUser(webhook, ruleConfig.options.users)) {
+      return null;
+    }
+
     ruleResult.validated =
       gitEvent === ruleConfig.options.status.toLocaleLowerCase() ? true : false;
 

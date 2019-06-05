@@ -5,7 +5,6 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { CommitMatches } from './commitMessage.rule';
 import { HttpService } from '@nestjs/common';
-import { logger } from '../logger/logger.service';
 import { Utils } from './utils';
 
 export enum CoverageProvider {

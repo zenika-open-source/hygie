@@ -3,9 +3,12 @@ import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
+import { UsersOptions } from './common.interface';
+import { Utils } from './utils';
 
 interface IssueTitleOptions {
   regexp: string;
+  users?: UsersOptions;
 }
 
 /**
@@ -25,6 +28,12 @@ export class IssueTitleRule extends Rule {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const titleIssue = webhook.getIssueTitle();
     const issueRegExp = RegExp(ruleConfig.options.regexp);
+
+    // First, check if rule need to be processed
+    if (!Utils.checkUser(webhook, ruleConfig.options.users)) {
+      return null;
+    }
+
     ruleResult.validated = issueRegExp.test(titleIssue);
 
     ruleResult.data = {

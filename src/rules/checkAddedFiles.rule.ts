@@ -4,9 +4,12 @@ import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook, WebhookCommit } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import 'array-flat-polyfill';
+import { UsersOptions } from './common.interface';
+import { Utils } from './utils';
 
 interface CheckAddedFilesOptions {
   regexp: string;
+  users?: UsersOptions;
 }
 
 /**
@@ -26,6 +29,11 @@ export class CheckAddedFilesRule extends Rule {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const commits: WebhookCommit[] = webhook.getAllCommits();
     const addedRegExp = RegExp(ruleConfig.options.regexp);
+
+    // First, check if rule need to be processed
+    if (!Utils.checkUser(webhook, ruleConfig.options.users)) {
+      return null;
+    }
 
     const allMatchingAddedFiles: string[] = commits
       .flatMap(c => {

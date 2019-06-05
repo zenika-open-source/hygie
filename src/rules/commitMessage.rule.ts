@@ -3,16 +3,14 @@ import { GitEventEnum, CommitStatusEnum } from '../webhook/utils.enum';
 import { WebhookCommit, Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
 import { RuleDecorator } from './rule.decorator';
+import { BranchesOptions, UsersOptions } from './common.interface';
+import { Utils } from './utils';
 
 interface CommitMessageOptions {
   regexp: string;
+  users: UsersOptions;
   maxLength?: number;
   branches?: BranchesOptions;
-}
-
-interface BranchesOptions {
-  only: string[];
-  ignore: string[];
 }
 
 export class CommitMatches {
@@ -46,6 +44,10 @@ export class CommitMessageRule extends Rule {
     const commitRegExp = RegExp(ruleConfig.options.regexp);
     const branchName = webhook.getBranchName();
 
+    // First, check if rule need to be processed
+    if (!Utils.checkUser(webhook, ruleConfig.options.users)) {
+      return null;
+    }
     // First, check if rule need to be processed
     if (typeof ruleConfig.options.branches !== 'undefined') {
       const ignore: string[] = ruleConfig.options.branches.ignore;

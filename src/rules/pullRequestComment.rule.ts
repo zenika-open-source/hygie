@@ -3,9 +3,12 @@ import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
+import { UsersOptions } from './common.interface';
+import { Utils } from './utils';
 
 interface PullRequestCommentOptions {
   regexp: string;
+  users?: UsersOptions;
 }
 
 /**
@@ -23,6 +26,11 @@ export class PullRequestCommentRule extends Rule {
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+
+    // First, check if rule need to be processed
+    if (!Utils.checkUser(webhook, ruleConfig.options.users)) {
+      return null;
+    }
 
     const commentDescription = webhook.getCommentDescription();
     const commentRegExp = RegExp(ruleConfig.options.regexp);

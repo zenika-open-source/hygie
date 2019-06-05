@@ -141,23 +141,30 @@ export class RulesService {
                   webhook,
                   ruleConfig,
                 );
-                results.push(ruleResult);
 
-                if (rulesOptions.allRuleResultInOne) {
-                  groupResults.push({
-                    name: ruleConfig.name,
-                    ruleResult,
-                  });
-                } else {
-                  this.runnableService.executeRunnableFunctions(ruleResult, g);
-                }
+                // Some rules return `null` when there are enabled but ignored due to interne business rule
+                if (ruleResult !== null) {
+                  results.push(ruleResult);
 
-                if (
-                  !rulesOptions.executeAllRules &&
-                  !rulesOptions.allRuleResultInOne &&
-                  !ruleResult.validated
-                ) {
-                  throw BreakException;
+                  if (rulesOptions.allRuleResultInOne) {
+                    groupResults.push({
+                      name: ruleConfig.name,
+                      ruleResult,
+                    });
+                  } else {
+                    this.runnableService.executeRunnableFunctions(
+                      ruleResult,
+                      g,
+                    );
+                  }
+
+                  if (
+                    !rulesOptions.executeAllRules &&
+                    !rulesOptions.allRuleResultInOne &&
+                    !ruleResult.validated
+                  ) {
+                    throw BreakException;
+                  }
                 }
               }
             }
