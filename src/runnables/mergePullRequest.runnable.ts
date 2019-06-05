@@ -51,7 +51,7 @@ export class MergePullRequestRunnable extends Runnable {
         gitMergePRInfos.sha = render(args.sha, ruleResult);
       }
       if (typeof args.method !== 'undefined') {
-        switch (args.method.toLocaleLowerCase()) {
+        switch (render(args.method.toLocaleLowerCase(), ruleResult)) {
           case 'squash':
             gitMergePRInfos.method = PRMethodsEnum.Squash;
             break;

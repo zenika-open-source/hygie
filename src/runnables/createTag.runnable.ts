@@ -62,7 +62,7 @@ export class CreateTagRunnable extends Runnable {
 
     const gitTag = new GitTag();
     if (typeof args.message !== 'undefined') {
-      gitTag.message = args.message;
+      gitTag.message = render(args.message, ruleResult);
     } else {
       gitTag.message = 'version ' + tag;
     }

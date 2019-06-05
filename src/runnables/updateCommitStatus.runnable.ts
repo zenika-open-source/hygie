@@ -8,6 +8,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { RunnableDecorator } from './runnable.decorator';
 import { Utils } from '../utils/utils';
+import { render } from 'mustache';
 
 interface UpdateCommitStatusArgs {
   successTargetUrl: string;
@@ -41,13 +42,19 @@ export class UpdateCommitStatusRunnable extends Runnable {
       gitCommitStatusInfos.commitSha = c.sha;
       gitCommitStatusInfos.commitStatus = c.status;
 
-      gitCommitStatusInfos.descriptionMessage = c.success
-        ? Utils.getStringValue(args.successDescriptionMessage)
-        : Utils.getStringValue(args.failDescriptionMessage);
+      gitCommitStatusInfos.descriptionMessage = render(
+        c.success
+          ? Utils.getStringValue(args.successDescriptionMessage)
+          : Utils.getStringValue(args.failDescriptionMessage),
+        ruleResult,
+      );
 
-      gitCommitStatusInfos.targetUrl = c.success
-        ? Utils.getStringValue(args.successTargetUrl)
-        : Utils.getStringValue(args.failTargetUrl);
+      gitCommitStatusInfos.targetUrl = render(
+        c.success
+          ? Utils.getStringValue(args.successTargetUrl)
+          : Utils.getStringValue(args.failTargetUrl),
+        ruleResult,
+      );
 
       if (gitApiInfos.git === GitTypeEnum.Github) {
         this.githubService.updateCommitStatus(

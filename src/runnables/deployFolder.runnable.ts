@@ -5,11 +5,9 @@ import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { GithubService } from '../github/github.service';
-import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommit } from '../git/gitCommit';
 import { GitRef } from '../git/gitRef';
-import { logger } from '../logger/logger.service';
 
 interface DeployFolderArgs {
   folder: string;
@@ -33,10 +31,17 @@ export class DeployFolderRunnable extends Runnable {
   ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
-    if (gitApiInfos.git === GitTypeEnum.Github) {
-      const folder = args.folder;
-      const branch = args.branch;
-      const message = args.message || `deploy ${folder} to ${branch}`;
+    if (
+      gitApiInfos.git === GitTypeEnum.Github &&
+      typeof args.folder !== 'undefined' &&
+      typeof args.branch !== 'undefined'
+    ) {
+      const folder = render(args.folder, ruleResult);
+      const branch = render(args.branch, ruleResult);
+      const message =
+        typeof args.message !== 'undefined'
+          ? render(args.message, ruleResult)
+          : `deploy ${folder} to ${branch}`;
 
       const treeSha: string = await this.githubService.getTree(
         gitApiInfos,
