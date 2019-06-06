@@ -65,6 +65,7 @@ describe('RulesService', () => {
         pullRequestDescription: webhook.pullRequest.description,
         commentId: webhook.comment.id,
         commentDescription: webhook.comment.description,
+        matches: null,
       });
     });
 
@@ -75,12 +76,13 @@ describe('RulesService', () => {
         pullRequestComment,
       );
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual({
+      expect(JSON.parse(JSON.stringify(result.data))).toEqual({
         pullRequestTitle: webhook.pullRequest.title,
         pullRequestNumber: webhook.pullRequest.number,
         pullRequestDescription: webhook.pullRequest.description,
         commentId: webhook.comment.id,
         commentDescription: webhook.comment.description,
+        matches: ['@pong'],
       });
     });
   });

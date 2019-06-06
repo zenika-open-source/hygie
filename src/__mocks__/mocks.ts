@@ -50,6 +50,8 @@ export class MockGitlabService {
   getIssues: jest.Mock = jest.fn().mockName('getIssuesGitlab');
   getPullRequests: jest.Mock = jest.fn().mockName('getPullRequestsGitlab');
   createRelease: jest.Mock = jest.fn().mockName('createReleaseGitlab');
+  getLastCommit: jest.Mock = jest.fn().mockName('getLastCommitGitlab');
+  createTag: jest.Mock = jest.fn().mockName('createTagGitlab');
 }
 
 export class MockGithubService {
@@ -77,6 +79,28 @@ export class MockGithubService {
   getIssues: jest.Mock = jest.fn().mockName('getIssuesGithub');
   getPullRequests: jest.Mock = jest.fn().mockName('getPullRequestsGithub');
   createRelease: jest.Mock = jest.fn().mockName('createReleaseGithub');
+
+  getTree: jest.Mock = jest
+    .fn()
+    .mockName('getTreeGithub')
+    .mockResolvedValue('tree');
+
+  getLastCommit: jest.Mock = jest
+    .fn()
+    .mockName('getLastCommitGithub')
+    .mockResolvedValue('commit');
+  createCommit: jest.Mock = jest
+    .fn()
+    .mockName('createCommitGithub')
+    .mockResolvedValue('createdCommit');
+
+  updateRef: jest.Mock = jest.fn().mockName('updateRefGithub');
+  createTag: jest.Mock = jest
+    .fn()
+    .mockName('createTagGithub')
+    .mockResolvedValue('tag');
+
+  createRef: jest.Mock = jest.fn().mockName('createRefGithub');
 }
 
 export class MockSendEmailRunnable {

@@ -406,6 +406,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://gitlab.com/bastien.terrier/test_webhook.git',
       );
+      expect(webhook.user.login).toBe('bastien.terrier');
     });
 
     it('should create a Webhook object according to the Github Push Hook', () => {
@@ -429,6 +430,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://github.com/bastienterrier/test-webhook.git',
       );
+      expect(webhook.user.login).toBe('bastienterrier');
     });
   });
 
@@ -677,6 +679,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://gitlab.com/bastien.terrier/test_webhook.git',
       );
+      expect(webhook.user.login).toBe('bastien.terrier');
     });
 
     it('should create a Webhook object according to the Github Branch Hook', () => {
@@ -691,6 +694,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://github.com/bastienterrier/test-webhook.git',
       );
+      expect(webhook.user.login).toBe('bastienterrier');
     });
   });
 
@@ -1053,6 +1057,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://gitlab.com/bastien.terrier/test_webhook.git',
       );
+      expect(webhook.user.login).toBe('bastien.terrier');
     });
 
     it('should create a Webhook object according to the Github Issue Hook', () => {
@@ -1068,6 +1073,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://github.com/bastienterrier/test-webhook.git',
       );
+      expect(webhook.user.login).toBe('bastienterrier');
     });
   });
 
@@ -1896,6 +1902,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://gitlab.com/bastien.terrier/test_webhook.git',
       );
+      expect(webhook.user.login).toBe('bastien.terrier');
     });
 
     it('should create a Webhook object according to the Github PR Hook', () => {
@@ -1914,6 +1921,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://github.com/bastienterrier/test-webhook.git',
       );
+      expect(webhook.user.login).toBe('bastienterrier');
     });
   });
 
@@ -2307,6 +2315,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://gitlab.com/bastien.terrier/test_webhook.git',
       );
+      expect(webhook.user.login).toBe('bastien.terrier');
     });
 
     it('should create a Webhook object according to the Github Issue Comment Hook', () => {
@@ -2324,6 +2333,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://github.com/bastienterrier/test-webhook.git',
       );
+      expect(webhook.user.login).toBe('bastienterrier');
     });
   });
 
@@ -2771,6 +2781,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://gitlab.com/bastien.terrier/test_webhook.git',
       );
+      expect(webhook.user.login).toBe('bastien.terrier');
     });
 
     it('should create a Webhook object according to the Github PR Comment Hook', () => {
@@ -2789,6 +2800,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://github.com/bastienterrier/test-webhook.git',
       );
+      expect(webhook.user.login).toBe('bastienterrier');
     });
   });
 
@@ -3577,6 +3589,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://gitlab.com/bastien.terrier/test_webhook.git',
       );
+      expect(webhook.user.login).toBe('bastien.terrier');
     });
 
     it('should create a Webhook object according to the Github PR Closed Hook', () => {
@@ -3595,6 +3608,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://github.com/bastienterrier/test-webhook.git',
       );
+      expect(webhook.user.login).toBe('bastienterrier');
     });
   });
 
@@ -4383,6 +4397,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://gitlab.com/bastien.terrier/test_webhook.git',
       );
+      expect(webhook.user.login).toBe('bastien.terrier');
     });
 
     it('should create a Webhook object according to the Github PR Reopened Hook', () => {
@@ -4401,6 +4416,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://github.com/bastienterrier/test-webhook.git',
       );
+      expect(webhook.user.login).toBe('bastienterrier');
     });
   });
 
@@ -5216,6 +5232,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://gitlab.com/bastien.terrier/test_webhook.git',
       );
+      expect(webhook.user.login).toBe('bastien.terrier');
     });
 
     it('should create a Webhook object according to the Github PR Merged Hook', () => {
@@ -5234,6 +5251,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://github.com/bastienterrier/test-webhook.git',
       );
+      expect(webhook.user.login).toBe('bastienterrier');
     });
   });
 
@@ -5427,6 +5445,9 @@ describe('Utils Enum', () => {
     it('isGithubNewRepoEvent should equal "true"', () => {
       expect(utils.isGithubNewRepoEvent(githubNewRepoEvent)).toBe(true);
     });
+    it('isGitlabClosedPREvent should equal "false"', () => {
+      expect(utils.isGitlabClosedPREvent(githubNewRepoEvent)).toBe(false);
+    });
 
     it('should create a Webhook object according to the Github PR Merged Hook', () => {
       webhook = new Webhook(gitlabService, githubService);
@@ -5443,6 +5464,7 @@ describe('Utils Enum', () => {
       expect(webhook.repository.cloneURL).toBe(
         'https://github.com/DX-DeveloperExperience/test-repository.git',
       );
+      expect(webhook.user.login).toBe('bastienterrier');
     });
   });
 });

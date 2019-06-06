@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 
 @Controller()
-export class AppplicationController {
+export class ApplicationController {
   @Get('/')
   welcome(): string {
     return (

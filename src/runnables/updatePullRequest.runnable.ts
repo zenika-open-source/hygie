@@ -8,6 +8,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitPRInfos } from '../git/gitPRInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { IssuePRStateEnum } from '../git/gitIssueInfos';
+import { render } from 'mustache';
 
 interface UpdatePullRequestArgs {
   target: string;
@@ -51,20 +52,20 @@ export class UpdatePullRequestRunnable extends Runnable {
 
       if (typeof args.state !== 'undefined') {
         gitPRInfos.state =
-          args.state.toLowerCase() === 'open'
+          render(args.state, ruleResult).toLowerCase() === 'open'
             ? IssuePRStateEnum.Open
-            : args.state.toLowerCase() === 'close'
+            : render(args.state, ruleResult).toLowerCase() === 'close'
             ? IssuePRStateEnum.Close
             : IssuePRStateEnum.Undefined;
       }
       if (typeof args.title !== 'undefined') {
-        gitPRInfos.title = args.title;
+        gitPRInfos.title = render(args.title, ruleResult);
       }
       if (typeof args.target !== 'undefined') {
-        gitPRInfos.target = args.target;
+        gitPRInfos.target = render(args.target, ruleResult);
       }
       if (typeof args.description !== 'undefined') {
-        gitPRInfos.description = args.description;
+        gitPRInfos.description = render(args.description, ruleResult);
       }
 
       if (gitApiInfos.git === GitTypeEnum.Github) {

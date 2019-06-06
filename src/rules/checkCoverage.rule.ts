@@ -5,7 +5,6 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { CommitMatches } from './commitMessage.rule';
 import { HttpService } from '@nestjs/common';
-import { logger } from '../logger/logger.service';
 import { Utils } from './utils';
 
 export enum CoverageProvider {
@@ -19,13 +18,13 @@ interface CheckCoverageOptions {
 }
 
 /**
- * `CheckCoverageRule` DESCRIPTION.
+ * `CheckCoverageRule` checks if coverage fulfill the options.
  * @return return a `RuleResult` object
  */
 @RuleDecorator('checkCoverage')
 export class CheckCoverageRule extends Rule {
   options: CheckCoverageOptions;
-  events = [GitEventEnum.Push];
+  events = [GitEventEnum.Cron];
 
   constructor(private readonly httpService: HttpService) {
     super();

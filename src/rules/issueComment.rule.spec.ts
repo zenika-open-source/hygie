@@ -63,6 +63,7 @@ describe('RulesService', () => {
         issueNumber: webhook.issue.number,
         commentId: webhook.comment.id,
         commentDescription: webhook.comment.description,
+        matches: null,
       });
     });
 
@@ -73,11 +74,12 @@ describe('RulesService', () => {
         issueComment,
       );
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual({
+      expect(JSON.parse(JSON.stringify(result.data))).toEqual({
         issueTitle: webhook.issue.title,
         issueNumber: webhook.issue.number,
         commentId: webhook.comment.id,
         commentDescription: webhook.comment.description,
+        matches: ['@ping'],
       });
     });
   });

@@ -35,16 +35,20 @@ export class CreateReleaseRunnable extends Runnable {
   ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const gitRelease: GitRelease = new GitRelease();
-    gitRelease.tag = args.tag;
+
+    if (typeof args.tag === 'undefined') {
+      return;
+    }
+    gitRelease.tag = render(args.tag, ruleResult);
 
     if (typeof args.name !== 'undefined') {
-      gitRelease.name = args.name;
+      gitRelease.name = render(args.name, ruleResult);
     }
     if (typeof args.description !== 'undefined') {
-      gitRelease.description = args.description;
+      gitRelease.description = render(args.description, ruleResult);
     }
     if (typeof args.ref !== 'undefined') {
-      gitRelease.ref = args.ref;
+      gitRelease.ref = render(args.ref, ruleResult);
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {

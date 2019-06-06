@@ -27,6 +27,10 @@ import { Utils } from '../utils/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitEnv } from '../git/gitEnv.interface';
 import { GitRelease } from '../git/gitRelease';
+import { GitContent } from '../git/gitContent';
+import { GitCommit } from '../git/gitCommit';
+import { GitRef } from '../git/gitRef';
+import { GitTag } from '../git/gitTag';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -428,5 +432,107 @@ export class GithubService implements GitServiceInterface {
         this.configGitHub,
       )
       .subscribe(null, err => logger.error(err));
+  }
+
+  async getTree(
+    gitApiInfos: GitApiInfos,
+    directoryPath: string,
+    branch: string = 'master',
+  ): Promise<string> {
+    const { base, name } = Utils.splitDirectoryPath(directoryPath);
+    const customGithubConfig = JSON.parse(JSON.stringify(this.configGitHub));
+    customGithubConfig.params = {
+      ref: branch,
+    };
+    return await this.httpService
+      .get(
+        `${this.urlApi}/repos/${
+          gitApiInfos.repositoryFullName
+        }/contents/${base}`,
+        customGithubConfig,
+      )
+      .toPromise()
+      .then(response => {
+        return response.data.find(e => e.name === name).sha;
+      })
+      .catch(err => logger.error(err, { location: 'getTree' }));
+  }
+
+  async getLastCommit(
+    gitApiInfos: GitApiInfos,
+    branch: string = 'master',
+  ): Promise<string> {
+    return this.httpService
+      .get(
+        `${this.urlApi}/repos/${
+          gitApiInfos.repositoryFullName
+        }/git/refs/heads/${branch}`,
+        this.configGitHub,
+      )
+      .toPromise()
+      .then(response => response.data.object.sha)
+      .catch(err => logger.error(err, { location: 'updateRef' }));
+  }
+
+  async createCommit(
+    gitApiInfos: GitApiInfos,
+    gitCommit: GitCommit,
+  ): Promise<string> {
+    return await this.httpService
+      .post(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/commits`,
+        gitCommit,
+        this.configGitHub,
+      )
+      .toPromise()
+      .then(response => {
+        return response.data.sha;
+      })
+      .catch(err => logger.error(err, { location: 'createCommit' }));
+  }
+
+  updateRef(gitApiInfos: GitApiInfos, gitRef: GitRef): void {
+    this.httpService
+      .patch(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/${
+          gitRef.refName
+        }`,
+        {
+          sha: gitRef.sha,
+          force: gitRef.force,
+        },
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err, { location: 'updateRef' }));
+  }
+
+  createRef(gitApiInfos: GitApiInfos, gitRef: GitRef): void {
+    this.httpService
+      .post(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/refs`,
+        {
+          sha: gitRef.sha,
+          ref: gitRef.refName,
+        },
+        this.configGitHub,
+      )
+      .subscribe(null, err => logger.error(err, { location: 'createRef' }));
+  }
+
+  async createTag(gitApiInfos: GitApiInfos, gitTag: GitTag): Promise<string> {
+    return await this.httpService
+      .post(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/tags`,
+        {
+          tag: gitTag.tag,
+          message: gitTag.message,
+          object: gitTag.sha,
+          type: gitTag.type,
+        },
+        this.configGitHub,
+      )
+      .toPromise()
+      .then(response => response.data.sha)
+      .catch(err => logger.error(err, { location: 'createTag' }));
   }
 }

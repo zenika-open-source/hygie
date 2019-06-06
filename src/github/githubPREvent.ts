@@ -1,4 +1,8 @@
-import { GithubRepository, GithubPullRequest } from './github.interface';
+import {
+  GithubRepository,
+  GithubPullRequest,
+  GithubSender,
+} from './github.interface';
 
 /**
  * GithubNewPREvent dto
@@ -8,4 +12,5 @@ export interface GithubPREvent {
   pull_request: GithubPullRequest;
   repository: GithubRepository;
   number: number;
+  sender: GithubSender;
 }

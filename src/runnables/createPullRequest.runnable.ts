@@ -37,6 +37,10 @@ export class CreatePullRequestRunnable extends Runnable {
 
     const gitCreatePRInfos: GitPRInfos = new GitPRInfos();
 
+    if (typeof args.title === 'undefined') {
+      return;
+    }
+
     // Defaults
     if (typeof args.description === 'undefined') {
       args.description = '';

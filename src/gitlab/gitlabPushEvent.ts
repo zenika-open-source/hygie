@@ -10,4 +10,5 @@ export interface GitlabPushEvent {
   ref: string;
   object_kind: string;
   project: GitlabProject;
+  user_username: string;
 }

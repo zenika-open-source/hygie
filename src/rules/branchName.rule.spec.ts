@@ -46,8 +46,12 @@ describe('RulesService', () => {
 
       const result: RuleResult = await branchName.validate(webhook, branchName);
       expect(result.validated).toBe(true);
-      expect((result.data as any).branch).toEqual('features/tdd');
-      expect((result.data as any).branchSplit).toEqual(['features', 'tdd']);
+
+      expect(JSON.parse(JSON.stringify(result.data))).toEqual({
+        branch: 'features/tdd',
+        branchSplit: ['features', 'tdd'],
+        matches: ['features/tdd', 'features'],
+      });
     });
   });
   describe('branchName Rule', () => {
@@ -64,6 +68,7 @@ describe('RulesService', () => {
       expect(result.validated).toBe(false);
       expect((result.data as any).branch).toEqual('testing/tdd');
       expect((result.data as any).branchSplit).toEqual(['testing', 'tdd']);
+      expect((result.data as any).matches).toEqual(null);
     });
   });
 });

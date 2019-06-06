@@ -48,7 +48,8 @@ export class WebhookController {
     } else {
       const getRemoteRules: string = process.env.ALLOW_REMOTE_CONFIG;
 
-      let rulesBranch: string = webhook.getDefaultBranchName();
+      const defaultBranch: string = webhook.getDefaultBranchName();
+      let rulesBranch: string = defaultBranch;
       if (GitEventEnum.Push === webhook.getGitEvent()) {
         rulesBranch = webhook.getBranchName();
       } else if (
@@ -73,6 +74,7 @@ export class WebhookController {
                 webhook.getCloneURL(),
                 Constants.rulesExtension,
                 rulesBranch,
+                defaultBranch,
               );
       } catch (e) {
         logger.error(e, {
@@ -100,7 +102,7 @@ export class WebhookController {
       }
 
       logger.info(
-        `\n\n=== processWebhook - ${webhook.getGitType()} - ${webhook.getGitEvent()} ===\n`,
+        `=== ${webhook.getGitType()} - ${webhook.getGitEvent()} ===`,
         { project: webhook.getCloneURL(), location: 'processWebhook' },
       );
 

@@ -44,3 +44,10 @@ export interface GitlabComment {
   note: string;
   description: string;
 }
+
+/**
+ * GitlabUser dto
+ */
+export interface GitlabUser {
+  username: string;
+}

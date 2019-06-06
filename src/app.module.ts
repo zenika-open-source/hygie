@@ -7,11 +7,11 @@ import { CronController } from './controllers/cron.controller';
 import { DocumentationController } from './controllers/documentation.controller';
 import { RegisterController } from './controllers/register.controller';
 import { WebhookController } from './controllers/webhook.controller';
-import { AppplicationController } from './controllers/application.controller';
+import { ApplicationController } from './controllers/application.controller';
 @Module({
   imports: [HttpModule, RulesModule.forRoot(), RunnableModule, GitModule],
   controllers: [
-    AppplicationController,
+    ApplicationController,
     CronController,
     DocumentationController,
     RegisterController,

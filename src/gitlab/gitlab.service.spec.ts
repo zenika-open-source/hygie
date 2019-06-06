@@ -25,6 +25,7 @@ import { GitlabService } from './gitlab.service';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitRelease } from '../git/gitRelease';
+import { GitTag } from '../git/gitTag';
 
 describe('Gitlab Service', () => {
   let app: TestingModule;
@@ -384,6 +385,28 @@ describe('Gitlab Service', () => {
       };
 
       gitlabService.createRelease(gitApiInfos, gitRelease);
+
+      expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+  });
+
+  describe('createTag', () => {
+    it('should emit a POST request with specific params', () => {
+      const gitTag = new GitTag();
+      gitTag.sha = '1';
+      gitTag.tag = 'v0.0.1';
+      gitTag.type = 'commit';
+      gitTag.message = 'new tag';
+
+      const expectedUrl = `${gitlabService.urlApi}/projects/1/repository/tags`;
+
+      expectedConfig.params = {
+        message: 'new tag',
+        ref: '1',
+        tag_name: 'v0.0.1',
+      };
+
+      gitlabService.createTag(gitApiInfos, gitTag);
 
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
     });

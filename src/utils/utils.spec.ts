@@ -21,6 +21,45 @@ describe('Utils', () => {
     jest.clearAllMocks();
   });
 
+  describe('transformToArray', () => {
+    it('should return ["a", "b", "c"]', () => {
+      expect(Utils.transformToArray('a,b,c', {})).toEqual(['a', 'b', 'c']);
+    });
+    it('should return ["a", "b", "c"]', () => {
+      expect(Utils.transformToArray(['a', 'b', 'c'], {})).toEqual([
+        'a',
+        'b',
+        'c',
+      ]);
+    });
+    it('should return ["a", "b", "c"]', () => {
+      expect(
+        Utils.transformToArray(
+          '{{data.a}}-{{data.b}}-{{data.c}}',
+          {
+            data: {
+              a: 'a',
+              b: 'b',
+              c: 'c',
+            },
+          },
+          '-',
+        ),
+      ).toEqual(['a', 'b', 'c']);
+    });
+    it('should return ["a", "b", "c"]', () => {
+      expect(
+        Utils.transformToArray(['{{data.a}}', '{{data.b}}', '{{data.c}}'], {
+          data: {
+            a: 'a',
+            b: 'b',
+            c: 'c',
+          },
+        }),
+      ).toEqual(['a', 'b', 'c']);
+    });
+  });
+
   describe('getGitEnv', () => {
     it('should return a GitEnv object', async () => {
       dataAccessService.readEnv = jest.fn().mockReturnValue({
@@ -150,6 +189,36 @@ describe('Utils', () => {
       const id1 = Utils.generateUniqueId();
       const id2 = Utils.generateUniqueId();
       expect(id1).not.toBe(id2);
+    });
+  });
+
+  describe('splitDirectoryPath', () => {
+    it('shoud return two paths', () => {
+      const { base, name } = Utils.splitDirectoryPath(
+        'docs/getting_started/steps',
+      );
+      expect(base).toBe('docs/getting_started');
+      expect(name).toBe('steps');
+    });
+    it('shoud return two paths', () => {
+      const { base, name } = Utils.splitDirectoryPath('docs');
+      expect(base).toBe('');
+      expect(name).toBe('docs');
+    });
+  });
+
+  describe('getTypeAndMode', () => {
+    it('shoud return tree', () => {
+      const result = Utils.getTypeAndMode('dir');
+      expect(result).toEqual({ type: 'tree', mode: '040000' });
+    });
+    it('shoud return blob', () => {
+      const result = Utils.getTypeAndMode('file');
+      expect(result).toEqual({ type: 'blob', mode: '100644' });
+    });
+    it('shoud return nothing', () => {
+      const result = Utils.getTypeAndMode('');
+      expect(result).toEqual({});
     });
   });
 

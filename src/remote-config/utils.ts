@@ -82,6 +82,7 @@ export class RemoteConfigUtils {
     projectURL: string,
     filename: string,
     branch: string = 'master',
+    defaultBranch?: string,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const whichGit: GitTypeEnum = this.getGitType(projectURL);
@@ -118,23 +119,43 @@ export class RemoteConfigUtils {
         return;
       }
 
+      const defaultFilePath: string = this.getGitRawPath(
+        whichGit,
+        projectURL,
+        `.git-webhooks/${filename}`,
+        defaultBranch,
+      );
+
       // Download file
       await httpService
         .get(rulesFilePath)
         .pipe(
-          catchError(err => {
+          catchError(() => {
             if (filename === Constants.rulesExtension) {
-              logger.warn(
-                `No ${
-                  Constants.rulesExtension
-                } file founded. Using the default one.`,
-                { project: projectURL, location: 'downloadRulesFile' },
+              const getDefaultBranchConfigFile =
+                defaultBranch !== branch
+                  ? httpService.get(defaultFilePath)
+                  : throwError('');
+
+              return getDefaultBranchConfigFile.pipe(
+                catchError(() => {
+                  logger.warn(
+                    `No ${
+                      Constants.rulesExtension
+                    } file founded. Using the default one.`,
+                    { project: projectURL, location: 'downloadRulesFile' },
+                  );
+
+                  return of({
+                    data: fs.readFileSync(
+                      path.join(
+                        __dirname,
+                        `../rules/${Constants.rulesExtension}`,
+                      ),
+                    ),
+                  });
+                }),
               );
-              return of({
-                data: fs.readFileSync(
-                  path.join(__dirname, `../rules/${Constants.rulesExtension}`),
-                ),
-              });
             } else {
               return throwError(`${rulesFilePath} do not exist!`);
             }

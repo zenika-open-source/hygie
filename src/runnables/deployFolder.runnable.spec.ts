@@ -6,15 +6,17 @@ import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
-import { CreateReleaseRunnable } from './createRelease.runnable';
+import { DeployFolderRunnable } from './deployFolder.runnable';
 
-describe('createRelease Runnable', () => {
+describe('DeployFolderRunnable', () => {
   let app: TestingModule;
 
   let githubService: GithubService;
   let gitlabService: GitlabService;
 
-  let createReleaseRunnable: CreateReleaseRunnable;
+  let myGitApiInfos;
+
+  let deployFolderRunnable: DeployFolderRunnable;
 
   let args: any;
   let ruleResult: RuleResult;
@@ -22,7 +24,7 @@ describe('createRelease Runnable', () => {
   beforeAll(async () => {
     app = await Test.createTestingModule({
       providers: [
-        CreateReleaseRunnable,
+        DeployFolderRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
       ],
@@ -30,18 +32,18 @@ describe('createRelease Runnable', () => {
 
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
-    createReleaseRunnable = app.get(CreateReleaseRunnable);
+    deployFolderRunnable = app.get(DeployFolderRunnable);
 
-    const myGitApiInfos = new GitApiInfos();
+    myGitApiInfos = new GitApiInfos();
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    args = { tag: 'v0.0.1' };
+    args = { folder: 'docs', branch: 'gh-pages' };
 
     ruleResult = new RuleResult(myGitApiInfos);
     ruleResult.validated = false;
     ruleResult.data = {
-      some: 'data',
+      branch: 'develop',
     };
   });
 
@@ -50,28 +52,31 @@ describe('createRelease Runnable', () => {
   });
 
   describe('Run method', () => {
-    it('should not call the createRelease Github nor Gitlab service', () => {
-      createReleaseRunnable.run(CallbackType.Both, ruleResult, args);
-      expect(githubService.createRelease).not.toBeCalled();
-      expect(gitlabService.createRelease).not.toBeCalled();
+    it('should not do anything', async () => {
+      await deployFolderRunnable.run(CallbackType.Both, ruleResult, args);
+      expect(githubService.getTree).not.toBeCalled();
     });
   });
   describe('Run method', () => {
-    it('should call the createRelease Github service', () => {
-      ruleResult.gitApiInfos.git = GitTypeEnum.Github;
+    it('should call Github methods', async () => {
+      myGitApiInfos.git = GitTypeEnum.Github;
+      await deployFolderRunnable.run(CallbackType.Both, ruleResult, args);
+      expect(githubService.getTree).toBeCalledWith(
+        myGitApiInfos,
+        'docs',
+        'develop',
+      );
+      expect(githubService.getLastCommit).toBeCalledWith(
+        myGitApiInfos,
+        'gh-pages',
+      );
+      expect(githubService.createCommit).toBeCalledWith(myGitApiInfos, {
+        message: 'deploy docs to gh-pages',
+        parents: ['commit'],
+        tree: 'tree',
+      });
 
-      createReleaseRunnable.run(CallbackType.Both, ruleResult, args);
-      expect(githubService.createRelease).toBeCalled();
-      expect(gitlabService.createRelease).not.toBeCalled();
-    });
-  });
-  describe('Run method', () => {
-    it('should call the createRelease Gitlab service', () => {
-      ruleResult.gitApiInfos.git = GitTypeEnum.Gitlab;
-
-      createReleaseRunnable.run(CallbackType.Both, ruleResult, args);
-      expect(githubService.createRelease).not.toBeCalled();
-      expect(gitlabService.createRelease).toBeCalled();
+      expect(githubService.updateRef).toBeCalled();
     });
   });
 });

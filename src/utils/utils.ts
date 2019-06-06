@@ -2,8 +2,35 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import 'array-flat-polyfill';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitEnv } from '../git/gitEnv.interface';
+import { render } from 'mustache';
+
+interface SplittedDirectory {
+  base: string;
+  name: string;
+}
 
 export class Utils {
+  /**
+   *
+   * @param input string x-separated or string[]
+   * @param data datasource for templating
+   * @param separator comma by default
+   */
+  static transformToArray(
+    input: string | string[],
+    data: any,
+    separator: string = ',',
+  ): string[] {
+    if (typeof input === 'string') {
+      return render(input, data)
+        .split(separator)
+        .filter(f => f !== '');
+    }
+    return render(input.toString(), data)
+      .split(',') // default toString() method separator
+      .filter(f => f !== '');
+  }
+
   static getObjectValue(obj: object): object {
     return typeof obj === 'undefined' ? {} : obj;
   }
@@ -111,5 +138,26 @@ export class Utils {
         resolve(await jsyaml.safeLoad(fileContent));
       }
     });
+  }
+
+  static getTypeAndMode(str: string): any {
+    switch (str) {
+      case 'dir':
+        return { type: 'tree', mode: '040000' };
+      case 'file':
+        return { type: 'blob', mode: '100644' };
+      default:
+        return {};
+    }
+  }
+
+  static splitDirectoryPath(str: string): SplittedDirectory {
+    const index = str.lastIndexOf('/');
+    const base = str.substring(0, index);
+    const name = str.substring(index + 1);
+    return {
+      base,
+      name,
+    };
   }
 }
