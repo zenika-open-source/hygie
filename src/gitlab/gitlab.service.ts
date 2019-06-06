@@ -28,6 +28,7 @@ import { GitEnv } from '../git/gitEnv.interface';
 import { PreconditionException } from '../exceptions/precondition.exception';
 import { GitRelease } from '../git/gitRelease';
 import { GitTag } from '../git/gitTag';
+import { GitBranchCommit } from '../git/gitBranchSha';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -547,5 +548,31 @@ export class GitlabService implements GitServiceInterface {
       .toPromise()
       .then(response => response.data.commit.id)
       .catch(err => logger.error(err, { location: 'updateRef' }));
+  }
+
+  async getLastBranchesCommitSha(
+    gitApiInfos: GitApiInfos,
+  ): Promise<GitBranchCommit[]> {
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {},
+    };
+    return await this.httpService
+      .get(
+        `${this.urlApi}/projects/${gitApiInfos.projectId}/repository/branches`,
+        configGitLab,
+      )
+      .toPromise()
+      .then(response =>
+        response.data.map(b => {
+          return { commitSha: b.commit.id, branch: b.name };
+        }),
+      )
+      .catch(err => {
+        logger.error(err, { location: 'getLastBranchesCommitSha' });
+        return [];
+      });
   }
 }

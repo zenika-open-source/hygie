@@ -27,10 +27,10 @@ import { Utils } from '../utils/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitEnv } from '../git/gitEnv.interface';
 import { GitRelease } from '../git/gitRelease';
-import { GitContent } from '../git/gitContent';
 import { GitCommit } from '../git/gitCommit';
 import { GitRef } from '../git/gitRef';
 import { GitTag } from '../git/gitTag';
+import { GitBranchCommit } from '../git/gitBranchSha';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -534,5 +534,25 @@ export class GithubService implements GitServiceInterface {
       .toPromise()
       .then(response => response.data.sha)
       .catch(err => logger.error(err, { location: 'createTag' }));
+  }
+
+  async getLastBranchesCommitSha(
+    gitApiInfos: GitApiInfos,
+  ): Promise<GitBranchCommit[]> {
+    return await this.httpService
+      .get(
+        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/branches`,
+        this.configGitHub,
+      )
+      .toPromise()
+      .then(response =>
+        response.data.map(b => {
+          return { commitSha: b.commit.sha, branch: b.name };
+        }),
+      )
+      .catch(err => {
+        logger.error(err, { location: 'getLastBranchesCommitSha' });
+        return [];
+      });
   }
 }
