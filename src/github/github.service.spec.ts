@@ -450,9 +450,12 @@ describe('Github Service', () => {
       });
       githubService.getTree(gitApiInfos, 'your/folder/path');
 
+      const customConfig = JSON.parse(JSON.stringify(expectedConfig));
+      customConfig.params = { ref: 'master' };
+
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/contents/your/folder`;
 
-      expect(httpService.get).toBeCalledWith(expectedUrl, expectedConfig);
+      expect(httpService.get).toBeCalledWith(expectedUrl, customConfig);
     });
   });
 
