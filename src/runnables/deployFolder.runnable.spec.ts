@@ -43,7 +43,7 @@ describe('DeployFolderRunnable', () => {
     ruleResult = new RuleResult(myGitApiInfos);
     ruleResult.validated = false;
     ruleResult.data = {
-      some: 'data',
+      branch: 'develop',
     };
   });
 
@@ -61,7 +61,11 @@ describe('DeployFolderRunnable', () => {
     it('should call Github methods', async () => {
       myGitApiInfos.git = GitTypeEnum.Github;
       await deployFolderRunnable.run(CallbackType.Both, ruleResult, args);
-      expect(githubService.getTree).toBeCalledWith(myGitApiInfos, 'docs');
+      expect(githubService.getTree).toBeCalledWith(
+        myGitApiInfos,
+        'docs',
+        'develop',
+      );
       expect(githubService.getLastCommit).toBeCalledWith(
         myGitApiInfos,
         'gh-pages',
