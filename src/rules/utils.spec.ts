@@ -64,4 +64,57 @@ describe('Rules Utils', () => {
       ).toBe(true);
     });
   });
+  describe('checkBranch', () => {
+    const httpService = new HttpService();
+    const webhook = new Webhook(
+      new GitlabService(httpService),
+      new GithubService(httpService),
+    );
+    webhook.branchName = 'master';
+    webhook.repository.defaultBranchName = 'master';
+    it('should return true', () => {
+      expect(
+        Utils.checkBranch(webhook, {
+          ignore: ['gh-pages'],
+        }),
+      ).toBe(true);
+    });
+    it('should return false', () => {
+      expect(
+        Utils.checkBranch(webhook, {
+          only: ['gh-pages'],
+        }),
+      ).toBe(false);
+    });
+    it('should return true', () => {
+      expect(Utils.checkBranch(webhook, {})).toBe(true);
+    });
+    it('should return true', () => {
+      expect(
+        Utils.checkBranch(webhook, {
+          only: ['$default'],
+        }),
+      ).toBe(true);
+    });
+  });
+
+  describe('replaceDefaultBranch', () => {
+    it('should return ["develop", "master", "gh-pages"]', () => {
+      expect(
+        Utils.replaceDefaultBranch('master', [
+          'develop',
+          '$default',
+          'gh-pages',
+        ]),
+      ).toEqual(['develop', 'master', 'gh-pages']);
+    });
+    it('should return ["master"]', () => {
+      expect(Utils.replaceDefaultBranch('master', ['$default'])).toEqual([
+        'master',
+      ]);
+    });
+    it('should return []', () => {
+      expect(Utils.replaceDefaultBranch('master', [])).toEqual([]);
+    });
+  });
 });

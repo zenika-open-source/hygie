@@ -45,23 +45,11 @@ export class CommitMessageRule extends Rule {
     const branchName = webhook.getBranchName();
 
     // First, check if rule need to be processed
-    if (!Utils.checkUser(webhook, ruleConfig.options.users)) {
+    if (
+      !Utils.checkUser(webhook, ruleConfig.options.users) ||
+      !Utils.checkBranch(webhook, ruleConfig.options.branches)
+    ) {
       return null;
-    }
-    // First, check if rule need to be processed
-    if (typeof ruleConfig.options.branches !== 'undefined') {
-      const ignore: string[] = ruleConfig.options.branches.ignore;
-      const only: string[] = ruleConfig.options.branches.only;
-      if (typeof ignore !== 'undefined') {
-        if (ignore.find(i => i === branchName)) {
-          return null;
-        }
-      }
-      if (typeof only !== 'undefined') {
-        if (!only.find(o => o === branchName)) {
-          return null;
-        }
-      }
     }
 
     const commitsMatches: CommitMatches[] = new Array();

@@ -1,6 +1,5 @@
 import { Webhook } from '../webhook/webhook';
-import { Rule } from './rule.class';
-import { UsersOptions } from './common.interface';
+import { UsersOptions, BranchesOptions } from './common.interface';
 
 export class Utils {
   static checkTime(updated, days = 7): boolean {
@@ -32,5 +31,44 @@ export class Utils {
       }
     }
     return true;
+  }
+
+  static checkBranch(webhook: Webhook, branches: BranchesOptions): boolean {
+    if (typeof branches !== 'undefined') {
+      const defaultBranch: string = webhook.getDefaultBranchName();
+      const ignore: string[] = branches.ignore;
+      const only: string[] = branches.only;
+      if (typeof ignore !== 'undefined') {
+        if (
+          this.replaceDefaultBranch(defaultBranch, ignore).find(
+            i => i === webhook.getBranchName(),
+          )
+        ) {
+          return false;
+        }
+      }
+      if (typeof only !== 'undefined') {
+        if (
+          !this.replaceDefaultBranch(defaultBranch, only).find(
+            o => o === webhook.getBranchName(),
+          )
+        ) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  static replaceDefaultBranch(
+    defaultBranch: string,
+    array: string[],
+  ): string[] {
+    return array.map(v => {
+      if (v === '$default') {
+        return defaultBranch;
+      }
+      return v;
+    });
   }
 }
