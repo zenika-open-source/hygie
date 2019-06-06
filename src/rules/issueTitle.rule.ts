@@ -39,6 +39,7 @@ export class IssueTitleRule extends Rule {
     ruleResult.data = {
       issueTitle: titleIssue,
       issueNumber: webhook.getIssueNumber(),
+      matches: titleIssue.match(issueRegExp),
     };
     return Promise.resolve(ruleResult);
   }

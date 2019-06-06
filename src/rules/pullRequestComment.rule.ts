@@ -42,6 +42,7 @@ export class PullRequestCommentRule extends Rule {
       pullRequestDescription: webhook.getPullRequestDescription(),
       commentId: webhook.getCommentId(),
       commentDescription,
+      matches: commentDescription.match(commentRegExp),
     };
 
     return Promise.resolve(ruleResult);

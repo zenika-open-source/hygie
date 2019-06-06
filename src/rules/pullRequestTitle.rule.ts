@@ -40,6 +40,7 @@ export class PullRequestTitleRule extends Rule {
       pullRequestTitle: titlePullRequest,
       pullRequestNumber: webhook.getPullRequestNumber(),
       pullRequestDescription: webhook.getPullRequestDescription(),
+      matches: titlePullRequest.match(pullRequestRegExp),
     };
     return ruleResult;
   }

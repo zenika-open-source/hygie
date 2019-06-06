@@ -42,6 +42,7 @@ export class IssueCommentRule extends Rule {
       issueNumber: webhook.getIssueNumber(),
       commentId: webhook.getCommentId(),
       commentDescription,
+      matches: commentDescription.match(commentRegExp),
     };
     return Promise.resolve(ruleResult);
   }

@@ -59,6 +59,7 @@ describe('RulesService', () => {
         pullRequestTitle: webhook.pullRequest.title,
         pullRequestNumber: webhook.pullRequest.number,
         pullRequestDescription: webhook.pullRequest.description,
+        matches: null,
       });
     });
   });
@@ -83,10 +84,11 @@ describe('RulesService', () => {
         pullRequestTitle,
       );
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual({
+      expect(JSON.parse(JSON.stringify(result.data))).toEqual({
         pullRequestTitle: webhook.pullRequest.title,
         pullRequestNumber: webhook.pullRequest.number,
         pullRequestDescription: webhook.pullRequest.description,
+        matches: ['WIP: webhook', 'WIP'],
       });
     });
   });

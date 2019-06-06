@@ -60,9 +60,10 @@ describe('RulesService', () => {
       const expectedResult = {
         issueTitle: 'add rules documentation',
         issueNumber: 22,
+        matches: ['add rules documentation', 'add'],
       };
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual(expectedResult);
+      expect(JSON.parse(JSON.stringify(result.data))).toEqual(expectedResult);
       expect(result.gitApiInfos).toEqual({
         git: 'Github',
         repositoryFullName: 'bastienterrier/test_webhook',
@@ -88,6 +89,7 @@ describe('RulesService', () => {
       const expectedResult = {
         issueTitle: 'update rules documentation',
         issueNumber: 42,
+        matches: null,
       };
       expect(result.validated).toBe(false);
       expect(result.data).toEqual(expectedResult);

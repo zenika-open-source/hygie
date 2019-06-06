@@ -38,6 +38,7 @@ export class BranchNameRule extends Rule {
     ruleResult.data = {
       branch: branchName,
       branchSplit: branchName.split('/'),
+      matches: branchName.match(branchRegExp),
     };
 
     return Promise.resolve(ruleResult);
