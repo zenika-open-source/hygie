@@ -1,0 +1,20 @@
+--- # Rules config file
+options:
+  executeAllRules: false
+  enableGroups: false
+  enableRules: true
+  allRuleResultInOne: false
+
+rules:
+  - name: checkCoverage
+    options:
+      allowDecrease: false
+      provider: coveralls
+    onSuccess:
+      - callback: LoggerRunnable
+        args:
+          message: 'Everything is ok'
+    onError:
+      - callback: LoggerRunnable
+        args:
+          message: 'NOOOOP'

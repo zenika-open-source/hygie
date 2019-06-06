@@ -2,21 +2,48 @@
 
 options:
   executeAllRules: true
-  enableRules: false
+  enableRules: true
   enableGroups: false
   allRuleResultInOne: false
 
 rules:
-  - name: checkCoverage
+  
+  # BRANCH
+  - name: branchName
     options:
-      allowDecrease: false
-      provider: coveralls
-    onSuccess:
-      - callback: LoggerRunnable
-        args:
-          message: 'Everything is ok'
+      regexp: '^(fix|feature)/.*'
     onError:
       - callback: LoggerRunnable
         args:
-          message: 'NOOOOP'
-  
+          message: 'Branch {{data.branch}} does not begin with fix or feature.'
+    onSuccess:
+      - callback: CreatePullRequestRunnable
+        args:
+          title: 'WIP: {{data.branch}}'
+          description: 'Work in Progress Pull Request'
+
+  # PULL REQUESTS
+  - name: pullRequestTitle
+    options:
+      regexp: '^(WIP|FIX)\s:.*'
+      users:
+        ignore:
+          - bastienterrier
+    onError:
+      - callback: CommentPullRequestRunnable
+        args:
+          comment: 'ping @bastienterrier'
+
+  # COMMITS
+  - name: commitMessage
+    options:
+      regexp: '^(feat|fix|docs)(\([a-z]*\))?:\s[^(]*(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
+      branches:
+        ignore:
+          - gh-pages
+    onBoth:
+      - callback: UpdateCommitStatusRunnable
+        args:
+          failTargetUrl: 'https://gist.github.com/stephenparish/9941e89d80e2bc58a153#examples'
+          successDescriptionMessage: 'Commit message matches the Good Practices!'
+          failDescriptionMessage: 'Caution, your commit message do not matches the Good Practices!'
