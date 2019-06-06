@@ -437,14 +437,19 @@ export class GithubService implements GitServiceInterface {
   async getTree(
     gitApiInfos: GitApiInfos,
     directoryPath: string,
+    branch: string = 'master',
   ): Promise<string> {
     const { base, name } = Utils.splitDirectoryPath(directoryPath);
+    const customGithubConfig = JSON.parse(JSON.stringify(this.configGitHub));
+    customGithubConfig.params = {
+      ref: branch,
+    };
     return await this.httpService
       .get(
         `${this.urlApi}/repos/${
           gitApiInfos.repositoryFullName
         }/contents/${base}`,
-        this.configGitHub,
+        customGithubConfig,
       )
       .toPromise()
       .then(response => {

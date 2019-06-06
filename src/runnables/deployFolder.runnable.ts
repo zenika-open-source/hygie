@@ -30,6 +30,7 @@ export class DeployFolderRunnable extends Runnable {
     args: DeployFolderArgs,
   ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
+    const sourceBranch: string = (ruleResult.data as any).branch;
 
     if (
       gitApiInfos.git === GitTypeEnum.Github &&
@@ -46,6 +47,7 @@ export class DeployFolderRunnable extends Runnable {
       const treeSha: string = await this.githubService.getTree(
         gitApiInfos,
         folder,
+        sourceBranch,
       );
       const lastCommit = await this.githubService.getLastCommit(
         gitApiInfos,
