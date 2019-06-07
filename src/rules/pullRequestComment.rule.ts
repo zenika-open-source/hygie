@@ -5,6 +5,9 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
+import { analytics } from '../analytics/analytics.service';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface PullRequestCommentOptions {
   regexp: string;
@@ -20,12 +23,22 @@ export class PullRequestCommentRule extends Rule {
   options: PullRequestCommentOptions;
   events = [GitEventEnum.NewPRComment];
 
+  constructor(
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
+  ) {
+    super();
+  }
+
   async validate(
     webhook: Webhook,
     ruleConfig: PullRequestCommentRule,
-    ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+
+    this.googleAnalytics
+      .event('Rule', 'pullRequestComment', webhook.getCloneURL())
+      .send();
 
     // First, check if rule need to be processed
     if (!Utils.checkUser(webhook, ruleConfig.options.users)) {

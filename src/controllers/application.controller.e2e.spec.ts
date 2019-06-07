@@ -2,6 +2,7 @@ import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { MockAppModule } from '../__mocks__/mock.app.module';
+import { MockAnalytics } from '../__mocks__/mocks';
 
 describe('ApplicationController (e2e)', () => {
   let app: INestApplication;
@@ -9,6 +10,12 @@ describe('ApplicationController (e2e)', () => {
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
       imports: [MockAppModule],
+      providers: [
+        {
+          provide: 'GoogleAnalytics',
+          useValue: MockAnalytics,
+        },
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();

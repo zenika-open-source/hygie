@@ -56,6 +56,7 @@
     "rimraf": "2.6.3",
     "rxjs": "6.5.2",
     "secure-compare": "3.0.1",
+    "universal-analytics": "0.4.20",
     "url": "0.11.0",
     "winston": "3.2.1"
   },
@@ -67,6 +68,7 @@
     "@types/js-yaml": "3.12.1",
     "@types/node": "11.13.13",
     "@types/supertest": "2.0.7",
+    "@types/universal-analytics": "0.4.2",
     "coveralls": "3.0.4",
     "cpx": "1.5.0",
     "husky": "2.4.0",

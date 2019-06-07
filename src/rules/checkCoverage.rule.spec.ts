@@ -8,6 +8,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockAnalytics,
 } from '../__mocks__/mocks';
 import { CheckCoverageRule, CoverageProvider } from './checkCoverage.rule';
 import { of } from 'rxjs';
@@ -94,7 +95,10 @@ describe('RulesService', () => {
           ];
         });
 
-      const checkCoverageRule = new CheckCoverageRule(httpService);
+      const checkCoverageRule = new CheckCoverageRule(
+        httpService,
+        MockAnalytics,
+      );
       checkCoverageRule.options = {
         allowDecrease: true,
         provider: CoverageProvider.Coveralls,
@@ -180,7 +184,10 @@ describe('RulesService', () => {
             },
           ];
         });
-      const checkCoverageRule = new CheckCoverageRule(httpService);
+      const checkCoverageRule = new CheckCoverageRule(
+        httpService,
+        MockAnalytics,
+      );
       checkCoverageRule.options = {
         allowDecrease: false,
         provider: CoverageProvider.Coveralls,
@@ -266,7 +273,10 @@ describe('RulesService', () => {
             },
           ];
         });
-      const checkCoverageRule = new CheckCoverageRule(httpService);
+      const checkCoverageRule = new CheckCoverageRule(
+        httpService,
+        MockAnalytics,
+      );
       checkCoverageRule.options = {
         allowDecrease: false,
         provider: CoverageProvider.Coveralls,

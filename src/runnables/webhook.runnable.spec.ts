@@ -4,7 +4,7 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { MockHttpService } from '../__mocks__/mocks';
+import { MockHttpService, MockAnalytics } from '../__mocks__/mocks';
 import { WebhookRunnable } from './webhook.runnable';
 
 describe('WebhookRunnable', () => {
@@ -22,6 +22,7 @@ describe('WebhookRunnable', () => {
       providers: [
         WebhookRunnable,
         { provide: HttpService, useClass: MockHttpService },
+        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
       ],
     }).compile();
 

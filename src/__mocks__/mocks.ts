@@ -3,6 +3,7 @@ import {
   DataAccessInterface,
   SourceEnum,
 } from '../data_access/dataAccess.interface';
+import { Visitor } from 'universal-analytics';
 
 export class MockHttpService {
   get: jest.Mock = jest.fn(() => {
@@ -238,3 +239,5 @@ export class MockDataAccess implements DataAccessInterface {
     return Promise.resolve(true);
   }
 }
+
+export const MockAnalytics: Visitor = new Visitor('mock');

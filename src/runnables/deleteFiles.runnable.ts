@@ -9,6 +9,8 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface DeleteFilesArgs {
   files: string[] | string;
@@ -24,6 +26,8 @@ export class DeleteFilesRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
   ) {
     super();
   }
@@ -36,6 +40,10 @@ export class DeleteFilesRunnable extends Runnable {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
     let filesList: string[];
+
+    this.googleAnalytics
+      .event('Runnable', 'deleteFiles', ruleResult.projectURL)
+      .send();
 
     // Default
     if (typeof args !== 'undefined' && typeof args.message === 'undefined') {

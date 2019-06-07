@@ -5,6 +5,8 @@ import { RuleResult } from './ruleResult';
 import { RuleDecorator } from './rule.decorator';
 import { BranchesOptions, UsersOptions } from './common.interface';
 import { Utils } from './utils';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface CommitMessageOptions {
   regexp: string;
@@ -31,6 +33,13 @@ export class CommitMessageRule extends Rule {
 
   events = [GitEventEnum.Push];
 
+  constructor(
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
+  ) {
+    super();
+  }
+
   async validate(
     webhook: Webhook,
     ruleConfig: CommitMessageRule,
@@ -42,7 +51,10 @@ export class CommitMessageRule extends Rule {
       return null;
     }
     const commitRegExp = RegExp(ruleConfig.options.regexp);
-    const branchName = webhook.getBranchName();
+
+    this.googleAnalytics
+      .event('Rule', 'commitMessage', webhook.getCloneURL())
+      .send();
 
     // First, check if rule need to be processed
     if (

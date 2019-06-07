@@ -9,6 +9,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockAnalytics,
 } from '../__mocks__/mocks';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { IssueTitleRule } from './issueTitle.rule';
@@ -38,7 +39,7 @@ describe('Rule', () => {
   describe('displayRule', () => {
     it('should call logger.info 8 times', () => {
       logger.info = jest.fn().mockName('logger.info');
-      const pullRequestTitle = new PullRequestTitleRule();
+      const pullRequestTitle = new PullRequestTitleRule(MockAnalytics);
       pullRequestTitle.options = {
         regexp: '(WIP|FIX):\\s.*',
       };
@@ -60,21 +61,21 @@ describe('Rule', () => {
     it('should return true', () => {
       const webhook: Webhook = new Webhook(gitlabService, githubService);
       webhook.gitEvent = GitEventEnum.NewIssue;
-      const issueTitleRule: IssueTitleRule = new IssueTitleRule();
+      const issueTitleRule: IssueTitleRule = new IssueTitleRule(MockAnalytics);
       // By default, IssueTitleRule.events = NewIssue
       expect(issueTitleRule.isEnabled(webhook, issueTitleRule)).toBe(true);
     });
     it('should return false', () => {
       const webhook: Webhook = new Webhook(gitlabService, githubService);
       webhook.gitEvent = GitEventEnum.NewBranch;
-      const issueTitleRule: IssueTitleRule = new IssueTitleRule();
+      const issueTitleRule: IssueTitleRule = new IssueTitleRule(MockAnalytics);
       // By default, IssueTitleRule.events = NewIssue
       expect(issueTitleRule.isEnabled(webhook, issueTitleRule)).toBe(false);
     });
     it('should return false', () => {
       const webhook: Webhook = new Webhook(gitlabService, githubService);
       webhook.gitEvent = GitEventEnum.NewIssue;
-      const issueTitleRule: IssueTitleRule = new IssueTitleRule();
+      const issueTitleRule: IssueTitleRule = new IssueTitleRule(MockAnalytics);
       // By default, IssueTitleRule.events = NewIssue
       issueTitleRule.enabled = false;
       expect(issueTitleRule.isEnabled(webhook, issueTitleRule)).toBe(false);

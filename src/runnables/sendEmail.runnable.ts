@@ -7,6 +7,8 @@ import { google } from 'googleapis';
 import { logger } from '../logger/logger.service';
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 function makeBody(to: string, subject: string, message: string): string {
   const str = [
@@ -127,11 +129,22 @@ export class SendEmailRunnable extends Runnable {
     });
   }
 
+  constructor(
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
+  ) {
+    super();
+  }
+
   async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: SendEmailArgs,
   ): Promise<void> {
+    this.googleAnalytics
+      .event('Runnable', 'sendEmail', ruleResult.projectURL)
+      .send();
+
     readFile('credentials.json')
       .then(content => {
         // Authorize a client with credentials, then call the Gmail API.

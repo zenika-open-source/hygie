@@ -9,6 +9,8 @@ import {
   IssueSearchResult,
 } from '../git/gitIssueInfos';
 import { Utils } from './utils';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface CheckIssuesOptions {
   updatedWithinXDays?: number;
@@ -26,12 +28,23 @@ export class CheckIssuesRule extends Rule {
   options: CheckIssuesOptions;
   events = [GitEventEnum.Cron];
 
+  constructor(
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
+  ) {
+    super();
+  }
+
   async validate(
     webhook: Webhook,
     ruleConfig: CheckIssuesRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+
+    this.googleAnalytics
+      .event('Rule', 'checkIssues', webhook.getCloneURL())
+      .send();
 
     const gitIssueSearch: GitIssuePRSearch = new GitIssuePRSearch();
     if (typeof ruleConfig.options.state !== 'undefined') {

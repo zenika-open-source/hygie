@@ -7,6 +7,8 @@ import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface DeleteBranchArgs {
   branchName?: string;
@@ -20,6 +22,8 @@ export class DeleteBranchRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
   ) {
     super();
   }
@@ -31,6 +35,11 @@ export class DeleteBranchRunnable extends Runnable {
   ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     let branchName: string;
+
+    this.googleAnalytics
+      .event('Runnable', 'deleteBranch', ruleResult.projectURL)
+      .send();
+
     // Defaults
     if (
       typeof args === 'undefined' ||

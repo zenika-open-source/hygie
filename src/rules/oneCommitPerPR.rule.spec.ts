@@ -8,6 +8,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockAnalytics,
 } from '../__mocks__/mocks';
 import { OneCommitPerPRRule } from './oneCommitPerPR.rule';
 
@@ -52,7 +53,7 @@ describe('RulesService', () => {
           sha: '3',
         },
       ];
-      const oneCommitPerPR = new OneCommitPerPRRule();
+      const oneCommitPerPR = new OneCommitPerPRRule(MockAnalytics);
       jest.spyOn(oneCommitPerPR, 'validate');
 
       const result: RuleResult = await oneCommitPerPR.validate(
@@ -74,7 +75,7 @@ describe('RulesService', () => {
           sha: '1',
         },
       ];
-      const oneCommitPerPR = new OneCommitPerPRRule();
+      const oneCommitPerPR = new OneCommitPerPRRule(MockAnalytics);
       jest.spyOn(oneCommitPerPR, 'validate');
 
       const result: RuleResult = await oneCommitPerPR.validate(

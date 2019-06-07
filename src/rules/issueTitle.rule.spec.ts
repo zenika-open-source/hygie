@@ -8,6 +8,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockAnalytics,
 } from '../__mocks__/mocks';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { IssueTitleRule } from './issueTitle.rule';
@@ -49,7 +50,7 @@ describe('RulesService', () => {
         defaultBranchName: 'master',
       };
 
-      const issueTitle = new IssueTitleRule();
+      const issueTitle = new IssueTitleRule(MockAnalytics);
       issueTitle.options = {
         regexp: '(add|fix)\\s.*',
       };
@@ -78,7 +79,7 @@ describe('RulesService', () => {
       webhook.issue.title = 'update rules documentation';
       webhook.projectId = 7657;
 
-      const issueTitle = new IssueTitleRule();
+      const issueTitle = new IssueTitleRule(MockAnalytics);
       issueTitle.options = {
         regexp: '(add|fix)\\s.*',
       };

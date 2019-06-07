@@ -5,6 +5,7 @@ import { RunnablesService } from '../runnables/runnables.service';
 import { RunnableModule } from '../runnables/runnable.module';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { DataAccessModule } from '../data_access/dataAccess.module';
+import { Visitor } from 'universal-analytics';
 
 export const RulesValues = Object.values(require('./index')).map(
   rule => rule as Rule,
@@ -15,7 +16,7 @@ const RulesProviders: any = RulesValues.map(rule => ({
 }));
 
 @Module({
-  imports: [HttpModule, RunnableModule],
+  imports: [HttpModule],
   exports: [RulesService],
   providers: [
     {
@@ -29,10 +30,14 @@ const RulesProviders: any = RulesValues.map(rule => ({
   ],
 })
 export class RulesModule {
-  static forRoot(entity: any = null): DynamicModule {
+  static forRoot(analytics: Visitor, entity: any = null): DynamicModule {
     return {
       module: RulesModule,
-      imports: [DataAccessModule.forRoot(entity)],
+      imports: [
+        DataAccessModule.forRoot(entity),
+        RunnableModule.forRoot(analytics),
+      ],
+      providers: [{ provide: 'GoogleAnalytics', useValue: analytics }],
     };
   }
 }

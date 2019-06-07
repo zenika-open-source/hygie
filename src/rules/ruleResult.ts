@@ -16,8 +16,13 @@ export class RuleResult {
    * Provide informations to `Runnable` to interact with Git API
    */
   gitApiInfos: GitApiInfos;
+  /**
+   * Project URL of the caller, used for Analytics
+   */
+  projectURL: string;
 
-  constructor(gitApiInfos: GitApiInfos) {
+  constructor(gitApiInfos: GitApiInfos, url: string = '') {
     this.gitApiInfos = gitApiInfos;
+    this.projectURL = url;
   }
 }

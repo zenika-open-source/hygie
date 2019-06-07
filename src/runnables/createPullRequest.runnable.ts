@@ -8,6 +8,8 @@ import { render } from 'mustache';
 import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { RunnableDecorator } from './runnable.decorator';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface CreatePullRequestArgs {
   title: string;
@@ -24,6 +26,8 @@ export class CreatePullRequestRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
   ) {
     super();
   }
@@ -34,6 +38,10 @@ export class CreatePullRequestRunnable extends Runnable {
     args: CreatePullRequestArgs,
   ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
+
+    this.googleAnalytics
+      .event('Runnable', 'createPullRequest', ruleResult.projectURL)
+      .send();
 
     const gitCreatePRInfos: GitPRInfos = new GitPRInfos();
 

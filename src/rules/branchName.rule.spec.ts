@@ -9,6 +9,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockAnalytics,
 } from '../__mocks__/mocks';
 
 describe('RulesService', () => {
@@ -38,7 +39,7 @@ describe('RulesService', () => {
     it('should return true', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.branchName = 'features/tdd';
-      const branchName = new BranchNameRule();
+      const branchName = new BranchNameRule(MockAnalytics);
       branchName.options = {
         regexp: '(features|fix)\\/.*',
       };
@@ -58,7 +59,7 @@ describe('RulesService', () => {
     it('should return false', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.branchName = 'testing/tdd';
-      const branchName = new BranchNameRule();
+      const branchName = new BranchNameRule(MockAnalytics);
       branchName.options = {
         regexp: '(features|fix)\\/.*',
       };

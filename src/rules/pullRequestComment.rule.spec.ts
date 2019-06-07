@@ -8,6 +8,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockAnalytics,
 } from '../__mocks__/mocks';
 import { PullRequestCommentRule } from './pullRequestComment.rule';
 
@@ -29,7 +30,7 @@ describe('RulesService', () => {
     description: 'comment on PR',
   };
 
-  const pullRequestComment = new PullRequestCommentRule();
+  const pullRequestComment = new PullRequestCommentRule(MockAnalytics);
   pullRequestComment.options = {
     regexp: '^@pong$',
   };

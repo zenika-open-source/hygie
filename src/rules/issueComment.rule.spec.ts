@@ -8,6 +8,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockAnalytics,
 } from '../__mocks__/mocks';
 import { IssueCommentRule } from './issueComment.rule';
 
@@ -28,7 +29,7 @@ describe('RulesService', () => {
     description: 'comment on issue',
   };
 
-  const issueComment = new IssueCommentRule();
+  const issueComment = new IssueCommentRule(MockAnalytics);
   issueComment.options = {
     regexp: '^@ping$',
   };

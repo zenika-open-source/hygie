@@ -11,6 +11,8 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
 import { GitTag } from '../git/gitTag';
 import { GitRef } from '../git/gitRef';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface CreateTagArgs {
   tag: string;
@@ -26,6 +28,8 @@ export class CreateTagRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
   ) {
     super();
   }
@@ -37,6 +41,10 @@ export class CreateTagRunnable extends Runnable {
   ): Promise<void> {
     const data = ruleResult.data as any;
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
+
+    this.googleAnalytics
+      .event('Runnable', 'createTag', ruleResult.projectURL)
+      .send();
 
     const lastItem = Utils.getLastItem(data.commits);
 

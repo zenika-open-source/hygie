@@ -5,6 +5,7 @@ import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { LoggerRunnable } from './logger.runnable';
+import { MockAnalytics } from '../__mocks__/mocks';
 
 describe('LoggerRunnable', () => {
   let app: TestingModule;
@@ -15,7 +16,10 @@ describe('LoggerRunnable', () => {
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
-      providers: [LoggerRunnable],
+      providers: [
+        LoggerRunnable,
+        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+      ],
     }).compile();
 
     logger.info = jest.fn().mockName('logger.info');

@@ -8,8 +8,14 @@ import { DocumentationController } from './controllers/documentation.controller'
 import { RegisterController } from './controllers/register.controller';
 import { WebhookController } from './controllers/webhook.controller';
 import { ApplicationController } from './controllers/application.controller';
+import { analytics } from './analytics/analytics.service';
 @Module({
-  imports: [HttpModule, RulesModule.forRoot(), RunnableModule, GitModule],
+  imports: [
+    HttpModule,
+    RulesModule.forRoot(analytics),
+    RunnableModule.forRoot(analytics),
+    GitModule,
+  ],
   controllers: [
     ApplicationController,
     CronController,

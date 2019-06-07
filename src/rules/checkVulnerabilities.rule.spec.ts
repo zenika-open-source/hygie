@@ -7,6 +7,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockAnalytics,
 } from '../__mocks__/mocks';
 import { GitEventEnum, GitTypeEnum } from '../webhook/utils.enum';
 import { CheckVulnerabilitiesRule } from './checkVulnerabilities.rule';
@@ -64,7 +65,7 @@ describe('RulesService', () => {
         sha: '3',
       },
     ];
-    checkVulnerabilitiesRule = new CheckVulnerabilitiesRule();
+    checkVulnerabilitiesRule = new CheckVulnerabilitiesRule(MockAnalytics);
     checkVulnerabilitiesRule.options = {
       packageUrl:
         'https://raw.githubusercontent.com/DX-DeveloperExperience/git-webhooks/master/package.json',

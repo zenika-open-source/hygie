@@ -9,6 +9,8 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface CreateIssueArgs {
   title: string;
@@ -25,6 +27,8 @@ export class CreateIssueRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
   ) {
     super();
   }
@@ -36,6 +40,10 @@ export class CreateIssueRunnable extends Runnable {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     gitIssueInfos.title = render(args.title, ruleResult);
+
+    this.googleAnalytics
+      .event('Runnable', 'createIssue', ruleResult.projectURL)
+      .send();
 
     if (typeof args.description !== 'undefined') {
       gitIssueInfos.description = render(args.description, ruleResult);
