@@ -192,13 +192,17 @@ describe('Gitlab Service', () => {
   });
 
   describe('createIssue', () => {
-    it('should emit a POST request with specific params', () => {
+    it('should emit a POST request with specific params', async () => {
       const gitIssueInfos = new GitIssueInfos();
       gitIssueInfos.title = 'my new issue';
       gitIssueInfos.description = 'my desc';
       gitIssueInfos.labels = ['good first issue', 'rules'];
 
-      gitlabService.createIssue(gitApiInfos, gitIssueInfos);
+      httpService.post = jest.fn().mockImplementationOnce(() => {
+        return of({ data: { iid: 1 } });
+      });
+
+      await gitlabService.createIssue(gitApiInfos, gitIssueInfos);
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/issues`;
 
@@ -209,6 +213,11 @@ describe('Gitlab Service', () => {
       };
 
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
+
+      // Restore mock
+      httpService.post = jest.fn().mockImplementation(() => {
+        return of([]);
+      });
     });
   });
 

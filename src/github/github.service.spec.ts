@@ -219,14 +219,18 @@ describe('Github Service', () => {
   });
 
   describe('createIssue', () => {
-    it('should emit a POST request with specific params', () => {
+    it('should emit a POST request with specific params', async () => {
       const gitIssueInfos = new GitIssueInfos();
       gitIssueInfos.title = 'my new issue';
       gitIssueInfos.description = 'my desc';
       gitIssueInfos.assignees = ['bastienterrier'];
       gitIssueInfos.labels = ['good first issue'];
 
-      githubService.createIssue(gitApiInfos, gitIssueInfos);
+      httpService.post = jest.fn().mockImplementationOnce((...args) => {
+        return of({ data: { number: 1 } });
+      });
+
+      await githubService.createIssue(gitApiInfos, gitIssueInfos);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues`;
 
@@ -242,6 +246,11 @@ describe('Github Service', () => {
         expectedData,
         expectedConfig,
       );
+
+      // Restore mock
+      httpService.post = jest.fn().mockImplementation(() => {
+        return of([]);
+      });
     });
   });
 

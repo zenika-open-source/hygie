@@ -63,7 +63,10 @@ export interface GitServiceInterface {
   /**
    * Create an Issue whose attributes are specify by the `gitCommitStatusInfos` param
    */
-  createIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void;
+  createIssue(
+    gitApiInfos: GitApiInfos,
+    gitIssueInfos: GitIssueInfos,
+  ): Promise<number>;
 
   /**
    * Update an issue partially

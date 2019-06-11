@@ -103,7 +103,9 @@ export class GithubService implements GitServiceInterface {
         dataGitHub,
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err));
+      .subscribe(null, err =>
+        logger.error(err, { location: 'updateCommitStatus' }),
+      );
   }
 
   addIssueComment(
@@ -122,7 +124,9 @@ export class GithubService implements GitServiceInterface {
         dataGitHub,
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err));
+      .subscribe(null, err =>
+        logger.error(err, { location: 'addIssueComment' }),
+      );
   }
 
   // Github PR is based on Issue
@@ -153,7 +157,9 @@ export class GithubService implements GitServiceInterface {
         dataGitHub,
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err));
+      .subscribe(null, err =>
+        logger.error(err, { location: 'createPullRequest' }),
+      );
   }
 
   deleteBranch(gitApiInfos: GitApiInfos, branchName: string): void {
@@ -164,7 +170,7 @@ export class GithubService implements GitServiceInterface {
         }/git/refs/heads/${encodeURIComponent(branchName)}`,
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err));
+      .subscribe(null, err => logger.error(err, { location: 'deleteBranch' }));
   }
 
   updateIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void {
@@ -188,10 +194,13 @@ export class GithubService implements GitServiceInterface {
         dataGitHub,
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err));
+      .subscribe(null, err => logger.error(err, { location: 'updateIssue' }));
   }
 
-  createIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void {
+  async createIssue(
+    gitApiInfos: GitApiInfos,
+    gitIssueInfos: GitIssueInfos,
+  ): Promise<number> {
     const dataGitHub: any = {};
 
     if (typeof gitIssueInfos.title !== 'undefined') {
@@ -210,13 +219,15 @@ export class GithubService implements GitServiceInterface {
       dataGitHub.body = gitIssueInfos.description;
     }
 
-    this.httpService
+    return await this.httpService
       .post(
         `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues`,
         dataGitHub,
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err));
+      .toPromise()
+      .then(response => response.data.number)
+      .catch(err => logger.error(err, { location: 'createIssue' }));
   }
 
   deleteFile(
@@ -252,13 +263,13 @@ export class GithubService implements GitServiceInterface {
               .subscribe(
                 response2 => resolve(),
                 err2 => {
-                  logger.error(err2);
+                  logger.error(err2, { location: 'deleteFile/blob' });
                   reject(err2);
                 },
               );
           },
           err => {
-            logger.error(err);
+            logger.error(err, { location: 'deleteFile' });
             reject(err);
           },
         );
@@ -293,7 +304,9 @@ export class GithubService implements GitServiceInterface {
         dataGitHub,
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err));
+      .subscribe(null, err =>
+        logger.error(err, { location: 'mergePullRequest' }),
+      );
   }
 
   updatePullRequest(gitApiInfos: GitApiInfos, gitPRInfos: GitPRInfos): void {
@@ -323,7 +336,9 @@ export class GithubService implements GitServiceInterface {
         dataGitHub,
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err));
+      .subscribe(null, err =>
+        logger.error(err, { location: 'updatePullRequest' }),
+      );
   }
 
   createWebhook(gitApiInfos: GitApiInfos, webhookURL: string): void {
@@ -341,7 +356,7 @@ export class GithubService implements GitServiceInterface {
         },
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err));
+      .subscribe(null, err => logger.error(err, { location: 'createWebhook' }));
   }
 
   async getIssues(
@@ -377,7 +392,7 @@ export class GithubService implements GitServiceInterface {
           }
         });
       })
-      .catch(err => logger.error(err));
+      .catch(err => logger.error(err, { location: 'getIssues' }));
   }
 
   async getPullRequests(
@@ -410,7 +425,7 @@ export class GithubService implements GitServiceInterface {
           return prSearchResult;
         });
       })
-      .catch(err => logger.error(err));
+      .catch(err => logger.error(err, { location: 'getPullRequests' }));
   }
 
   createRelease(gitApiInfos: GitApiInfos, gitRelease: GitRelease): void {
@@ -431,7 +446,7 @@ export class GithubService implements GitServiceInterface {
         dataGithub,
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err));
+      .subscribe(null, err => logger.error(err, { location: 'createRelease' }));
   }
 
   async getTree(

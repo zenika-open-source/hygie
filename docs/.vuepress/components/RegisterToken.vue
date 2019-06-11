@@ -149,10 +149,11 @@ export default {
           if (response.data.alreadyExist) {
             this.responseMessage =
               '<span class="warning">A config file with your repository already exist. It has been overwrite with the present token and API URL.</span>';
-          } else {
-            this.responseMessage =
-              '<span class="success">Token stored successfully!</span>';
           }
+          this.responseMessage +=
+            '<span class="success">Registration completed! Check-out the newly created <a href="' +
+            response.data.issue +
+            '">Connected to Git-Webhooks!</a> issue</span>';
         })
         .catch(err => {
           this.responseMessage =
