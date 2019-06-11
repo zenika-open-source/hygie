@@ -1,4 +1,4 @@
-import { Module, HttpModule, HttpService, DynamicModule } from '@nestjs/common';
+import { Module, HttpModule, DynamicModule } from '@nestjs/common';
 import { GitModule } from '../git/git.module';
 import { RunnablesService } from './runnables.service';
 import { Runnable } from './runnable.class';

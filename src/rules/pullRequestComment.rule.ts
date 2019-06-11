@@ -5,7 +5,6 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
-import { analytics } from '../analytics/analytics.service';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 
