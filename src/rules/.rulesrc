@@ -21,6 +21,7 @@ rules:
         args:
           title: 'WIP: {{data.branch}}'
           description: 'Work in Progress Pull Request'
+          draft: true
 
   # PULL REQUESTS
   - name: pullRequestTitle

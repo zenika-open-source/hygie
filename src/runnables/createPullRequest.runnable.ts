@@ -16,6 +16,7 @@ interface CreatePullRequestArgs {
   description: string;
   source: string;
   target: string;
+  draft: boolean | string;
 }
 
 /**
@@ -60,10 +61,27 @@ export class CreatePullRequestRunnable extends Runnable {
       args.target = 'master';
     }
 
-    gitCreatePRInfos.description = render(args.description, ruleResult);
-    gitCreatePRInfos.title = render(args.title, ruleResult);
-    gitCreatePRInfos.source = render(args.source, ruleResult);
-    gitCreatePRInfos.target = render(args.target, ruleResult);
+    gitCreatePRInfos.description = render(args.description, ruleResult).replace(
+      /&#x2F;/g,
+      '/',
+    );
+    gitCreatePRInfos.title = render(args.title, ruleResult).replace(
+      /&#x2F;/g,
+      '/',
+    );
+    gitCreatePRInfos.source = render(args.source, ruleResult).replace(
+      /&#x2F;/g,
+      '/',
+    );
+    gitCreatePRInfos.target = render(args.target, ruleResult).replace(
+      /&#x2F;/g,
+      '/',
+    );
+    if (typeof args.draft === 'string') {
+      gitCreatePRInfos.draft = render(args.draft, ruleResult);
+    } else if (typeof args.draft === 'boolean') {
+      gitCreatePRInfos.draft = args.draft;
+    }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
       this.githubService.createPullRequest(gitApiInfos, gitCreatePRInfos);

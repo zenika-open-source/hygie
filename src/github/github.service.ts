@@ -144,18 +144,25 @@ export class GithubService implements GitServiceInterface {
     gitApiInfos: GitApiInfos,
     gitCreatePRInfos: GitPRInfos,
   ): void {
-    const dataGitHub = {
+    const customConfig = JSON.parse(JSON.stringify(this.configGitHub));
+    const dataGitHub: any = {
       title: gitCreatePRInfos.title,
       body: gitCreatePRInfos.description,
       head: gitCreatePRInfos.source,
       base: gitCreatePRInfos.target,
     };
 
+    if (typeof gitCreatePRInfos.draft !== 'undefined') {
+      dataGitHub.draft = gitCreatePRInfos.draft;
+      customConfig.headers.Accept =
+        'application/vnd.github.shadow-cat-preview+json';
+    }
+
     this.httpService
       .post(
         `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls`,
         dataGitHub,
-        this.configGitHub,
+        customConfig,
       )
       .subscribe(null, err =>
         logger.error(err, { location: 'createPullRequest' }),
