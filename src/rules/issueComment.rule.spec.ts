@@ -61,11 +61,16 @@ describe('RulesService', () => {
       );
       expect(result.validated).toBe(false);
       expect(result.data).toEqual({
-        issueTitle: webhook.issue.title,
-        issueNumber: webhook.issue.number,
-        commentId: webhook.comment.id,
-        commentDescription: webhook.comment.description,
-        matches: null,
+        comment: {
+          description: 'comment on issue',
+          id: 123,
+          matches: null,
+        },
+        issue: {
+          description: 'issue description',
+          number: 22,
+          title: 'my issue for webhook',
+        },
       });
     });
 
@@ -77,11 +82,16 @@ describe('RulesService', () => {
       );
       expect(result.validated).toBe(true);
       expect(JSON.parse(JSON.stringify(result.data))).toEqual({
-        issueTitle: webhook.issue.title,
-        issueNumber: webhook.issue.number,
-        commentId: webhook.comment.id,
-        commentDescription: webhook.comment.description,
-        matches: ['@ping'],
+        comment: {
+          description: '@ping',
+          id: 123,
+          matches: ['@ping'],
+        },
+        issue: {
+          description: 'issue description',
+          number: 22,
+          title: 'my issue for webhook',
+        },
       });
     });
   });
