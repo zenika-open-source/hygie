@@ -20,4 +20,8 @@ describe('CronController', () => {
       .post('/cron')
       .expect(HttpStatus.PRECONDITION_FAILED);
   });
+
+  afterAll(async () => {
+    await app.close();
+  });
 });

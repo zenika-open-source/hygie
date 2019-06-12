@@ -38,4 +38,8 @@ describe('/doc (e2e)', () => {
       .get('/doc/schema')
       .expect(200);
   });
+
+  afterAll(async () => {
+    await app.close();
+  });
 });

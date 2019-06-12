@@ -25,4 +25,8 @@ describe('/webhook (POST) - In WhiteList', () => {
       .post('/webhook')
       .expect(HttpStatus.PRECONDITION_FAILED);
   });
+
+  afterAll(async () => {
+    await app.close();
+  });
 });

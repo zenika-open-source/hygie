@@ -31,4 +31,8 @@ describe('ApplicationController (e2e)', () => {
           '<p>Have a look at our <a href="https://dx-developerexperience.github.io/git-webhooks/">documentation</a> for more informations.</p>',
       );
   });
+
+  afterAll(async () => {
+    await app.close();
+  });
 });
