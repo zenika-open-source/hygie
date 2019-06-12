@@ -81,7 +81,7 @@ export class GitlabService implements GitServiceInterface {
         ),
         target_url: gitCommitStatusInfos.targetUrl,
         description: gitCommitStatusInfos.descriptionMessage,
-        context: process.env.APPLICATION_NAME,
+        context: process.env.APPLICATION_NAME + '/commit',
       },
     };
 

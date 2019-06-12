@@ -25,4 +25,8 @@ describe('/webhook (POST) - Not in WhiteList', () => {
       .post('/webhook')
       .expect(HttpStatus.UNAUTHORIZED);
   });
+
+  afterAll(async () => {
+    await app.close();
+  });
 });
