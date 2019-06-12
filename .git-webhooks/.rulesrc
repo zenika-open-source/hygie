@@ -42,6 +42,7 @@ rules:
       branches:
         ignore:
           - gh-pages
+          - master
     onBoth:
       - callback: UpdateCommitStatusRunnable
         args:
