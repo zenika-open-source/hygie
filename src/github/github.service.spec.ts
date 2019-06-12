@@ -28,6 +28,8 @@ import { GitRelease } from '../git/gitRelease';
 import { GitCommit } from '../git/gitCommit';
 import { GitRef } from '../git/gitRef';
 import { GitTag } from '../git/gitTag';
+import { GitBranchCommit } from '../git/gitBranchSha';
+import { logger } from '../logger/logger.service';
 
 describe('Github Service', () => {
   let app: TestingModule;
@@ -218,14 +220,18 @@ describe('Github Service', () => {
   });
 
   describe('createIssue', () => {
-    it('should emit a POST request with specific params', () => {
+    it('should emit a POST request with specific params', async () => {
       const gitIssueInfos = new GitIssueInfos();
       gitIssueInfos.title = 'my new issue';
       gitIssueInfos.description = 'my desc';
       gitIssueInfos.assignees = ['bastienterrier'];
       gitIssueInfos.labels = ['good first issue'];
 
-      githubService.createIssue(gitApiInfos, gitIssueInfos);
+      httpService.post = jest.fn().mockImplementationOnce((...args) => {
+        return of({ data: { number: 1 } });
+      });
+
+      await githubService.createIssue(gitApiInfos, gitIssueInfos);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues`;
 
@@ -241,6 +247,11 @@ describe('Github Service', () => {
         expectedData,
         expectedConfig,
       );
+
+      // Restore mock
+      httpService.post = jest.fn().mockImplementation(() => {
+        return of([]);
+      });
     });
   });
 
@@ -266,7 +277,9 @@ describe('Github Service', () => {
         });
       });
 
-      githubService.deleteFile(gitApiInfos, gitFileInfos);
+      githubService
+        .deleteFile(gitApiInfos, gitFileInfos)
+        .catch(err => logger.error(err));
 
       const expectedUrl1 = `https://api.github.com/repos/bastienterrier/test/contents/file/to/remove.txt`;
       const expectedUrl2 = `https://api.github.com/repos/bastienterrier/test/contents/file/to/remove.txt`;
@@ -380,7 +393,9 @@ describe('Github Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      githubService.getIssues(gitApiInfos, gitIssueSearch);
+      githubService
+        .getIssues(gitApiInfos, gitIssueSearch)
+        .catch(err => logger.error(err));
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues`;
 
       const expectedConfig2 = JSON.parse(JSON.stringify(expectedConfig));
@@ -403,7 +418,9 @@ describe('Github Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      githubService.getPullRequests(gitApiInfos, gitIssueSearch);
+      githubService
+        .getPullRequests(gitApiInfos, gitIssueSearch)
+        .catch(err => logger.error(err));
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/pulls`;
 
       const expectedConfig2 = JSON.parse(JSON.stringify(expectedConfig));
@@ -448,7 +465,9 @@ describe('Github Service', () => {
           data: [{ name: 'path', sha: 'sha' }],
         });
       });
-      githubService.getTree(gitApiInfos, 'your/folder/path');
+      githubService
+        .getTree(gitApiInfos, 'your/folder/path')
+        .catch(err => logger.error(err));
 
       const customConfig = JSON.parse(JSON.stringify(expectedConfig));
       customConfig.params = { ref: 'master' };
@@ -483,7 +502,9 @@ describe('Github Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      githubService.createCommit(gitApiInfos, gitCommit);
+      githubService
+        .createCommit(gitApiInfos, gitCommit)
+        .catch(err => logger.error(err));
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/commits`;
 
@@ -560,7 +581,9 @@ describe('Github Service', () => {
       gitTag.type = 'commit';
       gitTag.message = 'new tag';
 
-      githubService.createTag(gitApiInfos, gitTag);
+      githubService
+        .createTag(gitApiInfos, gitTag)
+        .catch(err => logger.error(err));
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/tags`;
 
@@ -576,6 +599,159 @@ describe('Github Service', () => {
         expectedData,
         expectedConfig,
       );
+    });
+  });
+
+  describe('getLastBranchesCommitSha', () => {
+    it('should emit a GET request with specific params', async () => {
+      httpService.get = jest.fn().mockImplementationOnce((...args) => {
+        return of({
+          data: [
+            {
+              name: 'develop',
+              commit: {
+                sha: '9c036a26fc5c26b68025d2b7d7fcf757d4dec36e',
+                url:
+                  'https://api.github.com/repos/DX-DeveloperExperience/git-webhooks/commits/9c036a26fc5c26b68025d2b7d7fcf757d4dec36e',
+              },
+              protected: false,
+              protection: {
+                enabled: false,
+                required_status_checks: {
+                  enforcement_level: 'off',
+                  contexts: [],
+                },
+              },
+              protection_url:
+                'https://api.github.com/repos/DX-DeveloperExperience/git-webhooks/branches/develop/protection',
+            },
+            {
+              name: 'gh-pages',
+              commit: {
+                sha: 'e82fef381b423754a2ca783e18dfb1eeac6aeec3',
+                url:
+                  'https://api.github.com/repos/DX-DeveloperExperience/git-webhooks/commits/e82fef381b423754a2ca783e18dfb1eeac6aeec3',
+              },
+              protected: false,
+              protection: {
+                enabled: false,
+                required_status_checks: {
+                  enforcement_level: 'off',
+                  contexts: [],
+                },
+              },
+              protection_url:
+                'https://api.github.com/repos/DX-DeveloperExperience/git-webhooks/branches/gh-pages/protection',
+            },
+            {
+              name: 'master',
+              commit: {
+                sha: 'eeaa4df1b847cd53378c0fcb457b83bad5224738',
+                url:
+                  'https://api.github.com/repos/DX-DeveloperExperience/git-webhooks/commits/eeaa4df1b847cd53378c0fcb457b83bad5224738',
+              },
+              protected: false,
+              protection: {
+                enabled: false,
+                required_status_checks: {
+                  enforcement_level: 'off',
+                  contexts: [],
+                },
+              },
+              protection_url:
+                'https://api.github.com/repos/DX-DeveloperExperience/git-webhooks/branches/master/protection',
+            },
+            {
+              name: 'renovate/express-4.x',
+              commit: {
+                sha: '31ed1b43b7f80c4a58a9b20f173f72b2b369c19f',
+                url:
+                  'https://api.github.com/repos/DX-DeveloperExperience/git-webhooks/commits/31ed1b43b7f80c4a58a9b20f173f72b2b369c19f',
+              },
+              protected: false,
+              protection: {
+                enabled: false,
+                required_status_checks: {
+                  enforcement_level: 'off',
+                  contexts: [],
+                },
+              },
+              protection_url:
+                'https://api.github.com/repos/DX-DeveloperExperience/git-webhooks/branches/renovate/express-4.x/protection',
+            },
+            {
+              name: 'renovate/googleapis-40.x',
+              commit: {
+                sha: 'c93f1779441198daef276a50a274d16a5a83dd4e',
+                url:
+                  'https://api.github.com/repos/DX-DeveloperExperience/git-webhooks/commits/c93f1779441198daef276a50a274d16a5a83dd4e',
+              },
+              protected: false,
+              protection: {
+                enabled: false,
+                required_status_checks: {
+                  enforcement_level: 'off',
+                  contexts: [],
+                },
+              },
+              protection_url:
+                'https://api.github.com/repos/DX-DeveloperExperience/git-webhooks/branches/renovate/googleapis-40.x/protection',
+            },
+            {
+              name: 'renovate/nest-monorepo',
+              commit: {
+                sha: '9d968cc538b9796ec61e78f4055814028e816858',
+                url:
+                  'https://api.github.com/repos/DX-DeveloperExperience/git-webhooks/commits/9d968cc538b9796ec61e78f4055814028e816858',
+              },
+              protected: false,
+              protection: {
+                enabled: false,
+                required_status_checks: {
+                  enforcement_level: 'off',
+                  contexts: [],
+                },
+              },
+              protection_url:
+                'https://api.github.com/repos/DX-DeveloperExperience/git-webhooks/branches/renovate/nest-monorepo/protection',
+            },
+          ],
+        });
+      });
+
+      const result: GitBranchCommit[] = await githubService.getLastBranchesCommitSha(
+        gitApiInfos,
+      );
+
+      const expectedUrl = `https://api.github.com/repos/bastienterrier/test/branches`;
+
+      expect(httpService.get).toBeCalledWith(expectedUrl, expectedConfig);
+      expect(result).toEqual([
+        {
+          commitSha: '9c036a26fc5c26b68025d2b7d7fcf757d4dec36e',
+          branch: 'develop',
+        },
+        {
+          commitSha: 'e82fef381b423754a2ca783e18dfb1eeac6aeec3',
+          branch: 'gh-pages',
+        },
+        {
+          commitSha: 'eeaa4df1b847cd53378c0fcb457b83bad5224738',
+          branch: 'master',
+        },
+        {
+          commitSha: '31ed1b43b7f80c4a58a9b20f173f72b2b369c19f',
+          branch: 'renovate/express-4.x',
+        },
+        {
+          commitSha: 'c93f1779441198daef276a50a274d16a5a83dd4e',
+          branch: 'renovate/googleapis-40.x',
+        },
+        {
+          commitSha: '9d968cc538b9796ec61e78f4055814028e816858',
+          branch: 'renovate/nest-monorepo',
+        },
+      ]);
     });
   });
 

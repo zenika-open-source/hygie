@@ -1,4 +1,4 @@
-# Register your Credentials
+# Register your Application
 
 This API allows you to interact with Github or Gitlab repositories. You can update commit status, add comments on issues or Pull Request/ Merge Request, etc.
 

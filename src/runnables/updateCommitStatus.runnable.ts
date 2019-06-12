@@ -9,6 +9,8 @@ import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { RunnableDecorator } from './runnable.decorator';
 import { Utils } from '../utils/utils';
 import { render } from 'mustache';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface UpdateCommitStatusArgs {
   successTargetUrl: string;
@@ -26,6 +28,8 @@ export class UpdateCommitStatusRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
   ) {
     super();
   }
@@ -34,6 +38,10 @@ export class UpdateCommitStatusRunnable extends Runnable {
     ruleResult: RuleResult,
     args: UpdateCommitStatusArgs,
   ): Promise<void> {
+    this.googleAnalytics
+      .event('Runnable', 'updateCommitStatus', ruleResult.projectURL)
+      .send();
+
     const data = ruleResult.data as any;
     const gitCommitStatusInfos: GitCommitStatusInfos = new GitCommitStatusInfos();
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;

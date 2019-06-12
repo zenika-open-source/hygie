@@ -9,6 +9,8 @@ import { GitPRInfos } from '../git/gitPRInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { IssuePRStateEnum } from '../git/gitIssueInfos';
 import { render } from 'mustache';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface UpdatePullRequestArgs {
   target: string;
@@ -26,6 +28,8 @@ export class UpdatePullRequestRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
   ) {
     super();
   }
@@ -40,6 +44,10 @@ export class UpdatePullRequestRunnable extends Runnable {
     const gitPRInfos = new GitPRInfos();
 
     let arrayOfPRNumber: number[] = new Array();
+
+    this.googleAnalytics
+      .event('Runnable', 'updatePullRequest', ruleResult.projectURL)
+      .send();
 
     if (typeof data.pullRequestNumber === 'number') {
       arrayOfPRNumber.push(data.issueNumber);

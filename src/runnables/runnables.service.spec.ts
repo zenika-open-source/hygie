@@ -8,7 +8,7 @@ import {
   MockRunnableModule,
   MockRunnable,
 } from '../__mocks__/mock.runnables.module';
-import { logger } from '../logger/logger.service';
+import { MockAnalytics } from '../__mocks__/mocks';
 
 describe('Runnables Service', () => {
   let app: TestingModule;
@@ -34,7 +34,7 @@ describe('Runnables Service', () => {
       issueNumber: 22,
     };
 
-    issueTitleRule = new IssueTitleRule();
+    issueTitleRule = new IssueTitleRule(MockAnalytics);
     issueTitleRule.onBoth = [
       {
         callback: 'MockRunnable',

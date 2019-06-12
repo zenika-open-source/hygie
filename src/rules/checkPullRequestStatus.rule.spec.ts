@@ -8,6 +8,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockAnalytics,
 } from '../__mocks__/mocks';
 import { CheckPullRequestStatusRule } from './checkPullRequestStatus.rule';
 import { GitEventEnum } from '../webhook/utils.enum';
@@ -27,7 +28,7 @@ describe('RulesService', () => {
     number: 22,
   };
 
-  const checkPullRequestStatus = new CheckPullRequestStatusRule();
+  const checkPullRequestStatus = new CheckPullRequestStatusRule(MockAnalytics);
 
   beforeAll(async () => {
     app = await Test.createTestingModule({

@@ -9,6 +9,9 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
+import { logger } from '../logger/logger.service';
 
 interface CreateIssueArgs {
   title: string;
@@ -25,6 +28,8 @@ export class CreateIssueRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
   ) {
     super();
   }
@@ -36,6 +41,10 @@ export class CreateIssueRunnable extends Runnable {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     gitIssueInfos.title = render(args.title, ruleResult);
+
+    this.googleAnalytics
+      .event('Runnable', 'createIssue', ruleResult.projectURL)
+      .send();
 
     if (typeof args.description !== 'undefined') {
       gitIssueInfos.description = render(args.description, ruleResult);
@@ -53,9 +62,13 @@ export class CreateIssueRunnable extends Runnable {
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.createIssue(gitApiInfos, gitIssueInfos);
+      this.githubService
+        .createIssue(gitApiInfos, gitIssueInfos)
+        .catch(err => logger.error(err));
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.createIssue(gitApiInfos, gitIssueInfos);
+      this.gitlabService
+        .createIssue(gitApiInfos, gitIssueInfos)
+        .catch(err => logger.error(err));
     }
   }
 }

@@ -8,12 +8,15 @@ import { render } from 'mustache';
 import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { RunnableDecorator } from './runnable.decorator';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface CreatePullRequestArgs {
   title: string;
   description: string;
   source: string;
   target: string;
+  draft: boolean | string;
 }
 
 /**
@@ -24,6 +27,8 @@ export class CreatePullRequestRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
   ) {
     super();
   }
@@ -34,6 +39,10 @@ export class CreatePullRequestRunnable extends Runnable {
     args: CreatePullRequestArgs,
   ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
+
+    this.googleAnalytics
+      .event('Runnable', 'createPullRequest', ruleResult.projectURL)
+      .send();
 
     const gitCreatePRInfos: GitPRInfos = new GitPRInfos();
 
@@ -52,10 +61,27 @@ export class CreatePullRequestRunnable extends Runnable {
       args.target = 'master';
     }
 
-    gitCreatePRInfos.description = render(args.description, ruleResult);
-    gitCreatePRInfos.title = render(args.title, ruleResult);
-    gitCreatePRInfos.source = render(args.source, ruleResult);
-    gitCreatePRInfos.target = render(args.target, ruleResult);
+    gitCreatePRInfos.description = render(args.description, ruleResult).replace(
+      /&#x2F;/g,
+      '/',
+    );
+    gitCreatePRInfos.title = render(args.title, ruleResult).replace(
+      /&#x2F;/g,
+      '/',
+    );
+    gitCreatePRInfos.source = render(args.source, ruleResult).replace(
+      /&#x2F;/g,
+      '/',
+    );
+    gitCreatePRInfos.target = render(args.target, ruleResult).replace(
+      /&#x2F;/g,
+      '/',
+    );
+    if (typeof args.draft === 'string') {
+      gitCreatePRInfos.draft = render(args.draft, ruleResult);
+    } else if (typeof args.draft === 'boolean') {
+      gitCreatePRInfos.draft = args.draft;
+    }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
       this.githubService.createPullRequest(gitApiInfos, gitCreatePRInfos);

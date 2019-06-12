@@ -1,5 +1,4 @@
 import { of, Observable } from 'rxjs';
-import { logger } from '../logger/logger.service';
 import {
   ExecutionContext,
   CallHandler,

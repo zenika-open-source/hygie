@@ -247,9 +247,14 @@ export class RemoteConfigUtils {
        */
       const gitIssueInfos = new GitIssueInfos();
       gitIssueInfos.title = 'Connected to Git-Webhooks!';
+      let issueNumber: number;
 
       if (gitApiInfos.git === GitTypeEnum.Github) {
-        githubService.createIssue(gitApiInfos, gitIssueInfos);
+        issueNumber = await githubService.createIssue(
+          gitApiInfos,
+          gitIssueInfos,
+        );
+        result.issue = `${configEnv.gitRepo}/issues/${issueNumber}`;
         githubService.createWebhook(gitApiInfos, applicationURL + '/webhook');
       } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
         gitApiInfos.projectId = await this.getGitlabProjectId(
@@ -258,7 +263,11 @@ export class RemoteConfigUtils {
           gitApiInfos.repositoryFullName,
         );
 
-        gitlabService.createIssue(gitApiInfos, gitIssueInfos);
+        issueNumber = await gitlabService.createIssue(
+          gitApiInfos,
+          gitIssueInfos,
+        );
+        result.issue = `${configEnv.gitRepo}/issues/${issueNumber}`;
         gitlabService.createWebhook(gitApiInfos, applicationURL + '/webhook');
       }
 

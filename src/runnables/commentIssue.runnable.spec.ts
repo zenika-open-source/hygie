@@ -5,8 +5,13 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import {
+  MockGitlabService,
+  MockGithubService,
+  MockAnalytics,
+} from '../__mocks__/mocks';
 import { CommentIssueRunnable } from './commentIssue.runnable';
+import { logger } from '../logger/logger.service';
 
 describe('CommentIssueRunnable', () => {
   let app: TestingModule;
@@ -25,6 +30,7 @@ describe('CommentIssueRunnable', () => {
         CommentIssueRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
+        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
       ],
     }).compile();
 
@@ -52,7 +58,9 @@ describe('CommentIssueRunnable', () => {
 
   describe('commentIssue Runnable', () => {
     it('should not call the addIssueComment Github nor Gitlab service', () => {
-      commentIssueRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
+      commentIssueRunnable
+        .run(CallbackType.Both, ruleResultIssueTitle, args)
+        .catch(err => logger.error(err));
       expect(githubService.addIssueComment).not.toBeCalled();
       expect(gitlabService.addIssueComment).not.toBeCalled();
     });
@@ -60,7 +68,9 @@ describe('CommentIssueRunnable', () => {
   describe('commentIssue Runnable', () => {
     it('should call the addIssueComment Github service', () => {
       ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Github;
-      commentIssueRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
+      commentIssueRunnable
+        .run(CallbackType.Both, ruleResultIssueTitle, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.addIssueComment).toBeCalled();
       expect(gitlabService.addIssueComment).not.toBeCalled();
@@ -69,7 +79,9 @@ describe('CommentIssueRunnable', () => {
   describe('commentIssue Runnable', () => {
     it('should call the addIssueComment Gitlab service', () => {
       ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
-      commentIssueRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
+      commentIssueRunnable
+        .run(CallbackType.Both, ruleResultIssueTitle, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.addIssueComment).not.toBeCalled();
       expect(gitlabService.addIssueComment).toBeCalled();

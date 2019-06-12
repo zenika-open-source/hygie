@@ -8,6 +8,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockAnalytics,
 } from '../__mocks__/mocks';
 import { CommitMessageRule } from './commitMessage.rule';
 import { GitEventEnum, GitTypeEnum } from '../webhook/utils.enum';
@@ -64,7 +65,7 @@ describe('RulesService', () => {
           sha: '3',
         },
       ];
-      const commitMessage = new CommitMessageRule();
+      const commitMessage = new CommitMessageRule(MockAnalytics);
       commitMessage.options = {
         regexp:
           '(feat|fix|docs)(\\([a-z]+\\))?:\\s[^(]*(\\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\\))?$',
@@ -138,7 +139,7 @@ describe('RulesService', () => {
           sha: '3',
         },
       ];
-      const commitMessage = new CommitMessageRule();
+      const commitMessage = new CommitMessageRule(MockAnalytics);
       commitMessage.options = {
         regexp:
           '(feat|fix|docs)(\\([a-z]+\\))?:\\s[^(]*(\\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\\))?$',

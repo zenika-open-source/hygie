@@ -43,6 +43,7 @@ webhook.pullRequest = {
 webhook.issue = {
   number: 43,
   title: 'add rules documentation',
+  description: 'please consider adding a Rules section',
 };
 webhook.comment = {
   id: 22,
@@ -91,6 +92,14 @@ describe('Webhook', () => {
   describe('getIssueTitle', () => {
     it('should return "add rules documentation"', () => {
       expect(webhook.getIssueTitle()).toBe('add rules documentation');
+    });
+  });
+
+  describe('getIssueDescription', () => {
+    it('should return "please consider adding a Rules section"', () => {
+      expect(webhook.getIssueDescription()).toBe(
+        'please consider adding a Rules section',
+      );
     });
   });
 

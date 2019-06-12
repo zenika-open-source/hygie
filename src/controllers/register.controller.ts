@@ -103,8 +103,9 @@ export class RegisterController {
 
     let resultToDisplay: string = '';
     if (finalResult.succeed) {
-      resultToDisplay +=
-        '<p style="color:green">Registration completed! Check-out if a <i>Connected to Git-Webhooks!</i> issue has been created.</p>';
+      resultToDisplay += `<p style="color:green">Registration completed! Check-out the newly created <a href='${
+        finalResult.issue
+      }'>Connected to Git-Webhooks!</a> issue.</p>`;
       if (finalResult.alreadyExist) {
         resultToDisplay +=
           '<p style="color:orange">A config file with your repository already exist. It has been overwrite with the present token and API URL.</p>';

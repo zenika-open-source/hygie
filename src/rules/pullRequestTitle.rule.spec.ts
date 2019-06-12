@@ -8,6 +8,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockAnalytics,
 } from '../__mocks__/mocks';
 import { PullRequestTitleRule } from './pullRequestTitle.rule';
 
@@ -44,7 +45,7 @@ describe('RulesService', () => {
         number: 22,
       };
 
-      const pullRequestTitle = new PullRequestTitleRule();
+      const pullRequestTitle = new PullRequestTitleRule(MockAnalytics);
       pullRequestTitle.options = {
         regexp: '(WIP|FIX):\\s.*',
       };
@@ -73,7 +74,7 @@ describe('RulesService', () => {
         number: 22,
       };
 
-      const pullRequestTitle = new PullRequestTitleRule();
+      const pullRequestTitle = new PullRequestTitleRule(MockAnalytics);
       pullRequestTitle.options = {
         regexp: '(WIP|FIX):\\s.*',
       };

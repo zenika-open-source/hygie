@@ -20,12 +20,14 @@ import {
   GitMergePRInfos,
   PRMethodsEnum,
 } from '../git/gitPRInfos';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { GitlabService } from './gitlab.service';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitRelease } from '../git/gitRelease';
 import { GitTag } from '../git/gitTag';
+import { GitBranchCommit } from '../git/gitBranchSha';
+import { logger } from '../logger/logger.service';
 
 describe('Gitlab Service', () => {
   let app: TestingModule;
@@ -191,13 +193,17 @@ describe('Gitlab Service', () => {
   });
 
   describe('createIssue', () => {
-    it('should emit a POST request with specific params', () => {
+    it('should emit a POST request with specific params', async () => {
       const gitIssueInfos = new GitIssueInfos();
       gitIssueInfos.title = 'my new issue';
       gitIssueInfos.description = 'my desc';
       gitIssueInfos.labels = ['good first issue', 'rules'];
 
-      gitlabService.createIssue(gitApiInfos, gitIssueInfos);
+      httpService.post = jest.fn().mockImplementationOnce(() => {
+        return of({ data: { iid: 1 } });
+      });
+
+      await gitlabService.createIssue(gitApiInfos, gitIssueInfos);
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/issues`;
 
@@ -208,6 +214,11 @@ describe('Gitlab Service', () => {
       };
 
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
+
+      // Restore mock
+      httpService.post = jest.fn().mockImplementation(() => {
+        return of([]);
+      });
     });
   });
 
@@ -231,7 +242,9 @@ describe('Gitlab Service', () => {
       gitFileInfos.fileBranch = 'master';
       gitFileInfos.filePath = 'file/to/delete.txt';
       gitFileInfos.commitMessage = 'delete file';
-      gitlabService.deleteFile(gitApiInfos, gitFileInfos);
+      gitlabService
+        .deleteFile(gitApiInfos, gitFileInfos)
+        .catch(err => logger.error(err));
 
       const expectedUrl = `${
         gitlabService.urlApi
@@ -333,7 +346,9 @@ describe('Gitlab Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      gitlabService.getIssues(gitApiInfos, gitIssueSearch);
+      gitlabService
+        .getIssues(gitApiInfos, gitIssueSearch)
+        .catch(err => logger.error(err));
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/issues`;
 
@@ -356,7 +371,9 @@ describe('Gitlab Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      gitlabService.getPullRequests(gitApiInfos, gitIssueSearch);
+      gitlabService
+        .getPullRequests(gitApiInfos, gitIssueSearch)
+        .catch(err => logger.error(err));
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/merge_requests`;
 
@@ -409,6 +426,139 @@ describe('Gitlab Service', () => {
       gitlabService.createTag(gitApiInfos, gitTag);
 
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
+    });
+  });
+
+  describe('getLastBranchesCommitSha', () => {
+    it('should emit a GET request with specific params', async () => {
+      httpService.get = jest.fn().mockImplementationOnce((...args) => {
+        return of({
+          data: [
+            {
+              name: 'develop',
+              commit: {
+                id: 'c072f9cab23bbd992a3acc3ad6eb4a6c70c7c5aa',
+                short_id: 'c072f9ca',
+                created_at: '2019-05-23T14:37:12.000+00:00',
+                parent_ids: null,
+                title: 'Merge branch master into develop',
+                message: 'Merge branch master into develop',
+                author_name: 'Bastien Terrier',
+                author_email: 'bastien.terrier@gmail.com',
+                authored_date: '2019-05-23T14:37:12.000+00:00',
+                committer_name: 'Bastien Terrier',
+                committer_email: 'bastien.terrier@gmail.com',
+                committed_date: '2019-05-23T14:37:12.000+00:00',
+              },
+              merged: false,
+              protected: false,
+              developers_can_push: false,
+              developers_can_merge: false,
+              can_push: false,
+              default: false,
+            },
+            {
+              name: 'gl-pages',
+              commit: {
+                id: '8a4d7d7d60d259679ef0edab2c156db8f7a7cd9d',
+                short_id: '8a4d7d7d',
+                created_at: '2019-06-03T13:12:14.000+00:00',
+                parent_ids: null,
+                title: 'Update README.md',
+                message: 'Update README.md',
+                author_name: 'Bastien Terrier',
+                author_email: 'bastien.terrier@gmail.com',
+                authored_date: '2019-06-03T13:12:14.000+00:00',
+                committer_name: 'Bastien Terrier',
+                committer_email: 'bastien.terrier@gmail.com',
+                committed_date: '2019-06-03T13:12:14.000+00:00',
+              },
+              merged: false,
+              protected: false,
+              developers_can_push: false,
+              developers_can_merge: false,
+              can_push: false,
+              default: false,
+            },
+            {
+              name: 'master',
+              commit: {
+                id: '9bcd827d36537f861c209a0b2a4d3006a281b707',
+                short_id: '9bcd827d',
+                created_at: '2019-06-04T14:31:27.000+00:00',
+                parent_ids: null,
+                title: 'test',
+                message: 'test',
+                author_name: 'TERRIER Bastien',
+                author_email: 'bastien.terrier@gmail.com',
+                authored_date: '2019-06-04T14:31:27.000+00:00',
+                committer_name: 'TERRIER Bastien',
+                committer_email: 'bastien.terrier@gmail.com',
+                committed_date: '2019-06-04T14:31:27.000+00:00',
+              },
+              merged: false,
+              protected: true,
+              developers_can_push: false,
+              developers_can_merge: false,
+              can_push: false,
+              default: true,
+            },
+            {
+              name: 'somebranch',
+              commit: {
+                id: 'b01a3298ec6f410bbcdf13667a6f6fda6d655442',
+                short_id: 'b01a3298',
+                created_at: '2019-06-04T10:43:54.000+00:00',
+                parent_ids: null,
+                title: 'fix(): #v0.1.0#',
+                message: 'fix(): #v0.1.0#',
+                author_name: 'TERRIER Bastien',
+                author_email: 'bastien.terrier@gmail.com',
+                authored_date: '2019-06-04T10:43:54.000+00:00',
+                committer_name: 'TERRIER Bastien',
+                committer_email: 'bastien.terrier@gmail.com',
+                committed_date: '2019-06-04T10:43:54.000+00:00',
+              },
+              merged: true,
+              protected: false,
+              developers_can_push: false,
+              developers_can_merge: false,
+              can_push: false,
+              default: false,
+            },
+          ],
+        });
+      });
+
+      const result: GitBranchCommit[] = await gitlabService.getLastBranchesCommitSha(
+        gitApiInfos,
+      );
+
+      const expectedUrl = `${
+        gitlabService.urlApi
+      }/projects/1/repository/branches`;
+
+      expectedConfig.params = {};
+
+      expect(httpService.get).toBeCalledWith(expectedUrl, expectedConfig);
+      expect(result).toEqual([
+        {
+          branch: 'develop',
+          commitSha: 'c072f9cab23bbd992a3acc3ad6eb4a6c70c7c5aa',
+        },
+        {
+          branch: 'gl-pages',
+          commitSha: '8a4d7d7d60d259679ef0edab2c156db8f7a7cd9d',
+        },
+        {
+          branch: 'master',
+          commitSha: '9bcd827d36537f861c209a0b2a4d3006a281b707',
+        },
+        {
+          branch: 'somebranch',
+          commitSha: 'b01a3298ec6f410bbcdf13667a6f6fda6d655442',
+        },
+      ]);
     });
   });
 

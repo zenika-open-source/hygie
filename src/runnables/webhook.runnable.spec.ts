@@ -4,8 +4,9 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { MockHttpService } from '../__mocks__/mocks';
+import { MockHttpService, MockAnalytics } from '../__mocks__/mocks';
 import { WebhookRunnable } from './webhook.runnable';
+import { logger } from '../logger/logger.service';
 
 describe('WebhookRunnable', () => {
   let app: TestingModule;
@@ -22,6 +23,7 @@ describe('WebhookRunnable', () => {
       providers: [
         WebhookRunnable,
         { provide: HttpService, useClass: MockHttpService },
+        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
       ],
     }).compile();
 
@@ -63,7 +65,9 @@ describe('WebhookRunnable', () => {
 
   describe('webhook Runnable', () => {
     it('should send a post request with specific url and data ', () => {
-      webhookRunnable.run(CallbackType.Both, ruleResultCommitMessage, args);
+      webhookRunnable
+        .run(CallbackType.Both, ruleResultCommitMessage, args)
+        .catch(err => logger.error(err));
 
       expect(httpService.post).toBeCalledWith(
         'https://webhook.site/abcdef',

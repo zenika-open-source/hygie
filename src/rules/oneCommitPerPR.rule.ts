@@ -5,6 +5,8 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface OneCommitPerPROptions {
   users?: UsersOptions;
@@ -19,12 +21,23 @@ export class OneCommitPerPRRule extends Rule {
   events = [GitEventEnum.Push];
   options: OneCommitPerPROptions;
 
+  constructor(
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
+  ) {
+    super();
+  }
+
   async validate(
     webhook: Webhook,
     ruleConfig: OneCommitPerPRRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+
+    this.googleAnalytics
+      .event('Rule', 'oneCommitPerPR', webhook.getCloneURL())
+      .send();
 
     // First, check if rule need to be processed
     if (

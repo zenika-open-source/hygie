@@ -21,6 +21,7 @@ rules:
         args:
           title: 'WIP: {{data.branch}}'
           description: 'Work in Progress Pull Request'
+          draft: true
 
   # PULL REQUESTS
   - name: pullRequestTitle
@@ -51,7 +52,7 @@ rules:
   # COMMITS
   - name: commitMessage
     options:
-      regexp: '^(feat|fix|docs)(\([a-z]*\))?:\s[^(]*(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
+      regexp: '^(build|ci|docs|feat|fix|perf|refactor|style|test|release)(\([a-z-]*\))?:\s(.*?)(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
       maxLength: 50
       branches:
         ignore:
@@ -108,8 +109,8 @@ rules:
       - callback: SendEmailRunnable
         args:
           to: bastien.terrier@gmail.com
-          subject: 'New issue (#{{data.issueNumber}}) '
-          message: '<b>{{data.issueTitle}}</b> has been created!'
+          subject: 'New issue: "{{data.issue.title}}" (#{{data.issue.number}})'
+          message: '<b>{{data.issue.title}}</b> has been created!<br>{{data.issue.description}}'
   - name: issueComment
     options:
       regexp: '^ping @bastienterrier$'

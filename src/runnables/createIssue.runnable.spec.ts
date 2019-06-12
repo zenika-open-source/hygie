@@ -5,8 +5,15 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import {
+  MockGitlabService,
+  MockGithubService,
+  MockAnalytics,
+  MockHttpService,
+} from '../__mocks__/mocks';
 import { CreateIssueRunnable } from './createIssue.runnable';
+import { logger } from '../logger/logger.service';
+import { HttpService } from '@nestjs/common';
 
 describe('CreateIssueRunnable', () => {
   let app: TestingModule;
@@ -25,6 +32,7 @@ describe('CreateIssueRunnable', () => {
         CreateIssueRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
+        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
       ],
     }).compile();
 
@@ -78,7 +86,9 @@ describe('CreateIssueRunnable', () => {
 
   describe('CreateIssue Runnable', () => {
     it('should not call the createIssue Github nor Gitlab service', () => {
-      createIssueRunnable.run(CallbackType.Both, ruleResultCommitMessage, args);
+      createIssueRunnable
+        .run(CallbackType.Both, ruleResultCommitMessage, args)
+        .catch(err => logger.error(err));
       expect(githubService.createIssue).not.toBeCalled();
       expect(gitlabService.createIssue).not.toBeCalled();
     });
@@ -86,7 +96,10 @@ describe('CreateIssueRunnable', () => {
   describe('CreateIssue Runnable', () => {
     it('should call the createIssue Github service', () => {
       ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Github;
-      createIssueRunnable.run(CallbackType.Both, ruleResultCommitMessage, args);
+
+      createIssueRunnable
+        .run(CallbackType.Both, ruleResultCommitMessage, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.createIssue).toBeCalledWith(
         { git: 'Github', repositoryFullName: 'bastienterrier/test_webhook' },
@@ -102,7 +115,9 @@ describe('CreateIssueRunnable', () => {
   describe('CreateIssue Runnable', () => {
     it('should call the createIssue Gitlab service', () => {
       ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Gitlab;
-      createIssueRunnable.run(CallbackType.Both, ruleResultCommitMessage, args);
+      createIssueRunnable
+        .run(CallbackType.Both, ruleResultCommitMessage, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.createIssue).not.toBeCalled();
       expect(gitlabService.createIssue).toBeCalledWith(

@@ -5,6 +5,7 @@ import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { LoggerRunnable } from './logger.runnable';
+import { MockAnalytics } from '../__mocks__/mocks';
 
 describe('LoggerRunnable', () => {
   let app: TestingModule;
@@ -15,7 +16,10 @@ describe('LoggerRunnable', () => {
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
-      providers: [LoggerRunnable],
+      providers: [
+        LoggerRunnable,
+        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+      ],
     }).compile();
 
     logger.info = jest.fn().mockName('logger.info');
@@ -45,7 +49,9 @@ describe('LoggerRunnable', () => {
 
   describe('logger Runnable', () => {
     it('should call the info() method', () => {
-      loggerRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
+      loggerRunnable
+        .run(CallbackType.Both, ruleResultIssueTitle, args)
+        .catch(err => logger.error(err));
 
       expect(logger.info).toBeCalled();
       expect(logger.error).not.toBeCalled();
@@ -57,7 +63,9 @@ describe('LoggerRunnable', () => {
     it('should call the error() method', () => {
       ruleResultIssueTitle.validated = false;
       args.type = undefined;
-      loggerRunnable.run(CallbackType.Error, ruleResultIssueTitle, args);
+      loggerRunnable
+        .run(CallbackType.Error, ruleResultIssueTitle, args)
+        .catch(err => logger.error(err));
 
       expect(logger.info).not.toBeCalled();
       expect(logger.error).toBeCalled();
@@ -70,7 +78,9 @@ describe('LoggerRunnable', () => {
       ruleResultIssueTitle.validated = false;
 
       args.type = 'info';
-      loggerRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
+      loggerRunnable
+        .run(CallbackType.Both, ruleResultIssueTitle, args)
+        .catch(err => logger.error(err));
 
       expect(logger.info).toBeCalled();
       expect(logger.error).not.toBeCalled();
@@ -83,7 +93,9 @@ describe('LoggerRunnable', () => {
       ruleResultIssueTitle.validated = true;
 
       args.type = 'warn';
-      loggerRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
+      loggerRunnable
+        .run(CallbackType.Both, ruleResultIssueTitle, args)
+        .catch(err => logger.error(err));
 
       expect(logger.info).not.toBeCalled();
       expect(logger.error).not.toBeCalled();

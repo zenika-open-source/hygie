@@ -4,6 +4,8 @@ import { RuleResult } from '../rules/ruleResult';
 import { render } from 'mustache';
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface LoggerArgs {
   type: string;
@@ -15,11 +17,22 @@ interface LoggerArgs {
  */
 @RunnableDecorator('LoggerRunnable')
 export class LoggerRunnable extends Runnable {
+  constructor(
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
+  ) {
+    super();
+  }
+
   async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: LoggerArgs,
   ): Promise<void> {
+    this.googleAnalytics
+      .event('Runnable', 'logger', ruleResult.projectURL)
+      .send();
+
     // Defaults
     if (
       typeof args.type === 'undefined' &&

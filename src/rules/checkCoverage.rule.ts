@@ -3,9 +3,10 @@ import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
-import { CommitMatches } from './commitMessage.rule';
-import { HttpService } from '@nestjs/common';
-import { Utils } from './utils';
+import { HttpService, Inject } from '@nestjs/common';
+import { logger } from '../logger/logger.service';
+import { GitBranchCommit } from '../git/gitBranchSha';
+import { Visitor } from 'universal-analytics';
 
 export enum CoverageProvider {
   Coveralls = 'Coveralls',
@@ -26,7 +27,11 @@ export class CheckCoverageRule extends Rule {
   options: CheckCoverageOptions;
   events = [GitEventEnum.Cron];
 
-  constructor(private readonly httpService: HttpService) {
+  constructor(
+    private readonly httpService: HttpService,
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
+  ) {
     super();
   }
 
@@ -36,20 +41,21 @@ export class CheckCoverageRule extends Rule {
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+    ruleResult.data = { coverage: [] };
+    let allBranchesPassed: boolean = true;
+    let coverageURL: string;
 
-    if (typeof ruleResults === 'undefined') {
-      return Promise.resolve(null);
-    }
+    this.googleAnalytics
+      .event('Rule', 'checkCoverage', webhook.getCloneURL())
+      .send();
 
-    const commit: any = ruleResults
-      .map(r => r.data)
-      .find(d => (d as any).commits);
+    const lastBranchesCommitSha: GitBranchCommit[] = await webhook.gitService.getLastBranchesCommitSha(
+      ruleResult.gitApiInfos,
+    );
 
-    if (typeof commit !== 'undefined') {
-      const commitMatches: CommitMatches[] = (commit as any).commits;
-      const sha = Utils.getLastItem(commitMatches).sha;
-
-      let coverageURL: string;
+    for (let index = 0; index < lastBranchesCommitSha.length; index++) {
+      const sha: string = lastBranchesCommitSha[index].commitSha;
+      const branch: string = lastBranchesCommitSha[index].branch;
 
       switch (ruleConfig.options.provider.toLowerCase()) {
         case CoverageProvider.Coveralls.toLowerCase():
@@ -62,9 +68,8 @@ export class CheckCoverageRule extends Rule {
           .get(coverageURL)
           .toPromise()
           .then(response => response.data)
-          .catch(err => {
-            // No coverage for this commit sha
-            throw new Error(err);
+          .catch(() => {
+            throw new Error('No coverage for this commit sha');
           });
 
         if (
@@ -74,23 +79,20 @@ export class CheckCoverageRule extends Rule {
           (typeof ruleConfig.options.threshold !== 'undefined' &&
             covered_percent < ruleConfig.options.threshold)
         ) {
-          ruleResult.validated = false;
-        } else {
-          ruleResult.validated = true;
+          allBranchesPassed = false;
         }
 
-        ruleResult.data = {
+        (ruleResult.data as any).coverage.push({
+          branch,
           coverage_change,
           covered_percent,
-        };
+        });
       } catch (e) {
-        // Ignore current rule
-        return Promise.resolve(null);
+        logger.error(e);
       }
-    } else {
-      // Ignore current rule
-      return Promise.resolve(null);
     }
+
+    ruleResult.validated = allBranchesPassed;
 
     return Promise.resolve(ruleResult);
   }

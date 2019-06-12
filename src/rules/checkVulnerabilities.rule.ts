@@ -5,6 +5,8 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { logger } from '../logger/logger.service';
 import { RemoteConfigUtils } from '../remote-config/utils';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface CheckVulnerabilitiesOptions {
   packageUrl: string;
@@ -19,6 +21,13 @@ interface CheckVulnerabilitiesOptions {
 export class CheckVulnerabilitiesRule extends Rule {
   options: CheckVulnerabilitiesOptions;
   events = [GitEventEnum.Push, GitEventEnum.Cron];
+
+  constructor(
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
+  ) {
+    super();
+  }
 
   getNumberOfVulnerabilities(data: any): number {
     const vulnerabilities = data.metadata.vulnerabilities;
@@ -38,6 +47,10 @@ export class CheckVulnerabilitiesRule extends Rule {
   ): Promise<RuleResult> {
     return new Promise(async (resolve, reject) => {
       const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+
+      this.googleAnalytics
+        .event('Rule', 'checkVulnerabilities', webhook.getCloneURL())
+        .send();
 
       const execa = require('execa');
       const download = require('download');

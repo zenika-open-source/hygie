@@ -8,6 +8,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockAnalytics,
 } from '../__mocks__/mocks';
 import { Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
@@ -50,7 +51,7 @@ describe('RulesService', () => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkPullRequestsRule = new CheckPullRequestsRule();
+      const checkPullRequestsRule = new CheckPullRequestsRule(MockAnalytics);
       checkPullRequestsRule.options = {
         notUpdatedSinceXDays: 7,
         state: 'open',
@@ -91,7 +92,7 @@ describe('RulesService', () => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkPullRequestsRule = new CheckPullRequestsRule();
+      const checkPullRequestsRule = new CheckPullRequestsRule(MockAnalytics);
       checkPullRequestsRule.options = {
         notUpdatedSinceXDays: 0, // for testing
         state: 'close',
@@ -133,7 +134,7 @@ describe('RulesService', () => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkPullRequestsRule = new CheckPullRequestsRule();
+      const checkPullRequestsRule = new CheckPullRequestsRule(MockAnalytics);
       checkPullRequestsRule.options = {
         notUpdatedSinceXDays: 0, // for testing
         state: 'all',

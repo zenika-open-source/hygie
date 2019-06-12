@@ -8,6 +8,8 @@ import { GithubService } from '../github/github.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommit } from '../git/gitCommit';
 import { GitRef } from '../git/gitRef';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface DeployFolderArgs {
   folder: string;
@@ -21,7 +23,11 @@ interface DeployFolderArgs {
  */
 @RunnableDecorator('DeployFolderRunnable')
 export class DeployFolderRunnable extends Runnable {
-  constructor(private readonly githubService: GithubService) {
+  constructor(
+    private readonly githubService: GithubService,
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
+  ) {
     super();
   }
   async run(
@@ -31,6 +37,10 @@ export class DeployFolderRunnable extends Runnable {
   ): Promise<void> {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const sourceBranch: string = (ruleResult.data as any).branch;
+
+    this.googleAnalytics
+      .event('Runnable', 'deployFolder', ruleResult.projectURL)
+      .send();
 
     if (
       gitApiInfos.git === GitTypeEnum.Github &&

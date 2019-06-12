@@ -5,6 +5,7 @@ export interface GitlabIssue {
   iid: number;
   title: string;
   project_id: number;
+  description: string;
 }
 /**
  * GitlabCommit dto

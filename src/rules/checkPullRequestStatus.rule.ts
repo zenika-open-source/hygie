@@ -5,6 +5,8 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
+import { Visitor } from 'universal-analytics';
+import { Inject } from '@nestjs/common';
 
 interface CheckPullRequestStatusOptions {
   status: string;
@@ -26,6 +28,13 @@ export class CheckPullRequestStatusRule extends Rule {
     GitEventEnum.ReopenedPR,
   ];
 
+  constructor(
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
+  ) {
+    super();
+  }
+
   getEvent(event: GitEventEnum): string {
     return event.toLowerCase().substring(0, event.length - 2);
   }
@@ -37,6 +46,10 @@ export class CheckPullRequestStatusRule extends Rule {
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
     const gitEvent = this.getEvent(webhook.gitEvent);
+
+    this.googleAnalytics
+      .event('Rule', 'checkPullRequestStatus', webhook.getCloneURL())
+      .send();
 
     // First, check if rule need to be processed
     if (!Utils.checkUser(webhook, ruleConfig.options.users)) {

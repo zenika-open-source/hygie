@@ -5,8 +5,13 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import {
+  MockGitlabService,
+  MockGithubService,
+  MockAnalytics,
+} from '../__mocks__/mocks';
 import { CreateReleaseRunnable } from './createRelease.runnable';
+import { logger } from '../logger/logger.service';
 
 describe('createRelease Runnable', () => {
   let app: TestingModule;
@@ -25,6 +30,7 @@ describe('createRelease Runnable', () => {
         CreateReleaseRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
+        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
       ],
     }).compile();
 
@@ -51,7 +57,9 @@ describe('createRelease Runnable', () => {
 
   describe('Run method', () => {
     it('should not call the createRelease Github nor Gitlab service', () => {
-      createReleaseRunnable.run(CallbackType.Both, ruleResult, args);
+      createReleaseRunnable
+        .run(CallbackType.Both, ruleResult, args)
+        .catch(err => logger.error(err));
       expect(githubService.createRelease).not.toBeCalled();
       expect(gitlabService.createRelease).not.toBeCalled();
     });
@@ -60,7 +68,9 @@ describe('createRelease Runnable', () => {
     it('should call the createRelease Github service', () => {
       ruleResult.gitApiInfos.git = GitTypeEnum.Github;
 
-      createReleaseRunnable.run(CallbackType.Both, ruleResult, args);
+      createReleaseRunnable
+        .run(CallbackType.Both, ruleResult, args)
+        .catch(err => logger.error(err));
       expect(githubService.createRelease).toBeCalled();
       expect(gitlabService.createRelease).not.toBeCalled();
     });
@@ -69,7 +79,9 @@ describe('createRelease Runnable', () => {
     it('should call the createRelease Gitlab service', () => {
       ruleResult.gitApiInfos.git = GitTypeEnum.Gitlab;
 
-      createReleaseRunnable.run(CallbackType.Both, ruleResult, args);
+      createReleaseRunnable
+        .run(CallbackType.Both, ruleResult, args)
+        .catch(err => logger.error(err));
       expect(githubService.createRelease).not.toBeCalled();
       expect(gitlabService.createRelease).toBeCalled();
     });

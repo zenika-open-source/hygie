@@ -26,16 +26,16 @@ export class CronController {
     private readonly scheduleService: ScheduleService,
     private readonly dataAccessService: DataAccessService,
   ) {
-    this.loadCronJobs();
+    this.loadCronJobs().catch(err => logger.error(err));
   }
 
   /**
    * Reload all Cron Jobs when application restart
    */
-  private async loadCronJobs(): Promise<any> {
+  private async loadCronJobs(): Promise<void> {
     const CronStandardClassArray: CronType = await this.dataAccessService.getAllCrons();
     if (this.dataAccessService.removeAllCrons()) {
-      this.cronJobs(CronStandardClassArray);
+      this.cronJobs(CronStandardClassArray).catch(err => logger.error(err));
     } else {
       logger.error('Can not remove old cron jobs', {
         location: 'CronController',

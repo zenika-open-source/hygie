@@ -2,6 +2,7 @@ import { Group } from './group.class';
 import { CommitMessageRule } from './commitMessage.rule';
 import { OneCommitPerPRRule } from './oneCommitPerPR.rule';
 import { logger } from '../logger/logger.service';
+import { MockAnalytics } from '../__mocks__/mocks';
 
 describe('Group', () => {
   describe('displayInformations', () => {
@@ -16,7 +17,10 @@ describe('Group', () => {
       ];
       grp.onSuccess = [];
       grp.onError = [];
-      grp.rules = [new CommitMessageRule(), new OneCommitPerPRRule()];
+      grp.rules = [
+        new CommitMessageRule(MockAnalytics),
+        new OneCommitPerPRRule(MockAnalytics),
+      ];
 
       logger.info = jest.fn().mockName('logger.info');
 
@@ -33,7 +37,10 @@ describe('Group', () => {
           args: { type: 'info', message: 'my message' },
         },
       ];
-      grp.rules = [new CommitMessageRule(), new OneCommitPerPRRule()];
+      grp.rules = [
+        new CommitMessageRule(MockAnalytics),
+        new OneCommitPerPRRule(MockAnalytics),
+      ];
 
       logger.info = jest.fn().mockName('logger.info');
 

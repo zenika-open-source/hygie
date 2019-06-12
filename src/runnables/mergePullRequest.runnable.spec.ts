@@ -5,8 +5,13 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import {
+  MockGitlabService,
+  MockGithubService,
+  MockAnalytics,
+} from '../__mocks__/mocks';
 import { MergePullRequestRunnable } from './mergePullRequest.runnable';
+import { logger } from '../logger/logger.service';
 
 describe('MergePullRequestRunnable', () => {
   let app: TestingModule;
@@ -25,6 +30,7 @@ describe('MergePullRequestRunnable', () => {
         MergePullRequestRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
+        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
       ],
     }).compile();
 
@@ -55,11 +61,9 @@ describe('MergePullRequestRunnable', () => {
   describe('mergePullRequest Runnable', () => {
     it('should not call the mergePullRequest Github nor Gitlab service', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Undefined;
-      mergePullRequestRunnable.run(
-        CallbackType.Both,
-        ruleResultPullRequestTitle,
-        args,
-      );
+      mergePullRequestRunnable
+        .run(CallbackType.Both, ruleResultPullRequestTitle, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.mergePullRequest).not.toBeCalled();
       expect(gitlabService.mergePullRequest).not.toBeCalled();
@@ -68,11 +72,9 @@ describe('MergePullRequestRunnable', () => {
   describe('mergePullRequest Runnable', () => {
     it('should call the mergePullRequest Githubservice', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Github;
-      mergePullRequestRunnable.run(
-        CallbackType.Both,
-        ruleResultPullRequestTitle,
-        args,
-      );
+      mergePullRequestRunnable
+        .run(CallbackType.Both, ruleResultPullRequestTitle, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.mergePullRequest).toBeCalled();
       expect(gitlabService.mergePullRequest).not.toBeCalled();
@@ -81,11 +83,9 @@ describe('MergePullRequestRunnable', () => {
   describe('mergePullRequest Runnable', () => {
     it('should call the mergePullRequest Gitlab service', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
-      mergePullRequestRunnable.run(
-        CallbackType.Both,
-        ruleResultPullRequestTitle,
-        args,
-      );
+      mergePullRequestRunnable
+        .run(CallbackType.Both, ruleResultPullRequestTitle, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.mergePullRequest).not.toBeCalled();
       expect(gitlabService.mergePullRequest).toBeCalled();

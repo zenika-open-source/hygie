@@ -14,6 +14,7 @@ import {
 import { GitFileInfos } from './gitFileInfos';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitRelease } from './gitRelease';
+import { GitBranchCommit } from './gitBranchSha';
 
 /**
  * Provide methods that must be implement by `GithubService` and `GitlabService` to interact with `git` repository
@@ -62,7 +63,10 @@ export interface GitServiceInterface {
   /**
    * Create an Issue whose attributes are specify by the `gitCommitStatusInfos` param
    */
-  createIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void;
+  createIssue(
+    gitApiInfos: GitApiInfos,
+    gitIssueInfos: GitIssueInfos,
+  ): Promise<number>;
 
   /**
    * Update an issue partially
@@ -121,4 +125,8 @@ export interface GitServiceInterface {
   ): Promise<PRSearchResult[]>;
 
   createRelease(gitApiInfos: GitApiInfos, gitRelease: GitRelease): void;
+
+  getLastBranchesCommitSha(
+    gitApiInfos: GitApiInfos,
+  ): Promise<GitBranchCommit[]>;
 }

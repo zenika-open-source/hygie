@@ -8,6 +8,7 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
+  MockAnalytics,
 } from '../__mocks__/mocks';
 import { IssueCommentRule } from './issueComment.rule';
 
@@ -22,13 +23,14 @@ describe('RulesService', () => {
   webhook.issue = {
     title: 'my issue for webhook',
     number: 22,
+    description: 'issue description',
   };
   webhook.comment = {
     id: 123,
     description: 'comment on issue',
   };
 
-  const issueComment = new IssueCommentRule();
+  const issueComment = new IssueCommentRule(MockAnalytics);
   issueComment.options = {
     regexp: '^@ping$',
   };
@@ -59,11 +61,16 @@ describe('RulesService', () => {
       );
       expect(result.validated).toBe(false);
       expect(result.data).toEqual({
-        issueTitle: webhook.issue.title,
-        issueNumber: webhook.issue.number,
-        commentId: webhook.comment.id,
-        commentDescription: webhook.comment.description,
-        matches: null,
+        comment: {
+          description: 'comment on issue',
+          id: 123,
+          matches: null,
+        },
+        issue: {
+          description: 'issue description',
+          number: 22,
+          title: 'my issue for webhook',
+        },
       });
     });
 
@@ -75,11 +82,16 @@ describe('RulesService', () => {
       );
       expect(result.validated).toBe(true);
       expect(JSON.parse(JSON.stringify(result.data))).toEqual({
-        issueTitle: webhook.issue.title,
-        issueNumber: webhook.issue.number,
-        commentId: webhook.comment.id,
-        commentDescription: webhook.comment.description,
-        matches: ['@ping'],
+        comment: {
+          description: '@ping',
+          id: 123,
+          matches: ['@ping'],
+        },
+        issue: {
+          description: 'issue description',
+          number: 22,
+          title: 'my issue for webhook',
+        },
       });
     });
   });

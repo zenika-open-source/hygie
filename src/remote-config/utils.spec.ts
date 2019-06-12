@@ -7,14 +7,12 @@ import {
   MockDataAccessService,
 } from '../__mocks__/mocks';
 import { RemoteConfigUtils } from './utils';
-import { Utils } from '../utils/utils';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { of } from 'rxjs';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { FileAccess } from '../data_access/providers/fileAccess';
-import { DatabaseAccess } from '../data_access/providers/databaseAccess';
 import { Constants } from '../utils/constants';
 
 describe('remote-config', () => {

@@ -5,6 +5,8 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
+import { Inject } from '@nestjs/common';
+import { Visitor } from 'universal-analytics';
 
 interface IssueTitleOptions {
   regexp: string;
@@ -20,6 +22,13 @@ export class IssueTitleRule extends Rule {
   options: IssueTitleOptions;
   events = [GitEventEnum.NewIssue];
 
+  constructor(
+    @Inject('GoogleAnalytics')
+    private readonly googleAnalytics: Visitor,
+  ) {
+    super();
+  }
+
   async validate(
     webhook: Webhook,
     ruleConfig: IssueTitleRule,
@@ -29,6 +38,10 @@ export class IssueTitleRule extends Rule {
     const titleIssue = webhook.getIssueTitle();
     const issueRegExp = RegExp(ruleConfig.options.regexp);
 
+    this.googleAnalytics
+      .event('Rule', 'issueTitle', webhook.getCloneURL())
+      .send();
+
     // First, check if rule need to be processed
     if (!Utils.checkUser(webhook, ruleConfig.options.users)) {
       return null;
@@ -37,9 +50,12 @@ export class IssueTitleRule extends Rule {
     ruleResult.validated = issueRegExp.test(titleIssue);
 
     ruleResult.data = {
-      issueTitle: titleIssue,
-      issueNumber: webhook.getIssueNumber(),
-      matches: titleIssue.match(issueRegExp),
+      issue: {
+        title: titleIssue,
+        number: webhook.getIssueNumber(),
+        description: webhook.getIssueDescription(),
+        matches: titleIssue.match(issueRegExp),
+      },
     };
     return Promise.resolve(ruleResult);
   }

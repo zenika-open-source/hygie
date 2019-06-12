@@ -18,6 +18,7 @@ export class GitPRInfos {
   target: string;
   state?: IssuePRStateEnum;
   number?: number;
+  draft?: boolean;
 }
 
 /**

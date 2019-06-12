@@ -3,6 +3,7 @@ import {
   DataAccessInterface,
   SourceEnum,
 } from '../data_access/dataAccess.interface';
+import { Visitor } from 'universal-analytics';
 
 export class MockHttpService {
   get: jest.Mock = jest.fn(() => {
@@ -36,7 +37,10 @@ export class MockGitlabService {
         resolve();
       });
     });
-  createIssue: jest.Mock = jest.fn().mockName('createIssueGitlab');
+  createIssue: jest.Mock = jest
+    .fn()
+    .mockName('createIssueGitlab')
+    .mockResolvedValue(42);
   deleteBranch: jest.Mock = jest.fn().mockName('deleteBranchGitlab');
   updateIssue: jest.Mock = jest.fn().mockName('updateIssueGitlab');
   updateCommitStatus: jest.Mock = jest.fn();
@@ -52,6 +56,9 @@ export class MockGitlabService {
   createRelease: jest.Mock = jest.fn().mockName('createReleaseGitlab');
   getLastCommit: jest.Mock = jest.fn().mockName('getLastCommitGitlab');
   createTag: jest.Mock = jest.fn().mockName('createTagGitlab');
+  getLastBranchesCommitSha: jest.Mock = jest
+    .fn()
+    .mockName('getLastBranchesCommitShaGitlab');
 }
 
 export class MockGithubService {
@@ -65,7 +72,10 @@ export class MockGithubService {
         resolve();
       });
     });
-  createIssue: jest.Mock = jest.fn().mockName('createIssueGithub');
+  createIssue: jest.Mock = jest
+    .fn()
+    .mockName('createIssueGithub')
+    .mockResolvedValue(42);
   updateIssue: jest.Mock = jest.fn().mockName('updateIssueGithub');
   deleteBranch: jest.Mock = jest.fn().mockName('deleteBranchGithub');
   updateCommitStatus: jest.Mock = jest.fn();
@@ -101,6 +111,10 @@ export class MockGithubService {
     .mockResolvedValue('tag');
 
   createRef: jest.Mock = jest.fn().mockName('createRefGithub');
+
+  getLastBranchesCommitSha: jest.Mock = jest
+    .fn()
+    .mockName('getLastBranchesCommitShaGithub');
 }
 
 export class MockSendEmailRunnable {
@@ -231,3 +245,5 @@ export class MockDataAccess implements DataAccessInterface {
     return Promise.resolve(true);
   }
 }
+
+export const MockAnalytics: Visitor = new Visitor('mock');

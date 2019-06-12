@@ -5,8 +5,13 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import {
+  MockGitlabService,
+  MockGithubService,
+  MockAnalytics,
+} from '../__mocks__/mocks';
 import { UpdateCommitStatusRunnable } from './updateCommitStatus.runnable';
+import { logger } from '../logger/logger.service';
 
 describe('UpdateCommitStatusRunnable', () => {
   let app: TestingModule;
@@ -25,6 +30,7 @@ describe('UpdateCommitStatusRunnable', () => {
         UpdateCommitStatusRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
+        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
       ],
     }).compile();
 
@@ -78,7 +84,9 @@ describe('UpdateCommitStatusRunnable', () => {
 
   describe('updateCommitMessage Runnable', () => {
     it('should not call the updateCommitStatus Github nor Gitlab service', () => {
-      updateCommitStatus.run(CallbackType.Both, ruleResultCommitMessage, args);
+      updateCommitStatus
+        .run(CallbackType.Both, ruleResultCommitMessage, args)
+        .catch(err => logger.error(err));
       expect(githubService.updateCommitStatus).not.toBeCalled();
       expect(gitlabService.updateCommitStatus).not.toBeCalled();
     });
@@ -86,7 +94,9 @@ describe('UpdateCommitStatusRunnable', () => {
   describe('updateCommitMessage Runnable', () => {
     it('should call the updateCommitStatus Github service 3 times', () => {
       ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Github;
-      updateCommitStatus.run(CallbackType.Both, ruleResultCommitMessage, args);
+      updateCommitStatus
+        .run(CallbackType.Both, ruleResultCommitMessage, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.updateCommitStatus).toBeCalledTimes(3);
       expect(gitlabService.updateCommitStatus).not.toBeCalled();
@@ -95,7 +105,9 @@ describe('UpdateCommitStatusRunnable', () => {
   describe('updateCommitMessage Runnable', () => {
     it('should call the updateCommitStatus Gitlab service 3 times', () => {
       ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Gitlab;
-      updateCommitStatus.run(CallbackType.Both, ruleResultCommitMessage, args);
+      updateCommitStatus
+        .run(CallbackType.Both, ruleResultCommitMessage, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.updateCommitStatus).not.toBeCalled();
       expect(gitlabService.updateCommitStatus).toBeCalledTimes(3);

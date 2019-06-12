@@ -5,8 +5,13 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import {
+  MockGitlabService,
+  MockGithubService,
+  MockAnalytics,
+} from '../__mocks__/mocks';
 import { DeleteBranchRunnable } from './deleteBranch.runnable';
+import { logger } from '../logger/logger.service';
 
 describe('DeleteBranchRunnable', () => {
   let app: TestingModule;
@@ -25,6 +30,7 @@ describe('DeleteBranchRunnable', () => {
         DeleteBranchRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
+        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
       ],
     }).compile();
 
@@ -56,7 +62,9 @@ describe('DeleteBranchRunnable', () => {
   describe('deleteBranch Runnable', () => {
     it('should not call the deleteBranch Github nor Gitlab service', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Undefined;
-      deleteBranchRunnable.run(CallbackType.Both, ruleResultBranchName, args);
+      deleteBranchRunnable
+        .run(CallbackType.Both, ruleResultBranchName, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.deleteBranch).not.toBeCalled();
       expect(gitlabService.deleteBranch).not.toBeCalled();
@@ -65,7 +73,9 @@ describe('DeleteBranchRunnable', () => {
   describe('deleteBranch Runnable', () => {
     it('should call the deleteBranch Github service', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Github;
-      deleteBranchRunnable.run(CallbackType.Both, ruleResultBranchName, args);
+      deleteBranchRunnable
+        .run(CallbackType.Both, ruleResultBranchName, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.deleteBranch).toBeCalledWith(
         { git: 'Github', repositoryFullName: 'bastienterrier/test_webhook' },
@@ -77,7 +87,9 @@ describe('DeleteBranchRunnable', () => {
   describe('deleteBranch Runnable', () => {
     it('should call the deleteBranch Gitlab service', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Gitlab;
-      deleteBranchRunnable.run(CallbackType.Both, ruleResultBranchName, args);
+      deleteBranchRunnable
+        .run(CallbackType.Both, ruleResultBranchName, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.deleteBranch).not.toBeCalled();
       expect(gitlabService.deleteBranch).toBeCalledWith(
