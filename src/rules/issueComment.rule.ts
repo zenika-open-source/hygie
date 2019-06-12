@@ -51,11 +51,16 @@ export class IssueCommentRule extends Rule {
     ruleResult.validated = commentRegExp.test(commentDescription);
 
     ruleResult.data = {
-      issueTitle: webhook.getIssueTitle(),
-      issueNumber: webhook.getIssueNumber(),
-      commentId: webhook.getCommentId(),
-      commentDescription,
-      matches: commentDescription.match(commentRegExp),
+      issue: {
+        title: webhook.getIssueTitle(),
+        number: webhook.getIssueNumber(),
+        description: webhook.getIssueDescription(),
+      },
+      comment: {
+        id: webhook.getCommentId(),
+        description: commentDescription,
+        matches: commentDescription.match(commentRegExp),
+      },
     };
     return Promise.resolve(ruleResult);
   }

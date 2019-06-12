@@ -34,6 +34,7 @@ import { Utils } from '../utils/utils';
 export class WebhookIssue {
   number: number;
   title: string;
+  description: string;
 }
 
 export class WebhookCommit {
@@ -134,6 +135,10 @@ export class Webhook {
     return this.issue.title;
   }
 
+  getIssueDescription(): string {
+    return this.issue.description;
+  }
+
   getIssueNumber(): number {
     return this.issue.number;
   }
@@ -228,6 +233,7 @@ export class Webhook {
       this.gitService = this.githubService;
       this.issue.number = git.issue.number;
       this.issue.title = git.issue.title;
+      this.issue.description = git.issue.body;
       this.repository.fullName = git.repository.full_name;
       this.repository.cloneURL = git.repository.clone_url;
       this.repository.defaultBranchName = git.repository.default_branch;
@@ -238,6 +244,7 @@ export class Webhook {
       this.gitService = this.gitlabService;
       this.issue.number = git.object_attributes.iid;
       this.issue.title = git.object_attributes.title;
+      this.issue.description = git.object_attributes.description;
       this.projectId = git.object_attributes.project_id;
       this.repository.cloneURL = git.project.git_http_url;
       this.repository.defaultBranchName = git.project.default_branch;
@@ -278,6 +285,7 @@ export class Webhook {
       this.comment.description = git.comment.body;
       this.issue.title = git.issue.title;
       this.issue.number = git.issue.number;
+      this.issue.description = git.issue.body;
       this.repository.defaultBranchName = git.repository.default_branch;
       this.user.login = git.sender.login;
     } else if (isGithubPRCommentEvent(git)) {
@@ -307,6 +315,7 @@ export class Webhook {
       this.comment.description = git.object_attributes.description;
       this.issue.title = git.issue.title;
       this.issue.number = git.issue.iid;
+      this.issue.description = git.issue.description;
       this.repository.defaultBranchName = git.project.default_branch;
       this.user.login = git.user.username;
     } else if (isGitlabPRCommentEvent(git)) {

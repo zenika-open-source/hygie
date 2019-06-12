@@ -23,6 +23,7 @@ describe('RulesService', () => {
   webhook.issue = {
     title: 'my issue for webhook',
     number: 22,
+    description: 'issue description',
   };
   webhook.comment = {
     id: 123,

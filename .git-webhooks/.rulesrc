@@ -21,6 +21,7 @@ rules:
         args:
           title: 'WIP: {{data.branch}}'
           description: 'Work in Progress Pull Request'
+          draft: true
 
   # PULL REQUESTS
   - name: pullRequestTitle
@@ -47,3 +48,17 @@ rules:
           failTargetUrl: 'https://gist.github.com/stephenparish/9941e89d80e2bc58a153#examples'
           successDescriptionMessage: 'Commit message matches the Good Practices!'
           failDescriptionMessage: 'Caution, your commit message do not matches the Good Practices!'
+
+  #ISSUES
+  - name: issueTitle
+    options:
+      regexp: '.*'
+      users:
+        ignore:
+          - bastienterrier
+    onSuccess:
+      - callback: SendEmailRunnable
+        args:
+          to: bastien.terrier@gmail.com
+          subject: 'New issue: "{{data.issue.title}}" (#{{data.issue.number}})'
+          message: '<b>{{data.issue.title}}</b> has been created!<br>{{data.issue.description}}'

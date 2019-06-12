@@ -50,9 +50,12 @@ export class IssueTitleRule extends Rule {
     ruleResult.validated = issueRegExp.test(titleIssue);
 
     ruleResult.data = {
-      issueTitle: titleIssue,
-      issueNumber: webhook.getIssueNumber(),
-      matches: titleIssue.match(issueRegExp),
+      issue: {
+        title: titleIssue,
+        number: webhook.getIssueNumber(),
+        description: webhook.getIssueDescription(),
+        matches: titleIssue.match(issueRegExp),
+      },
     };
     return Promise.resolve(ruleResult);
   }

@@ -17,6 +17,7 @@ describe('RulesService', () => {
   let app: TestingModule;
   let githubService: GithubService;
   let gitlabService: GitlabService;
+  let webhook: Webhook;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -29,6 +30,21 @@ describe('RulesService', () => {
 
     githubService = app.get(GithubService);
     gitlabService = app.get(GitlabService);
+
+    webhook = new Webhook(gitlabService, githubService);
+    webhook.gitType = GitTypeEnum.Github;
+    webhook.issue = {
+      number: 22,
+      title: 'add rules documentation',
+      description: 'please consider adding a Rules section',
+    };
+    webhook.repository = {
+      fullName: 'bastienterrier/test_webhook',
+      name: 'test_webhook',
+      description: 'amazing project',
+      cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
+      defaultBranchName: 'master',
+    };
   });
 
   beforeEach(() => {
@@ -37,19 +53,7 @@ describe('RulesService', () => {
 
   // IssueTitle Rule
   describe('issueTitle Rule', () => {
-    it('should return true + an object with issueTitle, git, issueNumber and gitApiInfos', async () => {
-      const webhook = new Webhook(gitlabService, githubService);
-      webhook.gitType = GitTypeEnum.Github;
-      webhook.issue.number = 22;
-      webhook.issue.title = 'add rules documentation';
-      webhook.repository = {
-        fullName: 'bastienterrier/test_webhook',
-        name: 'test_webhook',
-        description: 'amazing project',
-        cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
-        defaultBranchName: 'master',
-      };
-
+    it('should return true + an object with issue infos and gitApiInfos', async () => {
       const issueTitle = new IssueTitleRule(MockAnalytics);
       issueTitle.options = {
         regexp: '(add|fix)\\s.*',
@@ -59,9 +63,12 @@ describe('RulesService', () => {
 
       const result: RuleResult = await issueTitle.validate(webhook, issueTitle);
       const expectedResult = {
-        issueTitle: 'add rules documentation',
-        issueNumber: 22,
-        matches: ['add rules documentation', 'add'],
+        issue: {
+          matches: ['add rules documentation', 'add'],
+          number: 22,
+          title: 'add rules documentation',
+          description: 'please consider adding a Rules section',
+        },
       };
       expect(result.validated).toBe(true);
       expect(JSON.parse(JSON.stringify(result.data))).toEqual(expectedResult);
@@ -72,10 +79,8 @@ describe('RulesService', () => {
     });
   });
   describe('issueTitle Rule', () => {
-    it('should return false + an object with issueTitle, git, issueNumber and gitApiInfos', async () => {
-      const webhook = new Webhook(gitlabService, githubService);
+    it('should return false + an object with issue infos and gitApiInfos', async () => {
       webhook.gitType = GitTypeEnum.Gitlab;
-      webhook.issue.number = 42;
       webhook.issue.title = 'update rules documentation';
       webhook.projectId = 7657;
 
@@ -88,9 +93,12 @@ describe('RulesService', () => {
 
       const result: RuleResult = await issueTitle.validate(webhook, issueTitle);
       const expectedResult = {
-        issueTitle: 'update rules documentation',
-        issueNumber: 42,
-        matches: null,
+        issue: {
+          description: 'please consider adding a Rules section',
+          matches: null,
+          number: 22,
+          title: 'update rules documentation',
+        },
       };
       expect(result.validated).toBe(false);
       expect(result.data).toEqual(expectedResult);
