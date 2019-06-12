@@ -87,7 +87,7 @@ describe('Gitlab Service', () => {
       const expectedUrl = `${gitlabService.urlApi}/projects/1/statuses/1`;
 
       expectedConfig.params = {
-        context: process.env.APPLICATION_NAME,
+        context: process.env.APPLICATION_NAME + '/commit',
         state: 'success',
         target_url: 'https://www.zenika.com',
         description: 'Well done',

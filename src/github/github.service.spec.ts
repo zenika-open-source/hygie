@@ -90,7 +90,7 @@ describe('Github Service', () => {
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/statuses/1`;
       const expectedData = {
-        context: process.env.APPLICATION_NAME,
+        context: process.env.APPLICATION_NAME + '/commit',
         state: 'success',
         target_url: 'https://www.zenika.com',
         description: 'Well done',
