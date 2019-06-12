@@ -11,6 +11,7 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { MergePullRequestRunnable } from './mergePullRequest.runnable';
+import { logger } from '../logger/logger.service';
 
 describe('MergePullRequestRunnable', () => {
   let app: TestingModule;
@@ -60,11 +61,9 @@ describe('MergePullRequestRunnable', () => {
   describe('mergePullRequest Runnable', () => {
     it('should not call the mergePullRequest Github nor Gitlab service', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Undefined;
-      mergePullRequestRunnable.run(
-        CallbackType.Both,
-        ruleResultPullRequestTitle,
-        args,
-      );
+      mergePullRequestRunnable
+        .run(CallbackType.Both, ruleResultPullRequestTitle, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.mergePullRequest).not.toBeCalled();
       expect(gitlabService.mergePullRequest).not.toBeCalled();
@@ -73,11 +72,9 @@ describe('MergePullRequestRunnable', () => {
   describe('mergePullRequest Runnable', () => {
     it('should call the mergePullRequest Githubservice', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Github;
-      mergePullRequestRunnable.run(
-        CallbackType.Both,
-        ruleResultPullRequestTitle,
-        args,
-      );
+      mergePullRequestRunnable
+        .run(CallbackType.Both, ruleResultPullRequestTitle, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.mergePullRequest).toBeCalled();
       expect(gitlabService.mergePullRequest).not.toBeCalled();
@@ -86,11 +83,9 @@ describe('MergePullRequestRunnable', () => {
   describe('mergePullRequest Runnable', () => {
     it('should call the mergePullRequest Gitlab service', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
-      mergePullRequestRunnable.run(
-        CallbackType.Both,
-        ruleResultPullRequestTitle,
-        args,
-      );
+      mergePullRequestRunnable
+        .run(CallbackType.Both, ruleResultPullRequestTitle, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.mergePullRequest).not.toBeCalled();
       expect(gitlabService.mergePullRequest).toBeCalled();

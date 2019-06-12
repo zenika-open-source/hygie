@@ -37,7 +37,10 @@ export class MockGitlabService {
         resolve();
       });
     });
-  createIssue: jest.Mock = jest.fn().mockName('createIssueGitlab');
+  createIssue: jest.Mock = jest
+    .fn()
+    .mockName('createIssueGitlab')
+    .mockResolvedValue(42);
   deleteBranch: jest.Mock = jest.fn().mockName('deleteBranchGitlab');
   updateIssue: jest.Mock = jest.fn().mockName('updateIssueGitlab');
   updateCommitStatus: jest.Mock = jest.fn();
@@ -69,7 +72,10 @@ export class MockGithubService {
         resolve();
       });
     });
-  createIssue: jest.Mock = jest.fn().mockName('createIssueGithub');
+  createIssue: jest.Mock = jest
+    .fn()
+    .mockName('createIssueGithub')
+    .mockResolvedValue(42);
   updateIssue: jest.Mock = jest.fn().mockName('updateIssueGithub');
   deleteBranch: jest.Mock = jest.fn().mockName('deleteBranchGithub');
   updateCommitStatus: jest.Mock = jest.fn();

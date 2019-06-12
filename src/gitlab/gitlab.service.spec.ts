@@ -27,6 +27,7 @@ import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitRelease } from '../git/gitRelease';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
+import { logger } from '../logger/logger.service';
 
 describe('Gitlab Service', () => {
   let app: TestingModule;
@@ -241,7 +242,9 @@ describe('Gitlab Service', () => {
       gitFileInfos.fileBranch = 'master';
       gitFileInfos.filePath = 'file/to/delete.txt';
       gitFileInfos.commitMessage = 'delete file';
-      gitlabService.deleteFile(gitApiInfos, gitFileInfos);
+      gitlabService
+        .deleteFile(gitApiInfos, gitFileInfos)
+        .catch(err => logger.error(err));
 
       const expectedUrl = `${
         gitlabService.urlApi
@@ -343,7 +346,9 @@ describe('Gitlab Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      gitlabService.getIssues(gitApiInfos, gitIssueSearch);
+      gitlabService
+        .getIssues(gitApiInfos, gitIssueSearch)
+        .catch(err => logger.error(err));
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/issues`;
 
@@ -366,7 +371,9 @@ describe('Gitlab Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      gitlabService.getPullRequests(gitApiInfos, gitIssueSearch);
+      gitlabService
+        .getPullRequests(gitApiInfos, gitIssueSearch)
+        .catch(err => logger.error(err));
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/merge_requests`;
 

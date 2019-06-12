@@ -11,6 +11,7 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { CreatePullRequestRunnable } from './createPullRequest.runnable';
+import { logger } from '../logger/logger.service';
 
 describe('CreatePullRequestRunnable', () => {
   let app: TestingModule;
@@ -63,11 +64,9 @@ describe('CreatePullRequestRunnable', () => {
   describe('createPullRequest Runnable', () => {
     it('should not call the createPullRequest Github nor Gitlab service', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Undefined;
-      createPullRequestRunnable.run(
-        CallbackType.Both,
-        ruleResultBranchName,
-        args,
-      );
+      createPullRequestRunnable
+        .run(CallbackType.Both, ruleResultBranchName, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.createPullRequest).not.toBeCalled();
       expect(gitlabService.createPullRequest).not.toBeCalled();
@@ -76,11 +75,9 @@ describe('CreatePullRequestRunnable', () => {
   describe('createPullRequest Runnable', () => {
     it('should call the createPullRequest Github service', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Github;
-      createPullRequestRunnable.run(
-        CallbackType.Both,
-        ruleResultBranchName,
-        args,
-      );
+      createPullRequestRunnable
+        .run(CallbackType.Both, ruleResultBranchName, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.createPullRequest).toBeCalled();
       expect(gitlabService.createPullRequest).not.toBeCalled();
@@ -89,11 +86,9 @@ describe('CreatePullRequestRunnable', () => {
   describe('createPullRequest Runnable', () => {
     it('should call the createPullRequest Gitlab service', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Gitlab;
-      createPullRequestRunnable.run(
-        CallbackType.Both,
-        ruleResultBranchName,
-        args,
-      );
+      createPullRequestRunnable
+        .run(CallbackType.Both, ruleResultBranchName, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.createPullRequest).not.toBeCalled();
       expect(gitlabService.createPullRequest).toBeCalled();

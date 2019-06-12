@@ -93,10 +93,9 @@ export class RulesService {
               if (ruleResult !== null) {
                 results.push(ruleResult);
 
-                this.runnableService.executeRunnableFunctions(
-                  ruleResult,
-                  ruleConfig,
-                );
+                this.runnableService
+                  .executeRunnableFunctions(ruleResult, ruleConfig)
+                  .catch(err => logger.error(err));
                 if (!rulesOptions.executeAllRules && !ruleResult.validated) {
                   throw BreakException;
                 }
@@ -152,10 +151,9 @@ export class RulesService {
                       ruleResult,
                     });
                   } else {
-                    this.runnableService.executeRunnableFunctions(
-                      ruleResult,
-                      g,
-                    );
+                    this.runnableService
+                      .executeRunnableFunctions(ruleResult, g)
+                      .catch(err => logger.error(err));
                   }
 
                   if (
@@ -176,7 +174,9 @@ export class RulesService {
                   webhook.getGitApiInfos(),
                 );
                 ruleResult.data = groupResults;
-                this.runnableService.executeRunnableFunctions(ruleResult, g);
+                this.runnableService
+                  .executeRunnableFunctions(ruleResult, g)
+                  .catch(err => logger.error(err));
               }
             }
           }

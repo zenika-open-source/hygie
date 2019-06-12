@@ -11,6 +11,7 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { logger } from '../logger/logger.service';
 
 interface CreateIssueArgs {
   title: string;
@@ -61,9 +62,13 @@ export class CreateIssueRunnable extends Runnable {
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.createIssue(gitApiInfos, gitIssueInfos);
+      this.githubService
+        .createIssue(gitApiInfos, gitIssueInfos)
+        .catch(err => logger.error(err));
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.createIssue(gitApiInfos, gitIssueInfos);
+      this.gitlabService
+        .createIssue(gitApiInfos, gitIssueInfos)
+        .catch(err => logger.error(err));
     }
   }
 }

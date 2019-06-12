@@ -29,6 +29,7 @@ import { GitCommit } from '../git/gitCommit';
 import { GitRef } from '../git/gitRef';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
+import { logger } from '../logger/logger.service';
 
 describe('Github Service', () => {
   let app: TestingModule;
@@ -276,7 +277,9 @@ describe('Github Service', () => {
         });
       });
 
-      githubService.deleteFile(gitApiInfos, gitFileInfos);
+      githubService
+        .deleteFile(gitApiInfos, gitFileInfos)
+        .catch(err => logger.error(err));
 
       const expectedUrl1 = `https://api.github.com/repos/bastienterrier/test/contents/file/to/remove.txt`;
       const expectedUrl2 = `https://api.github.com/repos/bastienterrier/test/contents/file/to/remove.txt`;
@@ -390,7 +393,9 @@ describe('Github Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      githubService.getIssues(gitApiInfos, gitIssueSearch);
+      githubService
+        .getIssues(gitApiInfos, gitIssueSearch)
+        .catch(err => logger.error(err));
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues`;
 
       const expectedConfig2 = JSON.parse(JSON.stringify(expectedConfig));
@@ -413,7 +418,9 @@ describe('Github Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      githubService.getPullRequests(gitApiInfos, gitIssueSearch);
+      githubService
+        .getPullRequests(gitApiInfos, gitIssueSearch)
+        .catch(err => logger.error(err));
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/pulls`;
 
       const expectedConfig2 = JSON.parse(JSON.stringify(expectedConfig));
@@ -458,7 +465,9 @@ describe('Github Service', () => {
           data: [{ name: 'path', sha: 'sha' }],
         });
       });
-      githubService.getTree(gitApiInfos, 'your/folder/path');
+      githubService
+        .getTree(gitApiInfos, 'your/folder/path')
+        .catch(err => logger.error(err));
 
       const customConfig = JSON.parse(JSON.stringify(expectedConfig));
       customConfig.params = { ref: 'master' };
@@ -493,7 +502,9 @@ describe('Github Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      githubService.createCommit(gitApiInfos, gitCommit);
+      githubService
+        .createCommit(gitApiInfos, gitCommit)
+        .catch(err => logger.error(err));
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/commits`;
 
@@ -570,7 +581,9 @@ describe('Github Service', () => {
       gitTag.type = 'commit';
       gitTag.message = 'new tag';
 
-      githubService.createTag(gitApiInfos, gitTag);
+      githubService
+        .createTag(gitApiInfos, gitTag)
+        .catch(err => logger.error(err));
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/tags`;
 

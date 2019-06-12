@@ -49,7 +49,9 @@ describe('LoggerRunnable', () => {
 
   describe('logger Runnable', () => {
     it('should call the info() method', () => {
-      loggerRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
+      loggerRunnable
+        .run(CallbackType.Both, ruleResultIssueTitle, args)
+        .catch(err => logger.error(err));
 
       expect(logger.info).toBeCalled();
       expect(logger.error).not.toBeCalled();
@@ -61,7 +63,9 @@ describe('LoggerRunnable', () => {
     it('should call the error() method', () => {
       ruleResultIssueTitle.validated = false;
       args.type = undefined;
-      loggerRunnable.run(CallbackType.Error, ruleResultIssueTitle, args);
+      loggerRunnable
+        .run(CallbackType.Error, ruleResultIssueTitle, args)
+        .catch(err => logger.error(err));
 
       expect(logger.info).not.toBeCalled();
       expect(logger.error).toBeCalled();
@@ -74,7 +78,9 @@ describe('LoggerRunnable', () => {
       ruleResultIssueTitle.validated = false;
 
       args.type = 'info';
-      loggerRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
+      loggerRunnable
+        .run(CallbackType.Both, ruleResultIssueTitle, args)
+        .catch(err => logger.error(err));
 
       expect(logger.info).toBeCalled();
       expect(logger.error).not.toBeCalled();
@@ -87,7 +93,9 @@ describe('LoggerRunnable', () => {
       ruleResultIssueTitle.validated = true;
 
       args.type = 'warn';
-      loggerRunnable.run(CallbackType.Both, ruleResultIssueTitle, args);
+      loggerRunnable
+        .run(CallbackType.Both, ruleResultIssueTitle, args)
+        .catch(err => logger.error(err));
 
       expect(logger.info).not.toBeCalled();
       expect(logger.error).not.toBeCalled();

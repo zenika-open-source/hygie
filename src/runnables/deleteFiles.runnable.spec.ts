@@ -11,6 +11,7 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { DeleteFilesRunnable } from './deleteFiles.runnable';
+import { logger } from '../logger/logger.service';
 
 describe('DeleteFilesRunnable', () => {
   let app: TestingModule;
@@ -61,11 +62,9 @@ describe('DeleteFilesRunnable', () => {
   describe('deleteFiles Runnable', () => {
     it('should not call the deleteFile Github nor Gitlab service', () => {
       ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Undefined;
-      deleteFilesRunnable.run(
-        CallbackType.Both,
-        ruleResultCheckAddedFiles,
-        args,
-      );
+      deleteFilesRunnable
+        .run(CallbackType.Both, ruleResultCheckAddedFiles, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.deleteFile).not.toBeCalled();
       expect(gitlabService.deleteFile).not.toBeCalled();

@@ -11,6 +11,7 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { CreateReleaseRunnable } from './createRelease.runnable';
+import { logger } from '../logger/logger.service';
 
 describe('createRelease Runnable', () => {
   let app: TestingModule;
@@ -56,7 +57,9 @@ describe('createRelease Runnable', () => {
 
   describe('Run method', () => {
     it('should not call the createRelease Github nor Gitlab service', () => {
-      createReleaseRunnable.run(CallbackType.Both, ruleResult, args);
+      createReleaseRunnable
+        .run(CallbackType.Both, ruleResult, args)
+        .catch(err => logger.error(err));
       expect(githubService.createRelease).not.toBeCalled();
       expect(gitlabService.createRelease).not.toBeCalled();
     });
@@ -65,7 +68,9 @@ describe('createRelease Runnable', () => {
     it('should call the createRelease Github service', () => {
       ruleResult.gitApiInfos.git = GitTypeEnum.Github;
 
-      createReleaseRunnable.run(CallbackType.Both, ruleResult, args);
+      createReleaseRunnable
+        .run(CallbackType.Both, ruleResult, args)
+        .catch(err => logger.error(err));
       expect(githubService.createRelease).toBeCalled();
       expect(gitlabService.createRelease).not.toBeCalled();
     });
@@ -74,7 +79,9 @@ describe('createRelease Runnable', () => {
     it('should call the createRelease Gitlab service', () => {
       ruleResult.gitApiInfos.git = GitTypeEnum.Gitlab;
 
-      createReleaseRunnable.run(CallbackType.Both, ruleResult, args);
+      createReleaseRunnable
+        .run(CallbackType.Both, ruleResult, args)
+        .catch(err => logger.error(err));
       expect(githubService.createRelease).not.toBeCalled();
       expect(gitlabService.createRelease).toBeCalled();
     });

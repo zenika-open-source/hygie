@@ -27,4 +27,4 @@ async function bootstrap() {
     logger.error('No internet connection');
   }
 }
-bootstrap();
+bootstrap().catch(err => logger.error(err));

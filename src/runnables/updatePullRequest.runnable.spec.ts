@@ -11,6 +11,7 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { UpdatePullRequestRunnable } from '.';
+import { logger } from '../logger/logger.service';
 
 describe('UpdatePullRequestRunnable', () => {
   let app: TestingModule;
@@ -62,11 +63,9 @@ describe('UpdatePullRequestRunnable', () => {
   describe('updatePullRequest Runnable', () => {
     it('should not call the updatePullRequest Github nor Gitlab service', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Undefined;
-      updatePullRequestRunnable.run(
-        CallbackType.Both,
-        ruleResultPullRequestTitle,
-        args,
-      );
+      updatePullRequestRunnable
+        .run(CallbackType.Both, ruleResultPullRequestTitle, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.updatePullRequest).not.toBeCalled();
       expect(gitlabService.updatePullRequest).not.toBeCalled();
@@ -75,11 +74,9 @@ describe('UpdatePullRequestRunnable', () => {
   describe('updatePullRequest Runnable', () => {
     it('should call the updatePullRequest Githubservice', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Github;
-      updatePullRequestRunnable.run(
-        CallbackType.Both,
-        ruleResultPullRequestTitle,
-        args,
-      );
+      updatePullRequestRunnable
+        .run(CallbackType.Both, ruleResultPullRequestTitle, args)
+        .catch(err => logger.error(err));
       expect(githubService.updatePullRequest).toBeCalled();
       expect(gitlabService.updatePullRequest).not.toBeCalled();
     });
@@ -87,11 +84,9 @@ describe('UpdatePullRequestRunnable', () => {
   describe('updatePullRequest Runnable', () => {
     it('should call the updatePullRequest Gitlab service', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
-      updatePullRequestRunnable.run(
-        CallbackType.Both,
-        ruleResultPullRequestTitle,
-        args,
-      );
+      updatePullRequestRunnable
+        .run(CallbackType.Both, ruleResultPullRequestTitle, args)
+        .catch(err => logger.error(err));
       expect(githubService.updatePullRequest).not.toBeCalled();
       expect(gitlabService.updatePullRequest).toBeCalled();
     });

@@ -11,6 +11,7 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { UpdateCommitStatusRunnable } from './updateCommitStatus.runnable';
+import { logger } from '../logger/logger.service';
 
 describe('UpdateCommitStatusRunnable', () => {
   let app: TestingModule;
@@ -83,7 +84,9 @@ describe('UpdateCommitStatusRunnable', () => {
 
   describe('updateCommitMessage Runnable', () => {
     it('should not call the updateCommitStatus Github nor Gitlab service', () => {
-      updateCommitStatus.run(CallbackType.Both, ruleResultCommitMessage, args);
+      updateCommitStatus
+        .run(CallbackType.Both, ruleResultCommitMessage, args)
+        .catch(err => logger.error(err));
       expect(githubService.updateCommitStatus).not.toBeCalled();
       expect(gitlabService.updateCommitStatus).not.toBeCalled();
     });
@@ -91,7 +94,9 @@ describe('UpdateCommitStatusRunnable', () => {
   describe('updateCommitMessage Runnable', () => {
     it('should call the updateCommitStatus Github service 3 times', () => {
       ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Github;
-      updateCommitStatus.run(CallbackType.Both, ruleResultCommitMessage, args);
+      updateCommitStatus
+        .run(CallbackType.Both, ruleResultCommitMessage, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.updateCommitStatus).toBeCalledTimes(3);
       expect(gitlabService.updateCommitStatus).not.toBeCalled();
@@ -100,7 +105,9 @@ describe('UpdateCommitStatusRunnable', () => {
   describe('updateCommitMessage Runnable', () => {
     it('should call the updateCommitStatus Gitlab service 3 times', () => {
       ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Gitlab;
-      updateCommitStatus.run(CallbackType.Both, ruleResultCommitMessage, args);
+      updateCommitStatus
+        .run(CallbackType.Both, ruleResultCommitMessage, args)
+        .catch(err => logger.error(err));
 
       expect(githubService.updateCommitStatus).not.toBeCalled();
       expect(gitlabService.updateCommitStatus).toBeCalledTimes(3);

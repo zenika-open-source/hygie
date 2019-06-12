@@ -46,7 +46,9 @@ export class Schedule extends NestSchedule {
     this.webhook.setCronWebhook(cron);
 
     // Store CRON
-    this.dataAccessService.writeCron(`remote-crons/${this.id}`, this.cron);
+    this.dataAccessService
+      .writeCron(`remote-crons/${this.id}`, this.cron)
+      .catch(err => logger.error(err));
   }
 
   /**
@@ -85,21 +87,28 @@ export class Schedule extends NestSchedule {
     tz: 'Europe/Paris',
   })
   async cronJob() {
-    try {
-      this.githubService.setEnvironmentVariables(
-        this.dataAccessService,
-        this.remoteEnvs,
+    this.githubService
+      .setEnvironmentVariables(this.dataAccessService, this.remoteEnvs)
+      .catch(err =>
+        logger.error(
+          'There is no config.env file for the current git project',
+          {
+            project: this.cron.projectURL,
+            location: 'ScheduleService',
+          },
+        ),
       );
-      this.gitlabService.setEnvironmentVariables(
-        this.dataAccessService,
-        this.remoteEnvs,
+    this.gitlabService
+      .setEnvironmentVariables(this.dataAccessService, this.remoteEnvs)
+      .catch(err =>
+        logger.error(
+          'There is no config.env file for the current git project',
+          {
+            project: this.cron.projectURL,
+            location: 'ScheduleService',
+          },
+        ),
       );
-    } catch (e) {
-      logger.error('There is no config.env file for the current git project', {
-        project: this.cron.projectURL,
-        location: 'ScheduleService',
-      });
-    }
 
     await this.setGitlabProjectId();
 
