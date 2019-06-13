@@ -12,10 +12,6 @@ rules:
   - name: branchName
     options:
       regexp: '^(fix|feature)/.*'
-    onError:
-      - callback: LoggerRunnable
-        args:
-          message: 'Branch {{data.branch}} does not begin with fix or feature.'
     onSuccess:
       - callback: CreatePullRequestRunnable
         args:
@@ -43,6 +39,9 @@ rules:
         ignore:
           - gh-pages
           - master
+      users:
+        ignore:
+          - renovate[bot]
     onBoth:
       - callback: UpdateCommitStatusRunnable
         args:
