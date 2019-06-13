@@ -141,37 +141,24 @@ Now you can :
 
 Go to your repository integrations settings: `https://gitlab.com/:owner/:repo/settings/integrations`, configure the webhook URL and select all the events you want to intercept. Finally, save it via the `Add webhook` button.
 
-## Google API
+## Self-hosted Configurations
 
-The `SendEmailRunnable` makes use of Google API to send mails.
+### Environment Variables
 
-### Through our API
+If you're using your own server to host our solution, there's a few Environment Variables you need to set:
 
-If you're using **Git Webhooks** through our API, you do not have any configuration to do.
-::: warning
-But be aware, emails will be sent as **dx.developer.experience@gmail.com**.
-:::
+- `DEFAULT_CONFIGURATION_FILE`: url **[REQUIRED]**
 
-### In your own server
+  The URL of the default `.rulesrc` file
 
-If you want to use your own account, you have to deploy the project in your server.
-You need to create the `crendentials.json` file as described [in the offical documentation](https://developers.google.com/gmail/api/quickstart/nodejs).
+- `DISABLE_REMOTE_CONFIG`: true|false _[optional]_
 
-You just have to follow `Step 1` to get your credentials.
+  Specify if you allow to fetch the `.git-wehbooks/.rulesrc` file from the received hook. Otherwise, it uses the local `src/rules/.rulesrc`.
 
-::: warning
-The chosen account will be the sender (email `from` field) of all emails sended through the `SendEmailRunnable`.
-:::
-
-## Others config
-
-If you're using your own server to host our solution, there's a few Environment Variables you can set:
-
-- `ALLOW_REMOTE_CONFIG`: true|false _[optional]_
-  > Specify if you allow to fetch the `.git-wehbooks/.rulesrc` file from the received hook. Otherwise, it uses the local `src/rules/.rulesrc`.
 - `DATA_ACCESS`: "file" | undefined _[optional]_
-  > Specify the way you're accessing your data. By default, the app is fetching your mongo database.
-  > If you choose "file", it will store(and fetch) all users configurations into files.
+
+  Specify the way you're accessing your data. By default, the app is fetching your mongo database.
+  If you choose "file", it will store(and fetch) all users configurations into files.
 
 ::: tip
 Setting Environment Variables:
@@ -179,4 +166,16 @@ Setting Environment Variables:
 - Windows: `$env:DATA_ACCESS="file"`
 - Linux: `export DATA_ACCESS=file`
 
+:::
+
+### Google API
+
+The `SendEmailRunnable` makes use of Google API to send mails.
+
+If you want to use the Runnable, you need to create the `crendentials.json` (located in the top level of your application) file as described [in the offical documentation](https://developers.google.com/gmail/api/quickstart/nodejs).
+
+You just have to follow `Step 1` to get your credentials.
+
+::: warning
+The chosen account will be the sender (email `from` field) of all emails sended through the `SendEmailRunnable`.
 :::
