@@ -6,5 +6,6 @@
     "labels": ["security"],
     "assignees": ["@bastienterrier"]
   },
-  "ignoreDeps": ["vuepress"]
+  "ignoreDeps": ["vuepress"],
+  "commitMessageAction": "chore: Update"
 }

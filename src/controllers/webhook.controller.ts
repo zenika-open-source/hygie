@@ -61,6 +61,8 @@ export class WebhookController {
         rulesBranch = webhook.pullRequest.sourceBranch;
       }
 
+      logger.warn(rulesBranch);
+
       let remoteRepository: string;
       try {
         remoteRepository = await RemoteConfigUtils.downloadRulesFile(
