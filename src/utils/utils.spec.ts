@@ -139,12 +139,12 @@ describe('Utils', () => {
   });
 
   describe('getRepositoryFullName', () => {
-    it('should return "DX-DeveloperExperience/git-webhooks"', () => {
+    it('should return "DX-DeveloperExperience/hygie"', () => {
       expect(
         Utils.getRepositoryFullName(
-          'https://github.com/DX-DeveloperExperience/git-webhooks',
+          'https://github.com/DX-DeveloperExperience/hygie',
         ),
-      ).toBe('DX-DeveloperExperience/git-webhooks');
+      ).toBe('DX-DeveloperExperience/hygie');
     });
   });
 

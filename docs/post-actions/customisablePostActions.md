@@ -28,7 +28,7 @@ Your Runnable class must have a name and implement the `run()` method as said in
 
 ### CLI
 
-Same as Rules creation, the easiest way to create it is to use our CLI: [git-webhooks-cli](https://github.com/DX-DeveloperExperience/git-webhooks-cli).
+Same as Rules creation, the easiest way to create it is to use our CLI: [hygie-cli](https://github.com/DX-DeveloperExperience/hygie-cli).
 
 Simply run : `npm run generate:runnable RUNNABLENAME`.
 

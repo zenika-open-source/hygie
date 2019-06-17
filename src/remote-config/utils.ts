@@ -74,7 +74,7 @@ export class RemoteConfigUtils {
   /**
    * Download the `.rulesrc` from the repository associate to the `projectURL`.
    * @param projectURL
-   * @return the location of the `.git-webhooks` repo
+   * @return the location of the `.hygie` repo
    */
   static async downloadRulesFile(
     dataAccess: DataAccessService,
@@ -93,14 +93,12 @@ export class RemoteConfigUtils {
       const rulesFilePath: string = this.getGitRawPath(
         whichGit,
         projectURL,
-        `.git-webhooks/${filename}`,
+        `.hygie/${filename}`,
         branch,
       );
 
       const gitWebhooksFolder: string =
-        'remote-rules/' +
-        Utils.getRepositoryFullName(projectURL) +
-        '/.git-webhooks';
+        'remote-rules/' + Utils.getRepositoryFullName(projectURL) + '/.hygie';
 
       // If we don't allow fetching remote .rulesrc file
       if (disableRemoteConfig && filename === Constants.rulesExtension) {
@@ -137,7 +135,7 @@ export class RemoteConfigUtils {
       const defaultFilePath: string = this.getGitRawPath(
         whichGit,
         projectURL,
-        `.git-webhooks/${filename}`,
+        `.hygie/${filename}`,
         defaultBranch,
       );
 
@@ -252,12 +250,12 @@ export class RemoteConfigUtils {
       );
 
       /**
-       * Create a `Connected to Git-Webhooks!` issue
+       * Create a `Connected to Hygie!` issue
        * and
        * Create a Webhook
        */
       const gitIssueInfos = new GitIssueInfos();
-      gitIssueInfos.title = 'Connected to Git-Webhooks!';
+      gitIssueInfos.title = 'Connected to Hygie!';
       let issueNumber: number;
 
       if (gitApiInfos.git === GitTypeEnum.Github) {

@@ -2,13 +2,13 @@
 
 ## Directory structure
 
-If you want to use the `Git Webhooks` API, you need to create a `.git-webhooks` folder in your root directory.
+If you want to use the `Hygie` API, you need to create a `.hygie` folder in your root directory.
 
 This folder will be fetched everytime you interact with our API.
 
 ```
 .
-├── .git-webhooks
+├── .hygie
 │  ├── .rulesrc
 │  └── cron-*.rulesrc
 └── package.json
@@ -16,8 +16,8 @@ This folder will be fetched everytime you interact with our API.
 
 It contains the following files:
 
-- `.git-webhooks/rulesrc`: all the rules and post-actions you configured (see the [config generator](configGenerator.md)),
-- `.git-webhooks/cron-*.rulesrc`: all rules that will be evaluated in a cron job. Same as the `rulesrc` file, check out our [config generator](configGenerator.md). `*` is a wildcard; eg: `cron-vulnerabilities.rulesrc` or `cron-1.rulesrc`.
+- `.hygie/rulesrc`: all the rules and post-actions you configured (see the [config generator](configGenerator.md)),
+- `.hygie/cron-*.rulesrc`: all rules that will be evaluated in a cron job. Same as the `rulesrc` file, check out our [config generator](configGenerator.md). `*` is a wildcard; eg: `cron-vulnerabilities.rulesrc` or `cron-1.rulesrc`.
   ::: tip
   You can create as many Cron files as you want.
   :::
@@ -55,12 +55,12 @@ Our API is currently running at : [--OUR_URL--](--OUR_URL--).
 
 ### Run our Docker image from DockerHub
 
-If you just want to test our project, without cloning it, you can run a container with one of the existing versions in [DockerHub](https://hub.docker.com/r/dxdeveloperexperience/git-webhooks).
+If you just want to test our project, without cloning it, you can run a container with one of the existing versions in [DockerHub](https://hub.docker.com/r/dxdeveloperexperience/hygie).
 
 You can simply run a container:
 
 ```
-docker run --name=webhook-container -v webhook-vol:/app -p 3000:3000 dxdeveloperexperience/git-webhooks:--DOCKER_TAG--
+docker run --name=webhook-container -v webhook-vol:/app -p 3000:3000 dxdeveloperexperience/hygie:--DOCKER_TAG--
 ```
 
 ## Clone and extend it
@@ -76,8 +76,8 @@ If you create rules or post-actions that can be usefull for others, please ask f
 First, clone our project and go to the root directory:
 
 ```
-git clone https://github.com/DX-DeveloperExperience/git-webhooks
-cd git-webhooks
+git clone https://github.com/DX-DeveloperExperience/hygie
+cd hygie
 ```
 
 Then, simply run :
@@ -93,13 +93,13 @@ To check if everything's alright, you should get a welcome message.
 
 ### Build your own Docker image
 
-You can create a docker image of our **_Git Webhooks_** API.
+You can create a docker image of our **_Hygie_** API.
 
 First, clone our project and go to the root directory :
 
 ```
-git clone https://github.com/DX-DeveloperExperience/git-webhooks
-cd git-webhooks
+git clone https://github.com/DX-DeveloperExperience/hygie
+cd hygie
 ```
 
 Then, build it:

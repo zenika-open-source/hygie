@@ -1,7 +1,7 @@
 import { DataAccessInterface, SourceEnum } from '../dataAccess.interface';
 import { logger } from '../../logger/logger.service';
 import { Injectable } from '@nestjs/common';
-import * as Database from '@dxdeveloperexperience/git-webhooks-database';
+import * as Database from '@dxdeveloperexperience/hygie-database';
 
 @Injectable()
 export class DatabaseAccess implements DataAccessInterface {

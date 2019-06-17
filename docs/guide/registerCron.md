@@ -14,7 +14,7 @@ Available in CRON jobs
 
 ## Registration
 
-As said in the [Getting Started section](gettingStarted.md), you have to put all your CRON files in your `.git-webhooks` folder.
+As said in the [Getting Started section](gettingStarted.md), you have to put all your CRON files in your `.hygie` folder.
 
 Then, complete your JSON request to register your file(s), as defined in the following schema.
 
@@ -36,7 +36,7 @@ You can use [https://cronexpressiondescriptor.azurewebsites.net](https://cronexp
 ```json
 {
   "filename": ["rules-cron-1.yml", "rules-cron-2.yml", "rules-cron-3.yml"],
-  "projectURL": "https://github.com/DX-DeveloperExperience/git-webhooks",
+  "projectURL": "https://github.com/DX-DeveloperExperience/hygie",
   "expression": "0 0 8-20/1 * * *"
 }
 ```
@@ -47,17 +47,17 @@ You can use [https://cronexpressiondescriptor.azurewebsites.net](https://cronexp
 [
   {
     "filename": ["rules-cron-1.yml"],
-    "projectURL": "https://github.com/DX-DeveloperExperience/git-webhooks",
+    "projectURL": "https://github.com/DX-DeveloperExperience/hygie",
     "expression": "0 0 8-20/1 * * *"
   },
   {
     "filename": ["rules-cron-2.yml"],
-    "projectURL": "https://github.com/DX-DeveloperExperience/git-webhooks",
+    "projectURL": "https://github.com/DX-DeveloperExperience/hygie",
     "expression": "0 0 8-20/2 * * *"
   },
   {
     "filename": ["rules-cron-3.yml"],
-    "projectURL": "https://github.com/DX-DeveloperExperience/git-webhooks",
+    "projectURL": "https://github.com/DX-DeveloperExperience/hygie",
     "expression": "0 0 8-20/3 * * *"
   }
 ]

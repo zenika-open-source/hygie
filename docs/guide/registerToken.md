@@ -10,7 +10,7 @@ Theses informations will be stored in our server and will be accessible **only**
 
 Go to the [Github](#github) or [Gitlab](#gitlab) section following your needs.
 
-Once the corresponding form will be filled, a `Connected to Git-Webhooks!` issue will be created in your repository.
+Once the corresponding form will be filled, a `Connected to Hygie!` issue will be created in your repository.
 If not, please check the provided token.
 
 ## Github

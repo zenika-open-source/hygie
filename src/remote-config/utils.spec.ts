@@ -79,17 +79,15 @@ describe('remote-config', () => {
       const result: string = await RemoteConfigUtils.downloadRulesFile(
         dataAccessService,
         httpService,
-        'https://github.com/DX-DeveloperExperience/git-webhooks',
+        'https://github.com/DX-DeveloperExperience/hygie',
         Constants.rulesExtension,
       );
       expect(httpService.get).toBeCalledWith(
-        `https://raw.githubusercontent.com/DX-DeveloperExperience/git-webhooks/master/.git-webhooks/${
+        `https://raw.githubusercontent.com/DX-DeveloperExperience/hygie/master/.hygie/${
           Constants.rulesExtension
         }`,
       );
-      expect(result).toBe(
-        'remote-rules/DX-DeveloperExperience/git-webhooks/.git-webhooks',
-      );
+      expect(result).toBe('remote-rules/DX-DeveloperExperience/hygie/.hygie');
     });
   });
   describe('downloadRulesFile', () => {
@@ -108,11 +106,11 @@ describe('remote-config', () => {
         Constants.rulesExtension,
       );
       expect(httpService.get).toBeCalledWith(
-        `https://gitlab.com/gitlab-org/gitlab-ce/raw/master/.git-webhooks/${
+        `https://gitlab.com/gitlab-org/gitlab-ce/raw/master/.hygie/${
           Constants.rulesExtension
         }`,
       );
-      expect(result).toBe('remote-rules/gitlab-org/gitlab-ce/.git-webhooks');
+      expect(result).toBe('remote-rules/gitlab-org/gitlab-ce/.hygie');
     });
   });
   describe('registerConfigEnv', () => {
@@ -120,7 +118,7 @@ describe('remote-config', () => {
       const configEnv = {
         gitApi: 'https://gitapi.com',
         gitToken: 'azertyuiop',
-        gitRepo: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+        gitRepo: 'https://github.com/DX-DeveloperExperience/hygie',
       };
 
       await RemoteConfigUtils.registerConfigEnv(
@@ -133,11 +131,11 @@ describe('remote-config', () => {
       );
 
       expect(dataAccessService.checkIfEnvExist).toHaveBeenCalledWith(
-        'remote-envs/DX-DeveloperExperience/git-webhooks/config.env',
+        'remote-envs/DX-DeveloperExperience/hygie/config.env',
       );
 
       expect(dataAccessService.writeEnv).toHaveBeenCalledWith(
-        'remote-envs/DX-DeveloperExperience/git-webhooks/config.env',
+        'remote-envs/DX-DeveloperExperience/hygie/config.env',
         { gitApi: 'https://gitapi.com', gitToken: 'azertyuiop' },
       );
     });
@@ -148,11 +146,11 @@ describe('remote-config', () => {
       expect(
         RemoteConfigUtils.getGitRawPath(
           GitTypeEnum.Github,
-          'https://github.com/DX-DeveloperExperience/git-webhooks',
+          'https://github.com/DX-DeveloperExperience/hygie',
           'package.json',
         ),
       ).toBe(
-        'https://raw.githubusercontent.com/DX-DeveloperExperience/git-webhooks/master/package.json',
+        'https://raw.githubusercontent.com/DX-DeveloperExperience/hygie/master/package.json',
       );
     });
   });
@@ -162,11 +160,11 @@ describe('remote-config', () => {
         RemoteConfigUtils.getGitRawPath(
           GitTypeEnum.Github,
           'https://github.com/bastienterrier/test-webhook',
-          `.git-webhooks/${Constants.rulesExtension}`,
+          `.hygie/${Constants.rulesExtension}`,
           'test',
         ),
       ).toBe(
-        `https://raw.githubusercontent.com/bastienterrier/test-webhook/test/.git-webhooks/${
+        `https://raw.githubusercontent.com/bastienterrier/test-webhook/test/.hygie/${
           Constants.rulesExtension
         }`,
       );
@@ -178,10 +176,10 @@ describe('remote-config', () => {
         RemoteConfigUtils.getGitRawPath(
           GitTypeEnum.Gitlab,
           'https://gitlab.com/bastien.terrier/test_webhook',
-          `.git-webhooks/${Constants.rulesExtension}`,
+          `.hygie/${Constants.rulesExtension}`,
         ),
       ).toBe(
-        `https://gitlab.com/bastien.terrier/test_webhook/raw/master/.git-webhooks/${
+        `https://gitlab.com/bastien.terrier/test_webhook/raw/master/.hygie/${
           Constants.rulesExtension
         }`,
       );
@@ -209,7 +207,7 @@ describe('remote-config', () => {
     it('should return a Github', () => {
       expect(
         RemoteConfigUtils.getGitType(
-          'https://github.com/DX-DeveloperExperience/git-webhooks',
+          'https://github.com/DX-DeveloperExperience/hygie',
         ),
       ).toBe(GitTypeEnum.Github);
     });

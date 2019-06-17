@@ -1,7 +1,7 @@
 {
-  "name": "@dxdeveloperexperience/git-webhooks",
+  "name": "@dxdeveloperexperience/hygie",
   "version": "0.0.0",
-  "description": "Git Webhooks is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJS API expose a set of customizable rules to automate your project's life cycle.",
+  "description": "Hygie is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJS API expose a set of customizable rules to automate your project's life cycle.",
   "license": "MIT",
   "scripts": {
     "copyfiles": "cpx src/rules/.rulesrc dist/rules && cpx \"src/rules/*.rule.ts\" dist/rules && cpx src/rules/rules.options.ts dist/rules && cpx \"src/runnables/*.runnable.ts\" dist/runnables",
@@ -24,8 +24,8 @@
     "docs:build": "vuepress build docs",
     "tsdoc": "typedoc --out tsdoc src",
     "generate:schema": "ts-node --transpile-only src/generator/generateYAMLSchema.ts",
-    "generate:rule": "nest generate -c @dxdeveloperexperience/git-webhooks-cli rule",
-    "generate:runnable": "nest generate -c @dxdeveloperexperience/git-webhooks-cli runnable"
+    "generate:rule": "nest generate -c @dxdeveloperexperience/hygie-cli rule",
+    "generate:runnable": "nest generate -c @dxdeveloperexperience/hygie-cli runnable"
   },
   "husky": {
     "hooks": {
@@ -33,7 +33,7 @@
     }
   },
   "dependencies": {
-    "@dxdeveloperexperience/git-webhooks-database": "0.1.4",
+    "@dxdeveloperexperience/hygie-database": "0.1.4",
     "@dxdeveloperexperience/nest-schedule": "0.4.6",
     "@nestjs/common": "6.0.2",
     "@nestjs/core": "6.0.2",
@@ -61,7 +61,7 @@
     "winston": "3.2.1"
   },
   "devDependencies": {
-    "@dxdeveloperexperience/git-webhooks-cli": "0.1.9",
+    "@dxdeveloperexperience/hygie-cli": "0.1.9",
     "@nestjs/cli": "6.3.0",
     "@types/express": "4.17.0",
     "@types/jest": "24.0.15",

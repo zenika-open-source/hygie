@@ -1,11 +1,11 @@
 module.exports = {
-  base: '/git-webhooks/',
-  title: 'Git Webhooks',
+  base: '/hygie/',
+  title: 'Hygie',
   description:
-    "Git Webhooks is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJS API expose a set of customizable rules to automate your project's life cycle.",
+    "Hygie is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJS API expose a set of customizable rules to automate your project's life cycle.",
   themeConfig: {
-    repo: 'DX-DeveloperExperience/git-webhooks',
-    docsRepo: 'DX-DeveloperExperience/git-webhooks',
+    repo: 'DX-DeveloperExperience/hygie',
+    docsRepo: 'DX-DeveloperExperience/hygie',
     docsDir: 'docs',
     docsBranch: 'develop',
     editLinks: true,
@@ -19,11 +19,11 @@ module.exports = {
       {
         text: 'Generator',
         link:
-          'https://dx-developerexperience.github.io/git-webhooks-config-generator/',
+          'https://dx-developerexperience.github.io/hygie-config-generator/',
       },
       {
         text: 'Doc',
-        link: 'https://dx-developerexperience.github.io/git-webhooks/tsdoc/',
+        link: 'https://dx-developerexperience.github.io/hygie/tsdoc/',
       },
     ],
     sidebar: [

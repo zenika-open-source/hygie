@@ -248,7 +248,7 @@ onSuccess:
 
 `SendEmailRunnable` allows you to send Email with the Gmail API.
 
-If you're using **Git Webhooks** through our API, you do not have any configuration to do.
+If you're using **Hygie** through our API, you do not have any configuration to do.
 ::: warning
 But be aware, emails will be sent as **dx.developer.experience@gmail.com**.
 :::

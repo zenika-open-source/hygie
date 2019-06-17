@@ -68,7 +68,7 @@ export class CronController {
       remoteRepository =
         'remote-rules/' +
         Utils.getRepositoryFullName(cron.projectURL) +
-        '/.git-webhooks';
+        '/.hygie';
 
       const whichGit: GitTypeEnum = RemoteConfigUtils.getGitType(
         cron.projectURL,
@@ -77,7 +77,7 @@ export class CronController {
       fileURL = RemoteConfigUtils.getGitRawPath(
         whichGit,
         cron.projectURL,
-        `.git-webhooks/${cron.filename}`,
+        `.hygie/${cron.filename}`,
       );
 
       // Check the cron-*.rulesrc file exist

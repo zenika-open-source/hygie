@@ -57,6 +57,6 @@ git add -A
 git commit -m "deploy $VERSION"
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
-git push -f git@github.com:DX-DeveloperExperience/git-webhooks.git master:gh-pages
+git push -f git@github.com:DX-DeveloperExperience/hygie.git master:gh-pages
 
 cd -
