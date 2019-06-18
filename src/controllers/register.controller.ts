@@ -66,7 +66,9 @@ export class RegisterController {
     if (query.state !== this.state) {
       response
         .status(HttpStatus.UNAUTHORIZED)
-        .send('Third party created the request!<br>Aborting the process.');
+        .send(
+          '<p>Third party created the request!<br>Aborting the process.</p>',
+        );
     }
 
     const result = await this.httpService
