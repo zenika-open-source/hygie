@@ -1,6 +1,6 @@
 # Customisable Rules
 
-The `.git-webhooks/.rulesrc` file contains all the rules you've configured.
+The `.hygie/.rulesrc` file contains all the rules you've configured.
 Check our example `.rulesrc` file [here](./rulesExample.md).
 
 You can use our existing rules or adding yours. Rules are very simple to add.
@@ -46,7 +46,7 @@ These `callback`s are called sequentially and do not return value (`void` type).
 
 ### Templating with _mustache_
 
-Post-actions `args` support templating: **_Git Webhooks_** use [mustache js](https://github.com/janl/mustache.js).
+Post-actions `args` support templating: **_Hygie_** use [mustache js](https://github.com/janl/mustache.js).
 
 Consequently, you can inject data processed by the `validate()` method of the current rule (`name` attribute). You can see the [`validate()` method section](#validate-method) for more informations.
 
@@ -66,7 +66,7 @@ If you want to create a new type of rule, you can create your own class. This cl
 
 ### CLI
 
-The easiest way to create it is to use our CLI: [git-webhooks-cli](https://github.com/DX-DeveloperExperience/git-webhooks-cli).
+The easiest way to create it is to use our CLI: [hygie-cli](https://github.com/DX-DeveloperExperience/hygie-cli).
 
 Simply run : `npm run generate:rule RULENAME`.
 

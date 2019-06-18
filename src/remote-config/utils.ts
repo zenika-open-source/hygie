@@ -74,7 +74,7 @@ export class RemoteConfigUtils {
   /**
    * Download the `.rulesrc` from the repository associate to the `projectURL`.
    * @param projectURL
-   * @return the location of the `.git-webhooks` repo
+   * @return the location of the `.hygie` repo
    */
   static async downloadRulesFile(
     dataAccess: DataAccessService,
@@ -85,19 +85,32 @@ export class RemoteConfigUtils {
     defaultBranch?: string,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
+      const disableRemoteConfig: boolean =
+        process.env.DISABLE_REMOTE_CONFIG === 'true';
+
       const whichGit: GitTypeEnum = this.getGitType(projectURL);
 
       const rulesFilePath: string = this.getGitRawPath(
         whichGit,
         projectURL,
-        `.git-webhooks/${filename}`,
+        `.hygie/${filename}`,
         branch,
       );
 
       const gitWebhooksFolder: string =
-        'remote-rules/' +
-        Utils.getRepositoryFullName(projectURL) +
-        '/.git-webhooks';
+        'remote-rules/' + Utils.getRepositoryFullName(projectURL) + '/.hygie';
+
+      // If we don't allow fetching remote .rulesrc file
+      if (disableRemoteConfig && filename === Constants.rulesExtension) {
+        logger.warn('Not allowed to fetch remote file!');
+        // Get default configuration
+        const data = fs.readFileSync(
+          path.join(__dirname, `../rules/${Constants.rulesExtension}`),
+        );
+        await dataAccess.writeRule(`${gitWebhooksFolder}/${filename}`, data);
+        resolve(gitWebhooksFolder);
+        return;
+      }
 
       // Check size
       try {
@@ -122,7 +135,7 @@ export class RemoteConfigUtils {
       const defaultFilePath: string = this.getGitRawPath(
         whichGit,
         projectURL,
-        `.git-webhooks/${filename}`,
+        `.hygie/${filename}`,
         defaultBranch,
       );
 
@@ -146,14 +159,10 @@ export class RemoteConfigUtils {
                     { project: projectURL, location: 'downloadRulesFile' },
                   );
 
-                  return of({
-                    data: fs.readFileSync(
-                      path.join(
-                        __dirname,
-                        `../rules/${Constants.rulesExtension}`,
-                      ),
-                    ),
-                  });
+                  // return default REMOTE file
+                  return httpService.get(
+                    process.env.DEFAULT_CONFIGURATION_FILE,
+                  );
                 }),
               );
             } else {
@@ -241,12 +250,12 @@ export class RemoteConfigUtils {
       );
 
       /**
-       * Create a `Connected to Git-Webhooks!` issue
+       * Create a `Connected to Hygie!` issue
        * and
        * Create a Webhook
        */
       const gitIssueInfos = new GitIssueInfos();
-      gitIssueInfos.title = 'Connected to Git-Webhooks!';
+      gitIssueInfos.title = 'Connected to Hygie!';
       let issueNumber: number;
 
       if (gitApiInfos.git === GitTypeEnum.Github) {

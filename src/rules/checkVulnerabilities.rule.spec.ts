@@ -68,9 +68,9 @@ describe('RulesService', () => {
     checkVulnerabilitiesRule = new CheckVulnerabilitiesRule(MockAnalytics);
     checkVulnerabilitiesRule.options = {
       packageUrl:
-        'https://raw.githubusercontent.com/DX-DeveloperExperience/git-webhooks/master/package.json',
+        'https://raw.githubusercontent.com/DX-DeveloperExperience/hygie/master/package.json',
       packageLockUrl:
-        'https://raw.githubusercontent.com/DX-DeveloperExperience/git-webhooks/master/package-lock.json',
+        'https://raw.githubusercontent.com/DX-DeveloperExperience/hygie/master/package-lock.json',
     };
   });
 

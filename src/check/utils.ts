@@ -12,7 +12,7 @@ export class Check {
   static checkIfFileExist(filename: string): boolean {
     if (!existsSync(filename)) {
       logger.error(
-        `${filename} do not exist! Please refer to the documentation: https://dx-developerexperience.github.io/git-webhooks/`,
+        `${filename} do not exist! Please refer to the documentation: https://dx-developerexperience.github.io/hygie/`,
       );
       return false;
     }

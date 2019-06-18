@@ -8,15 +8,15 @@ import {
 const cron1: CronInterface[] = [
   {
     filename: 'cron-1-1.rulesrc',
-    projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+    projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
   },
   {
     filename: 'cron-1-2.rulesrc',
-    projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+    projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
   },
   {
     filename: 'cron-1-3.rulesrc',
-    projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+    projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
   },
 ];
 const cron2: CronInterface[] = [
@@ -26,28 +26,28 @@ const cron2: CronInterface[] = [
       'cron-2-1-2.rulesrc',
       'cron-2-1-3.rulesrc',
     ],
-    projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+    projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
   },
   {
     filename: 'cron-2-2.rulesrc',
-    projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+    projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
   },
   {
     filename: 'cron-2-3.rulesrc',
-    projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+    projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
   },
 ];
 const cron3: CronInterface = {
   filename: ['cron-3-1-1.rulesrc', 'cron-3-1-2.rulesrc', 'cron-3-1-3.rulesrc'],
-  projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+  projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
 };
 const cron4: CronInterface = {
   filename: 'cron-4-1.rulesrc',
-  projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+  projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
 };
 const cron5: CronInterface = {
   filename: 'rule-cron-4-1.yml',
-  projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+  projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
 };
 
 describe('Cron Interfaces', () => {
@@ -87,19 +87,19 @@ describe('Cron Interfaces', () => {
           expression: undefined,
           filename: 'cron-1-1.rulesrc',
           gitlabProjectId: undefined,
-          projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+          projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
         },
         {
           expression: undefined,
           filename: 'cron-1-2.rulesrc',
           gitlabProjectId: undefined,
-          projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+          projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
         },
         {
           expression: undefined,
           filename: 'cron-1-3.rulesrc',
           gitlabProjectId: undefined,
-          projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+          projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
         },
       ]);
     });
@@ -109,31 +109,31 @@ describe('Cron Interfaces', () => {
           expression: undefined,
           filename: 'cron-2-1-1.rulesrc',
           gitlabProjectId: undefined,
-          projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+          projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
         },
         {
           expression: undefined,
           filename: 'cron-2-1-2.rulesrc',
           gitlabProjectId: undefined,
-          projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+          projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
         },
         {
           expression: undefined,
           filename: 'cron-2-1-3.rulesrc',
           gitlabProjectId: undefined,
-          projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+          projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
         },
         {
           expression: undefined,
           filename: 'cron-2-2.rulesrc',
           gitlabProjectId: undefined,
-          projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+          projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
         },
         {
           expression: undefined,
           filename: 'cron-2-3.rulesrc',
           gitlabProjectId: undefined,
-          projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+          projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
         },
       ]);
     });
@@ -143,19 +143,19 @@ describe('Cron Interfaces', () => {
           expression: undefined,
           filename: 'cron-3-1-1.rulesrc',
           gitlabProjectId: undefined,
-          projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+          projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
         },
         {
           expression: undefined,
           filename: 'cron-3-1-2.rulesrc',
           gitlabProjectId: undefined,
-          projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+          projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
         },
         {
           expression: undefined,
           filename: 'cron-3-1-3.rulesrc',
           gitlabProjectId: undefined,
-          projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+          projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
         },
       ]);
     });
@@ -165,7 +165,7 @@ describe('Cron Interfaces', () => {
           expression: undefined,
           filename: 'cron-4-1.rulesrc',
           gitlabProjectId: undefined,
-          projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+          projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
         },
       ]);
     });

@@ -46,8 +46,6 @@ export class WebhookController {
     ) {
       throw new PreconditionException();
     } else {
-      const getRemoteRules: string = process.env.ALLOW_REMOTE_CONFIG;
-
       const defaultBranch: string = webhook.getDefaultBranchName();
       let rulesBranch: string = defaultBranch;
       if (GitEventEnum.Push === webhook.getGitEvent()) {
@@ -65,17 +63,14 @@ export class WebhookController {
 
       let remoteRepository: string;
       try {
-        remoteRepository =
-          getRemoteRules === 'false'
-            ? 'src/rules'
-            : await RemoteConfigUtils.downloadRulesFile(
-                this.dataAccessService,
-                this.httpService,
-                webhook.getCloneURL(),
-                Constants.rulesExtension,
-                rulesBranch,
-                defaultBranch,
-              );
+        remoteRepository = await RemoteConfigUtils.downloadRulesFile(
+          this.dataAccessService,
+          this.httpService,
+          webhook.getCloneURL(),
+          Constants.rulesExtension,
+          rulesBranch,
+          defaultBranch,
+        );
       } catch (e) {
         logger.error(e, {
           project: webhook.getCloneURL(),

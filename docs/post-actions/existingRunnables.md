@@ -248,9 +248,11 @@ onSuccess:
 
 `SendEmailRunnable` allows you to send Email with the Gmail API.
 
+If you're using **Hygie** through our API, you do not have any configuration to do.
 ::: warning
-Be sure to have configured the Gmail API as explained in the [getting started section](../guide/gettingStarted.html#google-api).
+But be aware, emails will be sent as **dx.developer.experience@gmail.com**.
 :::
+Otherwise, in case of self-hosted solution, make sure you have followed the [getting started section](../guide/gettingStarted.html#google-api).
 
 ### Usage
 

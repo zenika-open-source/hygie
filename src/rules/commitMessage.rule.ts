@@ -7,6 +7,7 @@ import { BranchesOptions, UsersOptions } from './common.interface';
 import { Utils } from './utils';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { logger } from '../logger/logger.service';
 
 interface CommitMessageOptions {
   regexp: string;
@@ -73,10 +74,13 @@ export class CommitMessageRule extends Rule {
     commits.forEach(c => {
       commitMatches = new CommitMatches();
 
+      // Git commit message, not commit description nor footer
+      const commitMessage: string = c.message.split('\n')[0];
+
       regexpSuccessed =
-        commitRegExp.test(c.message) &&
+        commitRegExp.test(commitMessage) &&
         (ruleConfig.options.maxLength !== undefined
-          ? c.message.length <= ruleConfig.options.maxLength
+          ? commitMessage.length <= ruleConfig.options.maxLength
           : true);
 
       if (regexpSuccessed) {
@@ -89,8 +93,8 @@ export class CommitMessageRule extends Rule {
       }
 
       commitMatches.sha = c.sha;
-      commitMatches.message = c.message;
-      commitMatches.matches = c.message.match(commitRegExp);
+      commitMatches.message = commitMessage;
+      commitMatches.matches = commitMessage.match(commitRegExp);
 
       commitsMatches.push(commitMatches);
     });

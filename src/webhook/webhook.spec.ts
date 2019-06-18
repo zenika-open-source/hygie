@@ -200,16 +200,16 @@ describe('Webhook', () => {
       const cron: CronInterface = {
         expression: '*/30 * * * * *',
         filename: 'rules-cron-1.yml',
-        projectURL: 'https://github.com/DX-DeveloperExperience/git-webhooks',
+        projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
       };
       myWebhook.setCronWebhook(cron);
       expect(myWebhook.gitType).toBe(GitTypeEnum.Github);
       expect(myWebhook.gitEvent).toBe(GitEventEnum.Cron);
       expect(myWebhook.repository.cloneURL).toBe(
-        'https://github.com/DX-DeveloperExperience/git-webhooks',
+        'https://github.com/DX-DeveloperExperience/hygie',
       );
       expect(myWebhook.repository.fullName).toBe(
-        'DX-DeveloperExperience/git-webhooks',
+        'DX-DeveloperExperience/hygie',
       );
       expect(myWebhook.projectId).toBe(undefined);
     });

@@ -54,7 +54,7 @@ describe('RulesService', () => {
               committer_name: 'GitHub',
               committer_email: 'noreply@github.com',
               commit_sha: 'c93f1779441198daef276a50a274d16a5a83dd4e',
-              repo_name: 'DX-DeveloperExperience/git-webhooks',
+              repo_name: 'DX-DeveloperExperience/hygie',
               badge_url:
                 'https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_78.svg',
               coverage_change: -0.2,
@@ -72,7 +72,7 @@ describe('RulesService', () => {
               committer_name: 'GitHub',
               committer_email: 'noreply@github.com',
               commit_sha: '9d968cc538b9796ec61e78f4055814028e816858',
-              repo_name: 'DX-DeveloperExperience/git-webhooks',
+              repo_name: 'DX-DeveloperExperience/hygie',
               badge_url:
                 'https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_78.svg',
               coverage_change: 0.2,
@@ -144,7 +144,7 @@ describe('RulesService', () => {
               committer_name: 'GitHub',
               committer_email: 'noreply@github.com',
               commit_sha: 'c93f1779441198daef276a50a274d16a5a83dd4e',
-              repo_name: 'DX-DeveloperExperience/git-webhooks',
+              repo_name: 'DX-DeveloperExperience/hygie',
               badge_url:
                 'https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_78.svg',
               coverage_change: -0.2,
@@ -162,7 +162,7 @@ describe('RulesService', () => {
               committer_name: 'GitHub',
               committer_email: 'noreply@github.com',
               commit_sha: '9d968cc538b9796ec61e78f4055814028e816858',
-              repo_name: 'DX-DeveloperExperience/git-webhooks',
+              repo_name: 'DX-DeveloperExperience/hygie',
               badge_url:
                 'https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_78.svg',
               coverage_change: 0.2,
@@ -233,7 +233,7 @@ describe('RulesService', () => {
               committer_name: 'GitHub',
               committer_email: 'noreply@github.com',
               commit_sha: 'c93f1779441198daef276a50a274d16a5a83dd4e',
-              repo_name: 'DX-DeveloperExperience/git-webhooks',
+              repo_name: 'DX-DeveloperExperience/hygie',
               badge_url:
                 'https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_78.svg',
               coverage_change: 0.2,
@@ -251,7 +251,7 @@ describe('RulesService', () => {
               committer_name: 'GitHub',
               committer_email: 'noreply@github.com',
               commit_sha: '9d968cc538b9796ec61e78f4055814028e816858',
-              repo_name: 'DX-DeveloperExperience/git-webhooks',
+              repo_name: 'DX-DeveloperExperience/hygie',
               badge_url:
                 'https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_78.svg',
               coverage_change: 0.2,

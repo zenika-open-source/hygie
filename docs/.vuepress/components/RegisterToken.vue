@@ -13,7 +13,7 @@
             <label>
               <v-text-field
                 type="text"
-                placeholder="https://github.com/DX-DeveloperExperience/git-webhooks"
+                placeholder="https://github.com/DX-DeveloperExperience/hygie"
                 label="Git repository URL"
                 v-model="gitRepo"
                 :rules="urlRules"
@@ -153,7 +153,7 @@ export default {
           this.responseMessage +=
             '<span class="success">Registration completed! Check-out the newly created <a href="' +
             response.data.issue +
-            '">Connected to Git-Webhooks!</a> issue</span>';
+            '">Connected to Hygie!</a> issue</span>';
         })
         .catch(err => {
           this.responseMessage =
