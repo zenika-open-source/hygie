@@ -83,7 +83,7 @@
     "tslint": "5.17.0",
     "typedoc": "0.14.2",
     "typescript": "3.5.2",
-    "vuepress": "1.0.0-alpha.47",
+    "vuepress": "1.0.1",
     "vuetify": "1.5.14"
   },
   "jest": {

@@ -1,6 +1,6 @@
 # Register CRON jobs
 
-## `rules-cron-*.yml` file
+## `cron-*.rulesrc` file
 
 CRON jobs files are rules files. Therefore, there are identical to the `.rulesrc` file and can be generate thank's to our [config generator](configGenerator.md).
 
@@ -35,7 +35,7 @@ You can use [https://cronexpressiondescriptor.azurewebsites.net](https://cronexp
 
 ```json
 {
-  "filename": ["rules-cron-1.yml", "rules-cron-2.yml", "rules-cron-3.yml"],
+  "filename": ["cron-1.rulesrc", "cron-2.rulesrc", "cron-3.rulesrc"],
   "projectURL": "https://github.com/DX-DeveloperExperience/hygie",
   "expression": "0 0 8-20/1 * * *"
 }
@@ -46,17 +46,17 @@ You can use [https://cronexpressiondescriptor.azurewebsites.net](https://cronexp
 ```json
 [
   {
-    "filename": ["rules-cron-1.yml"],
+    "filename": ["cron-1.rulesrc"],
     "projectURL": "https://github.com/DX-DeveloperExperience/hygie",
     "expression": "0 0 8-20/1 * * *"
   },
   {
-    "filename": ["rules-cron-2.yml"],
+    "filename": ["cron-2.rulesrc"],
     "projectURL": "https://github.com/DX-DeveloperExperience/hygie",
     "expression": "0 0 8-20/2 * * *"
   },
   {
-    "filename": ["rules-cron-3.yml"],
+    "filename": ["cron-2.rulesrc"],
     "projectURL": "https://github.com/DX-DeveloperExperience/hygie",
     "expression": "0 0 8-20/3 * * *"
   }

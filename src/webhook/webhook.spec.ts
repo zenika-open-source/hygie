@@ -182,7 +182,7 @@ describe('Webhook', () => {
       const myWebhook: Webhook = new Webhook(gitlabService, githubService);
       const cron: CronInterface = {
         expression: '*/30 * * * * *',
-        filename: 'rules-cron-1.yml',
+        filename: 'cron-1.rulesrc',
         projectURL: 'https://gitlab.com/bastien.terrier/test_webhook',
         gitlabProjectId: 10607595,
       };
@@ -199,7 +199,7 @@ describe('Webhook', () => {
       const myWebhook: Webhook = new Webhook(gitlabService, githubService);
       const cron: CronInterface = {
         expression: '*/30 * * * * *',
-        filename: 'rules-cron-1.yml',
+        filename: 'cron-1.rulesrc',
         projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
       };
       myWebhook.setCronWebhook(cron);
