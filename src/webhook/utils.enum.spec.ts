@@ -434,7 +434,7 @@ describe('Utils Enum', () => {
     });
   });
 
-  describe('isBranchEvent', () => {
+  describe('isNewBranchEvent', () => {
     const gitlabNewBranchEvent = {
       object_kind: 'push',
       event_name: 'push',
@@ -652,19 +652,19 @@ describe('Utils Enum', () => {
     };
 
     it('isGitlabBranchEvent should equal "true"', () => {
-      expect(utils.isGitlabBranchEvent(gitlabNewBranchEvent)).toBe(true);
+      expect(utils.isGitlabNewBranchEvent(gitlabNewBranchEvent)).toBe(true);
     });
 
     it('isGitlabBranchEvent should equal "false"', () => {
-      expect(utils.isGitlabBranchEvent(githubNewBranchEvent)).toBe(false);
+      expect(utils.isGitlabNewBranchEvent(githubNewBranchEvent)).toBe(false);
     });
 
-    it('isGithubBranchEvent should equal "true"', () => {
-      expect(utils.isGithubBranchEvent(githubNewBranchEvent)).toBe(true);
+    it('isGithubNewBranchEvent should equal "true"', () => {
+      expect(utils.isGithubNewBranchEvent(githubNewBranchEvent)).toBe(true);
     });
 
-    it('isGithubBranchEvent should equal "false"', () => {
-      expect(utils.isGithubBranchEvent(gitlabNewBranchEvent)).toBe(false);
+    it('isGithubNewBranchEvent should equal "false"', () => {
+      expect(utils.isGithubNewBranchEvent(gitlabNewBranchEvent)).toBe(false);
     });
 
     it('should create a Webhook object according to the Gitlab Branch Hook', () => {
@@ -698,6 +698,242 @@ describe('Utils Enum', () => {
     });
   });
 
+  describe('isDeletedBranchEvent', () => {
+    const githubDeletedBranchEvent = {
+      ref: 'feature/titi',
+      ref_type: 'branch',
+      pusher_type: 'user',
+      repository: {
+        id: 169373600,
+        node_id: 'MDEwOlJlcG9zaXRvcnkxNjkzNzM2MDA=',
+        name: 'test-webhook',
+        full_name: 'bastienterrier/test-webhook',
+        private: false,
+        owner: {
+          login: 'bastienterrier',
+          id: 25296454,
+          node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+          avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+          gravatar_id: '',
+          url: 'https://api.github.com/users/bastienterrier',
+          html_url: 'https://github.com/bastienterrier',
+          followers_url:
+            'https://api.github.com/users/bastienterrier/followers',
+          following_url:
+            'https://api.github.com/users/bastienterrier/following{/other_user}',
+          gists_url:
+            'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+          starred_url:
+            'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+          subscriptions_url:
+            'https://api.github.com/users/bastienterrier/subscriptions',
+          organizations_url: 'https://api.github.com/users/bastienterrier/orgs',
+          repos_url: 'https://api.github.com/users/bastienterrier/repos',
+          events_url:
+            'https://api.github.com/users/bastienterrier/events{/privacy}',
+          received_events_url:
+            'https://api.github.com/users/bastienterrier/received_events',
+          type: 'User',
+          site_admin: false,
+        },
+        html_url: 'https://github.com/bastienterrier/test-webhook',
+        description: null,
+        fork: false,
+        url: 'https://api.github.com/repos/bastienterrier/test-webhook',
+        forks_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/forks',
+        keys_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/keys{/key_id}',
+        collaborators_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/collaborators{/collaborator}',
+        teams_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/teams',
+        hooks_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/hooks',
+        issue_events_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/events{/number}',
+        events_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/events',
+        assignees_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/assignees{/user}',
+        branches_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/branches{/branch}',
+        tags_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/tags',
+        blobs_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/blobs{/sha}',
+        git_tags_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/tags{/sha}',
+        git_refs_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/refs{/sha}',
+        trees_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/trees{/sha}',
+        statuses_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/statuses/{sha}',
+        languages_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/languages',
+        stargazers_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/stargazers',
+        contributors_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/contributors',
+        subscribers_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/subscribers',
+        subscription_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/subscription',
+        commits_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/commits{/sha}',
+        git_commits_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/git/commits{/sha}',
+        comments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/comments{/number}',
+        issue_comment_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues/comments{/number}',
+        contents_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/contents/{+path}',
+        compare_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/compare/{base}...{head}',
+        merges_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/merges',
+        archive_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/{archive_format}{/ref}',
+        downloads_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/downloads',
+        issues_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/issues{/number}',
+        pulls_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/pulls{/number}',
+        milestones_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/milestones{/number}',
+        notifications_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/notifications{?since,all,participating}',
+        labels_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/labels{/name}',
+        releases_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/releases{/id}',
+        deployments_url:
+          'https://api.github.com/repos/bastienterrier/test-webhook/deployments',
+        created_at: '2019-02-06T08:14:08Z',
+        updated_at: '2019-06-18T09:06:29Z',
+        pushed_at: '2019-06-18T10:01:13Z',
+        git_url: 'git://github.com/bastienterrier/test-webhook.git',
+        ssh_url: 'git@github.com:bastienterrier/test-webhook.git',
+        clone_url: 'https://github.com/bastienterrier/test-webhook.git',
+        svn_url: 'https://github.com/bastienterrier/test-webhook',
+        homepage: null,
+        size: 25625,
+        stargazers_count: 0,
+        watchers_count: 0,
+        language: 'Shell',
+        has_issues: true,
+        has_projects: true,
+        has_downloads: true,
+        has_wiki: true,
+        has_pages: true,
+        forks_count: 0,
+        mirror_url: null,
+        archived: false,
+        disabled: false,
+        open_issues_count: 53,
+        license: null,
+        forks: 0,
+        open_issues: 53,
+        watchers: 0,
+        default_branch: 'master',
+      },
+      sender: {
+        login: 'bastienterrier',
+        id: 25296454,
+        node_id: 'MDQ6VXNlcjI1Mjk2NDU0',
+        avatar_url: 'https://avatars0.githubusercontent.com/u/25296454?v=4',
+        gravatar_id: '',
+        url: 'https://api.github.com/users/bastienterrier',
+        html_url: 'https://github.com/bastienterrier',
+        followers_url: 'https://api.github.com/users/bastienterrier/followers',
+        following_url:
+          'https://api.github.com/users/bastienterrier/following{/other_user}',
+        gists_url:
+          'https://api.github.com/users/bastienterrier/gists{/gist_id}',
+        starred_url:
+          'https://api.github.com/users/bastienterrier/starred{/owner}{/repo}',
+        subscriptions_url:
+          'https://api.github.com/users/bastienterrier/subscriptions',
+        organizations_url: 'https://api.github.com/users/bastienterrier/orgs',
+        repos_url: 'https://api.github.com/users/bastienterrier/repos',
+        events_url:
+          'https://api.github.com/users/bastienterrier/events{/privacy}',
+        received_events_url:
+          'https://api.github.com/users/bastienterrier/received_events',
+        type: 'User',
+        site_admin: false,
+      },
+    };
+    const gitlabDeletedBranchEvent = {
+      object_kind: 'push',
+      event_name: 'push',
+      before: '14f8a81413fc6021fef076c86297c0bc9e4e1041',
+      after: '0000000000000000000000000000000000000000',
+      ref: 'refs/heads/some/feature',
+      checkout_sha: null,
+      message: null,
+      user_id: 3360534,
+      user_name: 'Bastien Terrier',
+      user_username: 'bastien.terrier',
+      user_email: '',
+      user_avatar:
+        'https://secure.gravatar.com/avatar/a17bda7df8612108bc4442ce57cc6dc3?s=80&d=identicon',
+      project_id: 10607595,
+      project: {
+        id: 10607595,
+        name: 'test_webhook',
+        description: '',
+        web_url: 'https://gitlab.com/bastien.terrier/test_webhook',
+        avatar_url: null,
+        git_ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        git_http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+        namespace: 'bastien.terrier',
+        visibility_level: 20,
+        path_with_namespace: 'bastien.terrier/test_webhook',
+        default_branch: 'master',
+        ci_config_path: null,
+        homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+        url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+      },
+      commits: [],
+      total_commits_count: 0,
+      push_options: {},
+      repository: {
+        name: 'test_webhook',
+        url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        description: '',
+        homepage: 'https://gitlab.com/bastien.terrier/test_webhook',
+        git_http_url: 'https://gitlab.com/bastien.terrier/test_webhook.git',
+        git_ssh_url: 'git@gitlab.com:bastien.terrier/test_webhook.git',
+        visibility_level: 20,
+      },
+    };
+    it('isDeletedBranchEvent should equal "true"', () => {
+      expect(utils.isGithubDeletedBranchEvent(githubDeletedBranchEvent)).toBe(
+        true,
+      );
+    });
+    it('isDeletedBranchEvent should equal "false"', () => {
+      expect(utils.isGithubDeletedBranchEvent(gitlabDeletedBranchEvent)).toBe(
+        false,
+      );
+    });
+    it('isGitlabDeletedBranchEvent should equal "true"', () => {
+      expect(utils.isGitlabDeletedBranchEvent(gitlabDeletedBranchEvent)).toBe(
+        true,
+      );
+    });
+    it('isGitlabDeletedBranchEvent should equal "false"', () => {
+      expect(utils.isGitlabDeletedBranchEvent(githubDeletedBranchEvent)).toBe(
+        false,
+      );
+    });
+  });
   describe('isIssueEvent', () => {
     const githubIssueEvent = {
       action: 'opened',

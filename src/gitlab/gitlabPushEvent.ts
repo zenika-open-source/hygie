@@ -7,6 +7,7 @@ export interface GitlabPushEvent {
   commits: GitlabCommit[];
   project_id: number;
   before: string;
+  after: string;
   ref: string;
   object_kind: string;
   project: GitlabProject;

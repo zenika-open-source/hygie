@@ -4,8 +4,8 @@ import {
   isGithubPushEvent,
   GitEventEnum,
   CommitStatusEnum,
-  isGithubBranchEvent,
-  isGitlabBranchEvent,
+  isGithubNewBranchEvent,
+  isGitlabNewBranchEvent,
   isGithubIssueEvent,
   isGitlabIssueEvent,
   isGithubNewRepoEvent,
@@ -21,6 +21,8 @@ import {
   isGitlabClosedPREvent,
   isGitlabReopenedPREvent,
   isGithubReopenedPREvent,
+  isGithubDeletedBranchEvent,
+  isGitlabDeletedBranchEvent,
 } from './utils.enum';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
@@ -193,9 +195,18 @@ export class Webhook {
       this.repository.cloneURL = git.project.git_http_url;
       this.repository.defaultBranchName = git.project.default_branch;
       this.user.login = git.user_username;
-    } else if (isGitlabBranchEvent(git)) {
+    } else if (isGitlabNewBranchEvent(git)) {
       this.gitType = GitTypeEnum.Gitlab;
       this.gitEvent = GitEventEnum.NewBranch;
+      this.gitService = this.gitlabService;
+      this.branchName = git.ref.substring(11);
+      this.projectId = git.project_id;
+      this.repository.cloneURL = git.project.git_http_url;
+      this.repository.defaultBranchName = git.project.default_branch;
+      this.user.login = git.user_username;
+    } else if (isGitlabDeletedBranchEvent(git)) {
+      this.gitType = GitTypeEnum.Gitlab;
+      this.gitEvent = GitEventEnum.DeletedBranch;
       this.gitService = this.gitlabService;
       this.branchName = git.ref.substring(11);
       this.projectId = git.project_id;
@@ -218,9 +229,18 @@ export class Webhook {
       this.repository.cloneURL = git.repository.clone_url;
       this.repository.defaultBranchName = git.repository.default_branch;
       this.user.login = git.sender.login;
-    } else if (isGithubBranchEvent(git)) {
+    } else if (isGithubNewBranchEvent(git)) {
       this.gitType = GitTypeEnum.Github;
       this.gitEvent = GitEventEnum.NewBranch;
+      this.gitService = this.githubService;
+      this.branchName = git.ref;
+      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.fullName = git.repository.full_name;
+      this.repository.defaultBranchName = git.repository.default_branch;
+      this.user.login = git.sender.login;
+    } else if (isGithubDeletedBranchEvent(git)) {
+      this.gitType = GitTypeEnum.Github;
+      this.gitEvent = GitEventEnum.DeletedBranch;
       this.gitService = this.githubService;
       this.branchName = git.ref;
       this.repository.cloneURL = git.repository.clone_url;
