@@ -28,6 +28,7 @@ export enum GitEventEnum {
   Undefined = 'Undefined',
   Push = 'Push',
   NewBranch = 'NewBranch',
+  DeletedBranch = 'DeletedBranch',
   NewIssue = 'NewIssue',
   NewRepo = 'NewRepo',
   NewPR = 'NewPR',
@@ -105,6 +106,8 @@ export function isGitlabPushEvent(
     (git as GitlabPushEvent).project_id !== undefined &&
     (git as GitlabPushEvent).before !==
       '0000000000000000000000000000000000000000' &&
+    (git as GitlabPushEvent).after !==
+      '0000000000000000000000000000000000000000' &&
     (git as GitlabPushEvent).object_kind === 'push'
   );
 }
@@ -122,19 +125,41 @@ export function isGithubPushEvent(
   return false;
 }
 
-export function isGithubBranchEvent(
+export function isGithubNewBranchEvent(
   git: GitlabEvent | GithubEvent,
 ): git is GithubBranchEvent {
-  return (git as GithubBranchEvent).ref_type === 'branch';
+  return (
+    (git as GithubBranchEvent).ref_type === 'branch' &&
+    (git as GithubBranchEvent).master_branch !== undefined
+  );
 }
 
-export function isGitlabBranchEvent(
+export function isGithubDeletedBranchEvent(
+  git: GitlabEvent | GithubEvent,
+): git is GithubBranchEvent {
+  return (
+    (git as GithubBranchEvent).ref_type === 'branch' &&
+    (git as GithubBranchEvent).master_branch === undefined
+  );
+}
+
+export function isGitlabNewBranchEvent(
   git: GitlabEvent | GithubEvent,
 ): git is GitlabPushEvent {
   return (
     (git as GitlabPushEvent).object_kind === 'push' &&
     (git as GitlabPushEvent).project_id !== undefined &&
     (git as GitlabPushEvent).before ===
+      '0000000000000000000000000000000000000000'
+  );
+}
+export function isGitlabDeletedBranchEvent(
+  git: GitlabEvent | GithubEvent,
+): git is GitlabPushEvent {
+  return (
+    (git as GitlabPushEvent).object_kind === 'push' &&
+    (git as GitlabPushEvent).project_id !== undefined &&
+    (git as GitlabPushEvent).after ===
       '0000000000000000000000000000000000000000'
   );
 }
