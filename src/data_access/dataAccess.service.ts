@@ -33,6 +33,10 @@ export class DataAccessService {
     return this.dataProvider.readData(SourceEnum.Crons, path);
   }
 
+  deleteCron(path: string): Promise<any> {
+    return this.dataProvider.deleteData(SourceEnum.Crons, path);
+  }
+
   getAllCrons(): Promise<any> {
     return this.dataProvider.readCollection(SourceEnum.Crons, 'remote-crons');
   }

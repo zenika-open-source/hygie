@@ -11,7 +11,6 @@ import { CronExpressionException } from '../exceptions/cronExpression.exception'
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { HttpResponse } from '../utils/httpResponse';
 import { Utils } from '../utils/utils';
-import { GitTypeEnum } from '../webhook/utils.enum';
 import { RemoteConfigUtils } from '../remote-config/utils';
 import { Constants } from '../utils/constants';
 import { logger } from '../logger/logger.service';
@@ -49,6 +48,7 @@ export class ScheduleService {
           project: cron.projectURL,
           location: 'ScheduleService',
         });
+        return Promise.reject(new Error(e));
       }
 
       // Get CRON Expression if defined in the cron-*.rulesrc file
@@ -99,7 +99,6 @@ export class ScheduleService {
   }
 
   async createCronJobs(cronType: CronType): Promise<HttpResponse> {
-    // let fileURL: string;
     let responseString: string = '';
     let schedule: Schedule;
     let cronStandardArray: CronStandardClass[];
@@ -116,36 +115,6 @@ export class ScheduleService {
       // Need a for loop because Async/Wait does not work in ForEach
 
       const cron = cronStandardArray[index];
-
-      // USELESS
-      /*
-      const whichGit: GitTypeEnum = RemoteConfigUtils.getGitType(
-        cron.projectURL,
-      );
-
-      fileURL = RemoteConfigUtils.getGitRawPath(
-        whichGit,
-        cron.projectURL,
-        `.hygie/${cron.filename}`,
-      );
-
-      // Check the cron-*.rulesrc file exist
-
-      try {
-        await this.httpService
-          .head(fileURL)
-          .toPromise()
-          .catch(err => {
-            throw err;
-          });
-      } catch (e) {
-        return Promise.reject(
-          new HttpResponse(
-            HttpStatus.NOT_FOUND,
-            `${responseString}\n${cron.filename} does not exist.`,
-          ),
-        );
-      }*/
 
       try {
         schedule = await this.createSchedule(cron);

@@ -60,6 +60,8 @@ export class Schedule extends NestSchedule {
         });
       })
       .catch(err => logger.error(err));
+
+    this.updateCron(cron.expression);
   }
 
   /**
@@ -140,40 +142,6 @@ export class Schedule extends NestSchedule {
       project: this.cron.projectURL,
       location: 'ScheduleService',
     });
-
-    /*
-    try {
-      await RemoteConfigUtils.downloadRulesFile(
-        this.dataAccessService,
-        this.httpService,
-        this.cron.projectURL,
-        this.cron.filename,
-      ).catch(e => {
-        throw e;
-      });
-    } catch (e) {
-      logger.error(e, {
-        project: this.cron.projectURL,
-        location: 'ScheduleService',
-      });
-    }
-
-    // Update CRON Expression if defined in the cron-*.rulesrc file
-    const conf = await Utils.parseRuleFile(
-      await this.dataAccessService.readRule(
-        `${this.remoteRepository}/${this.cron.filename}`,
-      ),
-    );
-    const options = conf.options;
-
-    if (typeof options !== 'undefined') {
-      const cronExpression = options.cron;
-      if (typeof cronExpression !== 'undefined') {
-        if (checkCronExpression(cronExpression)) {
-          this.updateCron(cronExpression);
-        }
-      }
-    }*/
 
     // Testing rules
     await this.rulesService.testRules(

@@ -1,12 +1,12 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-import { render } from 'mustache';
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
-import { ScheduleService } from '../scheduler/scheduler.service';
-import { DataAccessService } from '../data_access/dataAccess.service';
+import { CronInterface } from '../scheduler/cron.interface';
+import { logger } from '../logger/logger.service';
+import { Utils } from '../utils/utils';
 
 interface UpdateCronArgs {
   arg: any;
@@ -19,12 +19,16 @@ interface UpdateCronArgs {
 @RunnableDecorator('UpdateCronRunnable')
 export class UpdateCronRunnable extends Runnable {
   constructor(
-    private readonly schedulerServie: ScheduleService,
-    private readonly dataAccessService: DataAccessService,
+    // private readonly scheduleServie: ScheduleService,
+    // private readonly dataAccessService: DataAccessService,
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
   ) {
     super();
+  }
+
+  getCronFileName(str: string): string {
+    return str.replace('.hygie/', '');
   }
 
   async run(
@@ -32,10 +36,37 @@ export class UpdateCronRunnable extends Runnable {
     ruleResult: RuleResult,
     args: UpdateCronArgs,
   ): Promise<void> {
-    const { added, updated, removed } = ruleResult.data as any;
-
     this.googleAnalytics
       .event('Runnable', 'UpdateCron', ruleResult.projectURL)
       .send();
+
+    const { added, updated, removed } = (ruleResult.data as any).cron;
+
+    const addOrUpdate: string[] = added.concat(updated);
+
+    if (addOrUpdate.length > 0) {
+      //
+      const addOrUpdateCrons: CronInterface[] = addOrUpdate.map(a => {
+        return {
+          filename: this.getCronFileName(a),
+          projectURL: ruleResult.projectURL,
+        };
+      });
+      // tslint:disable-next-line:no-console
+      console.log(addOrUpdateCrons);
+      // this.scheduleServie.createCronJobs(addedCrons);
+    }
+
+    if (typeof removed !== 'undefined' && removed.length > 0) {
+      //
+      removed.map(r => {
+        const filename: string = this.getCronFileName(r);
+        const cron: string = `${Utils.getRepositoryFullName(
+          ruleResult.projectURL,
+        )}/${filename}`;
+        logger.info('Removing ' + cron);
+        // this.dataAccessService.deleteCron(cron);
+      });
+    }
   }
 }

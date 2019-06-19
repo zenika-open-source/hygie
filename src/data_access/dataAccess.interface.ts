@@ -27,6 +27,12 @@ export interface DataAccessInterface {
    */
   writeData(source: SourceEnum, path: string, data: any): Promise<any>;
   /**
+   * Delete data from the Data Storage
+   * @param source data source (env, rule, ...)
+   * @param path data path
+   */
+  deleteData(source: SourceEnum, path: string): Promise<any>;
+  /**
    * Check if data already exist into the Data Storage
    * @param source data source (env, rule, ...)
    * @param path data path

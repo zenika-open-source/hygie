@@ -19,7 +19,7 @@ interface CheckCronFilesOptions {
 @RuleDecorator('checkCronFiles')
 export class CheckCronFilesRule extends Rule {
   options: CheckCronFilesOptions;
-  events = [GitEventEnum.Undefined];
+  events = [GitEventEnum.Push];
 
   constructor(
     @Inject('GoogleAnalytics')
@@ -32,14 +32,20 @@ export class CheckCronFilesRule extends Rule {
     webhook: Webhook,
     ruleConfig: CheckCronFilesRule,
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+    const ruleResult: RuleResult = new RuleResult(
+      webhook.getGitApiInfos(),
+      webhook.getCloneURL(),
+    );
 
     this.googleAnalytics
       .event('Rule', 'CheckCronFiles', webhook.getCloneURL())
       .send();
 
     // First, check if rule need to be processed
-    if (!Utils.checkUser(webhook, ruleConfig.options.users)) {
+    if (
+      typeof ruleConfig.options !== 'undefined' &&
+      !Utils.checkUser(webhook, ruleConfig.options.users)
+    ) {
       return null;
     }
 

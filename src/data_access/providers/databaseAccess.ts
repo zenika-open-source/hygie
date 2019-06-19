@@ -74,6 +74,15 @@ export class DatabaseAccess implements DataAccessInterface {
       .catch(err => err);
   }
 
+  async deleteData(source: SourceEnum, path: string): Promise<any> {
+    const model = this.getModel(source);
+
+    return await model
+      .deleteOne({ path })
+      .then(res => res.content)
+      .catch(err => err);
+  }
+
   async checkIfExist(source: SourceEnum, path: string): Promise<boolean> {
     const model = this.getModel(source);
 

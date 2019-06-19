@@ -39,4 +39,9 @@ export class FileAccess implements DataAccessInterface {
     logger.warn('not implemented yet.');
     return await true;
   }
+
+  async deleteData(source: SourceEnum, path: string): Promise<any> {
+    logger.warn('not implemented yet.');
+    return await {};
+  }
 }

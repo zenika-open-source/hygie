@@ -20,9 +20,11 @@ export class CronController {
   private async loadCronJobs(): Promise<void> {
     const CronStandardClassArray: CronType = await this.dataAccessService.getAllCrons();
     if (this.dataAccessService.removeAllCrons()) {
-      this.scheduleService
-        .createCronJobs(CronStandardClassArray)
-        .catch(err => logger.error(err));
+      this.scheduleService.createCronJobs(CronStandardClassArray).catch(err =>
+        logger.error(err, {
+          location: 'CronController',
+        }),
+      );
     } else {
       logger.error('Can not remove old cron jobs', {
         location: 'CronController',
