@@ -48,7 +48,12 @@ export class Schedule extends NestSchedule {
     this.webhook.setCronWebhook(cron);
 
     // Set Gitlab Project Id if needed
-    this.setGitlabProjectId();
+    this.setGitlabProjectId().catch(err =>
+      logger.error(err, {
+        location: 'SetGitlabProjectId',
+        project: this.cron.projectURL,
+      }),
+    );
 
     // Store CRON
     this.dataAccessService

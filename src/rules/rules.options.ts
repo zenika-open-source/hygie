@@ -21,7 +21,7 @@ export class RulesOptions {
    */
   allRuleResultInOne: boolean = false;
   /**
-   * Cron Expression used in `cron-*.rulesrc` file
+   * Cron Expression used in cron file
    */
   cron: string = Constants.cronExpression;
 

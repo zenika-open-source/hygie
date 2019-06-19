@@ -53,7 +53,7 @@ export class UpdateCronRunnable extends Runnable {
         };
       });
       // tslint:disable-next-line:no-console
-      console.log(addOrUpdateCrons);
+      // console.log(addOrUpdateCrons);
       // this.scheduleServie.createCronJobs(addedCrons);
     }
 
@@ -64,7 +64,7 @@ export class UpdateCronRunnable extends Runnable {
         const cron: string = `${Utils.getRepositoryFullName(
           ruleResult.projectURL,
         )}/${filename}`;
-        logger.info('Removing ' + cron);
+        // logger.info('Removing ' + cron);
         // this.dataAccessService.deleteCron(cron);
       });
     }

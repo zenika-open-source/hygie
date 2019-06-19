@@ -245,6 +245,10 @@ export class MockDataAccess implements DataAccessInterface {
   removeCollection(source: SourceEnum, path: string): Promise<boolean> {
     return Promise.resolve(true);
   }
+
+  deleteData(source: SourceEnum, path: string): Promise<any> {
+    return Promise.resolve([{}]);
+  }
 }
 
 export const MockAnalytics: Visitor = new Visitor('mock');

@@ -11,6 +11,7 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { UpdateCronRunnable } from './updateCron.runnable';
+import { logger } from '../logger/logger.service';
 
 describe('UpdateCronRunnable', () => {
   let app: TestingModule;
@@ -46,7 +47,11 @@ describe('UpdateCronRunnable', () => {
     ruleResult = new RuleResult(myGitApiInfos);
     ruleResult.validated = false;
     ruleResult.data = {
-      some: 'data',
+      cron: {
+        added: [],
+        updated: ['cron-1.rulesrc'],
+        removed: ['cron-2.rulesrc'],
+      },
     };
   });
 
@@ -56,7 +61,9 @@ describe('UpdateCronRunnable', () => {
 
   describe('Run method', () => {
     it('should do something', () => {
-      updateCronRunnable.run(CallbackType.Both, ruleResult, args);
+      updateCronRunnable
+        .run(CallbackType.Both, ruleResult, args)
+        .catch(err => logger.error(err));
     });
   });
 });
