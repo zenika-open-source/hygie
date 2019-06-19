@@ -14,6 +14,7 @@ export class CronStandardClass {
   projectURL: string;
   gitlabProjectId?: number;
   expression?: string;
+  updatedAt: Date;
 }
 
 export function isCronInterface(cron: CronType): cron is CronInterface {

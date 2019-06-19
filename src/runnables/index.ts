@@ -14,3 +14,4 @@ export { UpdatePullRequestRunnable } from './updatePullRequest.runnable';
 export { CreateReleaseRunnable } from './createRelease.runnable';
 export { DeployFolderRunnable } from './deployFolder.runnable';
 export { CreateTagRunnable } from './createTag.runnable';
+export { UpdateCronRunnable } from './updateCron.runnable';

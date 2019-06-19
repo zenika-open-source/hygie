@@ -49,7 +49,9 @@ export class DatabaseAccess implements DataAccessInterface {
     return await model
       .findOne({ path })
       .then(res => res.content)
-      .catch(err => err);
+      .catch(err => {
+        throw new Error(`${source} has no member ${path}`);
+      });
   }
 
   async writeData(source: SourceEnum, path: string, data: any): Promise<any> {

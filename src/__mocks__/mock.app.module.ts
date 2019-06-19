@@ -3,8 +3,7 @@ import { RulesModule } from '../rules/rules.module';
 import { RunnableModule } from '../runnables/runnable.module';
 import { GitModule } from '../git/git.module';
 import { ScheduleService } from '../scheduler/scheduler.service';
-import { MockDataAccess, MockAnalytics } from './mocks';
-import { CronController } from '../controllers/cron.controller';
+import { MockDataAccess, MockAnalytics, MockCronController } from './mocks';
 import { DocumentationController } from '../controllers/documentation.controller';
 import { RegisterController } from '../controllers/register.controller';
 import { WebhookController } from '../controllers/webhook.controller';
@@ -19,7 +18,7 @@ import { ApplicationController } from '../controllers/application.controller';
   ],
   controllers: [
     ApplicationController,
-    CronController,
+    MockCronController,
     DocumentationController,
     RegisterController,
     WebhookController,

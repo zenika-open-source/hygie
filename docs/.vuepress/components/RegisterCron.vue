@@ -69,7 +69,7 @@ export default {
     },
     registerCRON() {
       this.responseMessage = '';
-      const serverURL = configJS.gitwebhooksURL + '/cron';
+      const serverURL = configJS.hygieURL + '/cron';
       axios
         .post(serverURL, JSON.parse(this.jsonData))
         .then(response => {

@@ -1,4 +1,5 @@
 export function checkCronExpression(cronExpression: string): boolean {
+  // return true;
   const cron: string[] = cronExpression.split(' ');
   let isValidCron: boolean = true;
   cron.forEach((c, i) => {

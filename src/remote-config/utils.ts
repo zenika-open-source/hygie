@@ -97,7 +97,7 @@ export class RemoteConfigUtils {
         branch,
       );
 
-      const gitWebhooksFolder: string =
+      const hygieFolder: string =
         'remote-rules/' + Utils.getRepositoryFullName(projectURL) + '/.hygie';
 
       // If we don't allow fetching remote .rulesrc file
@@ -107,8 +107,8 @@ export class RemoteConfigUtils {
         const data = fs.readFileSync(
           path.join(__dirname, `../rules/${Constants.rulesExtension}`),
         );
-        await dataAccess.writeRule(`${gitWebhooksFolder}/${filename}`, data);
-        resolve(gitWebhooksFolder);
+        await dataAccess.writeRule(`${hygieFolder}/${filename}`, data);
+        resolve(hygieFolder);
         return;
       }
 
@@ -173,16 +173,16 @@ export class RemoteConfigUtils {
         .toPromise()
         .then(async response => {
           await dataAccess.writeRule(
-            `${gitWebhooksFolder}/${filename}`,
+            `${hygieFolder}/${filename}`,
             response.data,
           );
-          return gitWebhooksFolder;
+          return hygieFolder;
         })
         .catch(err => {
           reject(err);
           return;
         });
-      resolve(gitWebhooksFolder);
+      resolve(hygieFolder);
     });
   }
 
