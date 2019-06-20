@@ -1,4 +1,5 @@
 import { RulesOptions } from './rules.options';
+import { Constants } from '../utils/constants';
 
 describe('rules options', () => {
   it('should initalize RulesOptions object with defaults values', () => {
@@ -8,6 +9,7 @@ describe('rules options', () => {
       enableGroups: true,
       enableRules: true,
       executeAllRules: false,
+      cron: Constants.cronExpression,
     });
   });
 
@@ -17,12 +19,14 @@ describe('rules options', () => {
       enableGroups: false,
       enableRules: false,
       executeAllRules: true,
+      cron: '0 0 8-20/1 * * *',
     });
     expect(rulesOptions).toEqual({
       allRuleResultInOne: true,
       enableGroups: false,
       enableRules: false,
       executeAllRules: true,
+      cron: '0 0 8-20/1 * * *',
     });
   });
 });

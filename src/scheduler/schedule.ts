@@ -11,6 +11,7 @@ import { RemoteConfigUtils } from '../remote-config/utils';
 import { checkCronExpression } from './utils';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { DataAccessService } from '../data_access/dataAccess.service';
+import { Constants } from '../utils/constants';
 
 @Injectable()
 export class Schedule extends NestSchedule {
@@ -28,27 +29,44 @@ export class Schedule extends NestSchedule {
     private readonly httpService: HttpService,
     private readonly dataAccessService: DataAccessService,
     cron: CronStandardClass,
-    remoteRepository: string,
   ) {
     super();
-    this.id = Utils.generateUniqueId();
+    this.id = `${Utils.getRepositoryFullName(cron.projectURL)}/${
+      cron.filename
+    }`;
     this.cron = cron;
-    logger.info(`Schedule ${this.id} (${cron.filename}) created.`, {
-      project: this.cron.projectURL,
-      location: 'ScheduleService',
-    });
+    this.cron.updatedAt = new Date();
 
     this.remoteEnvs = Utils.getRepositoryFullName(this.cron.projectURL);
-    this.remoteRepository = remoteRepository;
+    this.remoteRepository =
+      'remote-rules/' +
+      Utils.getRepositoryFullName(cron.projectURL) +
+      '/.hygie';
 
     // Init Webhook
     this.webhook = new Webhook(this.gitlabService, this.githubService);
     this.webhook.setCronWebhook(cron);
 
+    // Set Gitlab Project Id if needed
+    this.setGitlabProjectId().catch(err =>
+      logger.error(err, {
+        location: 'SetGitlabProjectId',
+        project: this.cron.projectURL,
+      }),
+    );
+
     // Store CRON
     this.dataAccessService
       .writeCron(`remote-crons/${this.id}`, this.cron)
+      .then(() => {
+        logger.info(`Schedule ${this.id} created.`, {
+          project: this.cron.projectURL,
+          location: 'ScheduleService',
+        });
+      })
       .catch(err => logger.error(err));
+
+    this.updateCron(cron.expression);
   }
 
   /**
@@ -77,78 +95,58 @@ export class Schedule extends NestSchedule {
           });
         this.webhook.projectId = gitlabProjectId;
       }
-      resolve();
+      return resolve();
     });
   }
 
-  @Cron('0 0 6-20/1 * * *', {
+  @Cron(Constants.cronExpression, {
     startTime: new Date(),
     endTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
     tz: 'Europe/Paris',
   })
   async cronJob() {
-    this.githubService
-      .setEnvironmentVariables(this.dataAccessService, this.remoteEnvs)
-      .catch(err =>
-        logger.error(
-          'There is no config.env file for the current git project',
-          {
-            project: this.cron.projectURL,
-            location: 'ScheduleService',
-          },
-        ),
-      );
-    this.gitlabService
-      .setEnvironmentVariables(this.dataAccessService, this.remoteEnvs)
-      .catch(err =>
-        logger.error(
-          'There is no config.env file for the current git project',
-          {
-            project: this.cron.projectURL,
-            location: 'ScheduleService',
-          },
-        ),
-      );
+    // First check if Cron job has not been updated/removed
+    const { updatedAt } = await this.dataAccessService
+      .readCron(`remote-crons/${this.id}`)
+      .catch(() => {
+        return { updatedAt: new Date() };
+      });
+    if (this.cron.updatedAt.getTime() !== updatedAt.getTime()) {
+      logger.error('CANCELLING CRON!');
+      return true; // returning true cancel the job
+    }
 
-    await this.setGitlabProjectId();
+    // Set Git Env Vars
+    if (this.webhook.gitType === GitTypeEnum.Github) {
+      this.githubService
+        .setEnvironmentVariables(this.dataAccessService, this.remoteEnvs)
+        .catch(err =>
+          logger.error(
+            'There is no config.env file for the current git project',
+            {
+              project: this.cron.projectURL,
+              location: 'ScheduleService',
+            },
+          ),
+        );
+    } else if (this.webhook.gitType === GitTypeEnum.Gitlab) {
+      this.gitlabService
+        .setEnvironmentVariables(this.dataAccessService, this.remoteEnvs)
+        .catch(err =>
+          logger.error(
+            'There is no config.env file for the current git project',
+            {
+              project: this.cron.projectURL,
+              location: 'ScheduleService',
+            },
+          ),
+        );
+    }
 
-    logger.info(`${this.id}: processing '${this.cron.filename}'`, {
+    logger.info(`processing '${this.cron.filename}'`, {
       project: this.cron.projectURL,
       location: 'ScheduleService',
     });
-
-    try {
-      await RemoteConfigUtils.downloadRulesFile(
-        this.dataAccessService,
-        this.httpService,
-        this.cron.projectURL,
-        this.cron.filename,
-      ).catch(e => {
-        throw e;
-      });
-    } catch (e) {
-      logger.error(e, {
-        project: this.cron.projectURL,
-        location: 'ScheduleService',
-      });
-    }
-
-    // Update CRON Expression if defined in the cron-*.rulesrc file
-    const conf = await Utils.parseRuleFile(
-      await this.dataAccessService.readRule(
-        `${this.remoteRepository}/${this.cron.filename}`,
-      ),
-    );
-    const options = conf.options;
-
-    if (typeof options !== 'undefined') {
-      const cronExpression = options.cron;
-      if (typeof cronExpression !== 'undefined') {
-        if (checkCronExpression(cronExpression)) {
-          this.updateCron(cronExpression);
-        }
-      }
-    }
 
     // Testing rules
     await this.rulesService.testRules(

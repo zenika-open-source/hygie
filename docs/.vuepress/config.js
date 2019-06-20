@@ -62,7 +62,7 @@ module.exports = {
       },
     ],
   },
-  gitwebhooksURL: 'https://webhooks-sklnx3jldq-uc.a.run.app',
+  hygieURL: 'http://1fb886b1.ngrok.io',
   markdown: {
     toc: { includeLevel: [2, 2] },
   },

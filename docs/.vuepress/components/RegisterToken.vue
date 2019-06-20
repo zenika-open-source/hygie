@@ -126,7 +126,7 @@ export default {
         )
       ) {
         this.urlRegistration = `${
-          configJS.gitwebhooksURL
+          configJS.hygieURL
         }/register/${encodeURIComponent(this.gitRepo)}&${encodeURIComponent(
           this.gitApi,
         )}`;
@@ -138,7 +138,7 @@ export default {
       if (!this.$refs.form.validate()) {
         return;
       }
-      const serverURL = configJS.gitwebhooksURL + '/register/config-env';
+      const serverURL = configJS.hygieURL + '/register/config-env';
       axios
         .post(serverURL, {
           gitToken: this.gitToken,

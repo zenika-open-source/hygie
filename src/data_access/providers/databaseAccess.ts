@@ -49,7 +49,9 @@ export class DatabaseAccess implements DataAccessInterface {
     return await model
       .findOne({ path })
       .then(res => res.content)
-      .catch(err => err);
+      .catch(err => {
+        throw new Error(`${source} has no member ${path}`);
+      });
   }
 
   async writeData(source: SourceEnum, path: string, data: any): Promise<any> {
@@ -69,6 +71,15 @@ export class DatabaseAccess implements DataAccessInterface {
         }
         return res;
       })
+      .catch(err => err);
+  }
+
+  async deleteData(source: SourceEnum, path: string): Promise<any> {
+    const model = this.getModel(source);
+
+    return await model
+      .deleteOne({ path })
+      .then(res => res.content)
       .catch(err => err);
   }
 

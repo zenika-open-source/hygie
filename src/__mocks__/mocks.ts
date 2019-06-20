@@ -4,6 +4,7 @@ import {
   SourceEnum,
 } from '../data_access/dataAccess.interface';
 import { Visitor } from 'universal-analytics';
+import { Controller } from '@nestjs/common';
 
 export class MockHttpService {
   get: jest.Mock = jest.fn(() => {
@@ -244,6 +245,13 @@ export class MockDataAccess implements DataAccessInterface {
   removeCollection(source: SourceEnum, path: string): Promise<boolean> {
     return Promise.resolve(true);
   }
+
+  deleteData(source: SourceEnum, path: string): Promise<any> {
+    return Promise.resolve([{}]);
+  }
 }
 
 export const MockAnalytics: Visitor = new Visitor('mock');
+
+@Controller('mockcron')
+export class MockCronController {}
