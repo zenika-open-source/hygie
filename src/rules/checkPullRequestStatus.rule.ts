@@ -60,10 +60,12 @@ export class CheckPullRequestStatusRule extends Rule {
       gitEvent === ruleConfig.options.status.toLocaleLowerCase() ? true : false;
 
     ruleResult.data = {
-      pullRequestEvent: gitEvent,
-      pullRequestTitle: webhook.getPullRequestTitle(),
-      pullRequestNumber: webhook.getPullRequestNumber(),
-      pullRequestDescription: webhook.getPullRequestDescription(),
+      pullRequest: {
+        event: gitEvent,
+        title: webhook.getPullRequestTitle(),
+        number: webhook.getPullRequestNumber(),
+        description: webhook.getPullRequestDescription(),
+      },
     };
 
     return Promise.resolve(ruleResult);

@@ -36,6 +36,7 @@ module.exports = {
           '/guide/configGenerator.md',
           '/guide/registerToken.md',
           '/guide/registerCron.md',
+          '/guide/caution.md',
         ],
       },
       {
@@ -45,6 +46,7 @@ module.exports = {
           '/rules/customisableRules.md',
           '/rules/existingRules.md',
           '/rules/rulesExample.md',
+          '/rules/groups.md',
         ],
       },
       {

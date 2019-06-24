@@ -40,8 +40,8 @@ rules:
       - callback: SendEmailRunnable
         args:
           to: bastien.terrier@gmail.com
-          subject: 'Pull Request #{{data.pullRequestNumber}} reopened '
-          message: '<b>{{data.pullRequestTitle}}</b> has been reopened, please pay attention!'
+          subject: 'Pull Request #{{data.pullRequest.umber}} reopened '
+          message: '<b>{{data.pullRequest.title}}</b> has been reopened, please pay attention!'
   - name: pullRequestComment
     options:
       regexp: '^ping @bastienterrier$'
@@ -92,8 +92,8 @@ rules:
       - callback: SendEmailRunnable
         args:
           to: bastien.terrier@gmail.com
-          subject: 'New issue (#{{data.issueNumber}}) '
-          message: '<b>{{data.issueTitle}}</b> has been created!'
+          subject: 'New issue (#{{data.issue.number}}) '
+          message: '<b>{{data.issue.title}}</b> has been created!'
   - name: issueComment
     options:
       regexp: '^ping @bastienterrier$'

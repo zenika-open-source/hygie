@@ -50,9 +50,11 @@ describe('UpdatePullRequestRunnable', () => {
     ruleResultPullRequestTitle = new RuleResult(myGitApiInfos);
     ruleResultPullRequestTitle.validated = false;
     ruleResultPullRequestTitle.data = {
-      pullRequestTitle: 'Bad title',
-      pullRequestNumber: 22,
-      pullRequestDescription: 'my desc',
+      pullRequest: {
+        title: 'Bad title',
+        number: 22,
+        description: 'my desc',
+      },
     };
   });
 

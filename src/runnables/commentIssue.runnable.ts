@@ -17,7 +17,7 @@ interface CommentIssueArgs {
 
 /**
  * `CommentIssueRunnable` comments the Issue processed by the previous rule.
- * @warn Be sure that the rule returned the `issueNumber` property in the `RuleResult` object.
+ * @warn Be sure that the rule returned the `issue.number` property in the `RuleResult` object.
  */
 @RunnableDecorator('CommentIssueRunnable')
 export class CommentIssueRunnable extends Runnable {
@@ -36,7 +36,7 @@ export class CommentIssueRunnable extends Runnable {
   ): Promise<void> {
     const data = ruleResult.data as any;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
-    gitIssueInfos.number = data.issueNumber;
+    gitIssueInfos.number = data.issue.number;
     gitIssueInfos.comment = render(args.comment, ruleResult);
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 

@@ -32,14 +32,16 @@ describe('LoggerRunnable', () => {
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    args = { message: '{{data.issueTitle}} is a correct issue title' };
+    args = { message: '{{data.issue.title}} is a correct issue title' };
 
     // ruleResultIssueTitle initialisation
     ruleResultIssueTitle = new RuleResult(myGitApiInfos);
     ruleResultIssueTitle.validated = true;
     ruleResultIssueTitle.data = {
-      issueNumber: 22,
-      issueTitle: 'test',
+      issue: {
+        number: 22,
+        title: 'test',
+      },
     };
   });
 

@@ -50,10 +50,12 @@ export class PullRequestTitleRule extends Rule {
     ruleResult.validated = pullRequestRegExp.test(titlePullRequest);
 
     ruleResult.data = {
-      pullRequestTitle: titlePullRequest,
-      pullRequestNumber: webhook.getPullRequestNumber(),
-      pullRequestDescription: webhook.getPullRequestDescription(),
-      matches: titlePullRequest.match(pullRequestRegExp),
+      pullRequest: {
+        title: titlePullRequest,
+        number: webhook.getPullRequestNumber(),
+        description: webhook.getPullRequestDescription(),
+        matches: titlePullRequest.match(pullRequestRegExp),
+      },
     };
     return ruleResult;
   }

@@ -57,10 +57,12 @@ describe('RulesService', () => {
       );
       expect(result.validated).toBe(false);
       expect(result.data).toEqual({
-        pullRequestTitle: webhook.pullRequest.title,
-        pullRequestNumber: webhook.pullRequest.number,
-        pullRequestDescription: webhook.pullRequest.description,
-        matches: null,
+        pullRequest: {
+          title: webhook.pullRequest.title,
+          number: webhook.pullRequest.number,
+          description: webhook.pullRequest.description,
+          matches: null,
+        },
       });
     });
   });
@@ -86,10 +88,12 @@ describe('RulesService', () => {
       );
       expect(result.validated).toBe(true);
       expect(JSON.parse(JSON.stringify(result.data))).toEqual({
-        pullRequestTitle: webhook.pullRequest.title,
-        pullRequestNumber: webhook.pullRequest.number,
-        pullRequestDescription: webhook.pullRequest.description,
-        matches: ['WIP: webhook', 'WIP'],
+        pullRequest: {
+          title: webhook.pullRequest.title,
+          number: webhook.pullRequest.number,
+          description: webhook.pullRequest.description,
+          matches: ['WIP: webhook', 'WIP'],
+        },
       });
     });
   });

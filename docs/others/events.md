@@ -4,6 +4,7 @@ The following events are supported :
 
 - Push
 - NewBranch
+- DeletedBranch
 - NewIssue
 - NewRepo
   ::: warning

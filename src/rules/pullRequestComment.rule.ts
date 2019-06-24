@@ -49,12 +49,16 @@ export class PullRequestCommentRule extends Rule {
     ruleResult.validated = commentRegExp.test(commentDescription);
 
     ruleResult.data = {
-      pullRequestTitle: webhook.getPullRequestTitle(),
-      pullRequestNumber: webhook.getPullRequestNumber(),
-      pullRequestDescription: webhook.getPullRequestDescription(),
-      commentId: webhook.getCommentId(),
-      commentDescription,
-      matches: commentDescription.match(commentRegExp),
+      pullRequest: {
+        title: webhook.getPullRequestTitle(),
+        number: webhook.getPullRequestNumber(),
+        description: webhook.getPullRequestDescription(),
+      },
+      comment: {
+        id: webhook.getCommentId(),
+        description: commentDescription,
+        matches: commentDescription.match(commentRegExp),
+      },
     };
 
     return Promise.resolve(ruleResult);

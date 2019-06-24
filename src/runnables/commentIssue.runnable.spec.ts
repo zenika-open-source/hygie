@@ -48,7 +48,7 @@ describe('CommentIssueRunnable', () => {
     ruleResultIssueTitle = new RuleResult(myGitApiInfos);
     ruleResultIssueTitle.validated = true;
     ruleResultIssueTitle.data = {
-      issueNumber: 22,
+      issue: { number: 22 },
     };
   });
 

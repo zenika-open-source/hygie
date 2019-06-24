@@ -20,7 +20,7 @@ interface MergePullRequestArgs {
 
 /**
  * `MergePullRequestRunnable` merge the PR or MR processed by the previous rule.
- *  @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object.
+ *  @warn Be sure that the rule returned the `pullRequest.number` property in the `RuleResult` object.
  */
 @RunnableDecorator('MergePullRequestRunnable')
 export class MergePullRequestRunnable extends Runnable {
@@ -46,7 +46,7 @@ export class MergePullRequestRunnable extends Runnable {
       .event('Runnable', 'mergePullRequest', ruleResult.projectURL)
       .send();
 
-    gitMergePRInfos.number = data.pullRequestNumber;
+    gitMergePRInfos.number = data.pullRequest.number;
 
     if (typeof args !== 'undefined') {
       if (typeof args.commitMessage !== 'undefined') {
