@@ -103,6 +103,100 @@ export function getYAMLSchema(): object {
           anyOf: rulesOptions,
         },
       },
+      groups: {
+        description: 'All groups.',
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            groupName: {
+              type: 'string',
+              description: "Group's name",
+            },
+            rules: {
+              description: "All group's rules.",
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: {
+                    type: 'string',
+                    description: 'The name of the rule.',
+                    oneOf: rulesName,
+                  },
+                  enabled: {
+                    type: 'boolean',
+                    description: 'Specify if the rule will be evaluated.',
+                  },
+                  events: {
+                    type: 'array',
+                    description: 'All events on which the rule will be tested.',
+                    items: {
+                      type: 'string',
+                    },
+                    minItems: 1,
+                  },
+                },
+                required: ['name'],
+                anyOf: rulesOptions,
+              },
+            },
+            onSuccess: {
+              type: 'array',
+              description: 'Array of Runnables to execute in case of Success.',
+              minItems: 1,
+              items: {
+                type: 'object',
+                properties: {
+                  callback: {
+                    type: 'string',
+                    description: 'The name of the Runnable.',
+                    oneOf: runnablesName,
+                  },
+                },
+                required: ['callback'],
+                anyOf: runnablesArgs,
+              },
+            },
+            onError: {
+              type: 'array',
+              description: 'Array of Runnables to execute in case of Error.',
+              minItems: 1,
+              items: {
+                type: 'object',
+                properties: {
+                  callback: {
+                    type: 'string',
+                    description: 'The name of the Runnable.',
+                    oneOf: runnablesName,
+                  },
+                },
+                required: ['callback'],
+                anyOf: runnablesArgs,
+              },
+            },
+            onBoth: {
+              type: 'array',
+              description:
+                "Array of Runnables to execute after the rule's evaluation.",
+              minItems: 1,
+              items: {
+                type: 'object',
+                properties: {
+                  callback: {
+                    type: 'string',
+                    description: 'The name of the Runnable.',
+                    oneOf: runnablesName,
+                  },
+                },
+                required: ['callback'],
+                anyOf: runnablesArgs,
+              },
+            },
+          },
+          required: ['groupName'],
+        },
+      },
     },
   };
 }
