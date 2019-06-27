@@ -7,7 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { GithubEvent } from '../github/githubEvent';
 import { GitlabEvent } from '../gitlab/gitlabEvent';
-import { Webhook } from './webhook';
+import { Webhook } from '../webhook/webhook';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
 

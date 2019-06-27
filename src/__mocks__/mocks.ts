@@ -1,10 +1,15 @@
-import { of } from 'rxjs';
+import { of, Observable } from 'rxjs';
 import {
   DataAccessInterface,
   SourceEnum,
 } from '../data_access/dataAccess.interface';
 import { Visitor } from 'universal-analytics';
-import { Controller } from '@nestjs/common';
+import {
+  Controller,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+} from '@nestjs/common';
 
 export class MockHttpService {
   get: jest.Mock = jest.fn(() => {
@@ -255,3 +260,9 @@ export const MockAnalytics: Visitor = new Visitor('mock');
 
 @Controller('mockcron')
 export class MockCronController {}
+
+export class MockLoggingInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    return next.handle();
+  }
+}

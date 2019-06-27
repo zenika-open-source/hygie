@@ -1,4 +1,9 @@
-import { ExceptionFilter, Catch } from '@nestjs/common';
+import {
+  ExceptionFilter,
+  Catch,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 
 /**
  * Handle all ExceptionFilter
@@ -10,14 +15,19 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
-    const status = exception.getStatus();
+    const status =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const res = {
+    if (status === HttpStatus.NOT_FOUND) {
+      return response.status(status).render('404.hbs', { path: request.url });
+    }
+
+    return response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-    };
-
-    response.status(status).json(res);
+    });
   }
 }

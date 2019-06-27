@@ -9,6 +9,9 @@ import { RegisterController } from './controllers/register.controller';
 import { WebhookController } from './controllers/webhook.controller';
 import { ApplicationController } from './controllers/application.controller';
 import { analytics } from './analytics/analytics.service';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
+import { PrometheusService } from './logger/prometheus.service';
 @Module({
   imports: [
     HttpModule,
@@ -23,6 +26,13 @@ import { analytics } from './analytics/analytics.service';
     RegisterController,
     WebhookController,
   ],
-  providers: [ScheduleService],
+  providers: [
+    PrometheusService,
+    ScheduleService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
 })
 export class AppModule {}
