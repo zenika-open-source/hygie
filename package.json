@@ -47,7 +47,7 @@
     "dotenv": "8.0.0",
     "download": "7.1.0",
     "execa": "1.0.0",
-    "fs-extra": "8.0.1",
+    "fs-extra": "8.1.0",
     "github-release-notes": "0.17.0",
     "googleapis": "27.0.0",
     "hbs": "4.0.4",
