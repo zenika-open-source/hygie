@@ -35,7 +35,7 @@
   "dependencies": {
     "@dxdeveloperexperience/hygie-database": "0.2.0",
     "@dxdeveloperexperience/nest-schedule": "0.4.6",
-    "@nestjs/common": "^6.3.2",
+    "@nestjs/common": "6.3.2",
     "@nestjs/core": "6.0.2",
     "@nestjs/microservices": "6.0.2",
     "@nestjs/platform-express": "6.0.2",
