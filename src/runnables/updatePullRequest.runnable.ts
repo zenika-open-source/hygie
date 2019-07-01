@@ -21,7 +21,7 @@ interface UpdatePullRequestArgs {
 
 /**
  * `UpdatePullRequestRunnable` update some PR's properties.
- *  @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object.
+ *  @warn Be sure that the rule returned the `pullRequest.number` property in the `RuleResult` object.
  */
 @RunnableDecorator('UpdatePullRequestRunnable')
 export class UpdatePullRequestRunnable extends Runnable {
@@ -49,10 +49,10 @@ export class UpdatePullRequestRunnable extends Runnable {
       .event('Runnable', 'updatePullRequest', ruleResult.projectURL)
       .send();
 
-    if (typeof data.pullRequestNumber === 'number') {
-      arrayOfPRNumber.push(data.issueNumber);
+    if (typeof data.pullRequest.number === 'number') {
+      arrayOfPRNumber.push(data.pullRequest.number);
     } else {
-      arrayOfPRNumber = data.pullRequestNumber;
+      arrayOfPRNumber = data.pullRequest.number;
     }
 
     arrayOfPRNumber.forEach(pullRequestNumber => {

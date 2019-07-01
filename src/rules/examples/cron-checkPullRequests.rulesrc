@@ -13,7 +13,7 @@ rules:
       - callback: LoggerRunnable
         args:
           type: warn
-          message: '{{data.pullRequestNumber.length}} deserted Pull Request(s) founded. They will be closed. '
+          message: '{{data.pullRequest.number.length}} deserted Pull Request(s) founded. They will be closed. '
       - callback: UpdatePullRequestRunnable
         args:
           state: close

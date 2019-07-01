@@ -9,7 +9,7 @@ import {
   HttpService,
 } from '@nestjs/common';
 import { Webhook } from '../webhook/webhook';
-import { WebhookInterceptor } from '../webhook/webhook.interceptor';
+import { WebhookInterceptor } from '../interceptors/webhook.interceptor';
 import { logger } from '../logger/logger.service';
 import { RulesService } from '../rules/rules.service';
 import { GitTypeEnum, GitEventEnum } from '../webhook/utils.enum';
@@ -20,7 +20,7 @@ import { GithubService } from '../github/github.service';
 import { RemoteConfigUtils } from '../remote-config/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { Constants } from '../utils/constants';
-import { WhiteListInterceptor } from '../webhook/whiteList.interceptor';
+import { WhiteListInterceptor } from '../interceptors/whiteList.interceptor';
 
 @Controller('webhook')
 export class WebhookController {
@@ -106,7 +106,7 @@ export class WebhookController {
         remoteRepository,
         Constants.rulesExtension,
       );
-      response.status(HttpStatus.ACCEPTED).send(result);
+      return response.status(HttpStatus.OK).send(result);
     }
   }
 }

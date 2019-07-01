@@ -48,7 +48,7 @@ describe('UpdateIssueRunnable', () => {
     ruleResultIssueTitle = new RuleResult(myGitApiInfos);
     ruleResultIssueTitle.validated = false;
     ruleResultIssueTitle.data = {
-      issueNumber: 22,
+      issue: { number: 22 },
     };
   });
 

@@ -106,7 +106,7 @@ describe('RulesService', () => {
 
       jest.fn().mockReset();
 
-      const expectedResult = { pullRequestNumber: [1, 2, 3] };
+      const expectedResult = { pullRequest: { number: [1, 2, 3] } };
 
       expect(result.validated).toBe(true);
       expect(result.data).toEqual(expectedResult);
@@ -148,7 +148,7 @@ describe('RulesService', () => {
 
       jest.fn().mockReset();
 
-      const expectedResult = { pullRequestNumber: [1, 2, 3] };
+      const expectedResult = { pullRequest: { number: [1, 2, 3] } };
 
       expect(result.validated).toBe(true);
       expect(result.data).toEqual(expectedResult);

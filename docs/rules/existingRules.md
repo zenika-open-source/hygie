@@ -115,7 +115,7 @@ Available in CRON jobs
     - callback: LoggerRunnable
       args:
         type: warn
-        message: '{{data.issueNumber.length}} deserted Issue(s) founded. They will be closed. '
+        message: '{{data.issue.number.length}} deserted Issue(s) founded. They will be closed. '
     - callback: UpdateIssueRunnable
       args:
         state: close
@@ -164,7 +164,7 @@ Available in CRON jobs
     - callback: LoggerRunnable
       args:
         type: warn
-        message: '{{data.pullRequestNumber.length}} deserted Pull Request(s) founded. They will be closed.'
+        message: '{{data.pullRequest.number.length}} deserted Pull Request(s) founded. They will be closed.'
     - callback: UpdatePullRequestRunnable
       args:
         state: close
@@ -191,10 +191,12 @@ Checks if the Pull Request event matchs.
 {
   validated: boolean,
   data: {
-    pullRequestEvent: GitEvent,
-    pullRequestTitle: string,
-    pullRequestNumber: number,
-    pullRequestDescription: string
+    pullRequest:{
+      event: GitEvent,
+      title: string,
+      number: number,
+      description: string
+    }
   }
 }
 ```
@@ -209,8 +211,8 @@ Checks if the Pull Request event matchs.
     - callback: SendEmailRunnable
       args:
         to: bastien.terrier@gmail.com
-        subject: 'Pull Request #{{data.pullRequestNumber}} reopened '
-        message: '<b>{{data.pullRequestTitle}}</b> has been reopened, please pay attention!'
+        subject: 'Pull Request #{{data.pullRequest.number}} reopened '
+        message: '<b>{{data.pullRequest.title}}</b> has been reopened, please pay attention!'
 ```
 
 ## CheckVulnerabilitiesRule
@@ -398,8 +400,8 @@ Checks the issue's title according to a regular expression.
     - callback: SendEmailRunnable
       args:
         to: bastien.terrier@gmail.com
-        subject: 'New issue (#{{data.issueNumber}}) '
-        message: '<b>{{data.issueTitle}}</b> has been created!'
+        subject: 'New issue (#{{data.issue.number}}) '
+        message: '<b>{{data.issue.title}}</b> has been created!'
 ```
 
 ## OneCommitPerPRRule
@@ -463,11 +465,15 @@ Checks the new PR or MR's comment according to a regular expression.
 {
   validated: boolea,
   data: {
-    pullRequestTitle: string,
-    pullRequestNumber: number,
-    pullRequestDescription: string,
-    commentId: number,
-    commentDescription: string
+    pullRequest:{
+      title: string,
+      number: number,
+      description: string,
+    },
+    comment:{
+      id: number,
+      description: string
+    }
   }
 }
 ```
@@ -501,9 +507,11 @@ Checks the PR or MR's title according to a regular expression.
 {
   validated: boolea,
   data: {
-    pullRequestTitle: string,
-    pullRequestNumber: number,
-    pullRequestDescription: string
+    pullRequest:{
+      title: string,
+      number: number,
+      description: string
+    }
   }
 }
 ```

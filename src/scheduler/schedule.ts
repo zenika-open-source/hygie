@@ -112,7 +112,10 @@ export class Schedule extends NestSchedule {
         return { updatedAt: new Date() };
       });
     if (this.cron.updatedAt.getTime() !== updatedAt.getTime()) {
-      logger.error('CANCELLING CRON!');
+      logger.warn(`Cancelling ${this.id}`, {
+        project: this.cron.projectURL,
+        location: 'ScheduleService',
+      });
       return true; // returning true cancel the job
     }
 

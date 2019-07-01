@@ -19,7 +19,7 @@ interface UpdateIssueArgs {
 
 /**
  * `UpdateIssueRunnable` update some issue's properties.
- *  @warn Be sure that the rule returned the `issueNumber` property in the `RuleResult` object.
+ *  @warn Be sure that the rule returned the `issue.number` property in the `RuleResult` object.
  */
 @RunnableDecorator('UpdateIssueRunnable')
 export class UpdateIssueRunnable extends Runnable {
@@ -46,10 +46,10 @@ export class UpdateIssueRunnable extends Runnable {
       .event('Runnable', 'updateIssue', ruleResult.projectURL)
       .send();
 
-    if (typeof data.issueNumber === 'number') {
-      arrayOfIssueNumber.push(data.issueNumber);
+    if (typeof data.issue.number === 'number') {
+      arrayOfIssueNumber.push(data.issue.number);
     } else {
-      arrayOfIssueNumber = data.issueNumber;
+      arrayOfIssueNumber = data.issue.number;
     }
 
     arrayOfIssueNumber.forEach(issueNumber => {

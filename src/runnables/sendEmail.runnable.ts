@@ -32,7 +32,7 @@ function makeBody(to: string, subject: string, message: string): string {
 }
 
 interface SendEmailArgs {
-  to: string;
+  to: string | string[];
   subject: string;
   message: string;
 }
@@ -61,6 +61,11 @@ export class SendEmailRunnable extends Runnable {
     args: SendEmailArgs,
   ): void {
     const gmail = google.gmail({ version: 'v1', authentication });
+
+    // Convert args.to fied
+    if (typeof args.to !== 'string') {
+      args.to = args.to.toString();
+    }
 
     const content = makeBody(
       render(args.to, ruleResult),
@@ -144,6 +149,14 @@ export class SendEmailRunnable extends Runnable {
     this.googleAnalytics
       .event('Runnable', 'sendEmail', ruleResult.projectURL)
       .send();
+
+    if (
+      typeof args.to === 'undefined' ||
+      typeof args.subject === 'undefined' ||
+      typeof args.message === 'undefined'
+    ) {
+      return null;
+    }
 
     readFile('credentials.json')
       .then(content => {

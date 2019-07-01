@@ -35,7 +35,7 @@ onError:
 `CommentPullRequestRunnable` comments the PR or MR processed by the previous rule.
 
 ::: warning
-Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object.
+Be sure that the rule returned the `pullRequest.number` property in the `RuleResult` object.
 :::
 
 ### Usage
@@ -198,7 +198,7 @@ onSuccess:
   - callback: LoggerRunnable
     args:
       type: info
-      message: '{{data.issueTitle}} is correct issue title'
+      message: '{{data.issue.title}} is correct issue title'
 ```
 
 ## MergePullRequestRunnable
@@ -208,7 +208,7 @@ onSuccess:
 `MergePullRequestRunnable` merge the PR or MR processed by the previous rule.
 
 ::: warning
-Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object.
+Be sure that the rule returned the `pullRequest.number` property in the `RuleResult` object.
 :::
 
 ### Usage
@@ -274,8 +274,8 @@ onSuccess:
   - callback: SendEmailRunnable
     args:
       to: bastien.terrier@gmail.com
-      subject: 'New issue (#{{data.issueNumber}}) '
-      message: '<b>{{data.issueTitle}}</b> has been created!'
+      subject: 'New issue (#{{data.issue.number}}) '
+      message: '<b>{{data.issue.title}}</b> has been created!'
 ```
 
 ## UpdateCommitStatusRunnable
@@ -350,7 +350,7 @@ onError:
 `UpdatePullRequestRunnable` update some PR's properties.
 
 ::: warning
-Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object.
+Be sure that the rule returned the `pullRequest.number` property in the `RuleResult` object.
 :::
 
 ### Usage

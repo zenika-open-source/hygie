@@ -58,10 +58,12 @@ describe('RulesService', () => {
       );
       expect(result.validated).toBe(false);
       expect(result.data).toEqual({
-        pullRequestDescription: 'my desc',
-        pullRequestEvent: 'closed',
-        pullRequestNumber: 22,
-        pullRequestTitle: 'my PR for webhook',
+        pullRequest: {
+          description: 'my desc',
+          event: 'closed',
+          number: 22,
+          title: 'my PR for webhook',
+        },
       });
     });
   });
@@ -76,10 +78,12 @@ describe('RulesService', () => {
       );
       expect(result.validated).toBe(true);
       expect(result.data).toEqual({
-        pullRequestDescription: 'my desc',
-        pullRequestEvent: 'closed',
-        pullRequestNumber: 22,
-        pullRequestTitle: 'my PR for webhook',
+        pullRequest: {
+          description: 'my desc',
+          event: 'closed',
+          number: 22,
+          title: 'my PR for webhook',
+        },
       });
     });
   });

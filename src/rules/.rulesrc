@@ -38,8 +38,8 @@ rules:
       - callback: SendEmailRunnable
         args:
           to: bastien.terrier@gmail.com
-          subject: 'Pull Request #{{data.pullRequestNumber}} reopened '
-          message: '<b>{{data.pullRequestTitle}}</b> has been reopened, please pay attention!'
+          subject: 'Pull Request #{{data.pullRequest.number}} reopened '
+          message: '<b>{{data.pullRequest.title}}</b> has been reopened, please pay attention!'
   - name: pullRequestComment
     options:
       regexp: '^ping @bastienterrier$'
@@ -52,7 +52,7 @@ rules:
   # COMMITS
   - name: commitMessage
     options:
-      regexp: '^(build|ci|docs|feat|fix|perf|refactor|style|test|release)(\([a-zA-Z-]*\))?:\s(.*?)(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
+      regexp: '^(build|ci|docs|feat|fix|perf|refactor|style|test|release)(\([a-zA-Z-$]*\))?:\s(.*?)(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
       maxLength: 50
       branches:
         ignore:

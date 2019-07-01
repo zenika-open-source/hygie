@@ -81,7 +81,7 @@ export class CheckPullRequestsRule extends Rule {
 
     if (ruleResult.validated) {
       ruleResult.data = {
-        pullRequestNumber: PRToUpdate,
+        pullRequest: { number: PRToUpdate },
       };
     } else {
       ruleResult.data = {};

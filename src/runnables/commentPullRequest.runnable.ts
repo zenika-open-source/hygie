@@ -17,7 +17,7 @@ interface CommentPRArgs {
 
 /**
  * `CommentPullRequestRunnable` comments the PR or MR processed by the previous rule.
- *  @warn Be sure that the rule returned the `pullRequestNumber` property in the `RuleResult` object.
+ *  @warn Be sure that the rule returned the `pullRequest.number` property in the `RuleResult` object.
  */
 @RunnableDecorator('CommentPullRequestRunnable')
 export class CommentPullRequestRunnable extends Runnable {
@@ -36,7 +36,7 @@ export class CommentPullRequestRunnable extends Runnable {
   ): Promise<void> {
     const data = ruleResult.data as any;
     const gitPRInfos: GitCommentPRInfos = new GitCommentPRInfos();
-    gitPRInfos.number = data.pullRequestNumber;
+    gitPRInfos.number = data.pullRequest.number;
     gitPRInfos.comment = render(args.comment, ruleResult);
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 

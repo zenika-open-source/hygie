@@ -31,7 +31,7 @@ describe('Runnables Service', () => {
     ruleResultIssueTitle = new RuleResult(myGitApiInfos);
     ruleResultIssueTitle.validated = false;
     ruleResultIssueTitle.data = {
-      issueNumber: 22,
+      issue: { number: 22 },
     };
 
     issueTitleRule = new IssueTitleRule(MockAnalytics);

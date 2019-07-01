@@ -48,9 +48,11 @@ describe('CommentPullRequestRunnable', () => {
     ruleResultPullRequestTitle = new RuleResult(myGitApiInfos);
     ruleResultPullRequestTitle.validated = true;
     ruleResultPullRequestTitle.data = {
-      pullRequestTitle: 'WIP: webhook',
-      pullRequestNumber: 22,
-      pullRequestDescription: 'my desc',
+      pullRequest: {
+        title: 'WIP: webhook',
+        number: 22,
+        description: 'my desc',
+      },
     };
   });
 

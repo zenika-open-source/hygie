@@ -13,7 +13,7 @@ rules:
       - callback: LoggerRunnable
         args:
           type: warn
-          message: '{{data.issueNumber.length}} deserted Issue(s) founded. They will be closed. '
+          message: '{{data.issue.number.length}} deserted Issue(s) founded. They will be closed. '
       - callback: UpdateIssueRunnable
         args:
           state: close
