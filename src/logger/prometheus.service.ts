@@ -11,7 +11,7 @@ export class PrometheusService {
     try {
       this.Prometheus.collectDefaultMetrics();
     } catch (err) {
-      logger.error(err);
+      logger.error(err, { location: 'Prometheus' });
     }
     this.httpRequestDurationMicroseconds = new this.Prometheus.Histogram({
       name: 'http_request_duration_ms',
