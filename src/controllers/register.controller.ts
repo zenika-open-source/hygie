@@ -126,15 +126,17 @@ export class RegisterController {
       gitToken: body.gitToken,
       gitRepo: body.gitRepo,
     };
-    response.send(
-      await RemoteConfigUtils.registerConfigEnv(
-        this.dataAccessService,
-        this.httpService,
-        this.githubService,
-        this.gitlabService,
-        configEnv,
-        this.applicationURL,
-      ),
-    );
+    response
+      .status(HttpStatus.OK)
+      .send(
+        await RemoteConfigUtils.registerConfigEnv(
+          this.dataAccessService,
+          this.httpService,
+          this.githubService,
+          this.gitlabService,
+          configEnv,
+          this.applicationURL,
+        ),
+      );
   }
 }

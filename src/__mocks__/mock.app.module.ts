@@ -15,6 +15,7 @@ import { WebhookController } from '../controllers/webhook.controller';
 import { ApplicationController } from '../controllers/application.controller';
 import { PrometheusService } from '../logger/prometheus.service';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { DataAccessService } from '../data_access/dataAccess.service';
 
 @Module({
   imports: [
@@ -31,6 +32,13 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     WebhookController,
   ],
   providers: [
+    {
+      provide: DataAccessService,
+      useFactory() {
+        const mock = new MockDataAccess();
+        return new DataAccessService(mock);
+      },
+    },
     PrometheusService,
     ScheduleService,
     {
