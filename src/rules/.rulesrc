@@ -52,7 +52,7 @@ rules:
   # COMMITS
   - name: commitMessage
     options:
-      regexp: '^(build|ci|docs|feat|fix|perf|refactor|style|test|release)(\([a-zA-Z-]*\))?:\s(.*?)(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
+      regexp: '^(build|ci|docs|feat|fix|perf|refactor|style|test|release)(\([a-zA-Z-$]*\))?:\s(.*?)(\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\))?$'
       maxLength: 50
       branches:
         ignore:
