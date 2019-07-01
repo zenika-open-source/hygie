@@ -12,9 +12,11 @@ import { analytics } from './analytics/analytics.service';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { PrometheusService } from './logger/prometheus.service';
+import { DataAccessModule } from './data_access/dataAccess.module';
 @Module({
   imports: [
     HttpModule,
+    DataAccessModule.forRoot(),
     RulesModule.forRoot(analytics),
     RunnableModule.forRoot(analytics),
     GitModule,
