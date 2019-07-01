@@ -113,5 +113,15 @@
     "CI",
     "opensource",
     "FaaS"
+  ],
+  "bugs": {
+    "url": "https://github.com/DX-DeveloperExperience/hygie/issues"
+  },
+  "homepage": "https://dx-developerexperience.github.io/hygie/",
+  "repository": "github:DX-DeveloperExperience/hygie",
+  "author": "Bastien Terrier <bastien.terrier@gmail.com>",
+  "contributors": [
+    "Emmanuel Demey <emmanuel.demey@zenika.com>",
+    "Bastien Terrier <bastien.terrier@gmail.com>"
   ]
 }
