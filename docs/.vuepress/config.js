@@ -37,6 +37,7 @@ module.exports = {
           '/guide/registerToken.md',
           '/guide/registerCron.md',
           '/guide/caution.md',
+          '/guide/selfHosted.md',
         ],
       },
       {
