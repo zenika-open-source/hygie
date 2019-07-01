@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { logger } from './logger.service';
 
 @Injectable()
 export class PrometheusService {
@@ -7,7 +8,11 @@ export class PrometheusService {
   Prometheus;
   constructor() {
     this.Prometheus = require('prom-client');
-    this.Prometheus.collectDefaultMetrics();
+    try {
+      this.Prometheus.collectDefaultMetrics();
+    } catch (err) {
+      logger.error(err);
+    }
     this.httpRequestDurationMicroseconds = new this.Prometheus.Histogram({
       name: 'http_request_duration_ms',
       help: 'Duration of HTTP requests in ms',
