@@ -8,11 +8,14 @@ export class PrometheusService {
   Prometheus;
   constructor() {
     this.Prometheus = require('prom-client');
+    logger.info('Avant', { location: 'Prometheus' });
     try {
       this.Prometheus.collectDefaultMetrics();
     } catch (err) {
       logger.error(err, { location: 'Prometheus' });
     }
+    logger.info('Apres', { location: 'Prometheus' });
+
     this.httpRequestDurationMicroseconds = new this.Prometheus.Histogram({
       name: 'http_request_duration_ms',
       help: 'Duration of HTTP requests in ms',
