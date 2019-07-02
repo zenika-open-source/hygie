@@ -7,14 +7,12 @@ export class PrometheusService {
   httpRequestDurationMicroseconds;
   Prometheus;
   constructor() {
-    this.Prometheus = require('prom-client');
-    logger.info('Avant', { location: 'Prometheus' });
+    this.Prometheus = require('@dxdeveloperexperience/prom-client');
     try {
       this.Prometheus.collectDefaultMetrics();
     } catch (err) {
       logger.error(err, { location: 'Prometheus' });
     }
-    logger.info('Apres', { location: 'Prometheus' });
 
     try {
       this.httpRequestDurationMicroseconds = new this.Prometheus.Histogram({
