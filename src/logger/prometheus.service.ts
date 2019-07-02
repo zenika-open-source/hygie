@@ -11,7 +11,7 @@ export class PrometheusService {
     try {
       this.Prometheus.collectDefaultMetrics();
     } catch (err) {
-      logger.error(err, { location: 'Prometheus' });
+      logger.error(err, { location: 'Prometheus 1' });
     }
 
     try {
@@ -22,7 +22,7 @@ export class PrometheusService {
         buckets: [50, 100, 200, 300, 400, 500, 750, 1000], // buckets for response time from 50ms to 1000ms
       });
     } catch (e) {
-      logger.error(e, { location: 'Prometheus' });
+      logger.error(e, { location: 'Prometheus 2' });
     }
   }
 }
