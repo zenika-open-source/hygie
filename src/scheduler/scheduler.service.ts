@@ -14,6 +14,7 @@ import { Utils } from '../utils/utils';
 import { RemoteConfigUtils } from '../remote-config/utils';
 import { Constants } from '../utils/constants';
 import { logger } from '../logger/logger.service';
+import { Webhook } from '../webhook/webhook';
 
 @Injectable()
 export class ScheduleService {
@@ -94,6 +95,9 @@ export class ScheduleService {
     }
   }
 
+  /**
+   * Add Schedule to the list
+   */
   addSchedule(schedule: NestSchedule): void {
     this.schedules.push(schedule);
   }
@@ -130,4 +134,9 @@ export class ScheduleService {
     }
     return Promise.resolve(new HttpResponse(HttpStatus.OK, responseString));
   }
+
+  /**
+   * Check all created/updated/deleted cron files to update the Scheduler
+   */
+  checkCronFiles(webhook: Webhook) {}
 }
