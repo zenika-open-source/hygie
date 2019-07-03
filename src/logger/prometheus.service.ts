@@ -7,7 +7,7 @@ export class PrometheusService {
   httpRequestDurationMicroseconds;
   Prometheus;
   constructor() {
-    this.Prometheus = require('@dxdeveloperexperience/prom-client');
+    this.Prometheus = require('prom-client');
     try {
       this.Prometheus.collectDefaultMetrics();
     } catch (err) {
