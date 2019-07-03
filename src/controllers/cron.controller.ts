@@ -32,6 +32,10 @@ export class CronController {
     }
   }
 
+  /**
+   * Should be remove in the near futur
+   * Registration of cron job is now handle by the /webhook endpoint
+   */
   @Post('/')
   async cronJobs(@Body() cronType: CronType, @Res() response): Promise<void> {
     const httpResponse: HttpResponse = await this.scheduleService
