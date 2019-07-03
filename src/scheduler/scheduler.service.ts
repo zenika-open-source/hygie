@@ -167,7 +167,12 @@ export class ScheduleService {
           projectURL,
         };
       });
-      this.createCronJobs(addOrUpdateCrons);
+      this.createCronJobs(addOrUpdateCrons).catch(err =>
+        logger.error(err, {
+          location: 'processCronFiles',
+          project: webhook.getCloneURL(),
+        }),
+      );
     }
 
     if (allRemovedCronFiles.length > 0) {
@@ -177,7 +182,12 @@ export class ScheduleService {
           webhook.getCloneURL(),
         )}/${filename}`;
         logger.info('Removing ' + cron);
-        this.dataAccessService.deleteCron(cron);
+        this.dataAccessService.deleteCron(cron).catch(err =>
+          logger.error(err, {
+            location: 'processCronFiles',
+            project: webhook.getCloneURL(),
+          }),
+        );
       });
     }
   }
