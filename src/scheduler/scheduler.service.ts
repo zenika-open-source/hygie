@@ -1,12 +1,21 @@
 import { Injectable, HttpService, HttpStatus } from '@nestjs/common';
 import { NestSchedule } from '@dxdeveloperexperience/nest-schedule';
 import { Schedule } from './schedule';
-import { CronStandardClass, convertCronType, CronType } from './cron.interface';
+import {
+  CronStandardClass,
+  convertCronType,
+  CronType,
+  CronInterface,
+} from './cron.interface';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { RulesService } from '../rules/rules.service';
 import { SchedulerException } from '../exceptions/scheduler.exception';
-import { checkCronExpression } from './utils';
+import {
+  checkCronExpression,
+  getMatchingFiles,
+  getCronFileName,
+} from './utils';
 import { CronExpressionException } from '../exceptions/cronExpression.exception';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { HttpResponse } from '../utils/httpResponse';
@@ -14,6 +23,8 @@ import { Utils } from '../utils/utils';
 import { RemoteConfigUtils } from '../remote-config/utils';
 import { Constants } from '../utils/constants';
 import { logger } from '../logger/logger.service';
+import { Webhook, WebhookCommit } from '../webhook/webhook';
+import { GitEventEnum } from '../webhook/utils.enum';
 
 @Injectable()
 export class ScheduleService {
@@ -94,6 +105,9 @@ export class ScheduleService {
     }
   }
 
+  /**
+   * Add Schedule to the list
+   */
   addSchedule(schedule: NestSchedule): void {
     this.schedules.push(schedule);
   }
@@ -129,5 +143,52 @@ export class ScheduleService {
       }
     }
     return Promise.resolve(new HttpResponse(HttpStatus.OK, responseString));
+  }
+
+  /**
+   * Check all created/updated/deleted cron files to update the Scheduler
+   */
+  processCronFiles(webhook: Webhook) {
+    if (webhook.gitEvent !== GitEventEnum.Push) {
+      return;
+    }
+    const commits: WebhookCommit[] = webhook.getAllCommits();
+    const projectURL: string = webhook.getCloneURL();
+    const allAddedCronFiles: string[] = getMatchingFiles(commits, 'added');
+    const allUpdatedCronFiles: string[] = getMatchingFiles(commits, 'modified');
+    const allRemovedCronFiles: string[] = getMatchingFiles(commits, 'removed');
+
+    const addOrUpdate: string[] = allAddedCronFiles.concat(allUpdatedCronFiles);
+
+    if (addOrUpdate.length > 0) {
+      const addOrUpdateCrons: CronInterface[] = addOrUpdate.map(a => {
+        return {
+          filename: getCronFileName(a),
+          projectURL,
+        };
+      });
+      this.createCronJobs(addOrUpdateCrons).catch(err =>
+        logger.error(err, {
+          location: 'processCronFiles',
+          project: webhook.getCloneURL(),
+        }),
+      );
+    }
+
+    if (allRemovedCronFiles.length > 0) {
+      allRemovedCronFiles.map(r => {
+        const filename: string = getCronFileName(r);
+        const cron: string = `remote-crons/${Utils.getRepositoryFullName(
+          webhook.getCloneURL(),
+        )}/${filename}`;
+        logger.info('Removing ' + cron);
+        this.dataAccessService.deleteCron(cron).catch(err =>
+          logger.error(err, {
+            location: 'processCronFiles',
+            project: webhook.getCloneURL(),
+          }),
+        );
+      });
+    }
   }
 }

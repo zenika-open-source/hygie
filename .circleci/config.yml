@@ -2,7 +2,7 @@ version: 2
 jobs:
   install-dependencies:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:12
     steps:
       - checkout
       - restore_cache:
@@ -20,7 +20,7 @@ jobs:
           paths: [node_modules]
   build:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:12
     steps:
       - setup_remote_docker
       - checkout
@@ -34,7 +34,7 @@ jobs:
           command: npm run test:cov && (cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js)
   deploy:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:12
     steps:
       - checkout
       - attach_workspace:
