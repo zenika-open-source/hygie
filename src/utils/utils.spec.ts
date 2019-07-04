@@ -194,6 +194,7 @@ describe('Utils', () => {
 
   describe('encryptToken & decryptToken', () => {
     it('shoud encrypt the plain text and retrieve it', () => {
+      process.env.ENCRYPTION_KEY = 'somekey';
       const original = 'hello, world!';
       const encrypt = Utils.encryptToken(original);
       const decrypt = Utils.decryptToken(encrypt);
