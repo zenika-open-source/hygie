@@ -90,12 +90,15 @@ export class RegisterController {
       .then(res => res.data)
       .catch(err => err);
 
-    const accessToken = RemoteConfigUtils.getAccessToken(result);
+    const plainAccessToken = RemoteConfigUtils.getAccessToken(result);
+
+    // Encrypt Token before any storage
+    const cipherAccessToken = Utils.encryptToken(plainAccessToken);
 
     // Store data
     const finalResult = await this.httpService
       .post(this.applicationURL + '/register/config-env', {
-        gitToken: accessToken,
+        gitToken: cipherAccessToken,
         gitApi: this.apiURL,
         gitRepo: this.repoURL,
       })

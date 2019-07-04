@@ -28,6 +28,7 @@ import { GitRelease } from '../git/gitRelease';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
 import { logger } from '../logger/logger.service';
+import { Utils } from '../utils/utils';
 
 describe('Gitlab Service', () => {
   let app: TestingModule;
@@ -582,7 +583,7 @@ describe('Gitlab Service', () => {
     it('should set the token and urlApi', async () => {
       dataAccessService.readEnv = jest.fn().mockReturnValue({
         gitApi: 'https://mygitlabapi.com',
-        gitToken: 'gitlabToken',
+        gitToken: Utils.encryptToken('gitlabToken'),
       });
 
       await gitlabService.setEnvironmentVariables(

@@ -3,6 +3,7 @@ import 'array-flat-polyfill';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitEnv } from '../git/gitEnv.interface';
 import { render } from 'mustache';
+import { logger } from '../logger/logger.service';
 
 interface SplittedDirectory {
   base: string;
@@ -159,5 +160,22 @@ export class Utils {
       base,
       name,
     };
+  }
+
+  static decryptToken(str: string): string {
+    const CryptoJS = require('crypto-js');
+    try {
+      return CryptoJS.AES.decrypt(str, process.env.ENCRYPTION_KEY).toString(
+        CryptoJS.enc.Utf8,
+      );
+    } catch (err) {
+      logger.error(err, { location: 'decryptToken' });
+      return '';
+    }
+  }
+
+  static encryptToken(str: string): string {
+    const CryptoJS = require('crypto-js');
+    return CryptoJS.AES.encrypt(str, process.env.ENCRYPTION_KEY);
   }
 }

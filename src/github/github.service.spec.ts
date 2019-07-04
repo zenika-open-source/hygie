@@ -30,6 +30,7 @@ import { GitRef } from '../git/gitRef';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
 import { logger } from '../logger/logger.service';
+import { Utils } from '../utils/utils';
 
 describe('Github Service', () => {
   let app: TestingModule;
@@ -790,7 +791,7 @@ describe('Github Service', () => {
     it('should set the token and urlApi', async () => {
       dataAccessService.readEnv = jest.fn().mockReturnValue({
         gitApi: 'https://mygithubapi.com',
-        gitToken: 'githubToken',
+        gitToken: Utils.encryptToken('githubToken'),
       });
 
       await githubService.setEnvironmentVariables(

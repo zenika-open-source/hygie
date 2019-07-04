@@ -82,11 +82,7 @@ export class WebhookController {
       }
       try {
         const remoteEnvs: string = webhook.getRemoteDirectory();
-        await this.githubService.setEnvironmentVariables(
-          this.dataAccessService,
-          remoteEnvs,
-        );
-        await this.gitlabService.setEnvironmentVariables(
+        await webhook.gitService.setEnvironmentVariables(
           this.dataAccessService,
           remoteEnvs,
         );

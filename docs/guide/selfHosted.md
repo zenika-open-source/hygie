@@ -8,6 +8,10 @@ If you're using your own server to host our solution, there's a few things you n
 
   The URL of the default `.rulesrc` file
 
+- `ENCRYPTION_KEY`: secret passphrase **[REQUIRED]**
+
+  Used to encrypt user's tokens
+
 - `APPLICATION_NAME`: the name of the App **[REQUIRED]**
 
   Will appear on the commit status.
