@@ -32,7 +32,7 @@ export function getAllRules(): object {
     rule.name = contentFile.match(regexName)[1];
 
     let interfaceOptions = contentFile.substring(
-      contentFile.indexOf('interface'),
+      contentFile.indexOf('interface '),
     );
     interfaceOptions = interfaceOptions.substr(
       0,
@@ -41,7 +41,6 @@ export function getAllRules(): object {
     interfaceOptions = interfaceOptions.substr(interfaceOptions.indexOf('\n'));
     interfaceOptions = interfaceOptions.replace(/( |\n|\r)/g, '');
     const options: string[] = interfaceOptions.split(';');
-
     // Remove last 'null' element
     options.pop();
 

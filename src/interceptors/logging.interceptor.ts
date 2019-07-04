@@ -24,16 +24,6 @@ export class LoggingInterceptor implements NestInterceptor {
         const method = request.method;
 
         if (routePath !== '/metrics') {
-          logger.info(
-            routePath +
-              ' ' +
-              responseCode +
-              ' ' +
-              method +
-              ' - ' +
-              responseTimeInMs,
-          );
-
           this.prometheus.httpRequestDurationMicroseconds
             .labels(method, routePath, responseCode)
             .observe(responseTimeInMs);

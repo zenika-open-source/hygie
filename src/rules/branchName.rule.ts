@@ -34,7 +34,10 @@ export class BranchNameRule extends Rule {
     ruleConfig: BranchNameRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+    const ruleResult: RuleResult = new RuleResult(
+      webhook.getGitApiInfos(),
+      webhook.getCloneURL(),
+    );
     const branchName = webhook.getBranchName();
     const branchRegExp = RegExp(ruleConfig.options.regexp);
 

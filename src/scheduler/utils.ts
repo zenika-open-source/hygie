@@ -1,3 +1,5 @@
+import { WebhookCommit } from '../webhook/webhook';
+
 export function checkCronExpression(cronExpression: string): boolean {
   const cron: string[] = cronExpression.split(' ');
   let isValidCron: boolean = true;
@@ -9,4 +11,28 @@ export function checkCronExpression(cronExpression: string): boolean {
     }
   });
   return isValidCron;
+}
+
+export function getCronFileName(str: string): string {
+  return str.replace('.hygie/', '');
+}
+
+export function getMatchingFiles(
+  commits: WebhookCommit[],
+  type: string,
+): string[] {
+  return commits
+    .flatMap(c => {
+      if (c[type] !== undefined) {
+        return c[type].map(a => {
+          if (a.match('^\\.hygie/cron-.*\\.rulesrc$')) {
+            return a;
+          }
+        });
+      }
+    })
+    .flat(20) // maximal number of commits in a PUSH
+    .filter(elt => {
+      return elt !== undefined;
+    });
 }

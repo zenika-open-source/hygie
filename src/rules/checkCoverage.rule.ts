@@ -40,7 +40,10 @@ export class CheckCoverageRule extends Rule {
     ruleConfig: CheckCoverageRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+    const ruleResult: RuleResult = new RuleResult(
+      webhook.getGitApiInfos(),
+      webhook.getCloneURL(),
+    );
     ruleResult.data = { coverage: [] };
     let allBranchesPassed: boolean = true;
     let coverageURL: string;

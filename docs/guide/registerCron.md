@@ -16,49 +16,14 @@ Available in CRON jobs
 
 As said in the [Getting Started section](gettingStarted.md), you have to put all your CRON files in your `.hygie` folder.
 
-Then, complete your JSON request to register your file(s), as defined in the following schema.
+Everytime you're creating / updating / deleting a cron file into that directory, it will create / update / delete the cron job automatically.
 
-<RegisterCron/>
+A cron file is a classical `.rulesrc` file, but with an optional option : the cron expression `cron`, which default value is `0 0 6-20/1 * * *`. That means, every hour from 6am to 8pm every day.
 
-### Tips
-
-::: tip
-`expression` is optional. Default value is `0 0 6-20/1 * * *`.
-Which means, every hour from 6am to 8pm every day.
+::: warning
+Cron jobs cannot be processed more than 1 time per hour.
 :::
 
 ::: tip
 You can use [https://cronexpressiondescriptor.azurewebsites.net](https://cronexpressiondescriptor.azurewebsites.net) to generate your CRON expression.
 :::
-
-3 files with the same CRON expression.
-
-```json
-{
-  "filename": ["cron-1.rulesrc", "cron-2.rulesrc", "cron-3.rulesrc"],
-  "projectURL": "https://github.com/DX-DeveloperExperience/hygie",
-  "expression": "0 0 8-20/1 * * *"
-}
-```
-
-3 files but with different CRON expression.
-
-```json
-[
-  {
-    "filename": ["cron-1.rulesrc"],
-    "projectURL": "https://github.com/DX-DeveloperExperience/hygie",
-    "expression": "0 0 8-20/1 * * *"
-  },
-  {
-    "filename": ["cron-2.rulesrc"],
-    "projectURL": "https://github.com/DX-DeveloperExperience/hygie",
-    "expression": "0 0 8-20/2 * * *"
-  },
-  {
-    "filename": ["cron-2.rulesrc"],
-    "projectURL": "https://github.com/DX-DeveloperExperience/hygie",
-    "expression": "0 0 8-20/3 * * *"
-  }
-]
-```

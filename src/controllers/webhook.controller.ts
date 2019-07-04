@@ -21,6 +21,7 @@ import { RemoteConfigUtils } from '../remote-config/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { Constants } from '../utils/constants';
 import { WhiteListInterceptor } from '../interceptors/whiteList.interceptor';
+import { ScheduleService } from '../scheduler/scheduler.service';
 
 @Controller('webhook')
 export class WebhookController {
@@ -30,6 +31,7 @@ export class WebhookController {
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
     private readonly dataAccessService: DataAccessService,
+    private readonly scheduleService: ScheduleService,
   ) {}
 
   @Post('/')
@@ -100,6 +102,9 @@ export class WebhookController {
         `=== ${webhook.getGitType()} - ${webhook.getGitEvent()} ===`,
         { project: webhook.getCloneURL(), location: 'processWebhook' },
       );
+
+      // Process incoming cron files
+      this.scheduleService.processCronFiles(webhook);
 
       const result = await this.rulesService.testRules(
         webhook,
