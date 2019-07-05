@@ -63,7 +63,7 @@
     "winston": "3.2.1"
   },
   "devDependencies": {
-    "@dxdeveloperexperience/hygie-cli": "0.2.2",
+    "@dxdeveloperexperience/hygie-cli": "0.3.0",
     "@nestjs/cli": "6.5.0",
     "@types/express": "4.17.0",
     "@types/jest": "24.0.15",
