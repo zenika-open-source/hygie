@@ -21,11 +21,3 @@ When you want to use our application to deal with Issues, you must be aware of a
 When you're creating a Pull Request (Merge Request), we'll use the `.rulesrc` file of the source branch.
 
 For example, if you want the merge the content of `develop` to `master`, for every event related to this PR (MR), we'll use the `develop`'s `.rulesrc` file.
-
-## Github
-
-Last but not least, regarding `.rulesrc` access of Github.
-
-We fetch your `.rulesrc` file on Github through Github Raw Content, but this endpoint **refresh file content every minute**. That means that your changes cannot be effective immediately, but within the minute.
-
-Keep it in mind.
