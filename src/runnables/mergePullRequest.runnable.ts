@@ -80,9 +80,9 @@ export class MergePullRequestRunnable extends Runnable {
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.mergePullRequest(gitApiInfos, gitMergePRInfos);
+      this.githubService.mergePullRequest(gitMergePRInfos);
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.mergePullRequest(gitApiInfos, gitMergePRInfos);
+      this.gitlabService.mergePullRequest(gitMergePRInfos);
     }
   }
 }

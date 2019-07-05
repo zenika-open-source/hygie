@@ -84,9 +84,9 @@ export class DeleteFilesRunnable extends Runnable {
       gitFileInfos.filePath = render(file, ruleResult);
 
       if (gitApiInfos.git === GitTypeEnum.Github) {
-        await this.githubService.deleteFile(gitApiInfos, gitFileInfos);
+        await this.githubService.deleteFile(gitFileInfos);
       } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-        await this.gitlabService.deleteFile(gitApiInfos, gitFileInfos);
+        await this.gitlabService.deleteFile(gitFileInfos);
       }
     }
   }

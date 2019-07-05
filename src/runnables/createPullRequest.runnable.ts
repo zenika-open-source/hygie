@@ -84,9 +84,9 @@ export class CreatePullRequestRunnable extends Runnable {
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.createPullRequest(gitApiInfos, gitCreatePRInfos);
+      this.githubService.createPullRequest(gitCreatePRInfos);
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.createPullRequest(gitApiInfos, gitCreatePRInfos);
+      this.gitlabService.createPullRequest(gitCreatePRInfos);
     }
   }
 }

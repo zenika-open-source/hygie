@@ -3,7 +3,7 @@ import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
 import { catchError } from 'rxjs/operators';
-import { of, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
@@ -172,10 +172,10 @@ export class RemoteConfigUtils {
         )
         .toPromise()
         .then(async response => {
-          await dataAccess.writeRule(
-            `${hygieFolder}/${filename}`,
-            response.data,
-          );
+          const resultData = response.data;
+          // tslint:disable-next-line:no-console
+          console.log(resultData);
+          await dataAccess.writeRule(`${hygieFolder}/${filename}`, resultData);
           return hygieFolder;
         })
         .catch(err => {
@@ -215,12 +215,11 @@ export class RemoteConfigUtils {
         alreadyExist: false,
       };
 
-      const configFile: string =
-        'remote-envs/' +
-        Utils.getRepositoryFullName(configEnv.gitRepo) +
-        '/config.env';
+      const repositoryFullName = Utils.getRepositoryFullName(configEnv.gitRepo);
 
-      const content = {
+      const configFile: string = `remote-envs/${repositoryFullName}/config.env`;
+
+      const content: any = {
         gitApi: configEnv.gitApi,
         gitToken: configEnv.gitToken,
       };
@@ -229,25 +228,13 @@ export class RemoteConfigUtils {
         result.alreadyExist = true;
       }
 
-      await dataAccessService.writeEnv(configFile, content);
-
-      /**
-       * Check if Token is correct
-       */
-      await githubService.setEnvironmentVariables(
-        dataAccessService,
-        Utils.getRepositoryFullName(configEnv.gitRepo),
-      );
-      await gitlabService.setEnvironmentVariables(
-        dataAccessService,
-        Utils.getRepositoryFullName(configEnv.gitRepo),
-      );
-
       const gitApiInfos: GitApiInfos = new GitApiInfos();
       gitApiInfos.git = Utils.whichGitType(configEnv.gitRepo);
-      gitApiInfos.repositoryFullName = Utils.getRepositoryFullName(
-        configEnv.gitRepo,
-      );
+      gitApiInfos.repositoryFullName = repositoryFullName;
+
+      content.git = gitApiInfos.git;
+
+      await dataAccessService.writeEnv(configFile, content);
 
       /**
        * Create a `Connected to Hygie!` issue
@@ -259,12 +246,14 @@ export class RemoteConfigUtils {
       let issueNumber: number;
 
       if (gitApiInfos.git === GitTypeEnum.Github) {
-        issueNumber = await githubService.createIssue(
-          gitApiInfos,
-          gitIssueInfos,
+        await githubService.setEnvironmentVariables(
+          dataAccessService,
+          repositoryFullName,
         );
+
+        issueNumber = await githubService.createIssue(gitIssueInfos);
         result.issue = `${configEnv.gitRepo}/issues/${issueNumber}`;
-        githubService.createWebhook(gitApiInfos, applicationURL + '/webhook');
+        githubService.createWebhook(applicationURL + '/webhook');
       } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
         gitApiInfos.projectId = await this.getGitlabProjectId(
           httpService,
@@ -272,12 +261,18 @@ export class RemoteConfigUtils {
           gitApiInfos.repositoryFullName,
         );
 
-        issueNumber = await gitlabService.createIssue(
-          gitApiInfos,
-          gitIssueInfos,
+        // Store the projectId
+        content.gitlabId = gitApiInfos.projectId;
+        await dataAccessService.writeEnv(configFile, content);
+
+        await gitlabService.setEnvironmentVariables(
+          dataAccessService,
+          repositoryFullName,
         );
+
+        issueNumber = await gitlabService.createIssue(gitIssueInfos);
         result.issue = `${configEnv.gitRepo}/issues/${issueNumber}`;
-        gitlabService.createWebhook(gitApiInfos, applicationURL + '/webhook');
+        gitlabService.createWebhook(applicationURL + '/webhook');
       }
 
       resolve(result);

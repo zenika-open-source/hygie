@@ -69,9 +69,9 @@ export class UpdateIssueRunnable extends Runnable {
       }
 
       if (gitApiInfos.git === GitTypeEnum.Github) {
-        this.githubService.updateIssue(gitApiInfos, gitIssueInfos);
+        this.githubService.updateIssue(gitIssueInfos);
       } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-        this.gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
+        this.gitlabService.updateIssue(gitIssueInfos);
       }
     });
   }

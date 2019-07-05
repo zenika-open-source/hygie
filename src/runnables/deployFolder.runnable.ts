@@ -55,27 +55,22 @@ export class DeployFolderRunnable extends Runnable {
           : `deploy ${folder} to ${branch}`;
 
       const treeSha: string = await this.githubService.getTree(
-        gitApiInfos,
         folder,
         sourceBranch,
       );
-      const lastCommit = await this.githubService.getLastCommit(
-        gitApiInfos,
-        branch,
-      );
+      const lastCommit = await this.githubService.getLastCommit(branch);
       const gitCommit = new GitCommit();
       gitCommit.tree = treeSha;
       gitCommit.message = message;
       gitCommit.parents = [lastCommit];
       const commitSha: string = await this.githubService.createCommit(
-        gitApiInfos,
         gitCommit,
       );
       const gitRef = new GitRef();
       gitRef.refName = 'refs/heads/' + branch;
       gitRef.sha = commitSha;
       gitRef.force = false;
-      this.githubService.updateRef(gitApiInfos, gitRef);
+      this.githubService.updateRef(gitRef);
     }
   }
 }

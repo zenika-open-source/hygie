@@ -77,9 +77,9 @@ export class UpdatePullRequestRunnable extends Runnable {
       }
 
       if (gitApiInfos.git === GitTypeEnum.Github) {
-        this.githubService.updatePullRequest(gitApiInfos, gitPRInfos);
+        this.githubService.updatePullRequest(gitPRInfos);
       } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-        this.gitlabService.updatePullRequest(gitApiInfos, gitPRInfos);
+        this.gitlabService.updatePullRequest(gitPRInfos);
       }
     });
   }

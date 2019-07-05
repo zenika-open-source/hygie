@@ -136,7 +136,11 @@ describe('remote-config', () => {
 
       expect(dataAccessService.writeEnv).toHaveBeenCalledWith(
         'remote-envs/DX-DeveloperExperience/hygie/config.env',
-        { gitApi: 'https://gitapi.com', gitToken: 'azertyuiop' },
+        {
+          gitApi: 'https://gitapi.com',
+          gitToken: 'azertyuiop',
+          git: GitTypeEnum.Github,
+        },
       );
     });
   });

@@ -65,15 +65,9 @@ export class UpdateCommitStatusRunnable extends Runnable {
       );
 
       if (gitApiInfos.git === GitTypeEnum.Github) {
-        this.githubService.updateCommitStatus(
-          gitApiInfos,
-          gitCommitStatusInfos,
-        );
+        this.githubService.updateCommitStatus(gitCommitStatusInfos);
       } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-        this.gitlabService.updateCommitStatus(
-          gitApiInfos,
-          gitCommitStatusInfos,
-        );
+        this.gitlabService.updateCommitStatus(gitCommitStatusInfos);
       }
     });
   }

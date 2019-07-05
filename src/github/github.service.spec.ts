@@ -6,7 +6,6 @@ import {
   MockObservable,
   MockDataAccessService,
 } from '../__mocks__/mocks';
-import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { CommitStatusEnum } from '../webhook/utils.enum';
 import {
@@ -38,7 +37,6 @@ describe('Github Service', () => {
   let httpService: HttpService;
   let dataAccessService: DataAccessService;
 
-  let gitApiInfos: GitApiInfos;
   let gitCommitStatusInfos: GitCommitStatusInfos;
 
   let expectedConfig;
@@ -59,14 +57,12 @@ describe('Github Service', () => {
 
     githubService.setToken('0123456789abcdef');
     githubService.setUrlApi('https://api.github.com');
+    githubService.setRepositoryFullName('bastienterrier/test');
     githubService.setConfigGitHub({
       headers: {
         Authorization: `token 0123456789abcdef`,
       },
     });
-
-    gitApiInfos = new GitApiInfos();
-    gitApiInfos.repositoryFullName = 'bastienterrier/test';
 
     expectedConfig = {
       headers: {
@@ -87,7 +83,7 @@ describe('Github Service', () => {
       gitCommitStatusInfos.descriptionMessage = 'Well done';
       gitCommitStatusInfos.targetUrl = 'https://www.zenika.com';
 
-      githubService.updateCommitStatus(gitApiInfos, gitCommitStatusInfos);
+      githubService.updateCommitStatus(gitCommitStatusInfos);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/statuses/1`;
       const expectedData = {
@@ -111,7 +107,7 @@ describe('Github Service', () => {
       gitIssueInfos.number = '1';
       gitIssueInfos.comment = 'my comment';
 
-      githubService.addIssueComment(gitApiInfos, gitIssueInfos);
+      githubService.addIssueComment(gitIssueInfos);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues/1/comments`;
 
@@ -133,7 +129,7 @@ describe('Github Service', () => {
       gitIssueInfos.number = '1';
       gitIssueInfos.state = IssuePRStateEnum.Close;
 
-      githubService.updateIssue(gitApiInfos, gitIssueInfos);
+      githubService.updateIssue(gitIssueInfos);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues/1`;
 
@@ -153,7 +149,7 @@ describe('Github Service', () => {
       gitIssueInfos.number = '1';
       gitIssueInfos.state = IssuePRStateEnum.Open;
 
-      githubService.updateIssue(gitApiInfos, gitIssueInfos);
+      githubService.updateIssue(gitIssueInfos);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues/1`;
 
@@ -175,7 +171,7 @@ describe('Github Service', () => {
       gitCommentPRInfos.number = '1';
       gitCommentPRInfos.comment = 'my comment';
 
-      githubService.addPRComment(gitApiInfos, gitCommentPRInfos);
+      githubService.addPRComment(gitCommentPRInfos);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues/1/comments`;
 
@@ -199,7 +195,7 @@ describe('Github Service', () => {
       gitCreatePRInfos.source = 'develop';
       gitCreatePRInfos.target = 'master';
 
-      githubService.createPullRequest(gitApiInfos, gitCreatePRInfos);
+      githubService.createPullRequest(gitCreatePRInfos);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/pulls`;
 
@@ -232,7 +228,7 @@ describe('Github Service', () => {
         return of({ data: { number: 1 } });
       });
 
-      await githubService.createIssue(gitApiInfos, gitIssueInfos);
+      await githubService.createIssue(gitIssueInfos);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues`;
 
@@ -278,9 +274,7 @@ describe('Github Service', () => {
         });
       });
 
-      githubService
-        .deleteFile(gitApiInfos, gitFileInfos)
-        .catch(err => logger.error(err));
+      githubService.deleteFile(gitFileInfos).catch(err => logger.error(err));
 
       const expectedUrl1 = `https://api.github.com/repos/bastienterrier/test/contents/file/to/remove.txt`;
       const expectedUrl2 = `https://api.github.com/repos/bastienterrier/test/contents/file/to/remove.txt`;
@@ -299,7 +293,7 @@ describe('Github Service', () => {
 
   describe('deleteBranch', () => {
     it('should emit a DELETE request with specific params', () => {
-      githubService.deleteBranch(gitApiInfos, 'feature/test');
+      githubService.deleteBranch('feature/test');
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/refs/heads/feature%2Ftest`;
 
@@ -315,7 +309,7 @@ describe('Github Service', () => {
       gitMergePRInfos.commitMessage = 'commit message';
       gitMergePRInfos.method = PRMethodsEnum.Merge;
 
-      githubService.mergePullRequest(gitApiInfos, gitMergePRInfos);
+      githubService.mergePullRequest(gitMergePRInfos);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/pulls/42/merge`;
 
@@ -342,7 +336,7 @@ describe('Github Service', () => {
       gitPRInfos.target = 'master';
       gitPRInfos.state = IssuePRStateEnum.Close;
 
-      githubService.updatePullRequest(gitApiInfos, gitPRInfos);
+      githubService.updatePullRequest(gitPRInfos);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/pulls/42`;
 
@@ -365,7 +359,7 @@ describe('Github Service', () => {
     it('should emit a POST request with specific params', () => {
       const webhookURL: string = 'https://some.url.com';
 
-      githubService.createWebhook(gitApiInfos, webhookURL);
+      githubService.createWebhook(webhookURL);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/hooks`;
 
@@ -394,9 +388,7 @@ describe('Github Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      githubService
-        .getIssues(gitApiInfos, gitIssueSearch)
-        .catch(err => logger.error(err));
+      githubService.getIssues(gitIssueSearch).catch(err => logger.error(err));
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues`;
 
       const expectedConfig2 = JSON.parse(JSON.stringify(expectedConfig));
@@ -420,7 +412,7 @@ describe('Github Service', () => {
       });
 
       githubService
-        .getPullRequests(gitApiInfos, gitIssueSearch)
+        .getPullRequests(gitIssueSearch)
         .catch(err => logger.error(err));
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/pulls`;
 
@@ -441,7 +433,7 @@ describe('Github Service', () => {
       gitRelease.tag = 'v0.0.1';
       gitRelease.description = 'this is the first release';
 
-      githubService.createRelease(gitApiInfos, gitRelease);
+      githubService.createRelease(gitRelease);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/releases`;
 
@@ -466,9 +458,7 @@ describe('Github Service', () => {
           data: [{ name: 'path', sha: 'sha' }],
         });
       });
-      githubService
-        .getTree(gitApiInfos, 'your/folder/path')
-        .catch(err => logger.error(err));
+      githubService.getTree('your/folder/path').catch(err => logger.error(err));
 
       const customConfig = JSON.parse(JSON.stringify(expectedConfig));
       customConfig.params = { ref: 'master' };
@@ -485,7 +475,7 @@ describe('Github Service', () => {
         return of({ data: { object: { sha: '0123456789abcdef' } } });
       });
 
-      await githubService.getLastCommit(gitApiInfos, 'develop');
+      await githubService.getLastCommit('develop');
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/refs/heads/develop`;
 
@@ -503,9 +493,7 @@ describe('Github Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      githubService
-        .createCommit(gitApiInfos, gitCommit)
-        .catch(err => logger.error(err));
+      githubService.createCommit(gitCommit).catch(err => logger.error(err));
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/commits`;
 
@@ -528,7 +516,7 @@ describe('Github Service', () => {
       const gitRef = new GitRef();
       gitRef.refName = 'refs/heads/develop';
       gitRef.sha = 'sha';
-      githubService.updateRef(gitApiInfos, gitRef);
+      githubService.updateRef(gitRef);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/refs/heads/develop`;
 
@@ -554,7 +542,7 @@ describe('Github Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      githubService.createRef(gitApiInfos, gitRef);
+      githubService.createRef(gitRef);
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/refs`;
 
@@ -582,9 +570,7 @@ describe('Github Service', () => {
       gitTag.type = 'commit';
       gitTag.message = 'new tag';
 
-      githubService
-        .createTag(gitApiInfos, gitTag)
-        .catch(err => logger.error(err));
+      githubService.createTag(gitTag).catch(err => logger.error(err));
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/tags`;
 
@@ -720,9 +706,7 @@ describe('Github Service', () => {
         });
       });
 
-      const result: GitBranchCommit[] = await githubService.getLastBranchesCommitSha(
-        gitApiInfos,
-      );
+      const result: GitBranchCommit[] = await githubService.getLastBranchesCommitSha();
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/branches`;
 
@@ -772,6 +756,13 @@ describe('Github Service', () => {
     });
   });
 
+  describe('setRepositoryFullName', () => {
+    it('should set the repositoryFullName', () => {
+      githubService.setRepositoryFullName('some/repo');
+      expect(githubService.repositoryFullName).toBe('some/repo');
+    });
+  });
+
   describe('setConfigGitHub', () => {
     it('should set the config header', () => {
       githubService.setConfigGitHub({
@@ -795,13 +786,20 @@ describe('Github Service', () => {
         gitToken: Utils.encryptToken('githubToken'),
       });
 
+      githubService.setToken = jest.fn().mockName('setTokenGithub');
+      githubService.setUrlApi = jest.fn().mockName('setUrlApiGithub');
+      githubService.setRepositoryFullName = jest
+        .fn()
+        .mockName('setRepositoryFullNameGithub');
+
       await githubService.setEnvironmentVariables(
         dataAccessService,
-        'myFilePath',
+        'some/repo',
       );
 
-      expect(githubService.token).toBe('githubToken');
-      expect(githubService.urlApi).toBe('https://mygithubapi.com');
+      expect(githubService.setToken).toBeCalledWith('githubToken');
+      expect(githubService.setUrlApi).toBeCalledWith('https://mygithubapi.com');
+      expect(githubService.setRepositoryFullName).toBeCalledWith('some/repo');
     });
   });
 });

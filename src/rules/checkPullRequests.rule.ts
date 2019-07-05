@@ -57,7 +57,6 @@ export class CheckPullRequestsRule extends Rule {
     }
 
     const pullRequests: PRSearchResult[] = await webhook.gitService.getPullRequests(
-      webhook.getGitApiInfos(),
       gitPRSearch,
     );
 

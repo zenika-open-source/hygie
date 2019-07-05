@@ -45,9 +45,9 @@ export class CommentPullRequestRunnable extends Runnable {
       .send();
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.addPRComment(gitApiInfos, gitPRInfos);
+      this.githubService.addPRComment(gitPRInfos);
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.addPRComment(gitApiInfos, gitPRInfos);
+      this.gitlabService.addPRComment(gitPRInfos);
     }
   }
 }

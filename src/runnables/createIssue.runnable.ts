@@ -63,11 +63,11 @@ export class CreateIssueRunnable extends Runnable {
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
       this.githubService
-        .createIssue(gitApiInfos, gitIssueInfos)
+        .createIssue(gitIssueInfos)
         .catch(err => logger.error(err));
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
       this.gitlabService
-        .createIssue(gitApiInfos, gitIssueInfos)
+        .createIssue(gitIssueInfos)
         .catch(err => logger.error(err));
     }
   }

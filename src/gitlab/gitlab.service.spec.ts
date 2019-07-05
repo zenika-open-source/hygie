@@ -37,7 +37,6 @@ describe('Gitlab Service', () => {
   let observable: Observable<any>;
   let dataAccessService: DataAccessService;
 
-  let gitApiInfos: GitApiInfos;
   let gitCommitStatusInfos: GitCommitStatusInfos;
 
   let expectedConfig: any = {};
@@ -58,11 +57,9 @@ describe('Gitlab Service', () => {
     observable = app.get(Observable);
     dataAccessService = app.get(DataAccessService);
 
-    gitApiInfos = new GitApiInfos();
-    gitApiInfos.projectId = '1';
-
     gitlabService.setToken('0123456789abcdef');
     gitlabService.setUrlApi('https://gitlab.com/api/v4');
+    gitlabService.setProjectId('1');
 
     expectedConfig = {
       headers: {
@@ -83,7 +80,7 @@ describe('Gitlab Service', () => {
       gitCommitStatusInfos.descriptionMessage = 'Well done';
       gitCommitStatusInfos.targetUrl = 'https://www.zenika.com';
 
-      gitlabService.updateCommitStatus(gitApiInfos, gitCommitStatusInfos);
+      gitlabService.updateCommitStatus(gitCommitStatusInfos);
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/statuses/1`;
 
@@ -104,7 +101,7 @@ describe('Gitlab Service', () => {
       gitIssueInfos.number = '1';
       gitIssueInfos.comment = 'my comment';
 
-      gitlabService.addIssueComment(gitApiInfos, gitIssueInfos);
+      gitlabService.addIssueComment(gitIssueInfos);
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/issues/1/notes`;
 
@@ -122,7 +119,7 @@ describe('Gitlab Service', () => {
       gitIssueInfos.number = '1';
       gitIssueInfos.state = IssuePRStateEnum.Close;
 
-      gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
+      gitlabService.updateIssue(gitIssueInfos);
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/issues/1`;
 
@@ -138,7 +135,7 @@ describe('Gitlab Service', () => {
       gitIssueInfos.number = '1';
       gitIssueInfos.state = IssuePRStateEnum.Open;
 
-      gitlabService.updateIssue(gitApiInfos, gitIssueInfos);
+      gitlabService.updateIssue(gitIssueInfos);
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/issues/1`;
 
@@ -156,7 +153,7 @@ describe('Gitlab Service', () => {
       gitCommentPRInfos.number = '1';
       gitCommentPRInfos.comment = 'my comment';
 
-      gitlabService.addPRComment(gitApiInfos, gitCommentPRInfos);
+      gitlabService.addPRComment(gitCommentPRInfos);
 
       const expectedUrl = `${
         gitlabService.urlApi
@@ -178,7 +175,7 @@ describe('Gitlab Service', () => {
       gitCreatePRInfos.source = 'develop';
       gitCreatePRInfos.target = 'master';
 
-      gitlabService.createPullRequest(gitApiInfos, gitCreatePRInfos);
+      gitlabService.createPullRequest(gitCreatePRInfos);
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/merge_requests`;
 
@@ -204,7 +201,7 @@ describe('Gitlab Service', () => {
         return of({ data: { iid: 1 } });
       });
 
-      await gitlabService.createIssue(gitApiInfos, gitIssueInfos);
+      await gitlabService.createIssue(gitIssueInfos);
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/issues`;
 
@@ -225,7 +222,7 @@ describe('Gitlab Service', () => {
 
   describe('deleteBranch', () => {
     it('should emit a DELETE request with specific params', () => {
-      gitlabService.deleteBranch(gitApiInfos, 'feature/test');
+      gitlabService.deleteBranch('feature/test');
 
       const expectedUrl = `${
         gitlabService.urlApi
@@ -243,9 +240,7 @@ describe('Gitlab Service', () => {
       gitFileInfos.fileBranch = 'master';
       gitFileInfos.filePath = 'file/to/delete.txt';
       gitFileInfos.commitMessage = 'delete file';
-      gitlabService
-        .deleteFile(gitApiInfos, gitFileInfos)
-        .catch(err => logger.error(err));
+      gitlabService.deleteFile(gitFileInfos).catch(err => logger.error(err));
 
       const expectedUrl = `${
         gitlabService.urlApi
@@ -268,7 +263,7 @@ describe('Gitlab Service', () => {
       gitMergePRInfos.commitMessage = 'commit message';
       gitMergePRInfos.method = PRMethodsEnum.Squash;
 
-      gitlabService.mergePullRequest(gitApiInfos, gitMergePRInfos);
+      gitlabService.mergePullRequest(gitMergePRInfos);
 
       const expectedUrl = `${
         gitlabService.urlApi
@@ -293,7 +288,7 @@ describe('Gitlab Service', () => {
       gitPRInfos.target = 'master';
       gitPRInfos.state = IssuePRStateEnum.Close;
 
-      gitlabService.updatePullRequest(gitApiInfos, gitPRInfos);
+      gitlabService.updatePullRequest(gitPRInfos);
 
       const expectedUrl = `${
         gitlabService.urlApi
@@ -314,7 +309,7 @@ describe('Gitlab Service', () => {
     it('should emit a POST request with specific params', () => {
       const webhookURL: string = 'https://some.url.com';
 
-      gitlabService.createWebhook(gitApiInfos, webhookURL);
+      gitlabService.createWebhook(webhookURL);
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/hooks`;
 
@@ -347,9 +342,7 @@ describe('Gitlab Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      gitlabService
-        .getIssues(gitApiInfos, gitIssueSearch)
-        .catch(err => logger.error(err));
+      gitlabService.getIssues(gitIssueSearch).catch(err => logger.error(err));
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/issues`;
 
@@ -373,7 +366,7 @@ describe('Gitlab Service', () => {
       });
 
       gitlabService
-        .getPullRequests(gitApiInfos, gitIssueSearch)
+        .getPullRequests(gitIssueSearch)
         .catch(err => logger.error(err));
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/merge_requests`;
@@ -402,7 +395,7 @@ describe('Gitlab Service', () => {
         description: 'this is the first release',
       };
 
-      gitlabService.createRelease(gitApiInfos, gitRelease);
+      gitlabService.createRelease(gitRelease);
 
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
     });
@@ -424,7 +417,7 @@ describe('Gitlab Service', () => {
         tag_name: 'v0.0.1',
       };
 
-      gitlabService.createTag(gitApiInfos, gitTag);
+      gitlabService.createTag(gitTag);
 
       expect(httpService.post).toBeCalledWith(expectedUrl, {}, expectedConfig);
     });
@@ -531,9 +524,7 @@ describe('Gitlab Service', () => {
         });
       });
 
-      const result: GitBranchCommit[] = await gitlabService.getLastBranchesCommitSha(
-        gitApiInfos,
-      );
+      const result: GitBranchCommit[] = await gitlabService.getLastBranchesCommitSha();
 
       const expectedUrl = `${
         gitlabService.urlApi
@@ -579,21 +570,34 @@ describe('Gitlab Service', () => {
     });
   });
 
+  describe('setProjectId', () => {
+    it('should set the project Id', () => {
+      gitlabService.setProjectId('1');
+      expect(gitlabService.projectId).toBe('1');
+    });
+  });
+
   describe('setEnvironmentVariables', () => {
     it('should set the token and urlApi', async () => {
       process.env.ENCRYPTION_KEY = 'somekey';
       dataAccessService.readEnv = jest.fn().mockReturnValue({
         gitApi: 'https://mygitlabapi.com',
         gitToken: Utils.encryptToken('gitlabToken'),
+        gitlabId: '1',
       });
+
+      gitlabService.setToken = jest.fn().mockName('setTokenGitlab');
+      gitlabService.setUrlApi = jest.fn().mockName('setUrlApiGitlab');
+      gitlabService.setProjectId = jest.fn().mockName('setProjectIdGitlab');
 
       await gitlabService.setEnvironmentVariables(
         dataAccessService,
-        'myFilePath',
+        'some/repo',
       );
 
-      expect(gitlabService.token).toBe('gitlabToken');
-      expect(gitlabService.urlApi).toBe('https://mygitlabapi.com');
+      expect(gitlabService.setToken).toBeCalledWith('gitlabToken');
+      expect(gitlabService.setUrlApi).toBeCalledWith('https://mygitlabapi.com');
+      expect(gitlabService.setProjectId).toBeCalledWith('1');
     });
   });
 });

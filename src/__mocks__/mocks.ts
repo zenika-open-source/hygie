@@ -50,6 +50,9 @@ export class MockGitlabService {
   deleteBranch: jest.Mock = jest.fn().mockName('deleteBranchGitlab');
   updateIssue: jest.Mock = jest.fn().mockName('updateIssueGitlab');
   updateCommitStatus: jest.Mock = jest.fn();
+  setToken: jest.Mock = jest.fn().mockName('setTokenGitlab');
+  setUrlApi: jest.Mock = jest.fn().mockName('setUrlApiGitlab');
+  setProjectId: jest.Mock = jest.fn().mockName('setProjectIdGitlab');
   setEnvironmentVariables: jest.Mock = jest
     .fn()
     .mockName('setEnvironmentVariablesGitlab');
@@ -85,6 +88,11 @@ export class MockGithubService {
   updateIssue: jest.Mock = jest.fn().mockName('updateIssueGithub');
   deleteBranch: jest.Mock = jest.fn().mockName('deleteBranchGithub');
   updateCommitStatus: jest.Mock = jest.fn();
+  setToken: jest.Mock = jest.fn().mockName('setTokenGithub');
+  setUrlApi: jest.Mock = jest.fn().mockName('setUrlApiGithub');
+  setRepositoryFullName: jest.Mock = jest
+    .fn()
+    .mockName('setRepositoryFullNameGithub');
   setEnvironmentVariables: jest.Mock = jest
     .fn()
     .mockName('setEnvironmentVariablesGithub');

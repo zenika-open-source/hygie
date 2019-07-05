@@ -77,10 +77,7 @@ describe('DeleteBranchRunnable', () => {
         .run(CallbackType.Both, ruleResultBranchName, args)
         .catch(err => logger.error(err));
 
-      expect(githubService.deleteBranch).toBeCalledWith(
-        { git: 'Github', repositoryFullName: 'bastienterrier/test_webhook' },
-        'test&#x2F;webhook',
-      );
+      expect(githubService.deleteBranch).toBeCalledWith('test&#x2F;webhook');
       expect(gitlabService.deleteBranch).not.toBeCalled();
     });
   });
@@ -92,10 +89,7 @@ describe('DeleteBranchRunnable', () => {
         .catch(err => logger.error(err));
 
       expect(githubService.deleteBranch).not.toBeCalled();
-      expect(gitlabService.deleteBranch).toBeCalledWith(
-        { git: 'Gitlab', repositoryFullName: 'bastienterrier/test_webhook' },
-        'test&#x2F;webhook',
-      );
+      expect(gitlabService.deleteBranch).toBeCalledWith('test&#x2F;webhook');
     });
   });
 });

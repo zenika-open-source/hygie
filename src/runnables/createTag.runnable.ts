@@ -80,12 +80,12 @@ export class CreateTagRunnable extends Runnable {
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
       const gitRef = new GitRef();
-      const sha = await this.githubService.createTag(gitApiInfos, gitTag);
+      const sha = await this.githubService.createTag(gitTag);
       gitRef.sha = sha;
       gitRef.refName = 'refs/tags/' + gitTag.tag;
-      this.githubService.createRef(gitApiInfos, gitRef);
+      this.githubService.createRef(gitRef);
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.createTag(gitApiInfos, gitTag);
+      this.gitlabService.createTag(gitTag);
     }
   }
 }

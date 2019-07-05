@@ -45,9 +45,9 @@ export class CommentIssueRunnable extends Runnable {
       .send();
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.addIssueComment(gitApiInfos, gitIssueInfos);
+      this.githubService.addIssueComment(gitIssueInfos);
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.addIssueComment(gitApiInfos, gitIssueInfos);
+      this.gitlabService.addIssueComment(gitIssueInfos);
     }
   }
 }

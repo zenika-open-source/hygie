@@ -19,6 +19,8 @@ describe('getAppRules (e2e)', () => {
   it('/register/config-env (POST)', () => {
     RemoteConfigUtils.registerConfigEnv = jest.fn();
 
+    process.env.ENCRYPTION_KEY = 'somekey';
+
     return request(app.getHttpServer())
       .post('/register/config-env')
       .send({

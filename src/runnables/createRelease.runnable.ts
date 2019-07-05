@@ -60,9 +60,9 @@ export class CreateReleaseRunnable extends Runnable {
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.createRelease(gitApiInfos, gitRelease);
+      this.githubService.createRelease(gitRelease);
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.createRelease(gitApiInfos, gitRelease);
+      this.gitlabService.createRelease(gitRelease);
     }
   }
 }

@@ -92,13 +92,10 @@ export class RegisterController {
 
     const plainAccessToken = RemoteConfigUtils.getAccessToken(result);
 
-    // Encrypt Token before any storage
-    const cipherAccessToken = Utils.encryptToken(plainAccessToken);
-
     // Store data
     const finalResult = await this.httpService
       .post(this.applicationURL + '/register/config-env', {
-        gitToken: cipherAccessToken,
+        gitToken: plainAccessToken,
         gitApi: this.apiURL,
         gitRepo: this.repoURL,
       })
@@ -124,9 +121,11 @@ export class RegisterController {
 
   @Post('/config-env')
   async postConfigEnv(@Body() body: any, @Res() response): Promise<void> {
+    // Encrypt Token before any storage
+    const cipherAccessToken = Utils.encryptToken(body.gitToken).toString();
     const configEnv = {
       gitApi: body.gitApi,
-      gitToken: body.gitToken,
+      gitToken: cipherAccessToken,
       gitRepo: body.gitRepo,
     };
     response

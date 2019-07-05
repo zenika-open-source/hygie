@@ -51,9 +51,9 @@ export class DeleteBranchRunnable extends Runnable {
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.deleteBranch(gitApiInfos, branchName);
+      this.githubService.deleteBranch(branchName);
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.deleteBranch(gitApiInfos, branchName);
+      this.gitlabService.deleteBranch(branchName);
     }
   }
 }
