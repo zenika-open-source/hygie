@@ -98,7 +98,9 @@ export class RemoteConfigUtils {
 
       const repositoryFullName = Utils.getRepositoryFullName(projectURL);
 
-      gitService.setEnvironmentVariables(dataAccessService, repositoryFullName);
+      gitService
+        .setEnvironmentVariables(dataAccessService, repositoryFullName)
+        .catch(err => logger.error(err));
 
       // Used to check size
       const rulesFilePath: string = this.getGitRawPath(
@@ -141,13 +143,6 @@ export class RemoteConfigUtils {
         reject(e);
         return;
       }
-
-      const defaultFilePath: string = this.getGitRawPath(
-        whichGit,
-        projectURL,
-        `.hygie/${filename}`,
-        defaultBranch,
-      );
 
       const gitFileInfos = new GitFileInfos();
       gitFileInfos.filePath = `.hygie/${filename}`;

@@ -79,6 +79,11 @@ describe('remote-config', () => {
       githubService.getFileContent = jest
         .fn()
         .mockResolvedValue({ data: 'somedata' });
+      githubService.setEnvironmentVariables = jest
+        .fn()
+        .mockImplementation((...args) => {
+          return Promise.resolve();
+        });
       const result: string = await RemoteConfigUtils.downloadRulesFile(
         dataAccessService,
         httpService,
@@ -103,6 +108,11 @@ describe('remote-config', () => {
       gitlabService.getFileContent = jest
         .fn()
         .mockResolvedValue({ data: 'somedata' });
+      gitlabService.setEnvironmentVariables = jest
+        .fn()
+        .mockImplementation((...args) => {
+          return Promise.resolve();
+        });
       const result: string = await RemoteConfigUtils.downloadRulesFile(
         dataAccessService,
         httpService,
