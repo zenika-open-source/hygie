@@ -30,6 +30,7 @@ import { GitCommit } from '../git/gitCommit';
 import { GitRef } from '../git/gitRef';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
+import { GitFileData } from '../git/gitFileData';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -549,24 +550,31 @@ export class GithubService implements GitServiceInterface {
       });
   }
 
-  async getFileContent(gitFileInfos: GitFileInfos): Promise<string> {
+  async getFileContent(gitFileInfos: GitFileInfos): Promise<GitFileData> {
     const localConfig: any = JSON.parse(JSON.stringify(this.configGitHub));
 
     localConfig.params = {
-      branch: gitFileInfos.fileBranch,
+      ref: gitFileInfos.fileBranch,
     };
     return await this.httpService
       .get(
-        `${this.urlApi}/repos/${this.repositoryFullName}/content/${
+        `${this.urlApi}/repos/${this.repositoryFullName}/contents/${
           gitFileInfos.filePath
         }`,
         localConfig,
       )
       .toPromise()
-      .then(response => Buffer.from(response.data.content, 'base64').toString())
+      .then(response => {
+        return {
+          data: Buffer.from(response.data.content, 'base64').toString(),
+        };
+      })
       .catch(err => {
-        logger.error(err, { location: 'getFileContent' });
-        return '';
+        throw new Error(
+          `${err}: ${gitFileInfos.filePath} do not exist on branch ${
+            gitFileInfos.fileBranch
+          }`,
+        );
       });
   }
 }

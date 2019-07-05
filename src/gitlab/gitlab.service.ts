@@ -28,6 +28,7 @@ import { PreconditionException } from '../exceptions/precondition.exception';
 import { GitRelease } from '../git/gitRelease';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
+import { GitFileData } from '../git/gitFileData';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -565,17 +566,13 @@ export class GitlabService implements GitServiceInterface {
       });
   }
 
-  async getFileContent(gitFileInfos: GitFileInfos): Promise<string> {
-    // GET /projects/:id/repository/files/:file_path/raw
+  async getFileContent(gitFileInfos: GitFileInfos): Promise<GitFileData> {
     const configGitLab: any = {
       headers: {
         'PRIVATE-TOKEN': this.token,
       },
       params: { ref: gitFileInfos.fileBranch },
     };
-
-    // tslint:disable-next-line:no-console
-    console.log(configGitLab);
 
     return await this.httpService
       .get(
@@ -587,8 +584,11 @@ export class GitlabService implements GitServiceInterface {
       .toPromise()
       .then(response => response.data)
       .catch(err => {
-        logger.error(err, { location: 'getFileContent' });
-        return '';
+        throw new Error(
+          `${err}: ${gitFileInfos.filePath} do not exist on branch ${
+            gitFileInfos.fileBranch
+          }`,
+        );
       });
   }
 }

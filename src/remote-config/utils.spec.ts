@@ -76,16 +76,16 @@ describe('remote-config', () => {
           },
         });
       });
+      githubService.getFileContent = jest
+        .fn()
+        .mockResolvedValue({ data: 'somedata' });
       const result: string = await RemoteConfigUtils.downloadRulesFile(
         dataAccessService,
         httpService,
+        githubService,
+        gitlabService,
         'https://github.com/DX-DeveloperExperience/hygie',
         Constants.rulesExtension,
-      );
-      expect(httpService.get).toBeCalledWith(
-        `https://raw.githubusercontent.com/DX-DeveloperExperience/hygie/master/.hygie/${
-          Constants.rulesExtension
-        }`,
       );
       expect(result).toBe('remote-rules/DX-DeveloperExperience/hygie/.hygie');
     });
@@ -99,16 +99,17 @@ describe('remote-config', () => {
           },
         });
       });
+
+      gitlabService.getFileContent = jest
+        .fn()
+        .mockResolvedValue({ data: 'somedata' });
       const result: string = await RemoteConfigUtils.downloadRulesFile(
         dataAccessService,
         httpService,
+        githubService,
+        gitlabService,
         'https://gitlab.com/gitlab-org/gitlab-ce',
         Constants.rulesExtension,
-      );
-      expect(httpService.get).toBeCalledWith(
-        `https://gitlab.com/gitlab-org/gitlab-ce/raw/master/.hygie/${
-          Constants.rulesExtension
-        }`,
       );
       expect(result).toBe('remote-rules/gitlab-org/gitlab-ce/.hygie');
     });

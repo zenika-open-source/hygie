@@ -3,7 +3,7 @@ import { HttpService } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
 import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { throwError, from as fromObs } from 'rxjs';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
@@ -11,6 +11,7 @@ import { GitIssueInfos } from '../git/gitIssueInfos';
 import { FileSizeException } from '../exceptions/fileSize.exception';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { Constants } from '../utils/constants';
+import { GitFileInfos } from '../git/gitFileInfos';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -77,8 +78,10 @@ export class RemoteConfigUtils {
    * @return the location of the `.hygie` repo
    */
   static async downloadRulesFile(
-    dataAccess: DataAccessService,
+    dataAccessService: DataAccessService,
     httpService: HttpService,
+    githubService: GithubService,
+    gitlabService: GitlabService,
     projectURL: string,
     filename: string,
     branch: string = 'master',
@@ -90,6 +93,14 @@ export class RemoteConfigUtils {
 
       const whichGit: GitTypeEnum = this.getGitType(projectURL);
 
+      const gitService: GithubService | GitlabService =
+        whichGit === GitTypeEnum.Github ? githubService : gitlabService;
+
+      const repositoryFullName = Utils.getRepositoryFullName(projectURL);
+
+      gitService.setEnvironmentVariables(dataAccessService, repositoryFullName);
+
+      // Used to check size
       const rulesFilePath: string = this.getGitRawPath(
         whichGit,
         projectURL,
@@ -98,7 +109,7 @@ export class RemoteConfigUtils {
       );
 
       const hygieFolder: string =
-        'remote-rules/' + Utils.getRepositoryFullName(projectURL) + '/.hygie';
+        'remote-rules/' + repositoryFullName + '/.hygie';
 
       // If we don't allow fetching remote .rulesrc file
       if (disableRemoteConfig && filename === Constants.rulesExtension) {
@@ -107,9 +118,8 @@ export class RemoteConfigUtils {
         const data = fs.readFileSync(
           path.join(__dirname, `../rules/${Constants.rulesExtension}`),
         );
-        await dataAccess.writeRule(`${hygieFolder}/${filename}`, data);
-        resolve(hygieFolder);
-        return;
+        await dataAccessService.writeRule(`${hygieFolder}/${filename}`, data);
+        return resolve(hygieFolder);
       }
 
       // Check size
@@ -139,15 +149,21 @@ export class RemoteConfigUtils {
         defaultBranch,
       );
 
+      const gitFileInfos = new GitFileInfos();
+      gitFileInfos.filePath = `.hygie/${filename}`;
+      gitFileInfos.fileBranch = branch;
+
+      const observable = fromObs(gitService.getFileContent(gitFileInfos));
+
       // Download file
-      await httpService
-        .get(rulesFilePath)
+      await observable
         .pipe(
           catchError(() => {
             if (filename === Constants.rulesExtension) {
+              gitFileInfos.fileBranch = defaultBranch;
               const getDefaultBranchConfigFile =
                 defaultBranch !== branch
-                  ? httpService.get(defaultFilePath)
+                  ? fromObs(gitService.getFileContent(gitFileInfos))
                   : throwError('');
 
               return getDefaultBranchConfigFile.pipe(
@@ -173,9 +189,10 @@ export class RemoteConfigUtils {
         .toPromise()
         .then(async response => {
           const resultData = response.data;
-          // tslint:disable-next-line:no-console
-          console.log(resultData);
-          await dataAccess.writeRule(`${hygieFolder}/${filename}`, resultData);
+          await dataAccessService.writeRule(
+            `${hygieFolder}/${filename}`,
+            resultData,
+          );
           return hygieFolder;
         })
         .catch(err => {

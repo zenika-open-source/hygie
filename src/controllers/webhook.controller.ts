@@ -68,6 +68,8 @@ export class WebhookController {
         remoteRepository = await RemoteConfigUtils.downloadRulesFile(
           this.dataAccessService,
           this.httpService,
+          this.githubService,
+          this.gitlabService,
           webhook.getCloneURL(),
           Constants.rulesExtension,
           rulesBranch,

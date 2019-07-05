@@ -14,6 +14,7 @@ import { GitFileInfos } from './gitFileInfos';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitRelease } from './gitRelease';
 import { GitBranchCommit } from './gitBranchSha';
+import { GitFileData } from './gitFileData';
 
 /**
  * Provide methods that must be implement by `GithubService` and `GitlabService` to interact with `git` repository
@@ -100,5 +101,5 @@ export interface GitServiceInterface {
 
   getLastBranchesCommitSha(): Promise<GitBranchCommit[]>;
 
-  getFileContent(gitFileInfos: GitFileInfos): Promise<string>;
+  getFileContent(gitFileInfos: GitFileInfos): Promise<GitFileData>;
 }
