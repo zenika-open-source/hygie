@@ -84,7 +84,7 @@
     "tsconfig-paths": "3.8.0",
     "tslint": "5.18.0",
     "typedoc": "0.14.2",
-    "typescript": "3.5.2",
+    "typescript": "3.5.3",
     "vuepress": "1.0.1",
     "vuetify": "1.5.16"
   },
