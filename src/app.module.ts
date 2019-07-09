@@ -13,6 +13,9 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { PrometheusService } from './logger/prometheus.service';
 import { DataAccessModule } from './data_access/dataAccess.module';
+import { EnvVarController } from './controllers/env-var.controller';
+import { EnvVarService } from './env-var/env-var.service';
+import { EnvVarAccessor } from './env-var/env-var.accessor';
 @Module({
   imports: [
     HttpModule,
@@ -27,8 +30,11 @@ import { DataAccessModule } from './data_access/dataAccess.module';
     DocumentationController,
     RegisterController,
     WebhookController,
+    EnvVarController,
   ],
   providers: [
+    EnvVarAccessor,
+    EnvVarService,
     PrometheusService,
     ScheduleService,
     {

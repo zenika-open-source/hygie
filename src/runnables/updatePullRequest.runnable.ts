@@ -11,6 +11,7 @@ import { IssuePRStateEnum } from '../git/gitIssueInfos';
 import { render } from 'mustache';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface UpdatePullRequestArgs {
   target: string;
@@ -30,6 +31,7 @@ export class UpdatePullRequestRunnable extends Runnable {
     private readonly gitlabService: GitlabService,
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -39,6 +41,8 @@ export class UpdatePullRequestRunnable extends Runnable {
     ruleResult: RuleResult,
     args: UpdatePullRequestArgs,
   ): Promise<void> {
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const data = ruleResult.data as any;
     const gitPRInfos = new GitPRInfos();

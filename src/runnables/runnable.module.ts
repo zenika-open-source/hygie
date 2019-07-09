@@ -3,6 +3,8 @@ import { GitModule } from '../git/git.module';
 import { RunnablesService } from './runnables.service';
 import { Runnable } from './runnable.class';
 import { Visitor } from 'universal-analytics';
+import { EnvVarService } from '../env-var/env-var.service';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 export const RunnablesValues = Object.values(require('./index')).map(
   runnable => runnable as Runnable,

@@ -11,6 +11,7 @@ import { Utils } from '../utils/utils';
 import { render } from 'mustache';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface UpdateCommitStatusArgs {
   successTargetUrl: string;
@@ -30,6 +31,7 @@ export class UpdateCommitStatusRunnable extends Runnable {
     private readonly gitlabService: GitlabService,
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -38,6 +40,8 @@ export class UpdateCommitStatusRunnable extends Runnable {
     ruleResult: RuleResult,
     args: UpdateCommitStatusArgs,
   ): Promise<void> {
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     this.googleAnalytics
       .event('Runnable', 'updateCommitStatus', ruleResult.projectURL)
       .send();

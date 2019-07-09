@@ -271,6 +271,9 @@ export const MockAnalytics: Visitor = new Visitor('mock');
 @Controller('mockcron')
 export class MockCronController {}
 
+@Controller('env-var')
+export class MockEnvVarController {}
+
 export class MockLoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle();

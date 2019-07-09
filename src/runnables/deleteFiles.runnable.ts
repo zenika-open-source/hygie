@@ -11,6 +11,7 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface DeleteFilesArgs {
   files: string[] | string;
@@ -28,6 +29,7 @@ export class DeleteFilesRunnable extends Runnable {
     private readonly gitlabService: GitlabService,
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -37,6 +39,8 @@ export class DeleteFilesRunnable extends Runnable {
     ruleResult: RuleResult,
     args: DeleteFilesArgs,
   ): Promise<void> {
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
     let filesList: string[];

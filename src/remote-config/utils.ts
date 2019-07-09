@@ -248,6 +248,11 @@ export class RemoteConfigUtils {
 
       await dataAccessService.writeEnv(configFile, content);
 
+      // Add also the hygie-env config.env
+      const username = repositoryFullName.split('/')[0];
+      const hygieEnvVarConfigFile = `remote-envs/${username}/hygie-env/config.env`;
+      await dataAccessService.writeEnv(hygieEnvVarConfigFile, content);
+
       /**
        * Create a `Connected to Hygie!` issue
        * and
@@ -276,6 +281,9 @@ export class RemoteConfigUtils {
         // Store the projectId
         content.gitlabId = gitApiInfos.projectId;
         await dataAccessService.writeEnv(configFile, content);
+
+        // Add also the hygie-env config.env
+        await dataAccessService.writeEnv(hygieEnvVarConfigFile, content);
 
         await gitlabService.setEnvironmentVariables(
           dataAccessService,

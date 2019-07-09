@@ -10,6 +10,7 @@ import { GitCommit } from '../git/gitCommit';
 import { GitRef } from '../git/gitRef';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface DeployFolderArgs {
   folder: string;
@@ -27,6 +28,7 @@ export class DeployFolderRunnable extends Runnable {
     private readonly githubService: GithubService,
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -35,6 +37,8 @@ export class DeployFolderRunnable extends Runnable {
     ruleResult: RuleResult,
     args: DeployFolderArgs,
   ): Promise<void> {
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const sourceBranch: string = (ruleResult.data as any).branch;
 

@@ -22,7 +22,7 @@ export class RulesService {
     remoteRepository: string,
     ruleFile: string,
   ): Promise<any> {
-    return await Utils.parseRuleFile(
+    return await Utils.parseYAMLFile(
       await this.dataAccessService.readRule(`${remoteRepository}/${ruleFile}`),
     );
   }

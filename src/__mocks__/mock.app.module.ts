@@ -8,6 +8,7 @@ import {
   MockAnalytics,
   MockCronController,
   MockLoggingInterceptor,
+  MockEnvVarController,
 } from './mocks';
 import { DocumentationController } from '../controllers/documentation.controller';
 import { RegisterController } from '../controllers/register.controller';
@@ -16,6 +17,8 @@ import { ApplicationController } from '../controllers/application.controller';
 import { PrometheusService } from '../logger/prometheus.service';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { DataAccessService } from '../data_access/dataAccess.service';
+import { EnvVarService } from '../env-var/env-var.service';
+import { EnvVarController } from '../controllers/env-var.controller';
 
 @Module({
   imports: [
@@ -30,8 +33,10 @@ import { DataAccessService } from '../data_access/dataAccess.service';
     DocumentationController,
     RegisterController,
     WebhookController,
+    MockEnvVarController,
   ],
   providers: [
+    EnvVarService,
     {
       provide: DataAccessService,
       useFactory() {

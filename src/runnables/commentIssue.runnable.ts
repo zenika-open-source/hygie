@@ -10,6 +10,7 @@ import { RunnableDecorator } from './runnable.decorator';
 import { render } from 'mustache';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface CommentIssueArgs {
   comment: string;
@@ -26,6 +27,7 @@ export class CommentIssueRunnable extends Runnable {
     private readonly gitlabService: GitlabService,
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -35,6 +37,8 @@ export class CommentIssueRunnable extends Runnable {
     args: CommentIssueArgs,
   ): Promise<void> {
     const data = ruleResult.data as any;
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     gitIssueInfos.number = data.issue.number;
     gitIssueInfos.comment = render(args.comment, ruleResult);

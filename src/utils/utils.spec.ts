@@ -392,7 +392,7 @@ describe('Utils', () => {
         ],
       };
 
-      const parsedYAML = await Utils.parseRuleFile(yamlFile);
+      const parsedYAML = await Utils.parseYAMLFile(yamlFile);
       expect(parsedYAML).toEqual(expectedResult);
     });
     it('shoud return a JSON parsed rules object', async () => {
@@ -591,7 +591,7 @@ describe('Utils', () => {
         ],
       };
 
-      const parsedJSON = await Utils.parseRuleFile(jsonFile);
+      const parsedJSON = await Utils.parseYAMLFile(jsonFile);
       expect(parsedJSON).toEqual(expectedResult);
     });
   });

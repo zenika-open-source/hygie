@@ -13,6 +13,7 @@ import { GitTag } from '../git/gitTag';
 import { GitRef } from '../git/gitRef';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface CreateTagArgs {
   tag: string;
@@ -30,6 +31,7 @@ export class CreateTagRunnable extends Runnable {
     private readonly gitlabService: GitlabService,
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -40,6 +42,8 @@ export class CreateTagRunnable extends Runnable {
     args: CreateTagArgs,
   ): Promise<void> {
     const data = ruleResult.data as any;
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
     this.googleAnalytics

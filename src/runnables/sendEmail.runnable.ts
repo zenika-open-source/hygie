@@ -9,6 +9,7 @@ import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 function makeBody(to: string, subject: string, message: string): string {
   const str = [
@@ -137,6 +138,7 @@ export class SendEmailRunnable extends Runnable {
   constructor(
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -146,6 +148,8 @@ export class SendEmailRunnable extends Runnable {
     ruleResult: RuleResult,
     args: SendEmailArgs,
   ): Promise<void> {
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     this.googleAnalytics
       .event('Runnable', 'sendEmail', ruleResult.projectURL)
       .send();

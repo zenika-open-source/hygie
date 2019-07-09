@@ -130,7 +130,7 @@ export class Utils {
     return JSON.parse(res);
   }
 
-  static async parseRuleFile(fileContent: string): Promise<any> {
+  static async parseYAMLFile(fileContent: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const jsyaml = require('js-yaml');
       try {

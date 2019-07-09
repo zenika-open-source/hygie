@@ -65,7 +65,7 @@ module.exports = {
       },
     ],
   },
-  hygieURL: 'https://webhooks-sklnx3jldq-uc.a.run.app',
+  hygieURL: 'http://24e02850.ngrok.io',
   markdown: {
     toc: { includeLevel: [2, 2] },
   },

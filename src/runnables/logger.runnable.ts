@@ -6,6 +6,7 @@ import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface LoggerArgs {
   type: string;
@@ -20,6 +21,7 @@ export class LoggerRunnable extends Runnable {
   constructor(
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -29,6 +31,8 @@ export class LoggerRunnable extends Runnable {
     ruleResult: RuleResult,
     args: LoggerArgs,
   ): Promise<void> {
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     this.googleAnalytics
       .event('Runnable', 'logger', ruleResult.projectURL)
       .send();
