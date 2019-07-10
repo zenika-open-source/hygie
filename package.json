@@ -1,6 +1,6 @@
 {
   "name": "@dxdeveloperexperience/hygie",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "description": "Hygie is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJS API expose a set of customizable rules to automate your project's life cycle.",
   "license": "MIT",
   "scripts": {
