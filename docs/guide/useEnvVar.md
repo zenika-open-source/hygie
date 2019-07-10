@@ -4,16 +4,16 @@ If you wanna use Environment Variables in your callback's argument, like an API 
 
 ## Create a `hygie-env` repo
 
-First of all, you need to create a **PRIVATE** `hygie-env` git repository at the **same level than your repo(s) using `Hygie`**.
+First of all, you need to create a **PRIVATE** `hygie-env` git repository in the same organization of your repo(s) using `Hygie`.
 
-For example, if you have the following git repositories using our solution :
+For example, if you have the following git repositories using our solution:
 
 - /user/project1
 - /user/project2
 - /organization/project1
-- /organisation/project1
+- /organisation/project2
 
-you need to create the two following repositories :
+You need to create the two following repositories:
 
 - /user/hygie-env
 - /organisation/hygie-env
@@ -27,7 +27,7 @@ Make sure your repo is **PRIVATE** because it will contain all the secrets you w
 Then, add a webhook with the url: `--OUR_URL--/env-var` with the `push` event.
 
 ::: tip
-When you will commit your changes, we will be notice and save your data **encoded**.
+When you will commit your changes, we will be noticed and save your data **encoded**.
 :::
 
 ## Add an `env.yml` file
