@@ -58,6 +58,8 @@ Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
 {{/data.commits}}'
 ```
 
+You can also access the environment variables you've configured via the `env` prefix: `{{env.API_KEY}}`. More informations in the [Enviroment Variable section](./guide/useEnvVar.md).
+
 For more examples, check out the [documentation](https://github.com/janl/mustache.js#templates) provide by mustache.
 
 ## Create your own rule
