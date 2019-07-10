@@ -12,6 +12,7 @@ import {
 } from '../__mocks__/mocks';
 import { DeleteFilesRunnable } from './deleteFiles.runnable';
 import { logger } from '../logger/logger.service';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 describe('DeleteFilesRunnable', () => {
   let app: TestingModule;
@@ -31,6 +32,7 @@ describe('DeleteFilesRunnable', () => {
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
         { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+        EnvVarAccessor,
       ],
     }).compile();
 

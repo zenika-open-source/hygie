@@ -11,6 +11,7 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { CreateTagRunnable } from './createTag.runnable';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 describe('CreateTagRunnable', () => {
   let app: TestingModule;
@@ -31,6 +32,7 @@ describe('CreateTagRunnable', () => {
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
         { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+        EnvVarAccessor,
       ],
     }).compile();
 

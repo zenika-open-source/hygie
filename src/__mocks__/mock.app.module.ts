@@ -18,7 +18,7 @@ import { PrometheusService } from '../logger/prometheus.service';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { EnvVarService } from '../env-var/env-var.service';
-import { EnvVarController } from '../controllers/env-var.controller';
+import { EnvVarModule } from '../env-var/env-var.module';
 
 @Module({
   imports: [
@@ -26,6 +26,7 @@ import { EnvVarController } from '../controllers/env-var.controller';
     RulesModule.forRoot(MockAnalytics, MockDataAccess),
     RunnableModule.forRoot(MockAnalytics),
     GitModule,
+    EnvVarModule,
   ],
   controllers: [
     ApplicationController,
@@ -36,7 +37,6 @@ import { EnvVarController } from '../controllers/env-var.controller';
     MockEnvVarController,
   ],
   providers: [
-    EnvVarService,
     {
       provide: DataAccessService,
       useFactory() {

@@ -35,7 +35,6 @@ export class WebhookController {
     private readonly dataAccessService: DataAccessService,
     private readonly scheduleService: ScheduleService,
     private readonly envVarService: EnvVarService,
-    private readonly envVarAccessor: EnvVarAccessor,
   ) {}
 
   @Post('/')

@@ -7,6 +7,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { MockHttpService, MockAnalytics } from '../__mocks__/mocks';
 import { WebhookRunnable } from './webhook.runnable';
 import { logger } from '../logger/logger.service';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 describe('WebhookRunnable', () => {
   let app: TestingModule;
@@ -24,6 +25,7 @@ describe('WebhookRunnable', () => {
         WebhookRunnable,
         { provide: HttpService, useClass: MockHttpService },
         { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+        EnvVarAccessor,
       ],
     }).compile();
 

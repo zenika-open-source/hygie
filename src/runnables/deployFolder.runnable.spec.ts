@@ -11,6 +11,7 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { DeployFolderRunnable } from './deployFolder.runnable';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 describe('DeployFolderRunnable', () => {
   let app: TestingModule;
@@ -30,6 +31,7 @@ describe('DeployFolderRunnable', () => {
         DeployFolderRunnable,
         { provide: GithubService, useClass: MockGithubService },
         { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+        EnvVarAccessor,
       ],
     }).compile();
 

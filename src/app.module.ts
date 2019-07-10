@@ -14,8 +14,7 @@ import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { PrometheusService } from './logger/prometheus.service';
 import { DataAccessModule } from './data_access/dataAccess.module';
 import { EnvVarController } from './controllers/env-var.controller';
-import { EnvVarService } from './env-var/env-var.service';
-import { EnvVarAccessor } from './env-var/env-var.accessor';
+import { EnvVarModule } from './env-var/env-var.module';
 @Module({
   imports: [
     HttpModule,
@@ -23,6 +22,7 @@ import { EnvVarAccessor } from './env-var/env-var.accessor';
     RulesModule.forRoot(analytics),
     RunnableModule.forRoot(analytics),
     GitModule,
+    EnvVarModule,
   ],
   controllers: [
     ApplicationController,
@@ -33,8 +33,6 @@ import { EnvVarAccessor } from './env-var/env-var.accessor';
     EnvVarController,
   ],
   providers: [
-    EnvVarAccessor,
-    EnvVarService,
     PrometheusService,
     ScheduleService,
     {
