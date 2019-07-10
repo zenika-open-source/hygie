@@ -58,7 +58,23 @@ Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
 {{/data.commits}}'
 ```
 
-You can also access the environment variables you've configured via the `env` prefix: `{{env.API_KEY}}`. More informations in the [Enviroment Variable section](./guide/useEnvVar.md).
+You can also access the environment variables you've configured via the `env` prefix. More informations in the [Enviroment Variable section](./guide/useEnvVar.md).
+
+For examples:
+
+```
+callback: WebhookRunnable
+args:
+  url: 'https://webhook.site/0123-4567-89ab-cdef'
+  config: {
+    token: '{{env.API_KEY}}'
+  }
+  data: {
+    user: 'cron bot',
+    number: '{{data.number}}',
+    vulnerabilities: '{{{data.vulnerabilities}}}'
+  }
+```
 
 For more examples, check out the [documentation](https://github.com/janl/mustache.js#templates) provide by mustache.
 
