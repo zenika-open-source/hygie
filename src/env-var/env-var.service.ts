@@ -46,11 +46,13 @@ export class EnvVarService {
   async setEnvs(repositoryName: string) {
     const path: string = `remote_envs_vars/${repositoryName}/env.yml`;
     try {
-      const data: KeyValueEnvFileInterface = await this.dataAccessService.readEnvsVar(
-        path,
-      );
-      const decryptedEnv = this.decryptData(data);
-      this.envVarAccessor.setAllEnvVar(decryptedEnv);
+      if (await this.dataAccessService.checkIfEnvVarExist(path)) {
+        const data: KeyValueEnvFileInterface = await this.dataAccessService.readEnvsVar(
+          path,
+        );
+        const decryptedEnv = this.decryptData(data);
+        this.envVarAccessor.setAllEnvVar(decryptedEnv);
+      }
     } catch (e) {
       logger.error(e, { location: 'setEnvs', project: repositoryName });
     }

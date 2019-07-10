@@ -98,6 +98,14 @@ export class DataAccessService {
   }
 
   /**
+   * Check if EnvVar object already exist
+   * @param path path location (file system)/key (database)/etc
+   */
+  checkIfEnvVarExist(path: string): Promise<boolean> {
+    return this.dataProvider.checkIfExist(SourceEnum.EnvsVar, path);
+  }
+
+  /**
    * Connection with the dataProvider
    */
   connect(): Promise<boolean> {
