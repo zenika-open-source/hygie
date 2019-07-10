@@ -6,6 +6,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { LoggerRunnable } from './logger.runnable';
 import { MockAnalytics } from '../__mocks__/mocks';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 describe('LoggerRunnable', () => {
   let app: TestingModule;
@@ -19,6 +20,7 @@ describe('LoggerRunnable', () => {
       providers: [
         LoggerRunnable,
         { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+        EnvVarAccessor,
       ],
     }).compile();
 

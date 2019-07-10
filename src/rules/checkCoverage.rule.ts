@@ -52,9 +52,7 @@ export class CheckCoverageRule extends Rule {
       .event('Rule', 'checkCoverage', webhook.getCloneURL())
       .send();
 
-    const lastBranchesCommitSha: GitBranchCommit[] = await webhook.gitService.getLastBranchesCommitSha(
-      ruleResult.gitApiInfos,
-    );
+    const lastBranchesCommitSha: GitBranchCommit[] = await webhook.gitService.getLastBranchesCommitSha();
 
     for (let index = 0; index < lastBranchesCommitSha.length; index++) {
       const sha: string = lastBranchesCommitSha[index].commitSha;

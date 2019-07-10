@@ -21,6 +21,11 @@ export class RuleResult {
    */
   projectURL: string;
 
+  /**
+   * Contains all environment variables set in the current project
+   */
+  env: object;
+
   constructor(gitApiInfos: GitApiInfos, url: string = '') {
     this.gitApiInfos = gitApiInfos;
     this.projectURL = url;

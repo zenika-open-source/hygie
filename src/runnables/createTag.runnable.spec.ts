@@ -11,6 +11,7 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { CreateTagRunnable } from './createTag.runnable';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 describe('CreateTagRunnable', () => {
   let app: TestingModule;
@@ -31,6 +32,7 @@ describe('CreateTagRunnable', () => {
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
         { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+        EnvVarAccessor,
       ],
     }).compile();
 
@@ -75,13 +77,13 @@ describe('CreateTagRunnable', () => {
     it('should call Github methods', async () => {
       myGitApiInfos.git = GitTypeEnum.Github;
       await createTagRunnable.run(CallbackType.Both, ruleResult, args);
-      expect(githubService.createTag).toBeCalledWith(myGitApiInfos, {
+      expect(githubService.createTag).toBeCalledWith({
         message: 'version v0.0.1',
         sha: '1',
         tag: 'v0.0.1',
         type: 'commit',
       });
-      expect(githubService.createRef).toBeCalledWith(myGitApiInfos, {
+      expect(githubService.createRef).toBeCalledWith({
         refName: 'refs/tags/v0.0.1',
         sha: 'tag',
       });
@@ -91,7 +93,7 @@ describe('CreateTagRunnable', () => {
     it('should call Gitlab createTag method', async () => {
       myGitApiInfos.git = GitTypeEnum.Gitlab;
       await createTagRunnable.run(CallbackType.Both, ruleResult, args);
-      expect(gitlabService.createTag).toBeCalledWith(myGitApiInfos, {
+      expect(gitlabService.createTag).toBeCalledWith({
         message: 'version v0.0.1',
         sha: '1',
         tag: 'v0.0.1',

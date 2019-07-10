@@ -7,6 +7,7 @@ import { logger } from '../logger/logger.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { Utils } from '../utils/utils';
 import { Visitor } from 'universal-analytics';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface WebhookArgs {
   url: string;
@@ -23,6 +24,7 @@ export class WebhookRunnable extends Runnable {
     private readonly httpService: HttpService,
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -32,6 +34,8 @@ export class WebhookRunnable extends Runnable {
     ruleResult: RuleResult,
     args: WebhookArgs,
   ): Promise<void> {
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     this.googleAnalytics
       .event('Runnable', 'webhook', ruleResult.projectURL)
       .send();

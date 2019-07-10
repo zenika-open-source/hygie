@@ -8,11 +8,13 @@ export class DatabaseAccess implements DataAccessInterface {
   private readonly remoteRules;
   private readonly remoteEnvs;
   private readonly remoteCrons;
+  private readonly remoteEnvsVar;
 
   constructor() {
     this.remoteRules = Database.models.remoteRules;
     this.remoteEnvs = Database.models.remoteEnvs;
     this.remoteCrons = Database.models.remoteCrons;
+    this.remoteEnvsVar = Database.models.remoteEnvsVar;
   }
 
   private getModel(source: SourceEnum) {
@@ -23,6 +25,8 @@ export class DatabaseAccess implements DataAccessInterface {
         return this.remoteRules;
       case SourceEnum.Crons:
         return this.remoteCrons;
+      case SourceEnum.EnvsVar:
+        return this.remoteEnvsVar;
       default:
         return null;
     }

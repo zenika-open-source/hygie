@@ -12,6 +12,7 @@ import {
 } from '../__mocks__/mocks';
 import { DeleteFilesRunnable } from './deleteFiles.runnable';
 import { logger } from '../logger/logger.service';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 describe('DeleteFilesRunnable', () => {
   let app: TestingModule;
@@ -31,6 +32,7 @@ describe('DeleteFilesRunnable', () => {
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
         { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+        EnvVarAccessor,
       ],
     }).compile();
 
@@ -79,30 +81,16 @@ describe('DeleteFilesRunnable', () => {
         args,
       );
 
-      expect(githubService.deleteFile).toHaveBeenNthCalledWith(
-        1,
-        {
-          git: 'Github',
-          repositoryFullName: 'bastienterrier/test_webhook',
-        },
-        {
-          commitMessage: 'delete files',
-          fileBranch: 'test_branch',
-          filePath: 'a.exe',
-        },
-      );
-      expect(githubService.deleteFile).toHaveBeenNthCalledWith(
-        2,
-        {
-          git: 'Github',
-          repositoryFullName: 'bastienterrier/test_webhook',
-        },
-        {
-          commitMessage: 'delete files',
-          fileBranch: 'test_branch',
-          filePath: 'b.exe',
-        },
-      );
+      expect(githubService.deleteFile).toHaveBeenNthCalledWith(1, {
+        commitMessage: 'delete files',
+        fileBranch: 'test_branch',
+        filePath: 'a.exe',
+      });
+      expect(githubService.deleteFile).toHaveBeenNthCalledWith(2, {
+        commitMessage: 'delete files',
+        fileBranch: 'test_branch',
+        filePath: 'b.exe',
+      });
       expect(gitlabService.deleteFile).not.toBeCalled();
     });
   });
@@ -116,30 +104,16 @@ describe('DeleteFilesRunnable', () => {
       );
 
       expect(githubService.deleteFile).not.toBeCalled();
-      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
-        1,
-        {
-          git: 'Gitlab',
-          repositoryFullName: 'bastienterrier/test_webhook',
-        },
-        {
-          commitMessage: 'delete files',
-          fileBranch: 'test_branch',
-          filePath: 'a.exe',
-        },
-      );
-      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
-        2,
-        {
-          git: 'Gitlab',
-          repositoryFullName: 'bastienterrier/test_webhook',
-        },
-        {
-          commitMessage: 'delete files',
-          fileBranch: 'test_branch',
-          filePath: 'b.exe',
-        },
-      );
+      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(1, {
+        commitMessage: 'delete files',
+        fileBranch: 'test_branch',
+        filePath: 'a.exe',
+      });
+      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(2, {
+        commitMessage: 'delete files',
+        fileBranch: 'test_branch',
+        filePath: 'b.exe',
+      });
     });
   });
   describe('deleteFiles Runnable', () => {
@@ -154,30 +128,16 @@ describe('DeleteFilesRunnable', () => {
         args,
       );
 
-      expect(githubService.deleteFile).toHaveBeenNthCalledWith(
-        1,
-        {
-          git: 'Github',
-          repositoryFullName: 'bastienterrier/test_webhook',
-        },
-        {
-          commitMessage: 'delete files',
-          fileBranch: 'test_branch',
-          filePath: 'toto.exe',
-        },
-      );
-      expect(githubService.deleteFile).toHaveBeenNthCalledWith(
-        2,
-        {
-          git: 'Github',
-          repositoryFullName: 'bastienterrier/test_webhook',
-        },
-        {
-          commitMessage: 'delete files',
-          fileBranch: 'test_branch',
-          filePath: 'tata.exe',
-        },
-      );
+      expect(githubService.deleteFile).toHaveBeenNthCalledWith(1, {
+        commitMessage: 'delete files',
+        fileBranch: 'test_branch',
+        filePath: 'toto.exe',
+      });
+      expect(githubService.deleteFile).toHaveBeenNthCalledWith(2, {
+        commitMessage: 'delete files',
+        fileBranch: 'test_branch',
+        filePath: 'tata.exe',
+      });
       expect(gitlabService.deleteFile).not.toBeCalled();
     });
   });
@@ -191,30 +151,16 @@ describe('DeleteFilesRunnable', () => {
       );
 
       expect(githubService.deleteFile).not.toBeCalled();
-      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
-        1,
-        {
-          git: 'Gitlab',
-          repositoryFullName: 'bastienterrier/test_webhook',
-        },
-        {
-          commitMessage: 'delete files',
-          fileBranch: 'test_branch',
-          filePath: 'toto.exe',
-        },
-      );
-      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
-        2,
-        {
-          git: 'Gitlab',
-          repositoryFullName: 'bastienterrier/test_webhook',
-        },
-        {
-          commitMessage: 'delete files',
-          fileBranch: 'test_branch',
-          filePath: 'tata.exe',
-        },
-      );
+      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(1, {
+        commitMessage: 'delete files',
+        fileBranch: 'test_branch',
+        filePath: 'toto.exe',
+      });
+      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(2, {
+        commitMessage: 'delete files',
+        fileBranch: 'test_branch',
+        filePath: 'tata.exe',
+      });
     });
   });
   describe('deleteFiles Runnable', () => {
@@ -230,30 +176,16 @@ describe('DeleteFilesRunnable', () => {
         args,
       );
 
-      expect(githubService.deleteFile).toHaveBeenNthCalledWith(
-        1,
-        {
-          git: 'Github',
-          repositoryFullName: 'bastienterrier/test_webhook',
-        },
-        {
-          commitMessage: 'delete files',
-          fileBranch: 'test_branch',
-          filePath: 'c.exe',
-        },
-      );
-      expect(githubService.deleteFile).toHaveBeenNthCalledWith(
-        2,
-        {
-          git: 'Github',
-          repositoryFullName: 'bastienterrier/test_webhook',
-        },
-        {
-          commitMessage: 'delete files',
-          fileBranch: 'test_branch',
-          filePath: 'd.exe',
-        },
-      );
+      expect(githubService.deleteFile).toHaveBeenNthCalledWith(1, {
+        commitMessage: 'delete files',
+        fileBranch: 'test_branch',
+        filePath: 'c.exe',
+      });
+      expect(githubService.deleteFile).toHaveBeenNthCalledWith(2, {
+        commitMessage: 'delete files',
+        fileBranch: 'test_branch',
+        filePath: 'd.exe',
+      });
       expect(gitlabService.deleteFile).not.toBeCalled();
     });
   });
@@ -267,30 +199,16 @@ describe('DeleteFilesRunnable', () => {
       );
 
       expect(githubService.deleteFile).not.toBeCalled();
-      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
-        1,
-        {
-          git: 'Gitlab',
-          repositoryFullName: 'bastienterrier/test_webhook',
-        },
-        {
-          commitMessage: 'delete files',
-          fileBranch: 'test_branch',
-          filePath: 'c.exe',
-        },
-      );
-      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(
-        2,
-        {
-          git: 'Gitlab',
-          repositoryFullName: 'bastienterrier/test_webhook',
-        },
-        {
-          commitMessage: 'delete files',
-          fileBranch: 'test_branch',
-          filePath: 'd.exe',
-        },
-      );
+      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(1, {
+        commitMessage: 'delete files',
+        fileBranch: 'test_branch',
+        filePath: 'c.exe',
+      });
+      expect(gitlabService.deleteFile).toHaveBeenNthCalledWith(2, {
+        commitMessage: 'delete files',
+        fileBranch: 'test_branch',
+        filePath: 'd.exe',
+      });
     });
   });
 });

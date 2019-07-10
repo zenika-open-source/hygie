@@ -37,6 +37,7 @@ module.exports = {
           '/guide/registerToken.md',
           '/guide/registerCron.md',
           '/guide/caution.md',
+          '/guide/useEnvVar.md',
           '/guide/selfHosted.md',
         ],
       },
@@ -65,7 +66,7 @@ module.exports = {
       },
     ],
   },
-  hygieURL: 'https://webhooks-sklnx3jldq-uc.a.run.app',
+  hygieURL: 'https://webhooks-sklnx3jldq-uc.a.run.app/',
   markdown: {
     toc: { includeLevel: [2, 2] },
   },

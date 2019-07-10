@@ -11,12 +11,12 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { DeployFolderRunnable } from './deployFolder.runnable';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 describe('DeployFolderRunnable', () => {
   let app: TestingModule;
 
   let githubService: GithubService;
-  let gitlabService: GitlabService;
 
   let myGitApiInfos;
 
@@ -29,14 +29,13 @@ describe('DeployFolderRunnable', () => {
     app = await Test.createTestingModule({
       providers: [
         DeployFolderRunnable,
-        { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
         { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+        EnvVarAccessor,
       ],
     }).compile();
 
     githubService = app.get(GithubService);
-    gitlabService = app.get(GitlabService);
     deployFolderRunnable = app.get(DeployFolderRunnable);
 
     myGitApiInfos = new GitApiInfos();
@@ -66,16 +65,9 @@ describe('DeployFolderRunnable', () => {
     it('should call Github methods', async () => {
       myGitApiInfos.git = GitTypeEnum.Github;
       await deployFolderRunnable.run(CallbackType.Both, ruleResult, args);
-      expect(githubService.getTree).toBeCalledWith(
-        myGitApiInfos,
-        'docs',
-        'develop',
-      );
-      expect(githubService.getLastCommit).toBeCalledWith(
-        myGitApiInfos,
-        'gh-pages',
-      );
-      expect(githubService.createCommit).toBeCalledWith(myGitApiInfos, {
+      expect(githubService.getTree).toBeCalledWith('docs', 'develop');
+      expect(githubService.getLastCommit).toBeCalledWith('gh-pages');
+      expect(githubService.createCommit).toBeCalledWith({
         message: 'deploy docs to gh-pages',
         parents: ['commit'],
         tree: 'tree',

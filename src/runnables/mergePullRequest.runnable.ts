@@ -10,6 +10,7 @@ import { GitMergePRInfos, PRMethodsEnum } from '../git/gitPRInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface MergePullRequestArgs {
   commitTitle: string;
@@ -29,6 +30,7 @@ export class MergePullRequestRunnable extends Runnable {
     private readonly gitlabService: GitlabService,
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -38,6 +40,8 @@ export class MergePullRequestRunnable extends Runnable {
     ruleResult: RuleResult,
     args: MergePullRequestArgs,
   ): Promise<void> {
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const data = ruleResult.data as any;
     const gitMergePRInfos = new GitMergePRInfos();
@@ -80,9 +84,9 @@ export class MergePullRequestRunnable extends Runnable {
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.mergePullRequest(gitApiInfos, gitMergePRInfos);
+      this.githubService.mergePullRequest(gitMergePRInfos);
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.mergePullRequest(gitApiInfos, gitMergePRInfos);
+      this.gitlabService.mergePullRequest(gitMergePRInfos);
     }
   }
 }

@@ -22,6 +22,8 @@ import { DataAccessService } from '../data_access/dataAccess.service';
 import { Constants } from '../utils/constants';
 import { WhiteListInterceptor } from '../interceptors/whiteList.interceptor';
 import { ScheduleService } from '../scheduler/scheduler.service';
+import { EnvVarService } from '../env-var/env-var.service';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 @Controller('webhook')
 export class WebhookController {
@@ -32,6 +34,7 @@ export class WebhookController {
     private readonly gitlabService: GitlabService,
     private readonly dataAccessService: DataAccessService,
     private readonly scheduleService: ScheduleService,
+    private readonly envVarService: EnvVarService,
   ) {}
 
   @Post('/')
@@ -64,10 +67,13 @@ export class WebhookController {
       }
 
       let remoteRepository: string;
+      let remoteEnvs: string;
       try {
         remoteRepository = await RemoteConfigUtils.downloadRulesFile(
           this.dataAccessService,
           this.httpService,
+          this.githubService,
+          this.gitlabService,
           webhook.getCloneURL(),
           Constants.rulesExtension,
           rulesBranch,
@@ -81,12 +87,8 @@ export class WebhookController {
         throw new PreconditionException();
       }
       try {
-        const remoteEnvs: string = webhook.getRemoteDirectory();
-        await this.githubService.setEnvironmentVariables(
-          this.dataAccessService,
-          remoteEnvs,
-        );
-        await this.gitlabService.setEnvironmentVariables(
+        remoteEnvs = webhook.getRemoteDirectory();
+        await webhook.gitService.setEnvironmentVariables(
           this.dataAccessService,
           remoteEnvs,
         );
@@ -97,6 +99,9 @@ export class WebhookController {
         );
         throw new PreconditionException();
       }
+
+      // Set Envs Var
+      await this.envVarService.setEnvs(remoteEnvs);
 
       logger.info(
         `=== ${webhook.getGitType()} - ${webhook.getGitEvent()} ===`,

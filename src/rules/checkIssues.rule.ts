@@ -60,7 +60,6 @@ export class CheckIssuesRule extends Rule {
     }
 
     const issues: IssueSearchResult[] = await webhook.gitService.getIssues(
-      webhook.getGitApiInfos(),
       gitIssueSearch,
     );
 

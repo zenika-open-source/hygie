@@ -7,7 +7,6 @@ import {
   convertIssuePRSearchState,
 } from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
-import { GitApiInfos } from '../git/gitApiInfos';
 import {
   GitIssueInfos,
   GitIssuePRSearch,
@@ -31,6 +30,7 @@ import { GitCommit } from '../git/gitCommit';
 import { GitRef } from '../git/gitRef';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
+import { GitFileData } from '../git/gitFileData';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -39,6 +39,9 @@ import { GitBranchCommit } from '../git/gitBranchSha';
 export class GithubService implements GitServiceInterface {
   token: string;
   urlApi: string;
+  repositoryFullName: string;
+
+  // Add repositoryName
 
   configGitHub: object;
 
@@ -50,6 +53,10 @@ export class GithubService implements GitServiceInterface {
 
   setUrlApi(urlApi: string) {
     this.urlApi = urlApi;
+  }
+
+  setRepositoryFullName(repositoryFullName: string) {
+    this.repositoryFullName = repositoryFullName;
   }
 
   setConfigGitHub(conf?: any) {
@@ -65,26 +72,24 @@ export class GithubService implements GitServiceInterface {
 
   async setEnvironmentVariables(
     dataAccessService: DataAccessService,
-    filePath: string,
+    repositoryFullName: string,
   ): Promise<void> {
     const gitEnv: GitEnv = await Utils.getGitEnv(
       dataAccessService,
-      'remote-envs/' + filePath + '/config.env',
+      'remote-envs/' + repositoryFullName + '/config.env',
     )
       .then(res => res)
       .catch(e => {
         throw new PreconditionException();
       });
 
-    this.setToken(gitEnv.gitToken);
+    this.setToken(Utils.decryptValue(gitEnv.gitToken));
     this.setUrlApi(gitEnv.gitApi);
+    this.setRepositoryFullName(repositoryFullName);
     this.setConfigGitHub();
   }
 
-  updateCommitStatus(
-    gitApiInfos: GitApiInfos,
-    gitCommitStatusInfos: GitCommitStatusInfos,
-  ): void {
+  updateCommitStatus(gitCommitStatusInfos: GitCommitStatusInfos): void {
     const dataGitHub = {
       state: convertCommitStatus(
         GitTypeEnum.Github,
@@ -97,7 +102,7 @@ export class GithubService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/statuses/${
+        `${this.urlApi}/repos/${this.repositoryFullName}/statuses/${
           gitCommitStatusInfos.commitSha
         }`,
         dataGitHub,
@@ -108,17 +113,14 @@ export class GithubService implements GitServiceInterface {
       );
   }
 
-  addIssueComment(
-    gitApiInfos: GitApiInfos,
-    gitIssueInfos: GitIssueInfos,
-  ): void {
+  addIssueComment(gitIssueInfos: GitIssueInfos): void {
     const dataGitHub = {
       body: gitIssueInfos.comment,
     };
 
     this.httpService
       .post(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues/${
+        `${this.urlApi}/repos/${this.repositoryFullName}/issues/${
           gitIssueInfos.number
         }/comments`,
         dataGitHub,
@@ -130,20 +132,14 @@ export class GithubService implements GitServiceInterface {
   }
 
   // Github PR is based on Issue
-  addPRComment(
-    gitApiInfos: GitApiInfos,
-    gitCommentPRInfos: GitCommentPRInfos,
-  ): void {
+  addPRComment(gitCommentPRInfos: GitCommentPRInfos): void {
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     gitIssueInfos.number = gitCommentPRInfos.number;
     gitIssueInfos.comment = gitCommentPRInfos.comment;
-    this.addIssueComment(gitApiInfos, gitIssueInfos);
+    this.addIssueComment(gitIssueInfos);
   }
 
-  createPullRequest(
-    gitApiInfos: GitApiInfos,
-    gitCreatePRInfos: GitPRInfos,
-  ): void {
+  createPullRequest(gitCreatePRInfos: GitPRInfos): void {
     const customConfig = JSON.parse(JSON.stringify(this.configGitHub));
     const dataGitHub: any = {
       title: gitCreatePRInfos.title,
@@ -160,7 +156,7 @@ export class GithubService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls`,
+        `${this.urlApi}/repos/${this.repositoryFullName}/pulls`,
         dataGitHub,
         customConfig,
       )
@@ -169,18 +165,18 @@ export class GithubService implements GitServiceInterface {
       );
   }
 
-  deleteBranch(gitApiInfos: GitApiInfos, branchName: string): void {
+  deleteBranch(branchName: string): void {
     this.httpService
       .delete(
         `${this.urlApi}/repos/${
-          gitApiInfos.repositoryFullName
+          this.repositoryFullName
         }/git/refs/heads/${encodeURIComponent(branchName)}`,
         this.configGitHub,
       )
       .subscribe(null, err => logger.error(err, { location: 'deleteBranch' }));
   }
 
-  updateIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void {
+  updateIssue(gitIssueInfos: GitIssueInfos): void {
     const dataGitHub: any = {};
 
     if (typeof gitIssueInfos.state !== 'undefined') {
@@ -195,7 +191,7 @@ export class GithubService implements GitServiceInterface {
 
     this.httpService
       .patch(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues/${
+        `${this.urlApi}/repos/${this.repositoryFullName}/issues/${
           gitIssueInfos.number
         }`,
         dataGitHub,
@@ -204,10 +200,7 @@ export class GithubService implements GitServiceInterface {
       .subscribe(null, err => logger.error(err, { location: 'updateIssue' }));
   }
 
-  async createIssue(
-    gitApiInfos: GitApiInfos,
-    gitIssueInfos: GitIssueInfos,
-  ): Promise<number> {
+  async createIssue(gitIssueInfos: GitIssueInfos): Promise<number> {
     const dataGitHub: any = {};
 
     if (typeof gitIssueInfos.title !== 'undefined') {
@@ -228,7 +221,7 @@ export class GithubService implements GitServiceInterface {
 
     return await this.httpService
       .post(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues`,
+        `${this.urlApi}/repos/${this.repositoryFullName}/issues`,
         dataGitHub,
         this.configGitHub,
       )
@@ -237,17 +230,14 @@ export class GithubService implements GitServiceInterface {
       .catch(err => logger.error(err, { location: 'createIssue' }));
   }
 
-  deleteFile(
-    gitApiInfos: GitApiInfos,
-    gitFileInfos: GitFileInfos,
-  ): Promise<void> {
+  deleteFile(gitFileInfos: GitFileInfos): Promise<void> {
     const localConfig: any = JSON.parse(JSON.stringify(this.configGitHub));
 
     return new Promise((resolve, reject) => {
       // First of all, get file blob sha
       this.httpService
         .get(
-          `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/contents/${
+          `${this.urlApi}/repos/${this.repositoryFullName}/contents/${
             gitFileInfos.filePath
           }`,
           this.configGitHub,
@@ -262,9 +252,9 @@ export class GithubService implements GitServiceInterface {
 
             this.httpService
               .delete(
-                `${this.urlApi}/repos/${
-                  gitApiInfos.repositoryFullName
-                }/contents/${gitFileInfos.filePath}`,
+                `${this.urlApi}/repos/${this.repositoryFullName}/contents/${
+                  gitFileInfos.filePath
+                }`,
                 localConfig,
               )
               .subscribe(
@@ -283,10 +273,7 @@ export class GithubService implements GitServiceInterface {
     });
   }
 
-  mergePullRequest(
-    gitApiInfos: GitApiInfos,
-    gitMergePRInfos: GitMergePRInfos,
-  ): void {
+  mergePullRequest(gitMergePRInfos: GitMergePRInfos): void {
     const dataGitHub: any = {};
 
     if (gitMergePRInfos.commitTitle !== undefined) {
@@ -305,7 +292,7 @@ export class GithubService implements GitServiceInterface {
 
     this.httpService
       .put(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls/${
+        `${this.urlApi}/repos/${this.repositoryFullName}/pulls/${
           gitMergePRInfos.number
         }/merge`,
         dataGitHub,
@@ -316,7 +303,7 @@ export class GithubService implements GitServiceInterface {
       );
   }
 
-  updatePullRequest(gitApiInfos: GitApiInfos, gitPRInfos: GitPRInfos): void {
+  updatePullRequest(gitPRInfos: GitPRInfos): void {
     const dataGitHub: any = {};
 
     if (typeof gitPRInfos.state !== 'undefined') {
@@ -337,7 +324,7 @@ export class GithubService implements GitServiceInterface {
 
     this.httpService
       .patch(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls/${
+        `${this.urlApi}/repos/${this.repositoryFullName}/pulls/${
           gitPRInfos.number
         }`,
         dataGitHub,
@@ -348,10 +335,10 @@ export class GithubService implements GitServiceInterface {
       );
   }
 
-  createWebhook(gitApiInfos: GitApiInfos, webhookURL: string): void {
+  createWebhook(webhookURL: string): void {
     this.httpService
       .post(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/hooks`,
+        `${this.urlApi}/repos/${this.repositoryFullName}/hooks`,
         {
           name: 'web',
           active: true,
@@ -367,7 +354,6 @@ export class GithubService implements GitServiceInterface {
   }
 
   async getIssues(
-    gitApiInfos: GitApiInfos,
     gitIssueSearch: GitIssuePRSearch,
   ): Promise<IssueSearchResult[]> {
     const customGithubConfig = JSON.parse(JSON.stringify(this.configGitHub));
@@ -384,7 +370,7 @@ export class GithubService implements GitServiceInterface {
 
     return await this.httpService
       .get(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/issues`,
+        `${this.urlApi}/repos/${this.repositoryFullName}/issues`,
         customGithubConfig,
       )
       .toPromise()
@@ -403,7 +389,6 @@ export class GithubService implements GitServiceInterface {
   }
 
   async getPullRequests(
-    gitApiInfos: GitApiInfos,
     gitIssueSearch: GitIssuePRSearch,
   ): Promise<PRSearchResult[]> {
     const customGithubConfig = JSON.parse(JSON.stringify(this.configGitHub));
@@ -420,7 +405,7 @@ export class GithubService implements GitServiceInterface {
 
     return await this.httpService
       .get(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/pulls`,
+        `${this.urlApi}/repos/${this.repositoryFullName}/pulls`,
         customGithubConfig,
       )
       .toPromise()
@@ -435,7 +420,7 @@ export class GithubService implements GitServiceInterface {
       .catch(err => logger.error(err, { location: 'getPullRequests' }));
   }
 
-  createRelease(gitApiInfos: GitApiInfos, gitRelease: GitRelease): void {
+  createRelease(gitRelease: GitRelease): void {
     const dataGithub: any = {};
     dataGithub.tag_name = gitRelease.tag;
     if (typeof gitRelease.ref !== 'undefined') {
@@ -449,7 +434,7 @@ export class GithubService implements GitServiceInterface {
     }
     this.httpService
       .post(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/releases`,
+        `${this.urlApi}/repos/${this.repositoryFullName}/releases`,
         dataGithub,
         this.configGitHub,
       )
@@ -457,7 +442,6 @@ export class GithubService implements GitServiceInterface {
   }
 
   async getTree(
-    gitApiInfos: GitApiInfos,
     directoryPath: string,
     branch: string = 'master',
   ): Promise<string> {
@@ -468,9 +452,7 @@ export class GithubService implements GitServiceInterface {
     };
     return await this.httpService
       .get(
-        `${this.urlApi}/repos/${
-          gitApiInfos.repositoryFullName
-        }/contents/${base}`,
+        `${this.urlApi}/repos/${this.repositoryFullName}/contents/${base}`,
         customGithubConfig,
       )
       .toPromise()
@@ -480,14 +462,11 @@ export class GithubService implements GitServiceInterface {
       .catch(err => logger.error(err, { location: 'getTree' }));
   }
 
-  async getLastCommit(
-    gitApiInfos: GitApiInfos,
-    branch: string = 'master',
-  ): Promise<string> {
+  async getLastCommit(branch: string = 'master'): Promise<string> {
     return this.httpService
       .get(
         `${this.urlApi}/repos/${
-          gitApiInfos.repositoryFullName
+          this.repositoryFullName
         }/git/refs/heads/${branch}`,
         this.configGitHub,
       )
@@ -496,13 +475,10 @@ export class GithubService implements GitServiceInterface {
       .catch(err => logger.error(err, { location: 'updateRef' }));
   }
 
-  async createCommit(
-    gitApiInfos: GitApiInfos,
-    gitCommit: GitCommit,
-  ): Promise<string> {
+  async createCommit(gitCommit: GitCommit): Promise<string> {
     return await this.httpService
       .post(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/commits`,
+        `${this.urlApi}/repos/${this.repositoryFullName}/git/commits`,
         gitCommit,
         this.configGitHub,
       )
@@ -513,12 +489,10 @@ export class GithubService implements GitServiceInterface {
       .catch(err => logger.error(err, { location: 'createCommit' }));
   }
 
-  updateRef(gitApiInfos: GitApiInfos, gitRef: GitRef): void {
+  updateRef(gitRef: GitRef): void {
     this.httpService
       .patch(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/${
-          gitRef.refName
-        }`,
+        `${this.urlApi}/repos/${this.repositoryFullName}/git/${gitRef.refName}`,
         {
           sha: gitRef.sha,
           force: gitRef.force,
@@ -528,10 +502,10 @@ export class GithubService implements GitServiceInterface {
       .subscribe(null, err => logger.error(err, { location: 'updateRef' }));
   }
 
-  createRef(gitApiInfos: GitApiInfos, gitRef: GitRef): void {
+  createRef(gitRef: GitRef): void {
     this.httpService
       .post(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/refs`,
+        `${this.urlApi}/repos/${this.repositoryFullName}/git/refs`,
         {
           sha: gitRef.sha,
           ref: gitRef.refName,
@@ -541,10 +515,10 @@ export class GithubService implements GitServiceInterface {
       .subscribe(null, err => logger.error(err, { location: 'createRef' }));
   }
 
-  async createTag(gitApiInfos: GitApiInfos, gitTag: GitTag): Promise<string> {
+  async createTag(gitTag: GitTag): Promise<string> {
     return await this.httpService
       .post(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/git/tags`,
+        `${this.urlApi}/repos/${this.repositoryFullName}/git/tags`,
         {
           tag: gitTag.tag,
           message: gitTag.message,
@@ -558,12 +532,10 @@ export class GithubService implements GitServiceInterface {
       .catch(err => logger.error(err, { location: 'createTag' }));
   }
 
-  async getLastBranchesCommitSha(
-    gitApiInfos: GitApiInfos,
-  ): Promise<GitBranchCommit[]> {
+  async getLastBranchesCommitSha(): Promise<GitBranchCommit[]> {
     return await this.httpService
       .get(
-        `${this.urlApi}/repos/${gitApiInfos.repositoryFullName}/branches`,
+        `${this.urlApi}/repos/${this.repositoryFullName}/branches`,
         this.configGitHub,
       )
       .toPromise()
@@ -575,6 +547,34 @@ export class GithubService implements GitServiceInterface {
       .catch(err => {
         logger.error(err, { location: 'getLastBranchesCommitSha' });
         return [];
+      });
+  }
+
+  async getFileContent(gitFileInfos: GitFileInfos): Promise<GitFileData> {
+    const localConfig: any = JSON.parse(JSON.stringify(this.configGitHub));
+
+    localConfig.params = {
+      ref: gitFileInfos.fileBranch,
+    };
+    return await this.httpService
+      .get(
+        `${this.urlApi}/repos/${this.repositoryFullName}/contents/${
+          gitFileInfos.filePath
+        }`,
+        localConfig,
+      )
+      .toPromise()
+      .then(response => {
+        return {
+          data: Buffer.from(response.data.content, 'base64').toString(),
+        };
+      })
+      .catch(err => {
+        throw new Error(
+          `${err}: ${gitFileInfos.filePath} do not exist on branch ${
+            gitFileInfos.fileBranch
+          }`,
+        );
       });
   }
 }

@@ -7,8 +7,6 @@ import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { Webhook } from '../webhook/webhook';
 import { RulesService } from '../rules/rules.service';
-import { RemoteConfigUtils } from '../remote-config/utils';
-import { checkCronExpression } from './utils';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { Constants } from '../utils/constants';
@@ -94,6 +92,8 @@ export class Schedule extends NestSchedule {
             return response.data.id;
           });
         this.webhook.projectId = gitlabProjectId;
+
+        // ! Use getGitlabProjectId() instead
       }
       return resolve();
     });

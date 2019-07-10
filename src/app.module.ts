@@ -13,6 +13,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { PrometheusService } from './logger/prometheus.service';
 import { DataAccessModule } from './data_access/dataAccess.module';
+import { EnvVarController } from './controllers/env-var.controller';
+import { EnvVarModule } from './env-var/env-var.module';
 @Module({
   imports: [
     HttpModule,
@@ -20,6 +22,7 @@ import { DataAccessModule } from './data_access/dataAccess.module';
     RulesModule.forRoot(analytics),
     RunnableModule.forRoot(analytics),
     GitModule,
+    EnvVarModule,
   ],
   controllers: [
     ApplicationController,
@@ -27,6 +30,7 @@ import { DataAccessModule } from './data_access/dataAccess.module';
     DocumentationController,
     RegisterController,
     WebhookController,
+    EnvVarController,
   ],
   providers: [
     PrometheusService,

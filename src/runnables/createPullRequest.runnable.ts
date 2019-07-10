@@ -10,6 +10,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { RunnableDecorator } from './runnable.decorator';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface CreatePullRequestArgs {
   title: string;
@@ -29,6 +30,7 @@ export class CreatePullRequestRunnable extends Runnable {
     private readonly gitlabService: GitlabService,
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -38,6 +40,8 @@ export class CreatePullRequestRunnable extends Runnable {
     ruleResult: RuleResult,
     args: CreatePullRequestArgs,
   ): Promise<void> {
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
     this.googleAnalytics
@@ -84,9 +88,9 @@ export class CreatePullRequestRunnable extends Runnable {
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.createPullRequest(gitApiInfos, gitCreatePRInfos);
+      this.githubService.createPullRequest(gitCreatePRInfos);
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.createPullRequest(gitApiInfos, gitCreatePRInfos);
+      this.gitlabService.createPullRequest(gitCreatePRInfos);
     }
   }
 }

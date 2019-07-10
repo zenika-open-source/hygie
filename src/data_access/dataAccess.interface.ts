@@ -6,6 +6,7 @@ export enum SourceEnum {
   Envs = 'Envs',
   Rules = 'Rules',
   Crons = 'Crons',
+  EnvsVar = 'EnvsVar',
 }
 
 /**

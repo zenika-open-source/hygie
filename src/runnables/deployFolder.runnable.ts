@@ -10,6 +10,7 @@ import { GitCommit } from '../git/gitCommit';
 import { GitRef } from '../git/gitRef';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface DeployFolderArgs {
   folder: string;
@@ -27,6 +28,7 @@ export class DeployFolderRunnable extends Runnable {
     private readonly githubService: GithubService,
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -35,6 +37,8 @@ export class DeployFolderRunnable extends Runnable {
     ruleResult: RuleResult,
     args: DeployFolderArgs,
   ): Promise<void> {
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const sourceBranch: string = (ruleResult.data as any).branch;
 
@@ -55,27 +59,22 @@ export class DeployFolderRunnable extends Runnable {
           : `deploy ${folder} to ${branch}`;
 
       const treeSha: string = await this.githubService.getTree(
-        gitApiInfos,
         folder,
         sourceBranch,
       );
-      const lastCommit = await this.githubService.getLastCommit(
-        gitApiInfos,
-        branch,
-      );
+      const lastCommit = await this.githubService.getLastCommit(branch);
       const gitCommit = new GitCommit();
       gitCommit.tree = treeSha;
       gitCommit.message = message;
       gitCommit.parents = [lastCommit];
       const commitSha: string = await this.githubService.createCommit(
-        gitApiInfos,
         gitCommit,
       );
       const gitRef = new GitRef();
       gitRef.refName = 'refs/heads/' + branch;
       gitRef.sha = commitSha;
       gitRef.force = false;
-      this.githubService.updateRef(gitApiInfos, gitRef);
+      this.githubService.updateRef(gitRef);
     }
   }
 }

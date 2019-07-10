@@ -49,6 +49,8 @@ export class ScheduleService {
         await RemoteConfigUtils.downloadRulesFile(
           this.dataAccessService,
           this.httpService,
+          this.githubService,
+          this.gitlabService,
           cron.projectURL,
           cron.filename,
         ).catch(e => {
@@ -67,7 +69,7 @@ export class ScheduleService {
         'remote-rules/' +
         Utils.getRepositoryFullName(cron.projectURL) +
         '/.hygie';
-      const conf = await Utils.parseRuleFile(
+      const conf = await Utils.parseYAMLFile(
         await this.dataAccessService.readRule(
           `${remoteRepository}/${cron.filename}`,
         ),

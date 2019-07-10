@@ -12,6 +12,7 @@ import {
 } from '../__mocks__/mocks';
 import { DeleteBranchRunnable } from './deleteBranch.runnable';
 import { logger } from '../logger/logger.service';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 describe('DeleteBranchRunnable', () => {
   let app: TestingModule;
@@ -31,6 +32,7 @@ describe('DeleteBranchRunnable', () => {
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
         { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+        EnvVarAccessor,
       ],
     }).compile();
 
@@ -77,10 +79,7 @@ describe('DeleteBranchRunnable', () => {
         .run(CallbackType.Both, ruleResultBranchName, args)
         .catch(err => logger.error(err));
 
-      expect(githubService.deleteBranch).toBeCalledWith(
-        { git: 'Github', repositoryFullName: 'bastienterrier/test_webhook' },
-        'test&#x2F;webhook',
-      );
+      expect(githubService.deleteBranch).toBeCalledWith('test&#x2F;webhook');
       expect(gitlabService.deleteBranch).not.toBeCalled();
     });
   });
@@ -92,10 +91,7 @@ describe('DeleteBranchRunnable', () => {
         .catch(err => logger.error(err));
 
       expect(githubService.deleteBranch).not.toBeCalled();
-      expect(gitlabService.deleteBranch).toBeCalledWith(
-        { git: 'Gitlab', repositoryFullName: 'bastienterrier/test_webhook' },
-        'test&#x2F;webhook',
-      );
+      expect(gitlabService.deleteBranch).toBeCalledWith('test&#x2F;webhook');
     });
   });
 });

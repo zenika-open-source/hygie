@@ -3,6 +3,7 @@ import { CallbackType } from './runnables.service';
 
 export abstract class Runnable {
   name: string;
+
   abstract async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,

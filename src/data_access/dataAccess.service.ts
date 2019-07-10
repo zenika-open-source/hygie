@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { SourceEnum, DataAccessInterface } from './dataAccess.interface';
 import { GitEnv } from '../git/gitEnv.interface';
+import { KeyValueEnvFileInterface } from '../env-var/envFile.interface';
 
 @Injectable()
 export class DataAccessService {
@@ -15,6 +16,10 @@ export class DataAccessService {
    */
   readEnv(path: string): Promise<GitEnv> {
     return this.dataProvider.readData(SourceEnum.Envs, path);
+  }
+
+  readEnvsVar(path: string): Promise<KeyValueEnvFileInterface> {
+    return this.dataProvider.readData(SourceEnum.EnvsVar, path);
   }
 
   /**
@@ -52,6 +57,10 @@ export class DataAccessService {
    */
   writeEnv(path: string, data: any): Promise<any> {
     return this.dataProvider.writeData(SourceEnum.Envs, path, data);
+  }
+
+  writeEnvsVar(path: string, data: any): Promise<any> {
+    return this.dataProvider.writeData(SourceEnum.EnvsVar, path, data);
   }
 
   /**

@@ -192,6 +192,16 @@ describe('Utils', () => {
     });
   });
 
+  describe('encryptToken & decryptToken', () => {
+    it('shoud encrypt the plain text and retrieve it', () => {
+      process.env.ENCRYPTION_KEY = 'somekey';
+      const original = 'hello, world!';
+      const encrypt = Utils.encryptValue(original);
+      const decrypt = Utils.decryptValue(encrypt);
+      expect(decrypt).toBe(original);
+    });
+  });
+
   describe('splitDirectoryPath', () => {
     it('shoud return two paths', () => {
       const { base, name } = Utils.splitDirectoryPath(
@@ -382,7 +392,7 @@ describe('Utils', () => {
         ],
       };
 
-      const parsedYAML = await Utils.parseRuleFile(yamlFile);
+      const parsedYAML = await Utils.parseYAMLFile(yamlFile);
       expect(parsedYAML).toEqual(expectedResult);
     });
     it('shoud return a JSON parsed rules object', async () => {
@@ -581,7 +591,7 @@ describe('Utils', () => {
         ],
       };
 
-      const parsedJSON = await Utils.parseRuleFile(jsonFile);
+      const parsedJSON = await Utils.parseYAMLFile(jsonFile);
       expect(parsedJSON).toEqual(expectedResult);
     });
   });

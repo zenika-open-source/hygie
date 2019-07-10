@@ -7,7 +7,6 @@ import {
   convertIssuePRSearchState,
 } from '../webhook/utils.enum';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
-import { GitApiInfos } from '../git/gitApiInfos';
 import {
   GitIssueInfos,
   GitIssuePRSearch,
@@ -29,6 +28,7 @@ import { PreconditionException } from '../exceptions/precondition.exception';
 import { GitRelease } from '../git/gitRelease';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
+import { GitFileData } from '../git/gitFileData';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -37,6 +37,7 @@ import { GitBranchCommit } from '../git/gitBranchSha';
 export class GitlabService implements GitServiceInterface {
   token: string;
   urlApi: string;
+  projectId: string;
 
   constructor(private readonly httpService: HttpService) {}
 
@@ -48,27 +49,29 @@ export class GitlabService implements GitServiceInterface {
     this.urlApi = urlApi;
   }
 
+  setProjectId(projectId: string) {
+    this.projectId = projectId;
+  }
+
   async setEnvironmentVariables(
     dataAccessService: DataAccessService,
-    filePath: string,
+    repositoryFullName: string,
   ): Promise<void> {
     const gitEnv: GitEnv = await Utils.getGitEnv(
       dataAccessService,
-      'remote-envs/' + filePath + '/config.env',
+      'remote-envs/' + repositoryFullName + '/config.env',
     )
       .then(res => res)
       .catch(e => {
         throw new PreconditionException();
       });
 
-    this.setToken(gitEnv.gitToken);
+    this.setToken(Utils.decryptValue(gitEnv.gitToken));
     this.setUrlApi(gitEnv.gitApi);
+    this.setProjectId(gitEnv.gitlabId);
   }
 
-  updateCommitStatus(
-    gitApiInfos: GitApiInfos,
-    gitCommitStatusInfos: GitCommitStatusInfos,
-  ): void {
+  updateCommitStatus(gitCommitStatusInfos: GitCommitStatusInfos): void {
     // Config URL for GitLab
     const configGitLab = {
       headers: {
@@ -90,7 +93,7 @@ export class GitlabService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/statuses/${
+        `${this.urlApi}/projects/${this.projectId}/statuses/${
           gitCommitStatusInfos.commitSha
         }`,
         dataGitLab,
@@ -101,10 +104,7 @@ export class GitlabService implements GitServiceInterface {
       );
   }
 
-  addIssueComment(
-    gitApiInfos: GitApiInfos,
-    gitIssueInfos: GitIssueInfos,
-  ): void {
+  addIssueComment(gitIssueInfos: GitIssueInfos): void {
     // Config URL for GitLab
     const configGitLab = {
       headers: {
@@ -120,7 +120,7 @@ export class GitlabService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/issues/${
+        `${this.urlApi}/projects/${this.projectId}/issues/${
           gitIssueInfos.number
         }/notes`,
         dataGitLab,
@@ -131,10 +131,7 @@ export class GitlabService implements GitServiceInterface {
       );
   }
 
-  addPRComment(
-    gitApiInfos: GitApiInfos,
-    gitCommentPRInfos: GitCommentPRInfos,
-  ): void {
+  addPRComment(gitCommentPRInfos: GitCommentPRInfos): void {
     // Config URL for GitLab
     const configGitLab = {
       headers: {
@@ -150,7 +147,7 @@ export class GitlabService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests/${
+        `${this.urlApi}/projects/${this.projectId}/merge_requests/${
           gitCommentPRInfos.number
         }/notes`,
         dataGitLab,
@@ -159,10 +156,7 @@ export class GitlabService implements GitServiceInterface {
       .subscribe(null, err => logger.error(err, { location: 'addPRComment' }));
   }
 
-  createPullRequest(
-    gitApiInfos: GitApiInfos,
-    gitCreatePRInfos: GitPRInfos,
-  ): void {
+  createPullRequest(gitCreatePRInfos: GitPRInfos): void {
     // Config URL for GitLab
     const configGitLab = {
       headers: {
@@ -181,7 +175,7 @@ export class GitlabService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests`,
+        `${this.urlApi}/projects/${this.projectId}/merge_requests`,
         dataGitLab,
         configGitLab,
       )
@@ -190,7 +184,7 @@ export class GitlabService implements GitServiceInterface {
       );
   }
 
-  deleteBranch(gitApiInfos: GitApiInfos, branchName: string) {
+  deleteBranch(branchName: string) {
     // Config URL for GitLab
     const configGitLab = {
       headers: {
@@ -200,14 +194,14 @@ export class GitlabService implements GitServiceInterface {
     this.httpService
       .delete(
         `${this.urlApi}/projects/${
-          gitApiInfos.projectId
+          this.projectId
         }/repository/branches/${encodeURIComponent(branchName)}`,
         configGitLab,
       )
       .subscribe(null, err => logger.error(err, { location: 'deleteBranch' }));
   }
 
-  updateIssue(gitApiInfos: GitApiInfos, gitIssueInfos: GitIssueInfos): void {
+  updateIssue(gitIssueInfos: GitIssueInfos): void {
     // Config URL for GitLab
     const configGitLab = {
       headers: {
@@ -230,7 +224,7 @@ export class GitlabService implements GitServiceInterface {
     const dataGitLab = {};
     this.httpService
       .put(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/issues/${
+        `${this.urlApi}/projects/${this.projectId}/issues/${
           gitIssueInfos.number
         }`,
         dataGitLab,
@@ -239,10 +233,7 @@ export class GitlabService implements GitServiceInterface {
       .subscribe(null, err => logger.error(err, { location: 'updateIssue' }));
   }
 
-  async createIssue(
-    gitApiInfos: GitApiInfos,
-    gitIssueInfos: GitIssueInfos,
-  ): Promise<number> {
+  async createIssue(gitIssueInfos: GitIssueInfos): Promise<number> {
     // Config URL for GitLab
     const configGitLab = {
       headers: {
@@ -269,7 +260,7 @@ export class GitlabService implements GitServiceInterface {
 
     return await this.httpService
       .post(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/issues`,
+        `${this.urlApi}/projects/${this.projectId}/issues`,
         dataGitLab,
         configGitLab,
       )
@@ -278,10 +269,7 @@ export class GitlabService implements GitServiceInterface {
       .catch(err => logger.error(err, { location: 'createIssue' }));
   }
 
-  deleteFile(
-    gitApiInfos: GitApiInfos,
-    gitFileInfos: GitFileInfos,
-  ): Promise<void> {
+  deleteFile(gitFileInfos: GitFileInfos): Promise<void> {
     return new Promise((resolve, reject) => {
       // Config URL for GitLab
       const configGitLab = {
@@ -296,7 +284,7 @@ export class GitlabService implements GitServiceInterface {
       this.httpService
         .delete(
           `${this.urlApi}/projects/${
-            gitApiInfos.projectId
+            this.projectId
           }/repository/files/${encodeURIComponent(gitFileInfos.filePath)}`,
           configGitLab,
         )
@@ -310,10 +298,7 @@ export class GitlabService implements GitServiceInterface {
     });
   }
 
-  mergePullRequest(
-    gitApiInfos: GitApiInfos,
-    gitMergePRInfos: GitMergePRInfos,
-  ): void {
+  mergePullRequest(gitMergePRInfos: GitMergePRInfos): void {
     // Config URL for GitLab
     const configGitLab: any = {
       headers: {
@@ -337,7 +322,7 @@ export class GitlabService implements GitServiceInterface {
 
     this.httpService
       .put(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests/${
+        `${this.urlApi}/projects/${this.projectId}/merge_requests/${
           gitMergePRInfos.number
         }/merge`,
         {},
@@ -348,7 +333,7 @@ export class GitlabService implements GitServiceInterface {
       );
   }
 
-  updatePullRequest(gitApiInfos: GitApiInfos, gitPRInfos: GitPRInfos): void {
+  updatePullRequest(gitPRInfos: GitPRInfos): void {
     // Config URL for GitLab
     const configGitLab: any = {
       headers: {
@@ -377,7 +362,7 @@ export class GitlabService implements GitServiceInterface {
     const dataGitLab = {};
     this.httpService
       .put(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests/${
+        `${this.urlApi}/projects/${this.projectId}/merge_requests/${
           gitPRInfos.number
         }`,
         dataGitLab,
@@ -388,7 +373,7 @@ export class GitlabService implements GitServiceInterface {
       );
   }
 
-  createWebhook(gitApiInfos: GitApiInfos, webhookURL: string): void {
+  createWebhook(webhookURL: string): void {
     // Data for GitLab
     const dataGitLab = {};
     const configGitLab: any = {
@@ -413,7 +398,7 @@ export class GitlabService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/hooks`,
+        `${this.urlApi}/projects/${this.projectId}/hooks`,
         dataGitLab,
         configGitLab,
       )
@@ -421,7 +406,6 @@ export class GitlabService implements GitServiceInterface {
   }
 
   async getIssues(
-    gitApiInfos: GitApiInfos,
     gitIssueSearch: GitIssuePRSearch,
   ): Promise<IssueSearchResult[]> {
     const configGitLab: any = {
@@ -441,10 +425,7 @@ export class GitlabService implements GitServiceInterface {
     }
 
     return await this.httpService
-      .get(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/issues`,
-        configGitLab,
-      )
+      .get(`${this.urlApi}/projects/${this.projectId}/issues`, configGitLab)
       .toPromise()
       .then(res => {
         return res.data.map(d => {
@@ -458,7 +439,6 @@ export class GitlabService implements GitServiceInterface {
   }
 
   async getPullRequests(
-    gitApiInfos: GitApiInfos,
     gitIssueSearch: GitIssuePRSearch,
   ): Promise<PRSearchResult[]> {
     const configGitLab: any = {
@@ -479,7 +459,7 @@ export class GitlabService implements GitServiceInterface {
 
     return await this.httpService
       .get(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/merge_requests`,
+        `${this.urlApi}/projects/${this.projectId}/merge_requests`,
         configGitLab,
       )
       .toPromise()
@@ -494,7 +474,7 @@ export class GitlabService implements GitServiceInterface {
       .catch(err => logger.error(err, { location: 'getPullRequests' }));
   }
 
-  createRelease(gitApiInfos: GitApiInfos, gitRelease: GitRelease): void {
+  createRelease(gitRelease: GitRelease): void {
     const configGitLab: any = {
       headers: {
         'PRIVATE-TOKEN': this.token,
@@ -515,14 +495,14 @@ export class GitlabService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/releases`,
+        `${this.urlApi}/projects/${this.projectId}/releases`,
         {},
         configGitLab,
       )
       .subscribe(null, err => logger.error(err, { location: 'createRelease' }));
   }
 
-  createTag(gitApiInfos: GitApiInfos, gitTag: GitTag): void {
+  createTag(gitTag: GitTag): void {
     const configGitLab: any = {
       headers: {
         'PRIVATE-TOKEN': this.token,
@@ -536,17 +516,14 @@ export class GitlabService implements GitServiceInterface {
 
     this.httpService
       .post(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/repository/tags`,
+        `${this.urlApi}/projects/${this.projectId}/repository/tags`,
         {},
         configGitLab,
       )
       .subscribe(null, err => logger.error(err, { location: 'createTag' }));
   }
 
-  async getLastCommit(
-    gitApiInfos: GitApiInfos,
-    branch: string = 'master',
-  ): Promise<string> {
+  async getLastCommit(branch: string = 'master'): Promise<string> {
     const configGitLab: any = {
       headers: {
         'PRIVATE-TOKEN': this.token,
@@ -556,7 +533,7 @@ export class GitlabService implements GitServiceInterface {
     return this.httpService
       .get(
         `${this.urlApi}/projects/${
-          gitApiInfos.projectId
+          this.projectId
         }/repository/branches/${branch}`,
         configGitLab,
       )
@@ -565,9 +542,7 @@ export class GitlabService implements GitServiceInterface {
       .catch(err => logger.error(err, { location: 'getLastCommit' }));
   }
 
-  async getLastBranchesCommitSha(
-    gitApiInfos: GitApiInfos,
-  ): Promise<GitBranchCommit[]> {
+  async getLastBranchesCommitSha(): Promise<GitBranchCommit[]> {
     const configGitLab: any = {
       headers: {
         'PRIVATE-TOKEN': this.token,
@@ -576,7 +551,7 @@ export class GitlabService implements GitServiceInterface {
     };
     return await this.httpService
       .get(
-        `${this.urlApi}/projects/${gitApiInfos.projectId}/repository/branches`,
+        `${this.urlApi}/projects/${this.projectId}/repository/branches`,
         configGitLab,
       )
       .toPromise()
@@ -588,6 +563,32 @@ export class GitlabService implements GitServiceInterface {
       .catch(err => {
         logger.error(err, { location: 'getLastBranchesCommitSha' });
         return [];
+      });
+  }
+
+  async getFileContent(gitFileInfos: GitFileInfos): Promise<GitFileData> {
+    const configGitLab: any = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: { ref: gitFileInfos.fileBranch },
+    };
+
+    return await this.httpService
+      .get(
+        `${this.urlApi}/projects/${this.projectId}/repository/files/${
+          gitFileInfos.filePath
+        }/raw`,
+        configGitLab,
+      )
+      .toPromise()
+      .then(response => response.data)
+      .catch(err => {
+        throw new Error(
+          `${err}: ${gitFileInfos.filePath} do not exist on branch ${
+            gitFileInfos.fileBranch
+          }`,
+        );
       });
   }
 }

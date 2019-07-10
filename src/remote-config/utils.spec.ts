@@ -76,16 +76,21 @@ describe('remote-config', () => {
           },
         });
       });
+      githubService.getFileContent = jest
+        .fn()
+        .mockResolvedValue({ data: 'somedata' });
+      githubService.setEnvironmentVariables = jest
+        .fn()
+        .mockImplementation((...args) => {
+          return Promise.resolve();
+        });
       const result: string = await RemoteConfigUtils.downloadRulesFile(
         dataAccessService,
         httpService,
+        githubService,
+        gitlabService,
         'https://github.com/DX-DeveloperExperience/hygie',
         Constants.rulesExtension,
-      );
-      expect(httpService.get).toBeCalledWith(
-        `https://raw.githubusercontent.com/DX-DeveloperExperience/hygie/master/.hygie/${
-          Constants.rulesExtension
-        }`,
       );
       expect(result).toBe('remote-rules/DX-DeveloperExperience/hygie/.hygie');
     });
@@ -99,16 +104,22 @@ describe('remote-config', () => {
           },
         });
       });
+
+      gitlabService.getFileContent = jest
+        .fn()
+        .mockResolvedValue({ data: 'somedata' });
+      gitlabService.setEnvironmentVariables = jest
+        .fn()
+        .mockImplementation((...args) => {
+          return Promise.resolve();
+        });
       const result: string = await RemoteConfigUtils.downloadRulesFile(
         dataAccessService,
         httpService,
+        githubService,
+        gitlabService,
         'https://gitlab.com/gitlab-org/gitlab-ce',
         Constants.rulesExtension,
-      );
-      expect(httpService.get).toBeCalledWith(
-        `https://gitlab.com/gitlab-org/gitlab-ce/raw/master/.hygie/${
-          Constants.rulesExtension
-        }`,
       );
       expect(result).toBe('remote-rules/gitlab-org/gitlab-ce/.hygie');
     });
@@ -136,7 +147,11 @@ describe('remote-config', () => {
 
       expect(dataAccessService.writeEnv).toHaveBeenCalledWith(
         'remote-envs/DX-DeveloperExperience/hygie/config.env',
-        { gitApi: 'https://gitapi.com', gitToken: 'azertyuiop' },
+        {
+          gitApi: 'https://gitapi.com',
+          gitToken: 'azertyuiop',
+          git: GitTypeEnum.Github,
+        },
       );
     });
   });

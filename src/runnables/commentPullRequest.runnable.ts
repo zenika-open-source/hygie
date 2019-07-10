@@ -10,6 +10,7 @@ import { RunnableDecorator } from './runnable.decorator';
 import { render } from 'mustache';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface CommentPRArgs {
   comment: string;
@@ -26,6 +27,7 @@ export class CommentPullRequestRunnable extends Runnable {
     private readonly gitlabService: GitlabService,
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -35,6 +37,8 @@ export class CommentPullRequestRunnable extends Runnable {
     args: CommentPRArgs,
   ): Promise<void> {
     const data = ruleResult.data as any;
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     const gitPRInfos: GitCommentPRInfos = new GitCommentPRInfos();
     gitPRInfos.number = data.pullRequest.number;
     gitPRInfos.comment = render(args.comment, ruleResult);
@@ -45,9 +49,9 @@ export class CommentPullRequestRunnable extends Runnable {
       .send();
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
-      this.githubService.addPRComment(gitApiInfos, gitPRInfos);
+      this.githubService.addPRComment(gitPRInfos);
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-      this.gitlabService.addPRComment(gitApiInfos, gitPRInfos);
+      this.gitlabService.addPRComment(gitPRInfos);
     }
   }
 }

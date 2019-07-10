@@ -20,7 +20,7 @@ describe('/webhook (POST) - Not in WhiteList', () => {
     await app.init();
   });
 
-  it('shoud return UNAUTHORIZED', () => {
+  it('should return UNAUTHORIZED', () => {
     return request(app.getHttpServer())
       .post('/webhook')
       .expect(HttpStatus.UNAUTHORIZED);

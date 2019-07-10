@@ -12,6 +12,7 @@ import { Utils } from '../utils/utils';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { logger } from '../logger/logger.service';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface CreateIssueArgs {
   title: string;
@@ -30,6 +31,7 @@ export class CreateIssueRunnable extends Runnable {
     private readonly gitlabService: GitlabService,
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
+    private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
@@ -38,6 +40,8 @@ export class CreateIssueRunnable extends Runnable {
     ruleResult: RuleResult,
     args: CreateIssueArgs,
   ): Promise<void> {
+    ruleResult.env = this.envVarAccessor.getAllEnvVar();
+
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     gitIssueInfos.title = render(args.title, ruleResult);
@@ -63,11 +67,11 @@ export class CreateIssueRunnable extends Runnable {
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
       this.githubService
-        .createIssue(gitApiInfos, gitIssueInfos)
+        .createIssue(gitIssueInfos)
         .catch(err => logger.error(err));
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
       this.gitlabService
-        .createIssue(gitApiInfos, gitIssueInfos)
+        .createIssue(gitIssueInfos)
         .catch(err => logger.error(err));
     }
   }

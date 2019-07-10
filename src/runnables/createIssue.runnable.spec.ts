@@ -9,11 +9,10 @@ import {
   MockGitlabService,
   MockGithubService,
   MockAnalytics,
-  MockHttpService,
 } from '../__mocks__/mocks';
 import { CreateIssueRunnable } from './createIssue.runnable';
 import { logger } from '../logger/logger.service';
-import { HttpService } from '@nestjs/common';
+import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 describe('CreateIssueRunnable', () => {
   let app: TestingModule;
@@ -33,6 +32,7 @@ describe('CreateIssueRunnable', () => {
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
         { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+        EnvVarAccessor,
       ],
     }).compile();
 
@@ -101,14 +101,11 @@ describe('CreateIssueRunnable', () => {
         .run(CallbackType.Both, ruleResultCommitMessage, args)
         .catch(err => logger.error(err));
 
-      expect(githubService.createIssue).toBeCalledWith(
-        { git: 'Github', repositoryFullName: 'bastienterrier/test_webhook' },
-        {
-          description: 'test_webhook as a new commit which failed, find why.',
-          labels: ['bug', 'urgent'],
-          title: 'new issue',
-        },
-      );
+      expect(githubService.createIssue).toBeCalledWith({
+        description: 'test_webhook as a new commit which failed, find why.',
+        labels: ['bug', 'urgent'],
+        title: 'new issue',
+      });
       expect(gitlabService.createIssue).not.toBeCalled();
     });
   });
@@ -120,14 +117,11 @@ describe('CreateIssueRunnable', () => {
         .catch(err => logger.error(err));
 
       expect(githubService.createIssue).not.toBeCalled();
-      expect(gitlabService.createIssue).toBeCalledWith(
-        { git: 'Gitlab', repositoryFullName: 'bastienterrier/test_webhook' },
-        {
-          description: 'test_webhook as a new commit which failed, find why.',
-          labels: ['bug', 'urgent'],
-          title: 'new issue',
-        },
-      );
+      expect(gitlabService.createIssue).toBeCalledWith({
+        description: 'test_webhook as a new commit which failed, find why.',
+        labels: ['bug', 'urgent'],
+        title: 'new issue',
+      });
     });
   });
 });
