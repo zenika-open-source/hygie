@@ -122,7 +122,7 @@ export class RegisterController {
   @Post('/config-env')
   async postConfigEnv(@Body() body: any, @Res() response): Promise<void> {
     // Encrypt Token before any storage
-    const cipherAccessToken = Utils.encryptToken(body.gitToken).toString();
+    const cipherAccessToken = Utils.encryptValue(body.gitToken);
     const configEnv = {
       gitApi: body.gitApi,
       gitToken: cipherAccessToken,

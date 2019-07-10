@@ -783,7 +783,7 @@ describe('Github Service', () => {
       process.env.ENCRYPTION_KEY = 'somekey';
       dataAccessService.readEnv = jest.fn().mockReturnValue({
         gitApi: 'https://mygithubapi.com',
-        gitToken: Utils.encryptToken('githubToken'),
+        gitToken: Utils.encryptValue('githubToken'),
       });
 
       githubService.setToken = jest.fn().mockName('setTokenGithub');

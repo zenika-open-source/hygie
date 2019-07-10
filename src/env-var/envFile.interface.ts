@@ -1,5 +1,5 @@
 export interface KeyValueEnvFileInterface {
-  [key: string]: string | boolean | number;
+  [key: string]: string;
 }
 
 export interface ProjectEnvFileInterface {

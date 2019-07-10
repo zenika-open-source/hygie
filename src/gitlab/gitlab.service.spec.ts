@@ -582,7 +582,7 @@ describe('Gitlab Service', () => {
       process.env.ENCRYPTION_KEY = 'somekey';
       dataAccessService.readEnv = jest.fn().mockReturnValue({
         gitApi: 'https://mygitlabapi.com',
-        gitToken: Utils.encryptToken('gitlabToken'),
+        gitToken: Utils.encryptValue('gitlabToken'),
         gitlabId: '1',
       });
 

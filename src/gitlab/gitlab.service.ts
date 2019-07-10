@@ -66,7 +66,7 @@ export class GitlabService implements GitServiceInterface {
         throw new PreconditionException();
       });
 
-    this.setToken(Utils.decryptToken(gitEnv.gitToken));
+    this.setToken(Utils.decryptValue(gitEnv.gitToken));
     this.setUrlApi(gitEnv.gitApi);
     this.setProjectId(gitEnv.gitlabId);
   }

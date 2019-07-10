@@ -162,7 +162,7 @@ export class Utils {
     };
   }
 
-  static decryptToken(str: string): string {
+  static decryptValue(str: string): string {
     const CryptoJS = require('crypto-js');
     try {
       return CryptoJS.AES.decrypt(str, process.env.ENCRYPTION_KEY).toString(
@@ -174,8 +174,8 @@ export class Utils {
     }
   }
 
-  static encryptToken(str: string): string {
+  static encryptValue(str: string): string {
     const CryptoJS = require('crypto-js');
-    return CryptoJS.AES.encrypt(str, process.env.ENCRYPTION_KEY);
+    return CryptoJS.AES.encrypt(str, process.env.ENCRYPTION_KEY).toString();
   }
 }
