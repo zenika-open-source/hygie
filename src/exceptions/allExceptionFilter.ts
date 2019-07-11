@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { Utils } from '../utils/utils';
 
 /**
  * Handle all ExceptionFilter
@@ -21,7 +22,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
     if (status === HttpStatus.NOT_FOUND) {
-      return response.status(status).render('404.hbs', { path: request.url });
+      return response
+        .status(status)
+        .send(Utils.renderHbs('404', { path: request.url }));
     }
 
     return response.status(status).json({
