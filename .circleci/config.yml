@@ -66,6 +66,4 @@ workflows:
           requires: [build]
           filters:
             branches:
-              only: 
-                - master
-                - develop
+              only: master
