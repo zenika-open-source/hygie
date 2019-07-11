@@ -1,4 +1,4 @@
-import { Controller, Get, Res, Header } from '@nestjs/common';
+import { Controller, Get, Res, Header, HttpStatus } from '@nestjs/common';
 import { PrometheusService } from '../logger/prometheus.service';
 import { logger } from '../logger/logger.service';
 import { join } from 'path';
@@ -9,9 +9,8 @@ export class ApplicationController {
   constructor(private readonly prometheus: PrometheusService) {}
 
   @Get('/')
-  @Header('Content-Type', 'text/html')
   async welcome(@Res() response): Promise<string> {
-    return response.send(Utils.renderHbs('homepage'));
+    return response.status(HttpStatus.OK).send(Utils.renderHbs('homepage'));
   }
 
   @Get('/metrics')
