@@ -1,6 +1,6 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-import { render } from 'mustache';
+
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { GithubService } from '../github/github.service';
@@ -75,7 +75,7 @@ export class DeleteFilesRunnable extends Runnable {
       const file: string = filesList[index];
       const gitFileInfos = new GitFileInfos();
       if (typeof args !== 'undefined' && typeof args.branch !== 'undefined') {
-        gitFileInfos.fileBranch = render(args.branch, ruleResult);
+        gitFileInfos.fileBranch = Utils.render(args.branch, ruleResult);
       } else {
         // Default
         if (typeof (ruleResult as any).data.branch !== 'undefined') {
@@ -84,8 +84,8 @@ export class DeleteFilesRunnable extends Runnable {
           gitFileInfos.fileBranch = 'master';
         }
       }
-      gitFileInfos.commitMessage = render(args.message, ruleResult);
-      gitFileInfos.filePath = render(file, ruleResult);
+      gitFileInfos.commitMessage = Utils.render(args.message, ruleResult);
+      gitFileInfos.filePath = Utils.render(file, ruleResult);
 
       if (gitApiInfos.git === GitTypeEnum.Github) {
         await this.githubService.deleteFile(gitFileInfos);

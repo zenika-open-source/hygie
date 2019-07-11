@@ -1,6 +1,6 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-import { render } from 'mustache';
+
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { GitApiInfos } from '../git/gitApiInfos';
@@ -11,6 +11,7 @@ import { GitRelease } from '../git/gitRelease';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Utils } from '../utils/utils';
 
 interface CreateReleaseArgs {
   name: string;
@@ -51,16 +52,16 @@ export class CreateReleaseRunnable extends Runnable {
     if (typeof args.tag === 'undefined') {
       return;
     }
-    gitRelease.tag = render(args.tag, ruleResult);
+    gitRelease.tag = Utils.render(args.tag, ruleResult);
 
     if (typeof args.name !== 'undefined') {
-      gitRelease.name = render(args.name, ruleResult);
+      gitRelease.name = Utils.render(args.name, ruleResult);
     }
     if (typeof args.description !== 'undefined') {
-      gitRelease.description = render(args.description, ruleResult);
+      gitRelease.description = Utils.render(args.description, ruleResult);
     }
     if (typeof args.ref !== 'undefined') {
-      gitRelease.ref = render(args.ref, ruleResult);
+      gitRelease.ref = Utils.render(args.ref, ruleResult);
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {

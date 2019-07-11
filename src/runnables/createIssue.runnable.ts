@@ -1,6 +1,6 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-import { render } from 'mustache';
+
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { GithubService } from '../github/github.service';
@@ -44,14 +44,14 @@ export class CreateIssueRunnable extends Runnable {
 
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
-    gitIssueInfos.title = render(args.title, ruleResult);
+    gitIssueInfos.title = Utils.render(args.title, ruleResult);
 
     this.googleAnalytics
       .event('Runnable', 'createIssue', ruleResult.projectURL)
       .send();
 
     if (typeof args.description !== 'undefined') {
-      gitIssueInfos.description = render(args.description, ruleResult);
+      gitIssueInfos.description = Utils.render(args.description, ruleResult);
     }
 
     if (typeof args.labels !== 'undefined') {

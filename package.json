@@ -52,7 +52,6 @@
     "googleapis": "27.0.0",
     "hbs": "4.0.4",
     "js-yaml": "3.13.1",
-    "mustache": "3.0.1",
     "prom-client": "11.5.3",
     "reflect-metadata": "0.1.13",
     "rimraf": "2.6.3",

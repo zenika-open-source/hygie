@@ -44,39 +44,36 @@ The following properties are all needed :
 These `callback`s are called sequentially and do not return value (`void` type).
 :::
 
-### Templating with _mustache_
+### Templating with _handlebars_
 
-Post-actions `args` support templating: **_Hygie_** use [mustache js](https://github.com/janl/mustache.js).
+Post-actions `args` support templating: **_Hygie_** use [handlebars js](https://handlebarsjs.com).
 
 Consequently, you can inject data processed by the `validate()` method of the current rule (`name` attribute). You can see the [`validate()` method section](#validate-method) for more informations.
 
 For example, you can iterate over the `data.commits` array of `CommitMessageRule`, and display the commit's `sha` and the differents groups captured by the `regexp` options.
 
-```
-'{{#data.commits}}{{sha}} =
-Object: {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}}
-{{/data.commits}}'
-```
-
 You can also access the environment variables you've configured via the `env` prefix. More informations in the [Enviroment Variable section](./guide/useEnvVar.md).
 
-For examples:
-
+```yaml
+onSuccess:
+  - callback: WebhookRunnable
+    args:
+      url: https://discordapp.com/api/webhooks/{{env.DISCORD_ISSUE_WEBHOOK}}/{{env.DISCORD_ISSUE_TOKEN}}
+      data: '{
+        "embeds": [
+          {{#foreach data.commits}}
+          {
+            "title": "Commit #{{sha}} = Object: {{matches.[1]}} | Scope: {{matches.[2]}} | Issue: {{matches.[3]}}",
+            "color": 1127128
+          }
+          {{/foreach}}
+        ]
+      }'
 ```
-callback: WebhookRunnable
-args:
-  url: 'https://webhook.site/0123-4567-89ab-cdef'
-  config: {
-    token: '{{env.API_KEY}}'
-  }
-  data: {
-    user: 'cron bot',
-    number: '{{data.number}}',
-    vulnerabilities: '{{{data.vulnerabilities}}}'
-  }
-```
 
-For more examples, check out the [documentation](https://github.com/janl/mustache.js#templates) provide by mustache.
+::: tip
+The `foreach` keyword has been add to solve the trailing-comma's problem. When you use it, it will add a comma at the end of the pattern, except for the last one element of the array.
+:::
 
 ## Create your own rule
 
@@ -103,23 +100,27 @@ Each Rule, have a `validate()` method as follows:
 export class MyCustomRule extends Rule {
   // ...
 
-  validate(webhook: Webhook, ruleConfig: PullRequestTitleRule): RuleResult {
-    const ruleResult: RuleResult = new RuleResult(webhook.getGitApiInfos());
+  async validate(
+    webhook: Webhook,
+    ruleConfig: MyCustomRule,
+    ruleResults?: RuleResult[],
+  ): Promise<RuleResult> {
+    const ruleResult: RuleResult = new RuleResult(
+      webhook.getGitApiInfos(),
+      webhook.getCloneURL(),
+    );
+    this.googleAnalytics
+      .event('Rule', 'myCustom', webhook.getCloneURL())
+      .send();
 
-    /**
-     * Your process
-     *
-     * You can call gitApi via `this.webhook.gitService`
-     **/
+    // BUSINESS LOGIC
 
-    // Optional
-    // If you want to export data for callbacks, accessible with {{data}}
+    ruleResult.validated = true | false;
     ruleResult.data = {
       myData: 'this is some data',
       myArray: ['val1', 'val2', 'val3'],
     };
-    ruleResult.validated = true | false;
-    return ruleResult;
+    return Promise.resolve(ruleResult);
   }
 }
 ```

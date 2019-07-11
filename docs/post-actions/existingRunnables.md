@@ -16,7 +16,7 @@ Be sure that the rule returned the `issueNumber` property in the `RuleResult` ob
 
 ### Usage
 
-This Post-Action only needs a string message. This string can contain _mustache_ templating.
+This Post-Action only needs a string message. This string can contain _handlebars_ templating.
 
 To use the `CommentIssueRunnable`, add the `callback` on your `.rulesrc` config file.
 
@@ -40,7 +40,7 @@ Be sure that the rule returned the `pullRequest.number` property in the `RuleRes
 
 ### Usage
 
-This Post-Action only needs a string message. This string can contain _mustache_ templating.
+This Post-Action only needs a string message. This string can contain _handlebars_ templating.
 
 To use the `CommentPullRequestRunnable`, add the `callback` on your `.rulesrc` config file.
 
@@ -188,7 +188,7 @@ This Post-Action need two args:
   ::: tip
   If you're in an `onSuccess` or `onBoth` statement, the default value will be `info`. On the other hand, if you're in an `onError` statement, it would be `error`.
   :::
-- `message`: a string that can contain _mustache_ templating.
+- `message`: a string that can contain _handlebars_ templating.
 
 To use the `LoggerRunnable`, simply add the `callback` on your `.rulesrc` config file.
 
@@ -389,7 +389,7 @@ This Post-Action need the following args:
 - `data`: the data you want to send (`any` type) _[optional]_,
 - `config`: the `AxiosRequestConfig` configuration _[optional]_.
 
-All of these parameters can contain _mustache_ templating.
+All of these parameters can contain _handlebars_ templating.
 
 To use the `WebhookRunnable`, simply add the `callback` on your `.rulesrc` config file.
 

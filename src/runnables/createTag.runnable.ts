@@ -1,9 +1,10 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-import { render } from 'mustache';
+
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { Utils } from '../rules/utils';
+import { Utils as UtilsGeneral } from '../utils/utils';
 import { logger } from '../logger/logger.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
@@ -58,7 +59,7 @@ export class CreateTagRunnable extends Runnable {
 
     const lastSha = lastItem.sha;
 
-    const tag = render(args.tag, ruleResult);
+    const tag = UtilsGeneral.render(args.tag, ruleResult);
 
     const semVerRegexp = new RegExp(
       // tslint:disable-next-line:max-line-length
@@ -74,7 +75,7 @@ export class CreateTagRunnable extends Runnable {
 
     const gitTag = new GitTag();
     if (typeof args.message !== 'undefined') {
-      gitTag.message = render(args.message, ruleResult);
+      gitTag.message = UtilsGeneral.render(args.message, ruleResult);
     } else {
       gitTag.message = 'version ' + tag;
     }

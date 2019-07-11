@@ -50,9 +50,9 @@ constructor(private readonly myService: MyService)
 
 NestJs dependency injection will handle everything.
 
-### _mustache_ templating
+### _handlebars_ templating
 
-If you want to allow templating (you want to!), you need to use the `render()` method provide by _mustache_.
+If you want to allow templating (you want to!), you need to use the `render()` method provide by our _Utils_ class.
 
 Just have a look at the `LoggerRunnable` implementation:
 
@@ -69,4 +69,4 @@ run(ruleResult: RuleResult, args: LoggerArgs): void {
 }
 ```
 
-The `render()` method need the string containing the template (in the `args` object), and the data provider: `RuleResult` which is the return by the [`validate()` rule method](../rules/customisableRules.html#validate-method).
+The `render()` method need the string containing the template (in the `args` object), and the data provider: `RuleResult` which is the return by the [`validate()` rule method](../rules/customisableRules.md#validate-method).

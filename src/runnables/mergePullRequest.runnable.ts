@@ -1,6 +1,6 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-import { render } from 'mustache';
+
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { GithubService } from '../github/github.service';
@@ -11,6 +11,7 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Utils } from '../utils/utils';
 
 interface MergePullRequestArgs {
   commitTitle: string;
@@ -54,16 +55,22 @@ export class MergePullRequestRunnable extends Runnable {
 
     if (typeof args !== 'undefined') {
       if (typeof args.commitMessage !== 'undefined') {
-        gitMergePRInfos.commitMessage = render(args.commitMessage, ruleResult);
+        gitMergePRInfos.commitMessage = Utils.render(
+          args.commitMessage,
+          ruleResult,
+        );
       }
       if (typeof args.commitTitle !== 'undefined') {
-        gitMergePRInfos.commitTitle = render(args.commitTitle, ruleResult);
+        gitMergePRInfos.commitTitle = Utils.render(
+          args.commitTitle,
+          ruleResult,
+        );
       }
       if (typeof args.sha !== 'undefined') {
-        gitMergePRInfos.sha = render(args.sha, ruleResult);
+        gitMergePRInfos.sha = Utils.render(args.sha, ruleResult);
       }
       if (typeof args.method !== 'undefined') {
-        switch (render(args.method.toLocaleLowerCase(), ruleResult)) {
+        switch (Utils.render(args.method.toLocaleLowerCase(), ruleResult)) {
           case 'squash':
             gitMergePRInfos.method = PRMethodsEnum.Squash;
             break;

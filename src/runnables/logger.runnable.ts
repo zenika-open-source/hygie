@@ -1,12 +1,13 @@
 import { Runnable } from './runnable.class';
 import { logger } from '../logger/logger.service';
 import { RuleResult } from '../rules/ruleResult';
-import { render } from 'mustache';
+
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Utils } from '../utils/utils';
 
 interface LoggerArgs {
   type: string;
@@ -49,13 +50,13 @@ export class LoggerRunnable extends Runnable {
 
     switch (args.type) {
       case 'info':
-        logger.info(render(args.message, ruleResult));
+        logger.info(Utils.render(args.message, ruleResult));
         break;
       case 'warn':
-        logger.warn(render(args.message, ruleResult));
+        logger.warn(Utils.render(args.message, ruleResult));
         break;
       case 'error':
-        logger.error(render(args.message, ruleResult));
+        logger.error(Utils.render(args.message, ruleResult));
         break;
     }
   }

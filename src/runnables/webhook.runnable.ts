@@ -1,7 +1,7 @@
 import { Runnable } from './runnable.class';
 import { HttpService, Inject } from '@nestjs/common';
 import { RuleResult } from '../rules/ruleResult';
-import { render } from 'mustache';
+
 import { CallbackType } from './runnables.service';
 import { logger } from '../logger/logger.service';
 import { RunnableDecorator } from './runnable.decorator';
@@ -11,8 +11,8 @@ import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface WebhookArgs {
   url: string;
-  data: object;
-  config: object;
+  data: object | string;
+  config: object | string;
 }
 
 /**
@@ -40,16 +40,33 @@ export class WebhookRunnable extends Runnable {
       .event('Runnable', 'webhook', ruleResult.projectURL)
       .send();
 
-    this.httpService
-      .post(
-        render(args.url, ruleResult),
-        render(JSON.stringify(args.data), ruleResult),
-        render(JSON.stringify(Utils.getObjectValue(args.config)), ruleResult),
-      )
-      .subscribe(null, err =>
-        logger.error(err, {
-          location: 'WebhookRunnable',
-        }),
-      );
+    const url: string = Utils.render(args.url, ruleResult);
+    let config: any = {};
+    let data: string;
+
+    try {
+      if (typeof args.data === 'string') {
+        data = Utils.render(args.data, ruleResult);
+      } else {
+        data = Utils.render(JSON.stringify(args.data), ruleResult);
+      }
+      if (typeof args.config === 'string') {
+        config = JSON.parse(Utils.render(args.config, ruleResult));
+      } else if (typeof args.config !== 'undefined') {
+        config = JSON.parse(
+          Utils.render(JSON.stringify(args.config), ruleResult),
+        );
+      }
+    } catch (err) {
+      logger.error(err, {
+        location: 'WebhookRunnable',
+      });
+    }
+
+    this.httpService.post(url, data, config).subscribe(null, err =>
+      logger.error(err, {
+        location: 'WebhookRunnable',
+      }),
+    );
   }
 }

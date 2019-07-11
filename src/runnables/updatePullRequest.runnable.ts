@@ -8,10 +8,11 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitPRInfos } from '../git/gitPRInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { IssuePRStateEnum } from '../git/gitIssueInfos';
-import { render } from 'mustache';
+
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Utils } from '../utils/utils';
 
 interface UpdatePullRequestArgs {
   target: string;
@@ -64,20 +65,20 @@ export class UpdatePullRequestRunnable extends Runnable {
 
       if (typeof args.state !== 'undefined') {
         gitPRInfos.state =
-          render(args.state, ruleResult).toLowerCase() === 'open'
+          Utils.render(args.state, ruleResult).toLowerCase() === 'open'
             ? IssuePRStateEnum.Open
-            : render(args.state, ruleResult).toLowerCase() === 'close'
+            : Utils.render(args.state, ruleResult).toLowerCase() === 'close'
             ? IssuePRStateEnum.Close
             : IssuePRStateEnum.Undefined;
       }
       if (typeof args.title !== 'undefined') {
-        gitPRInfos.title = render(args.title, ruleResult);
+        gitPRInfos.title = Utils.render(args.title, ruleResult);
       }
       if (typeof args.target !== 'undefined') {
-        gitPRInfos.target = render(args.target, ruleResult);
+        gitPRInfos.target = Utils.render(args.target, ruleResult);
       }
       if (typeof args.description !== 'undefined') {
-        gitPRInfos.description = render(args.description, ruleResult);
+        gitPRInfos.description = Utils.render(args.description, ruleResult);
       }
 
       if (gitApiInfos.git === GitTypeEnum.Github) {

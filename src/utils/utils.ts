@@ -2,8 +2,12 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import 'array-flat-polyfill';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitEnv } from '../git/gitEnv.interface';
-import { render } from 'mustache';
 import { logger } from '../logger/logger.service';
+
+import * as Handlebars from 'handlebars';
+Handlebars.registerHelper('foreach', (items, options) => {
+  return items.map(item => options.fn(item)).join(',');
+});
 
 interface SplittedDirectory {
   base: string;
@@ -11,6 +15,11 @@ interface SplittedDirectory {
 }
 
 export class Utils {
+  static render(template, ctx) {
+    const handlebarsTemplate = Handlebars.compile(template);
+    return handlebarsTemplate(ctx);
+  }
+
   /**
    *
    * @param input string x-separated or string[]

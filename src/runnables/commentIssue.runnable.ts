@@ -7,10 +7,11 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { RunnableDecorator } from './runnable.decorator';
-import { render } from 'mustache';
+
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Utils } from '../utils/utils';
 
 interface CommentIssueArgs {
   comment: string;
@@ -41,7 +42,7 @@ export class CommentIssueRunnable extends Runnable {
 
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     gitIssueInfos.number = data.issue.number;
-    gitIssueInfos.comment = render(args.comment, ruleResult);
+    gitIssueInfos.comment = Utils.render(args.comment, ruleResult);
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
     this.googleAnalytics
