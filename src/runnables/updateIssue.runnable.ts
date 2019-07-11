@@ -7,7 +7,7 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { IssuePRStateEnum, GitIssueInfos } from '../git/gitIssueInfos';
-import { render } from 'mustache';
+
 import { Utils } from '../utils/utils';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
@@ -61,9 +61,9 @@ export class UpdateIssueRunnable extends Runnable {
 
       if (typeof args.state !== 'undefined') {
         gitIssueInfos.state =
-          render(args.state, ruleResult).toLowerCase() === 'open'
+          Utils.render(args.state, ruleResult).toLowerCase() === 'open'
             ? IssuePRStateEnum.Open
-            : render(args.state, ruleResult).toLowerCase() === 'close'
+            : Utils.render(args.state, ruleResult).toLowerCase() === 'close'
             ? IssuePRStateEnum.Close
             : IssuePRStateEnum.Undefined;
       }

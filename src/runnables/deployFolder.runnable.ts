@@ -1,6 +1,6 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-import { render } from 'mustache';
+
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { GitTypeEnum } from '../webhook/utils.enum';
@@ -11,6 +11,7 @@ import { GitRef } from '../git/gitRef';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Utils } from '../utils/utils';
 
 interface DeployFolderArgs {
   folder: string;
@@ -51,11 +52,11 @@ export class DeployFolderRunnable extends Runnable {
       typeof args.folder !== 'undefined' &&
       typeof args.branch !== 'undefined'
     ) {
-      const folder = render(args.folder, ruleResult);
-      const branch = render(args.branch, ruleResult);
+      const folder = Utils.render(args.folder, ruleResult);
+      const branch = Utils.render(args.branch, ruleResult);
       const message =
         typeof args.message !== 'undefined'
-          ? render(args.message, ruleResult)
+          ? Utils.render(args.message, ruleResult)
           : `deploy ${folder} to ${branch}`;
 
       const treeSha: string = await this.githubService.getTree(

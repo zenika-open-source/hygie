@@ -1,6 +1,6 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-import { render } from 'mustache';
+
 import { readFile, writeFile } from 'fs-extra';
 import { createInterface } from 'readline';
 import { google } from 'googleapis';
@@ -10,6 +10,7 @@ import { RunnableDecorator } from './runnable.decorator';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Utils } from '../utils/utils';
 
 function makeBody(to: string, subject: string, message: string): string {
   const str = [
@@ -69,9 +70,9 @@ export class SendEmailRunnable extends Runnable {
     }
 
     const content = makeBody(
-      render(args.to, ruleResult),
-      render(args.subject, ruleResult),
-      render(args.message, ruleResult),
+      Utils.render(args.to, ruleResult),
+      Utils.render(args.subject, ruleResult),
+      Utils.render(args.message, ruleResult),
     );
     gmail.users.messages.send(
       {

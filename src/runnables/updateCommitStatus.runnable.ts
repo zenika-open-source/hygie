@@ -8,7 +8,7 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { RunnableDecorator } from './runnable.decorator';
 import { Utils } from '../utils/utils';
-import { render } from 'mustache';
+
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
@@ -54,14 +54,14 @@ export class UpdateCommitStatusRunnable extends Runnable {
       gitCommitStatusInfos.commitSha = c.sha;
       gitCommitStatusInfos.commitStatus = c.status;
 
-      gitCommitStatusInfos.descriptionMessage = render(
+      gitCommitStatusInfos.descriptionMessage = Utils.render(
         c.success
           ? Utils.getStringValue(args.successDescriptionMessage)
           : Utils.getStringValue(args.failDescriptionMessage),
         ruleResult,
       );
 
-      gitCommitStatusInfos.targetUrl = render(
+      gitCommitStatusInfos.targetUrl = Utils.render(
         c.success
           ? Utils.getStringValue(args.successTargetUrl)
           : Utils.getStringValue(args.failTargetUrl),

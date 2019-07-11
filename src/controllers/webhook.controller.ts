@@ -51,6 +51,11 @@ export class WebhookController {
     ) {
       throw new PreconditionException();
     } else {
+      logger.info(
+        `=== ${webhook.getGitType()} - ${webhook.getGitEvent()} ===`,
+        { project: webhook.getCloneURL(), location: 'processWebhook' },
+      );
+
       const defaultBranch: string = webhook.getDefaultBranchName();
       let rulesBranch: string = defaultBranch;
       if (GitEventEnum.Push === webhook.getGitEvent()) {
@@ -102,11 +107,6 @@ export class WebhookController {
 
       // Set Envs Var
       await this.envVarService.setEnvs(remoteEnvs);
-
-      logger.info(
-        `=== ${webhook.getGitType()} - ${webhook.getGitEvent()} ===`,
-        { project: webhook.getCloneURL(), location: 'processWebhook' },
-      );
 
       // Process incoming cron files
       this.scheduleService.processCronFiles(webhook);

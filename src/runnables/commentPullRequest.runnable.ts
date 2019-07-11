@@ -7,10 +7,11 @@ import { GitCommentPRInfos } from '../git/gitPRInfos';
 import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { RunnableDecorator } from './runnable.decorator';
-import { render } from 'mustache';
+
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Utils } from '../utils/utils';
 
 interface CommentPRArgs {
   comment: string;
@@ -41,7 +42,7 @@ export class CommentPullRequestRunnable extends Runnable {
 
     const gitPRInfos: GitCommentPRInfos = new GitCommentPRInfos();
     gitPRInfos.number = data.pullRequest.number;
-    gitPRInfos.comment = render(args.comment, ruleResult);
+    gitPRInfos.comment = Utils.render(args.comment, ruleResult);
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
     this.googleAnalytics

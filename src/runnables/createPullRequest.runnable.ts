@@ -4,13 +4,14 @@ import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { GitPRInfos } from '../git/gitPRInfos';
-import { render } from 'mustache';
+
 import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { RunnableDecorator } from './runnable.decorator';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Utils } from '../utils/utils';
 
 interface CreatePullRequestArgs {
   title: string;
@@ -65,24 +66,24 @@ export class CreatePullRequestRunnable extends Runnable {
       args.target = 'master';
     }
 
-    gitCreatePRInfos.description = render(args.description, ruleResult).replace(
+    gitCreatePRInfos.description = Utils.render(
+      args.description,
+      ruleResult,
+    ).replace(/&#x2F;/g, '/');
+    gitCreatePRInfos.title = Utils.render(args.title, ruleResult).replace(
       /&#x2F;/g,
       '/',
     );
-    gitCreatePRInfos.title = render(args.title, ruleResult).replace(
+    gitCreatePRInfos.source = Utils.render(args.source, ruleResult).replace(
       /&#x2F;/g,
       '/',
     );
-    gitCreatePRInfos.source = render(args.source, ruleResult).replace(
-      /&#x2F;/g,
-      '/',
-    );
-    gitCreatePRInfos.target = render(args.target, ruleResult).replace(
+    gitCreatePRInfos.target = Utils.render(args.target, ruleResult).replace(
       /&#x2F;/g,
       '/',
     );
     if (typeof args.draft === 'string') {
-      gitCreatePRInfos.draft = render(args.draft, ruleResult);
+      gitCreatePRInfos.draft = Boolean(Utils.render(args.draft, ruleResult));
     } else if (typeof args.draft === 'boolean') {
       gitCreatePRInfos.draft = args.draft;
     }

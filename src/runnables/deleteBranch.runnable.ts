@@ -1,6 +1,6 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-import { render } from 'mustache';
+
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { GithubService } from '../github/github.service';
@@ -10,6 +10,7 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Utils } from '../utils/utils';
 
 interface DeleteBranchArgs {
   branchName?: string;
@@ -51,7 +52,7 @@ export class DeleteBranchRunnable extends Runnable {
     ) {
       branchName = (ruleResult as any).data.branch;
     } else {
-      branchName = render(args.branchName, ruleResult);
+      branchName = Utils.render(args.branchName, ruleResult);
     }
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
