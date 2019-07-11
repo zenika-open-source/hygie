@@ -57,6 +57,6 @@ export class BranchNameRule extends Rule {
       matches: branchName.match(branchRegExp),
     };
 
-    return Promise.resolve(ruleResult);
+    return ruleResult;
   }
 }

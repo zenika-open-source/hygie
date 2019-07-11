@@ -58,7 +58,7 @@ export class EnvVarController {
         .getFileContent(gitFileInfos)
         .then(response => response.data)
         .catch(err => {
-          throw new Error('in GitFileContent');
+          throw err;
         });
     } catch (err) {
       logger.error(err);

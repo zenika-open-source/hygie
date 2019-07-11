@@ -95,6 +95,6 @@ export class CheckCoverageRule extends Rule {
 
     ruleResult.validated = allBranchesPassed;
 
-    return Promise.resolve(ruleResult);
+    return ruleResult;
   }
 }

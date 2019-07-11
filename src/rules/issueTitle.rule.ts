@@ -60,6 +60,6 @@ export class IssueTitleRule extends Rule {
         matches: titleIssue.match(issueRegExp),
       },
     };
-    return Promise.resolve(ruleResult);
+    return ruleResult;
   }
 }

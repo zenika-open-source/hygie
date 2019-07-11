@@ -61,7 +61,7 @@ export class ScheduleService {
           project: cron.projectURL,
           location: 'ScheduleService',
         });
-        return Promise.reject(new Error(e));
+        throw e;
       }
 
       // Get CRON Expression if defined in the cron-*.rulesrc file
@@ -122,9 +122,7 @@ export class ScheduleService {
     try {
       cronStandardArray = convertCronType(cronType);
     } catch (e) {
-      return Promise.reject(
-        new HttpResponse(HttpStatus.PRECONDITION_FAILED, e.message),
-      );
+      throw new HttpResponse(HttpStatus.PRECONDITION_FAILED, e.message);
     }
 
     for (let index = 0; index < cronStandardArray.length; index++) {
@@ -136,15 +134,13 @@ export class ScheduleService {
         schedule = await this.createSchedule(cron);
         responseString += `Schedule ${schedule.id} successfully created\n`;
       } catch (e) {
-        return Promise.reject(
-          new HttpResponse(
-            HttpStatus.UNAUTHORIZED,
-            `${responseString}\n${e.message}`,
-          ),
+        throw new HttpResponse(
+          HttpStatus.UNAUTHORIZED,
+          `${responseString}\n${e.message}`,
         );
       }
     }
-    return Promise.resolve(new HttpResponse(HttpStatus.OK, responseString));
+    return new HttpResponse(HttpStatus.OK, responseString);
   }
 
   /**

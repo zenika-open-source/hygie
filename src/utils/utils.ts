@@ -5,6 +5,7 @@ import { GitEnv } from '../git/gitEnv.interface';
 import { logger } from '../logger/logger.service';
 
 import * as Handlebars from 'handlebars';
+import { PreconditionException } from '../exceptions/precondition.exception';
 Handlebars.registerHelper('foreach', (items, options) => {
   return items.map(item => options.fn(item)).join(',');
 });
@@ -53,20 +54,23 @@ export class Utils {
     dataAccessService: DataAccessService,
     filePath: string,
   ): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      const envData: GitEnv = await dataAccessService.readEnv(filePath);
+    const envData: GitEnv = await dataAccessService
+      .readEnv(filePath)
+      .catch(err => {
+        logger.error(err, { location: 'getGitEnv' });
+        throw new PreconditionException();
+      });
 
-      if (
-        envData.gitApi !== '' &&
-        typeof envData.gitApi !== 'undefined' &&
-        envData.gitToken !== '' &&
-        typeof envData.gitToken !== 'undefined'
-      ) {
-        resolve(envData);
-      } else {
-        reject('envData object has empty properties');
-      }
-    });
+    if (
+      envData.gitApi !== '' &&
+      typeof envData.gitApi !== 'undefined' &&
+      envData.gitToken !== '' &&
+      typeof envData.gitToken !== 'undefined'
+    ) {
+      return envData;
+    } else {
+      throw new Error('envData object has empty properties');
+    }
   }
 
   static async writeFileSync(
@@ -140,14 +144,12 @@ export class Utils {
   }
 
   static async parseYAMLFile(fileContent: string): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      const jsyaml = require('js-yaml');
-      try {
-        resolve(JSON.parse(fileContent));
-      } catch (e) {
-        resolve(await jsyaml.safeLoad(fileContent));
-      }
-    });
+    const jsyaml = require('js-yaml');
+    try {
+      return JSON.parse(fileContent);
+    } catch (e) {
+      return await jsyaml.safeLoad(fileContent);
+    }
   }
 
   static getTypeAndMode(str: string): any {

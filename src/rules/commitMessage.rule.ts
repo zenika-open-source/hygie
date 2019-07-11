@@ -108,6 +108,6 @@ export class CommitMessageRule extends Rule {
       commits: commitsMatches,
     };
 
-    return Promise.resolve(ruleResult);
+    return ruleResult;
   }
 }

@@ -781,7 +781,7 @@ describe('Github Service', () => {
   describe('setEnvironmentVariables', () => {
     it('should set the token and urlApi', async () => {
       process.env.ENCRYPTION_KEY = 'somekey';
-      dataAccessService.readEnv = jest.fn().mockReturnValue({
+      dataAccessService.readEnv = jest.fn().mockResolvedValue({
         gitApi: 'https://mygithubapi.com',
         gitToken: Utils.encryptValue('githubToken'),
       });

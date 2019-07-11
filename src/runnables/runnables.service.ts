@@ -40,7 +40,7 @@ export class RunnablesService {
           .run(CallbackType.Success, ruleResult, success.args)
           .catch(err => logger.error(err));
       });
-      return Promise.resolve(true);
+      return true;
     } else if (
       !ruleResult.validated &&
       typeof ruleOrGroup.onError !== 'undefined'
@@ -51,8 +51,8 @@ export class RunnablesService {
           .run(CallbackType.Error, ruleResult, error.args)
           .catch(err => logger.error(err));
       });
-      return Promise.resolve(false);
+      return false;
     }
-    return Promise.resolve(false);
+    return false;
   }
 }

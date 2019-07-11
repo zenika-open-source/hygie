@@ -62,7 +62,7 @@ describe('Utils', () => {
 
   describe('getGitEnv', () => {
     it('should return a GitEnv object', async () => {
-      dataAccessService.readEnv = jest.fn().mockReturnValue({
+      dataAccessService.readEnv = jest.fn().mockResolvedValue({
         gitApi: 'https://gitapi.com',
         gitToken: 'myToken',
       });
@@ -81,11 +81,11 @@ describe('Utils', () => {
 
   describe('getGitEnv', () => {
     it('should throw an error', async () => {
-      dataAccessService.readEnv = jest.fn().mockReturnValue({});
+      dataAccessService.readEnv = jest.fn().mockResolvedValue({});
       try {
         await Utils.getGitEnv(dataAccessService, 'myFilePath');
       } catch (e) {
-        expect(e).toEqual('envData object has empty properties');
+        expect(e).toEqual(new Error('envData object has empty properties'));
       }
     });
   });

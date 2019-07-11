@@ -54,6 +54,6 @@ export class OneCommitPerPRRule extends Rule {
       branch: webhook.getBranchName(),
       commits: webhook.getAllCommits(),
     };
-    return Promise.resolve(ruleResult);
+    return ruleResult;
   }
 }

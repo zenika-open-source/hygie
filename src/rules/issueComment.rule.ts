@@ -64,6 +64,6 @@ export class IssueCommentRule extends Rule {
         matches: commentDescription.match(commentRegExp),
       },
     };
-    return Promise.resolve(ruleResult);
+    return ruleResult;
   }
 }
