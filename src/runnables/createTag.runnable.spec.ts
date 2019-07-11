@@ -44,7 +44,7 @@ describe('CreateTagRunnable', () => {
     myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
-    args = { tag: '{{data.commits.0.matches.1}}' };
+    args = { tag: '{{data.commits.[0].matches.[1]}}' };
 
     ruleResult = new RuleResult(myGitApiInfos);
     ruleResult.validated = false;

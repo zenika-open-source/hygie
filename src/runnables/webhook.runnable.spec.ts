@@ -77,7 +77,7 @@ describe('WebhookRunnable', () => {
           user: 'my name',
           content: 'my content',
         }),
-        JSON.stringify({}),
+        {},
       );
     });
   });

@@ -32,11 +32,11 @@ export class Utils {
     separator: string = ',',
   ): string[] {
     if (typeof input === 'string') {
-      return render(input, data)
+      return Utils.render(input, data)
         .split(separator)
         .filter(f => f !== '');
     }
-    return render(input.toString(), data)
+    return Utils.render(input.toString(), data)
       .split(',') // default toString() method separator
       .filter(f => f !== '');
   }

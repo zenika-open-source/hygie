@@ -45,7 +45,7 @@ describe('CreatePullRequestRunnable', () => {
     myGitApiInfos.git = GitTypeEnum.Undefined;
 
     args = {
-      title: 'WIP: {{data.branchSplit.1}}',
+      title: 'WIP: {{data.branchSplit.[1]}}',
       description: 'this is the description',
     };
 
