@@ -22,7 +22,7 @@
     "ci": "jest --clearCache && npm-run-all prettier-test lint test",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "tsdoc": "typedoc --ignoreCompilerErrors --out tsdoc src",
+    "tsdoc": "typedoc --out tsdoc src",
     "generate:schema": "ts-node --transpile-only src/generator/generateYAMLSchema.ts",
     "generate:rule": "nest generate -c @dxdeveloperexperience/hygie-cli rule",
     "generate:runnable": "nest generate -c @dxdeveloperexperience/hygie-cli runnable"
