@@ -13,7 +13,7 @@ chmod +x ./node_modules/typedoc/bin/typedoc
 echo "> ./node_modules/.bin/vuepress build docs"
 ./node_modules/.bin/vuepress build docs
 
-echo "> ./node_modules/typedoc/bin/typedoc --out tsdoc src"
+echo "> ./node_modules/typedoc/bin/typedoc --ignoreCompilerErrors --out tsdoc src"
 ./node_modules/typedoc/bin/typedoc src
 
 echo "> mv tsdoc docs/.vuepress/dist"
