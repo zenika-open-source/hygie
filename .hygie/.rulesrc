@@ -6,7 +6,7 @@ options:
   enableGroups: false
   allRuleResultInOne: false
 
-rules:
+rules:    
   
   # BRANCH
   - name: branchName
@@ -30,6 +30,8 @@ rules:
       - callback: CommentPullRequestRunnable
         args:
           comment: 'ping @bastienterrier'
+
+
 
   # COMMITS
   - name: commitMessage

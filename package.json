@@ -22,7 +22,7 @@
     "ci": "jest --clearCache && npm-run-all prettier-test lint test",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "tsdoc": "typedoc --out tsdoc src",
+    "tsdoc": "typedoc --ignoreCompilerErrors --out tsdoc src",
     "generate:schema": "ts-node --transpile-only src/generator/generateYAMLSchema.ts",
     "generate:rule": "nest generate -c @dxdeveloperexperience/hygie-cli rule",
     "generate:runnable": "nest generate -c @dxdeveloperexperience/hygie-cli runnable"
@@ -62,7 +62,7 @@
     "winston": "3.2.1"
   },
   "devDependencies": {
-    "@dxdeveloperexperience/hygie-cli": "0.3.0",
+    "@dxdeveloperexperience/hygie-cli": "0.3.1",
     "@nestjs/cli": "6.5.0",
     "@types/express": "4.17.0",
     "@types/jest": "24.0.15",

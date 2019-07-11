@@ -72,6 +72,6 @@ export class CheckAddedFilesRule extends Rule {
       branch: webhook.getBranchName(),
     };
 
-    return Promise.resolve(ruleResult);
+    return ruleResult;
   }
 }

@@ -91,6 +91,6 @@ export class CheckIssuesRule extends Rule {
       ruleResult.data = {};
     }
 
-    return Promise.resolve(ruleResult);
+    return ruleResult;
   }
 }

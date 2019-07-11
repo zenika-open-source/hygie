@@ -120,7 +120,7 @@ export class MyCustomRule extends Rule {
       myData: 'this is some data',
       myArray: ['val1', 'val2', 'val3'],
     };
-    return Promise.resolve(ruleResult);
+    return ruleResult;
   }
 }
 ```

@@ -63,6 +63,6 @@ export class PullRequestCommentRule extends Rule {
       },
     };
 
-    return Promise.resolve(ruleResult);
+    return ruleResult;
   }
 }

@@ -27,7 +27,7 @@ export class FileAccess implements DataAccessInterface {
 
   // Nothing to do => return true
   async connect(): Promise<boolean> {
-    return Promise.resolve(true);
+    return true;
   }
 
   async readCollection(source: SourceEnum, path: string): Promise<any> {

@@ -71,32 +71,30 @@ export class Schedule extends NestSchedule {
    * Set the Gitlab projectId if undefined
    */
   async setGitlabProjectId(): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      if (
-        this.webhook.gitType === GitTypeEnum.Gitlab &&
-        typeof this.webhook.projectId === 'undefined'
-      ) {
-        await this.gitlabService.setEnvironmentVariables(
-          this.dataAccessService,
-          this.remoteEnvs,
-        );
-        const urlApi: string = this.gitlabService.urlApi;
-        let url = `${urlApi}/projects/${Utils.getRepositoryFullName(
-          this.cron.projectURL,
-        )}`;
-        url = url.replace(/\/([^\/]*)$/, '%2F' + '$1');
-        const gitlabProjectId = await this.httpService
-          .get(url)
-          .toPromise()
-          .then(response => {
-            return response.data.id;
-          });
-        this.webhook.projectId = gitlabProjectId;
+    if (
+      this.webhook.gitType === GitTypeEnum.Gitlab &&
+      typeof this.webhook.projectId === 'undefined'
+    ) {
+      await this.gitlabService.setEnvironmentVariables(
+        this.dataAccessService,
+        this.remoteEnvs,
+      );
+      const urlApi: string = this.gitlabService.urlApi;
+      let url = `${urlApi}/projects/${Utils.getRepositoryFullName(
+        this.cron.projectURL,
+      )}`;
+      url = url.replace(/\/([^\/]*)$/, '%2F' + '$1');
+      const gitlabProjectId = await this.httpService
+        .get(url)
+        .toPromise()
+        .then(response => {
+          return response.data.id;
+        });
+      this.webhook.projectId = gitlabProjectId;
 
-        // ! Use getGitlabProjectId() instead
-      }
-      return resolve();
-    });
+      // ! Use getGitlabProjectId() instead
+    }
+    return;
   }
 
   @Cron(Constants.cronExpression, {

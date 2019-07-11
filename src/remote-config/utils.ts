@@ -49,19 +49,19 @@ export class RemoteConfigUtils {
     httpService: HttpService,
     url: string,
   ): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
-      const size: number = await httpService
-        .head(url)
-        .toPromise()
-        .then(response => {
-          return response.headers['content-length'];
-        })
-        .catch(err => reject(err));
-      if (size > this.MAX_SIZE) {
-        resolve(false);
-      }
-      resolve(true);
-    });
+    const size: number = await httpService
+      .head(url)
+      .toPromise()
+      .then(response => {
+        return response.headers['content-length'];
+      })
+      .catch(err => {
+        throw err;
+      });
+    if (size > this.MAX_SIZE) {
+      return false;
+    }
+    return true;
   }
 
   static getGitType(url: string): GitTypeEnum {
@@ -87,115 +87,111 @@ export class RemoteConfigUtils {
     branch: string = 'master',
     defaultBranch?: string,
   ): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      const disableRemoteConfig: boolean =
-        process.env.DISABLE_REMOTE_CONFIG === 'true';
+    const disableRemoteConfig: boolean =
+      process.env.DISABLE_REMOTE_CONFIG === 'true';
 
-      const whichGit: GitTypeEnum = this.getGitType(projectURL);
+    const whichGit: GitTypeEnum = this.getGitType(projectURL);
 
-      const gitService: GithubService | GitlabService =
-        whichGit === GitTypeEnum.Github ? githubService : gitlabService;
+    const gitService: GithubService | GitlabService =
+      whichGit === GitTypeEnum.Github ? githubService : gitlabService;
 
-      const repositoryFullName = Utils.getRepositoryFullName(projectURL);
+    const repositoryFullName = Utils.getRepositoryFullName(projectURL);
 
-      gitService
-        .setEnvironmentVariables(dataAccessService, repositoryFullName)
-        .catch(err => logger.error(err));
+    await gitService
+      .setEnvironmentVariables(dataAccessService, repositoryFullName)
+      .catch(err => {
+        throw err;
+      });
 
-      // Used to check size
-      const rulesFilePath: string = this.getGitRawPath(
-        whichGit,
-        projectURL,
-        `.hygie/${filename}`,
-        branch,
+    // Used to check size
+    const rulesFilePath: string = this.getGitRawPath(
+      whichGit,
+      projectURL,
+      `.hygie/${filename}`,
+      branch,
+    );
+
+    const hygieFolder: string =
+      'remote-rules/' + repositoryFullName + '/.hygie';
+
+    // If we don't allow fetching remote .rulesrc file
+    if (disableRemoteConfig && filename === Constants.rulesExtension) {
+      logger.warn('Not allowed to fetch remote file!');
+      // Get default configuration
+      const data = fs.readFileSync(
+        path.join(__dirname, `../rules/${Constants.rulesExtension}`),
       );
+      await dataAccessService.writeRule(`${hygieFolder}/${filename}`, data);
+      return hygieFolder;
+    }
 
-      const hygieFolder: string =
-        'remote-rules/' + repositoryFullName + '/.hygie';
-
-      // If we don't allow fetching remote .rulesrc file
-      if (disableRemoteConfig && filename === Constants.rulesExtension) {
-        logger.warn('Not allowed to fetch remote file!');
-        // Get default configuration
-        const data = fs.readFileSync(
-          path.join(__dirname, `../rules/${Constants.rulesExtension}`),
-        );
-        await dataAccessService.writeRule(`${hygieFolder}/${filename}`, data);
-        return resolve(hygieFolder);
-      }
-
-      // Check size
-      try {
-        const checkSize: boolean = await RemoteConfigUtils.checkDownloadSize(
-          httpService,
-          rulesFilePath,
-        ).catch(err => {
-          if (err.response.status !== 404) {
-            throw new Error(err);
-          } else {
-            return true;
-          }
-        });
-        if (!checkSize) {
-          throw new FileSizeException(rulesFilePath);
+    // Check size
+    try {
+      const checkSize: boolean = await RemoteConfigUtils.checkDownloadSize(
+        httpService,
+        rulesFilePath,
+      ).catch(err => {
+        if (err.response.status !== 404) {
+          throw err;
+        } else {
+          return true;
         }
-      } catch (e) {
-        reject(e);
-        return;
+      });
+      if (!checkSize) {
+        throw new FileSizeException(rulesFilePath);
       }
+    } catch (e) {
+      throw e;
+    }
 
-      const gitFileInfos = new GitFileInfos();
-      gitFileInfos.filePath = `.hygie/${filename}`;
-      gitFileInfos.fileBranch = branch;
+    const gitFileInfos = new GitFileInfos();
+    gitFileInfos.filePath = `.hygie/${filename}`;
+    gitFileInfos.fileBranch = branch;
 
-      const observable = fromObs(gitService.getFileContent(gitFileInfos));
+    const observable = fromObs(gitService.getFileContent(gitFileInfos));
 
-      // Download file
-      await observable
-        .pipe(
-          catchError(() => {
-            if (filename === Constants.rulesExtension) {
-              gitFileInfos.fileBranch = defaultBranch;
-              const getDefaultBranchConfigFile =
-                defaultBranch !== branch
-                  ? fromObs(gitService.getFileContent(gitFileInfos))
-                  : throwError('');
+    // Download file
+    await observable
+      .pipe(
+        catchError(() => {
+          if (filename === Constants.rulesExtension) {
+            gitFileInfos.fileBranch = defaultBranch;
+            const getDefaultBranchConfigFile =
+              defaultBranch !== branch
+                ? fromObs(gitService.getFileContent(gitFileInfos))
+                : throwError('');
 
-              return getDefaultBranchConfigFile.pipe(
-                catchError(() => {
-                  logger.warn(
-                    `No ${
-                      Constants.rulesExtension
-                    } file founded. Using the default one.`,
-                    { project: projectURL, location: 'downloadRulesFile' },
-                  );
+            return getDefaultBranchConfigFile.pipe(
+              catchError(() => {
+                logger.warn(
+                  `No ${
+                    Constants.rulesExtension
+                  } file founded. Using the default one.`,
+                  { project: projectURL, location: 'downloadRulesFile' },
+                );
 
-                  // return default REMOTE file
-                  return httpService.get(
-                    process.env.DEFAULT_CONFIGURATION_FILE,
-                  );
-                }),
-              );
-            } else {
-              return throwError(`${rulesFilePath} do not exist!`);
-            }
-          }),
-        )
-        .toPromise()
-        .then(async response => {
-          const resultData = response.data;
-          await dataAccessService.writeRule(
-            `${hygieFolder}/${filename}`,
-            resultData,
-          );
-          return hygieFolder;
-        })
-        .catch(err => {
-          reject(err);
-          return;
-        });
-      resolve(hygieFolder);
-    });
+                // return default REMOTE file
+                return httpService.get(process.env.DEFAULT_CONFIGURATION_FILE);
+              }),
+            );
+          } else {
+            return throwError(`${rulesFilePath} do not exist!`);
+          }
+        }),
+      )
+      .toPromise()
+      .then(async response => {
+        const resultData = response.data;
+        await dataAccessService.writeRule(
+          `${hygieFolder}/${filename}`,
+          resultData,
+        );
+        return hygieFolder;
+      })
+      .catch(err => {
+        throw err;
+      });
+    return hygieFolder;
   }
 
   static async getGitlabProjectId(
@@ -221,82 +217,80 @@ export class RemoteConfigUtils {
     configEnv: ConfigEnv,
     applicationURL: string,
   ): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      const result: any = {
-        succeed: true,
-        alreadyExist: false,
-      };
+    const result: any = {
+      succeed: true,
+      alreadyExist: false,
+    };
 
-      const repositoryFullName = Utils.getRepositoryFullName(configEnv.gitRepo);
+    const repositoryFullName = Utils.getRepositoryFullName(configEnv.gitRepo);
 
-      const configFile: string = `remote-envs/${repositoryFullName}/config.env`;
+    const configFile: string = `remote-envs/${repositoryFullName}/config.env`;
 
-      const content: any = {
-        gitApi: configEnv.gitApi,
-        gitToken: configEnv.gitToken,
-      };
+    const content: any = {
+      gitApi: configEnv.gitApi,
+      gitToken: configEnv.gitToken,
+    };
 
-      if (await dataAccessService.checkIfEnvExist(configFile)) {
-        result.alreadyExist = true;
-      }
+    if (await dataAccessService.checkIfEnvExist(configFile)) {
+      result.alreadyExist = true;
+    }
 
-      const gitApiInfos: GitApiInfos = new GitApiInfos();
-      gitApiInfos.git = Utils.whichGitType(configEnv.gitRepo);
-      gitApiInfos.repositoryFullName = repositoryFullName;
+    const gitApiInfos: GitApiInfos = new GitApiInfos();
+    gitApiInfos.git = Utils.whichGitType(configEnv.gitRepo);
+    gitApiInfos.repositoryFullName = repositoryFullName;
 
-      content.git = gitApiInfos.git;
+    content.git = gitApiInfos.git;
 
+    await dataAccessService.writeEnv(configFile, content);
+
+    // Add also the hygie-env config.env
+    const username = repositoryFullName.split('/')[0];
+    const hygieEnvVarConfigFile = `remote-envs/${username}/hygie-env/config.env`;
+    await dataAccessService.writeEnv(hygieEnvVarConfigFile, content);
+
+    /**
+     * Create a `Connected to Hygie!` issue
+     * and
+     * Create a Webhook
+     */
+    const gitIssueInfos = new GitIssueInfos();
+    gitIssueInfos.title = 'Connected to Hygie!';
+    let issueNumber: number;
+
+    if (gitApiInfos.git === GitTypeEnum.Github) {
+      await githubService.setEnvironmentVariables(
+        dataAccessService,
+        repositoryFullName,
+      );
+
+      issueNumber = await githubService.createIssue(gitIssueInfos);
+      result.issue = `${configEnv.gitRepo}/issues/${issueNumber}`;
+      githubService.createWebhook(applicationURL + '/webhook');
+    } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
+      gitApiInfos.projectId = await this.getGitlabProjectId(
+        httpService,
+        configEnv.gitApi,
+        gitApiInfos.repositoryFullName,
+      );
+
+      // Store the projectId
+      content.gitlabId = gitApiInfos.projectId;
       await dataAccessService.writeEnv(configFile, content);
 
       // Add also the hygie-env config.env
-      const username = repositoryFullName.split('/')[0];
-      const hygieEnvVarConfigFile = `remote-envs/${username}/hygie-env/config.env`;
       await dataAccessService.writeEnv(hygieEnvVarConfigFile, content);
 
-      /**
-       * Create a `Connected to Hygie!` issue
-       * and
-       * Create a Webhook
-       */
-      const gitIssueInfos = new GitIssueInfos();
-      gitIssueInfos.title = 'Connected to Hygie!';
-      let issueNumber: number;
+      await gitlabService.setEnvironmentVariables(
+        dataAccessService,
+        repositoryFullName,
+      );
 
-      if (gitApiInfos.git === GitTypeEnum.Github) {
-        await githubService.setEnvironmentVariables(
-          dataAccessService,
-          repositoryFullName,
-        );
+      issueNumber = await gitlabService.createIssue(gitIssueInfos);
+      result.issue = `${configEnv.gitRepo}/issues/${issueNumber}`;
+      gitlabService.createWebhook(applicationURL + '/webhook');
+    }
 
-        issueNumber = await githubService.createIssue(gitIssueInfos);
-        result.issue = `${configEnv.gitRepo}/issues/${issueNumber}`;
-        githubService.createWebhook(applicationURL + '/webhook');
-      } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-        gitApiInfos.projectId = await this.getGitlabProjectId(
-          httpService,
-          configEnv.gitApi,
-          gitApiInfos.repositoryFullName,
-        );
-
-        // Store the projectId
-        content.gitlabId = gitApiInfos.projectId;
-        await dataAccessService.writeEnv(configFile, content);
-
-        // Add also the hygie-env config.env
-        await dataAccessService.writeEnv(hygieEnvVarConfigFile, content);
-
-        await gitlabService.setEnvironmentVariables(
-          dataAccessService,
-          repositoryFullName,
-        );
-
-        issueNumber = await gitlabService.createIssue(gitIssueInfos);
-        result.issue = `${configEnv.gitRepo}/issues/${issueNumber}`;
-        gitlabService.createWebhook(applicationURL + '/webhook');
-      }
-
-      resolve(result);
-    });
+    return result;
   }
 
   static getAccessToken(result: string) {

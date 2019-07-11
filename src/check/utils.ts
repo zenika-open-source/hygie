@@ -34,17 +34,11 @@ export class Check {
     return allFilesOk;
   }
 
-  static async checkInternet(httpService: HttpService) {
-    return new Promise((resolve, reject) => {
-      httpService
-        .get('https://google.com')
-        .toPromise()
-        .then(() => {
-          resolve(true);
-        })
-        .catch(() => {
-          resolve(false);
-        });
-    });
+  static async checkInternet(httpService: HttpService): Promise<boolean> {
+    return httpService
+      .get('https://google.com')
+      .toPromise()
+      .then(() => true)
+      .catch(() => false);
   }
 }

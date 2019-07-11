@@ -269,33 +269,33 @@ export class GitlabService implements GitServiceInterface {
       .catch(err => logger.error(err, { location: 'createIssue' }));
   }
 
-  deleteFile(gitFileInfos: GitFileInfos): Promise<void> {
-    return new Promise((resolve, reject) => {
-      // Config URL for GitLab
-      const configGitLab = {
-        headers: {
-          'PRIVATE-TOKEN': this.token,
+  async deleteFile(gitFileInfos: GitFileInfos): Promise<void> {
+    // Config URL for GitLab
+    const configGitLab = {
+      headers: {
+        'PRIVATE-TOKEN': this.token,
+      },
+      params: {
+        commit_message: gitFileInfos.commitMessage,
+        branch: gitFileInfos.fileBranch,
+      },
+    };
+    this.httpService
+      .delete(
+        `${this.urlApi}/projects/${
+          this.projectId
+        }/repository/files/${encodeURIComponent(gitFileInfos.filePath)}`,
+        configGitLab,
+      )
+      .subscribe(
+        response => {
+          return;
         },
-        params: {
-          commit_message: gitFileInfos.commitMessage,
-          branch: gitFileInfos.fileBranch,
+        err => {
+          logger.error(err, { location: 'deleteFile' });
+          throw err;
         },
-      };
-      this.httpService
-        .delete(
-          `${this.urlApi}/projects/${
-            this.projectId
-          }/repository/files/${encodeURIComponent(gitFileInfos.filePath)}`,
-          configGitLab,
-        )
-        .subscribe(
-          response => resolve(),
-          err => {
-            logger.error(err, { location: 'deleteFile' });
-            reject(err);
-          },
-        );
-    });
+      );
   }
 
   mergePullRequest(gitMergePRInfos: GitMergePRInfos): void {

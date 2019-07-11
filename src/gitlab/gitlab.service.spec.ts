@@ -580,7 +580,7 @@ describe('Gitlab Service', () => {
   describe('setEnvironmentVariables', () => {
     it('should set the token and urlApi', async () => {
       process.env.ENCRYPTION_KEY = 'somekey';
-      dataAccessService.readEnv = jest.fn().mockReturnValue({
+      dataAccessService.readEnv = jest.fn().mockResolvedValue({
         gitApi: 'https://mygitlabapi.com',
         gitToken: Utils.encryptValue('gitlabToken'),
         gitlabId: '1',

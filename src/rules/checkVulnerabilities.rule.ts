@@ -45,75 +45,73 @@ export class CheckVulnerabilitiesRule extends Rule {
     ruleConfig: CheckVulnerabilitiesRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    return new Promise(async (resolve, reject) => {
-      const ruleResult: RuleResult = new RuleResult(
-        webhook.getGitApiInfos(),
+    const ruleResult: RuleResult = new RuleResult(
+      webhook.getGitApiInfos(),
+      webhook.getCloneURL(),
+    );
+    this.googleAnalytics
+      .event('Rule', 'checkVulnerabilities', webhook.getCloneURL())
+      .send();
+
+    const execa = require('execa');
+    const download = require('download');
+    const fs = require('fs-extra');
+
+    let audit: any;
+
+    let packageUrl: string;
+    let packageLockUrl: string;
+
+    if (
+      typeof ruleConfig.options !== 'undefined' &&
+      typeof ruleConfig.options.packageUrl !== 'undefined' &&
+      typeof ruleConfig.options.packageLockUrl !== 'undefined'
+    ) {
+      packageUrl = ruleConfig.options.packageUrl;
+      packageLockUrl = ruleConfig.options.packageLockUrl;
+    } else {
+      packageUrl = RemoteConfigUtils.getGitRawPath(
+        webhook.getGitType(),
         webhook.getCloneURL(),
+        'package.json',
       );
-      this.googleAnalytics
-        .event('Rule', 'checkVulnerabilities', webhook.getCloneURL())
-        .send();
+      packageLockUrl = RemoteConfigUtils.getGitRawPath(
+        webhook.getGitType(),
+        webhook.getCloneURL(),
+        'package-lock.json',
+      );
+    }
 
-      const execa = require('execa');
-      const download = require('download');
-      const fs = require('fs-extra');
+    await Promise.all([
+      download(packageUrl, `packages/${webhook.getRemoteDirectory()}`),
+      download(packageLockUrl, `packages/${webhook.getRemoteDirectory()}`),
+    ]);
 
-      let audit: any;
-
-      let packageUrl: string;
-      let packageLockUrl: string;
-
-      if (
-        typeof ruleConfig.options !== 'undefined' &&
-        typeof ruleConfig.options.packageUrl !== 'undefined' &&
-        typeof ruleConfig.options.packageLockUrl !== 'undefined'
-      ) {
-        packageUrl = ruleConfig.options.packageUrl;
-        packageLockUrl = ruleConfig.options.packageLockUrl;
-      } else {
-        packageUrl = RemoteConfigUtils.getGitRawPath(
-          webhook.getGitType(),
-          webhook.getCloneURL(),
-          'package.json',
-        );
-        packageLockUrl = RemoteConfigUtils.getGitRawPath(
-          webhook.getGitType(),
-          webhook.getCloneURL(),
-          'package-lock.json',
-        );
-      }
-
-      await Promise.all([
-        download(packageUrl, `packages/${webhook.getRemoteDirectory()}`),
-        download(packageLockUrl, `packages/${webhook.getRemoteDirectory()}`),
-      ]);
-
-      try {
-        audit = execa.shellSync(
-          `cd packages/${webhook.getRemoteDirectory()} & npm audit --json`,
-        );
-
-        ruleResult.data = {
-          vulnerabilities: JSON.parse(audit.stdout),
-        };
-        ruleResult.validated = true;
-      } catch (e) {
-        const data = JSON.parse(e.stdout);
-        ruleResult.data = {
-          number: this.getNumberOfVulnerabilities(data),
-          vulnerabilities: JSON.stringify(data),
-        };
-        ruleResult.validated = false;
-      }
-
-      // Delete folder
-      fs.remove(`packages/${webhook.getRemoteDirectory().split('/')[0]}`).catch(
-        err => {
-          logger.error(err, { location: 'checkVulnerabilities' });
-        },
+    try {
+      audit = execa.shellSync(
+        `cd packages/${webhook.getRemoteDirectory()} & npm audit --json`,
       );
 
-      resolve(ruleResult);
-    });
+      ruleResult.data = {
+        vulnerabilities: JSON.parse(audit.stdout),
+      };
+      ruleResult.validated = true;
+    } catch (e) {
+      const data = JSON.parse(e.stdout);
+      ruleResult.data = {
+        number: this.getNumberOfVulnerabilities(data),
+        vulnerabilities: JSON.stringify(data),
+      };
+      ruleResult.validated = false;
+    }
+
+    // Delete folder
+    fs.remove(`packages/${webhook.getRemoteDirectory().split('/')[0]}`).catch(
+      err => {
+        logger.error(err, { location: 'checkVulnerabilities' });
+      },
+    );
+
+    return ruleResult;
   }
 }

@@ -88,6 +88,6 @@ export class CheckPullRequestsRule extends Rule {
       ruleResult.data = {};
     }
 
-    return Promise.resolve(ruleResult);
+    return ruleResult;
   }
 }

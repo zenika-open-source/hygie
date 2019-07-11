@@ -230,47 +230,47 @@ export class GithubService implements GitServiceInterface {
       .catch(err => logger.error(err, { location: 'createIssue' }));
   }
 
-  deleteFile(gitFileInfos: GitFileInfos): Promise<void> {
+  async deleteFile(gitFileInfos: GitFileInfos): Promise<void> {
     const localConfig: any = JSON.parse(JSON.stringify(this.configGitHub));
 
-    return new Promise((resolve, reject) => {
-      // First of all, get file blob sha
-      this.httpService
-        .get(
-          `${this.urlApi}/repos/${this.repositoryFullName}/contents/${
-            gitFileInfos.filePath
-          }`,
-          this.configGitHub,
-        )
-        .subscribe(
-          response => {
-            localConfig.params = {
-              sha: response.data.sha,
-              message: gitFileInfos.commitMessage,
-              branch: gitFileInfos.fileBranch,
-            };
+    // First of all, get file blob sha
+    this.httpService
+      .get(
+        `${this.urlApi}/repos/${this.repositoryFullName}/contents/${
+          gitFileInfos.filePath
+        }`,
+        this.configGitHub,
+      )
+      .subscribe(
+        response => {
+          localConfig.params = {
+            sha: response.data.sha,
+            message: gitFileInfos.commitMessage,
+            branch: gitFileInfos.fileBranch,
+          };
 
-            this.httpService
-              .delete(
-                `${this.urlApi}/repos/${this.repositoryFullName}/contents/${
-                  gitFileInfos.filePath
-                }`,
-                localConfig,
-              )
-              .subscribe(
-                response2 => resolve(),
-                err2 => {
-                  logger.error(err2, { location: 'deleteFile/blob' });
-                  reject(err2);
-                },
-              );
-          },
-          err => {
-            logger.error(err, { location: 'deleteFile' });
-            reject(err);
-          },
-        );
-    });
+          this.httpService
+            .delete(
+              `${this.urlApi}/repos/${this.repositoryFullName}/contents/${
+                gitFileInfos.filePath
+              }`,
+              localConfig,
+            )
+            .subscribe(
+              response2 => {
+                return;
+              },
+              err2 => {
+                logger.error(err2, { location: 'deleteFile/blob' });
+                throw err2;
+              },
+            );
+        },
+        err => {
+          logger.error(err, { location: 'deleteFile' });
+          throw err;
+        },
+      );
   }
 
   mergePullRequest(gitMergePRInfos: GitMergePRInfos): void {

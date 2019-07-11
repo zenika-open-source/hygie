@@ -71,6 +71,6 @@ export class CheckPullRequestStatusRule extends Rule {
       },
     };
 
-    return Promise.resolve(ruleResult);
+    return ruleResult;
   }
 }
