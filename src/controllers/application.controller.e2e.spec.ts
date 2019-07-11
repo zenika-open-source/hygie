@@ -20,8 +20,6 @@ describe('ApplicationController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.setBaseViewsDir(join(__dirname, '..', 'views'));
-    app.setViewEngine('hbs');
     await app.init();
   });
 

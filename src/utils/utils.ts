@@ -6,6 +6,7 @@ import { logger } from '../logger/logger.service';
 
 import * as Handlebars from 'handlebars';
 import { PreconditionException } from '../exceptions/precondition.exception';
+import { join } from 'path';
 Handlebars.registerHelper('foreach', (items, options) => {
   return items.map(item => options.fn(item)).join(',');
 });
@@ -188,5 +189,14 @@ export class Utils {
   static encryptValue(str: string): string {
     const CryptoJS = require('crypto-js');
     return CryptoJS.AES.encrypt(str, process.env.ENCRYPTION_KEY).toString();
+  }
+
+  static renderHbs(filePath: string, dataSource: any = {}): string {
+    const fs = require('fs-extra');
+    const path = join(__dirname, '../views/', `${filePath}.hbs`);
+    let template = fs.readFileSync(path);
+    template = template.toString();
+
+    return Utils.render(template, dataSource);
   }
 }

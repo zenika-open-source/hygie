@@ -15,10 +15,6 @@ async function bootstrap() {
   // Handle every exceptions
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  // Set View Engine
-  app.setBaseViewsDir(join(__dirname, 'views'));
-  app.setViewEngine('hbs');
-
   const port = process.env.PORT || 3000;
 
   app.enableCors({
