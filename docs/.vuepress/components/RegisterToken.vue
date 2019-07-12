@@ -13,7 +13,7 @@
             <label>
               <v-text-field
                 type="text"
-                placeholder="https://github.com/DX-DeveloperExperience/hygie"
+                placeholder="https://github.com/zenika-open-source/hygie"
                 label="Git repository URL"
                 v-model="gitRepo"
                 :rules="urlRules"

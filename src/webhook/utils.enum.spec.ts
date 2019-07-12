@@ -5498,122 +5498,119 @@ describe('Utils Enum', () => {
         id: 180810951,
         node_id: 'MDEwOlJlcG9zaXRvcnkxODA4MTA5NTE=',
         name: 'test-repository',
-        full_name: 'DX-DeveloperExperience/test-repository',
+        full_name: 'zenika-open-source/test-repository',
         private: false,
         owner: {
-          login: 'DX-DeveloperExperience',
+          login: 'zenika-open-source',
           id: 36013040,
           node_id: 'MDEyOk9yZ2FuaXphdGlvbjM2MDEzMDQw',
           avatar_url: 'https://avatars1.githubusercontent.com/u/36013040?v=4',
           gravatar_id: '',
-          url: 'https://api.github.com/users/DX-DeveloperExperience',
-          html_url: 'https://github.com/DX-DeveloperExperience',
+          url: 'https://api.github.com/users/zenika-open-source',
+          html_url: 'https://github.com/zenika-open-source',
           followers_url:
-            'https://api.github.com/users/DX-DeveloperExperience/followers',
+            'https://api.github.com/users/zenika-open-source/followers',
           following_url:
-            'https://api.github.com/users/DX-DeveloperExperience/following{/other_user}',
+            'https://api.github.com/users/zenika-open-source/following{/other_user}',
           gists_url:
-            'https://api.github.com/users/DX-DeveloperExperience/gists{/gist_id}',
+            'https://api.github.com/users/zenika-open-source/gists{/gist_id}',
           starred_url:
-            'https://api.github.com/users/DX-DeveloperExperience/starred{/owner}{/repo}',
+            'https://api.github.com/users/zenika-open-source/starred{/owner}{/repo}',
           subscriptions_url:
-            'https://api.github.com/users/DX-DeveloperExperience/subscriptions',
+            'https://api.github.com/users/zenika-open-source/subscriptions',
           organizations_url:
-            'https://api.github.com/users/DX-DeveloperExperience/orgs',
-          repos_url:
-            'https://api.github.com/users/DX-DeveloperExperience/repos',
+            'https://api.github.com/users/zenika-open-source/orgs',
+          repos_url: 'https://api.github.com/users/zenika-open-source/repos',
           events_url:
-            'https://api.github.com/users/DX-DeveloperExperience/events{/privacy}',
+            'https://api.github.com/users/zenika-open-source/events{/privacy}',
           received_events_url:
-            'https://api.github.com/users/DX-DeveloperExperience/received_events',
+            'https://api.github.com/users/zenika-open-source/received_events',
           type: 'Organization',
           site_admin: false,
         },
-        html_url: 'https://github.com/DX-DeveloperExperience/test-repository',
+        html_url: 'https://github.com/zenika-open-source/test-repository',
         description: null,
         fork: false,
-        url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository',
+        url: 'https://api.github.com/repos/zenika-open-source/test-repository',
         forks_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/forks',
+          'https://api.github.com/repos/zenika-open-source/test-repository/forks',
         keys_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/keys{/key_id}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/keys{/key_id}',
         collaborators_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/collaborators{/collaborator}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/collaborators{/collaborator}',
         teams_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/teams',
+          'https://api.github.com/repos/zenika-open-source/test-repository/teams',
         hooks_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/hooks',
+          'https://api.github.com/repos/zenika-open-source/test-repository/hooks',
         issue_events_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/issues/events{/number}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/issues/events{/number}',
         events_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/events',
+          'https://api.github.com/repos/zenika-open-source/test-repository/events',
         assignees_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/assignees{/user}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/assignees{/user}',
         branches_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/branches{/branch}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/branches{/branch}',
         tags_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/tags',
+          'https://api.github.com/repos/zenika-open-source/test-repository/tags',
         blobs_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/git/blobs{/sha}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/git/blobs{/sha}',
         git_tags_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/git/tags{/sha}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/git/tags{/sha}',
         git_refs_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/git/refs{/sha}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/git/refs{/sha}',
         trees_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/git/trees{/sha}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/git/trees{/sha}',
         statuses_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/statuses/{sha}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/statuses/{sha}',
         languages_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/languages',
+          'https://api.github.com/repos/zenika-open-source/test-repository/languages',
         stargazers_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/stargazers',
+          'https://api.github.com/repos/zenika-open-source/test-repository/stargazers',
         contributors_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/contributors',
+          'https://api.github.com/repos/zenika-open-source/test-repository/contributors',
         subscribers_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/subscribers',
+          'https://api.github.com/repos/zenika-open-source/test-repository/subscribers',
         subscription_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/subscription',
+          'https://api.github.com/repos/zenika-open-source/test-repository/subscription',
         commits_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/commits{/sha}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/commits{/sha}',
         git_commits_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/git/commits{/sha}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/git/commits{/sha}',
         comments_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/comments{/number}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/comments{/number}',
         issue_comment_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/issues/comments{/number}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/issues/comments{/number}',
         contents_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/contents/{+path}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/contents/{+path}',
         compare_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/compare/{base}...{head}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/compare/{base}...{head}',
         merges_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/merges',
+          'https://api.github.com/repos/zenika-open-source/test-repository/merges',
         archive_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/{archive_format}{/ref}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/{archive_format}{/ref}',
         downloads_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/downloads',
+          'https://api.github.com/repos/zenika-open-source/test-repository/downloads',
         issues_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/issues{/number}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/issues{/number}',
         pulls_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/pulls{/number}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/pulls{/number}',
         milestones_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/milestones{/number}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/milestones{/number}',
         notifications_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/notifications{?since,all,participating}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/notifications{?since,all,participating}',
         labels_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/labels{/name}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/labels{/name}',
         releases_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/releases{/id}',
+          'https://api.github.com/repos/zenika-open-source/test-repository/releases{/id}',
         deployments_url:
-          'https://api.github.com/repos/DX-DeveloperExperience/test-repository/deployments',
+          'https://api.github.com/repos/zenika-open-source/test-repository/deployments',
         created_at: '2019-04-11T14:34:40Z',
         updated_at: '2019-04-11T14:34:40Z',
         pushed_at: null,
-        git_url: 'git://github.com/DX-DeveloperExperience/test-repository.git',
-        ssh_url: 'git@github.com:DX-DeveloperExperience/test-repository.git',
-        clone_url:
-          'https://github.com/DX-DeveloperExperience/test-repository.git',
-        svn_url: 'https://github.com/DX-DeveloperExperience/test-repository',
+        git_url: 'git://github.com/zenika-open-source/test-repository.git',
+        ssh_url: 'git@github.com:zenika-open-source/test-repository.git',
+        clone_url: 'https://github.com/zenika-open-source/test-repository.git',
+        svn_url: 'https://github.com/zenika-open-source/test-repository',
         homepage: null,
         size: 0,
         stargazers_count: 0,
@@ -5636,18 +5633,18 @@ describe('Utils Enum', () => {
         default_branch: 'master',
       },
       organization: {
-        login: 'DX-DeveloperExperience',
+        login: 'zenika-open-source',
         id: 36013040,
         node_id: 'MDEyOk9yZ2FuaXphdGlvbjM2MDEzMDQw',
-        url: 'https://api.github.com/orgs/DX-DeveloperExperience',
-        repos_url: 'https://api.github.com/orgs/DX-DeveloperExperience/repos',
-        events_url: 'https://api.github.com/orgs/DX-DeveloperExperience/events',
-        hooks_url: 'https://api.github.com/orgs/DX-DeveloperExperience/hooks',
-        issues_url: 'https://api.github.com/orgs/DX-DeveloperExperience/issues',
+        url: 'https://api.github.com/orgs/zenika-open-source',
+        repos_url: 'https://api.github.com/orgs/zenika-open-source/repos',
+        events_url: 'https://api.github.com/orgs/zenika-open-source/events',
+        hooks_url: 'https://api.github.com/orgs/zenika-open-source/hooks',
+        issues_url: 'https://api.github.com/orgs/zenika-open-source/issues',
         members_url:
-          'https://api.github.com/orgs/DX-DeveloperExperience/members{/member}',
+          'https://api.github.com/orgs/zenika-open-source/members{/member}',
         public_members_url:
-          'https://api.github.com/orgs/DX-DeveloperExperience/public_members{/member}',
+          'https://api.github.com/orgs/zenika-open-source/public_members{/member}',
         avatar_url: 'https://avatars1.githubusercontent.com/u/36013040?v=4',
         description: '',
       },
@@ -5695,10 +5692,10 @@ describe('Utils Enum', () => {
       expect(webhook.repository.name).toBe('test-repository');
       expect(webhook.repository.description).toBe(null);
       expect(webhook.repository.fullName).toBe(
-        'DX-DeveloperExperience/test-repository',
+        'zenika-open-source/test-repository',
       );
       expect(webhook.repository.cloneURL).toBe(
-        'https://github.com/DX-DeveloperExperience/test-repository.git',
+        'https://github.com/zenika-open-source/test-repository.git',
       );
       expect(webhook.user.login).toBe('bastienterrier');
     });

@@ -200,17 +200,15 @@ describe('Webhook', () => {
       const cron: CronInterface = {
         expression: '*/30 * * * * *',
         filename: 'cron-1.rulesrc',
-        projectURL: 'https://github.com/DX-DeveloperExperience/hygie',
+        projectURL: 'https://github.com/zenika-open-source/hygie',
       };
       myWebhook.setCronWebhook(cron);
       expect(myWebhook.gitType).toBe(GitTypeEnum.Github);
       expect(myWebhook.gitEvent).toBe(GitEventEnum.Cron);
       expect(myWebhook.repository.cloneURL).toBe(
-        'https://github.com/DX-DeveloperExperience/hygie',
+        'https://github.com/zenika-open-source/hygie',
       );
-      expect(myWebhook.repository.fullName).toBe(
-        'DX-DeveloperExperience/hygie',
-      );
+      expect(myWebhook.repository.fullName).toBe('zenika-open-source/hygie');
       expect(myWebhook.projectId).toBe(undefined);
     });
   });

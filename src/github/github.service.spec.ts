@@ -599,7 +599,7 @@ describe('Github Service', () => {
               commit: {
                 sha: '9c036a26fc5c26b68025d2b7d7fcf757d4dec36e',
                 url:
-                  'https://api.github.com/repos/DX-DeveloperExperience/hygie/commits/9c036a26fc5c26b68025d2b7d7fcf757d4dec36e',
+                  'https://api.github.com/repos/zenika-open-source/hygie/commits/9c036a26fc5c26b68025d2b7d7fcf757d4dec36e',
               },
               protected: false,
               protection: {
@@ -610,14 +610,14 @@ describe('Github Service', () => {
                 },
               },
               protection_url:
-                'https://api.github.com/repos/DX-DeveloperExperience/hygie/branches/develop/protection',
+                'https://api.github.com/repos/zenika-open-source/hygie/branches/develop/protection',
             },
             {
               name: 'gh-pages',
               commit: {
                 sha: 'e82fef381b423754a2ca783e18dfb1eeac6aeec3',
                 url:
-                  'https://api.github.com/repos/DX-DeveloperExperience/hygie/commits/e82fef381b423754a2ca783e18dfb1eeac6aeec3',
+                  'https://api.github.com/repos/zenika-open-source/hygie/commits/e82fef381b423754a2ca783e18dfb1eeac6aeec3',
               },
               protected: false,
               protection: {
@@ -628,14 +628,14 @@ describe('Github Service', () => {
                 },
               },
               protection_url:
-                'https://api.github.com/repos/DX-DeveloperExperience/hygie/branches/gh-pages/protection',
+                'https://api.github.com/repos/zenika-open-source/hygie/branches/gh-pages/protection',
             },
             {
               name: 'master',
               commit: {
                 sha: 'eeaa4df1b847cd53378c0fcb457b83bad5224738',
                 url:
-                  'https://api.github.com/repos/DX-DeveloperExperience/hygie/commits/eeaa4df1b847cd53378c0fcb457b83bad5224738',
+                  'https://api.github.com/repos/zenika-open-source/hygie/commits/eeaa4df1b847cd53378c0fcb457b83bad5224738',
               },
               protected: false,
               protection: {
@@ -646,14 +646,14 @@ describe('Github Service', () => {
                 },
               },
               protection_url:
-                'https://api.github.com/repos/DX-DeveloperExperience/hygie/branches/master/protection',
+                'https://api.github.com/repos/zenika-open-source/hygie/branches/master/protection',
             },
             {
               name: 'renovate/express-4.x',
               commit: {
                 sha: '31ed1b43b7f80c4a58a9b20f173f72b2b369c19f',
                 url:
-                  'https://api.github.com/repos/DX-DeveloperExperience/hygie/commits/31ed1b43b7f80c4a58a9b20f173f72b2b369c19f',
+                  'https://api.github.com/repos/zenika-open-source/hygie/commits/31ed1b43b7f80c4a58a9b20f173f72b2b369c19f',
               },
               protected: false,
               protection: {
@@ -664,14 +664,14 @@ describe('Github Service', () => {
                 },
               },
               protection_url:
-                'https://api.github.com/repos/DX-DeveloperExperience/hygie/branches/renovate/express-4.x/protection',
+                'https://api.github.com/repos/zenika-open-source/hygie/branches/renovate/express-4.x/protection',
             },
             {
               name: 'renovate/googleapis-40.x',
               commit: {
                 sha: 'c93f1779441198daef276a50a274d16a5a83dd4e',
                 url:
-                  'https://api.github.com/repos/DX-DeveloperExperience/hygie/commits/c93f1779441198daef276a50a274d16a5a83dd4e',
+                  'https://api.github.com/repos/zenika-open-source/hygie/commits/c93f1779441198daef276a50a274d16a5a83dd4e',
               },
               protected: false,
               protection: {
@@ -682,14 +682,14 @@ describe('Github Service', () => {
                 },
               },
               protection_url:
-                'https://api.github.com/repos/DX-DeveloperExperience/hygie/branches/renovate/googleapis-40.x/protection',
+                'https://api.github.com/repos/zenika-open-source/hygie/branches/renovate/googleapis-40.x/protection',
             },
             {
               name: 'renovate/nest-monorepo',
               commit: {
                 sha: '9d968cc538b9796ec61e78f4055814028e816858',
                 url:
-                  'https://api.github.com/repos/DX-DeveloperExperience/hygie/commits/9d968cc538b9796ec61e78f4055814028e816858',
+                  'https://api.github.com/repos/zenika-open-source/hygie/commits/9d968cc538b9796ec61e78f4055814028e816858',
               },
               protected: false,
               protection: {
@@ -700,7 +700,7 @@ describe('Github Service', () => {
                 },
               },
               protection_url:
-                'https://api.github.com/repos/DX-DeveloperExperience/hygie/branches/renovate/nest-monorepo/protection',
+                'https://api.github.com/repos/zenika-open-source/hygie/branches/renovate/nest-monorepo/protection',
             },
           ],
         });

@@ -139,12 +139,12 @@ describe('Utils', () => {
   });
 
   describe('getRepositoryFullName', () => {
-    it('should return "DX-DeveloperExperience/hygie"', () => {
+    it('should return "zenika-open-source/hygie"', () => {
       expect(
         Utils.getRepositoryFullName(
-          'https://github.com/DX-DeveloperExperience/hygie',
+          'https://github.com/zenika-open-source/hygie',
         ),
-      ).toBe('DX-DeveloperExperience/hygie');
+      ).toBe('zenika-open-source/hygie');
     });
   });
 

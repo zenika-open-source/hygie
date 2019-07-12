@@ -76,7 +76,7 @@ If you create rules or post-actions that can be usefull for others, please ask f
 First, clone our project and go to the root directory:
 
 ```
-git clone https://github.com/DX-DeveloperExperience/hygie
+git clone https://github.com/zenika-open-source/hygie
 cd hygie
 ```
 
@@ -98,7 +98,7 @@ You can create a docker image of our **_Hygie_** API.
 First, clone our project and go to the root directory :
 
 ```
-git clone https://github.com/DX-DeveloperExperience/hygie
+git clone https://github.com/zenika-open-source/hygie
 cd hygie
 ```
 
