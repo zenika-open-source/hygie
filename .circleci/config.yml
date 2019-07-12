@@ -51,7 +51,7 @@ jobs:
           command: .circleci/scripts/run_all.sh
 workflows:
   version: 2
-  dependencies-and-deploy:
+  dependencies-build-and-deploy:
     jobs:
       - install-dependencies:
           filters:
