@@ -1,11 +1,11 @@
 # Hygie
 
-[![Coverage Status](https://coveralls.io/repos/github/DX-DeveloperExperience/hygie/badge.svg?branch=master)](https://coveralls.io/github/DX-DeveloperExperience/hygie?branch=master)
-[![CircleCI branch](https://img.shields.io/circleci/project/github/DX-DeveloperExperience/hygie/master.svg)](https://circleci.com/gh/DX-DeveloperExperience/hygie)
+[![Coverage Status](https://coveralls.io/repos/github/zenika-open-source/hygie/badge.svg?branch=master)](https://coveralls.io/github/zenika-open-source/hygie?branch=master)
+[![CircleCI branch](https://img.shields.io/circleci/project/github/zenika-open-source/hygie/master.svg)](https://circleci.com/gh/zenika-open-source/hygie)
 [![npm](https://img.shields.io/npm/v/@dxdeveloperexperience/hygie.svg)](https://www.npmjs.com/package/@dxdeveloperexperience/hygie)
-![GitHub release](https://img.shields.io/github/release/dx-developerexperience/hygie.svg)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/dx-developerexperience/hygie.svg)
-[![Website](https://img.shields.io/website/https/dx-developerexperience.github.io/hygie.svg)](https://dx-developerexperience.github.io/hygie/)
+![GitHub release](https://img.shields.io/github/release/zenika-open-source/hygie.svg)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/zenika-open-source/hygie.svg)
+[![Website](https://img.shields.io/website/https/zenika-open-source.github.io/hygie.svg)](https://zenika-open-source.github.io/hygie/)
 [![Discord](https://img.shields.io/badge/discord-online-brightgreen.svg)](https://discord.gg/w5AE8vS)
 
 ## Motivation
@@ -16,15 +16,15 @@ This [NestJs](https://docs.nestjs.com/) API expose a set of customizable Rules t
 
 ## Quick Getting Started
 
-To use our solution, just [register your application](https://dx-developerexperience.github.io/hygie/guide/registerToken.html): this will create a _webhook_ in your repository and an `Connected to Hygie!` issue, to ensure that everything worked fine.
+To use our solution, just [register your application](https://zenika-open-source.github.io/hygie/guide/registerToken.html): this will create a _webhook_ in your repository and an `Connected to Hygie!` issue, to ensure that everything worked fine.
 
 You can now create your configuration file to fit your needs, or continue working on your project without any changes and using our default configuration file, with our _good practices_.
 
-For more informations, read the [Getting Started section](https://dx-developerexperience.github.io/hygie/guide/gettingStarted.html).
+For more informations, read the [Getting Started section](https://zenika-open-source.github.io/hygie/guide/gettingStarted.html).
 
 ## Documentation
 
-Check-out our [documentation website](https://dx-developerexperience.github.io/hygie/) for more informations.
+Check-out our [documentation website](https://zenika-open-source.github.io/hygie/) for more informations.
 
 ## Keywords
 

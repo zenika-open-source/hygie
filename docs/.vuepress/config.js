@@ -4,8 +4,8 @@ module.exports = {
   description:
     "Hygie is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJS API expose a set of customizable rules to automate your project's life cycle.",
   themeConfig: {
-    repo: 'DX-DeveloperExperience/hygie',
-    docsRepo: 'DX-DeveloperExperience/hygie',
+    repo: 'zenika-open-source/hygie',
+    docsRepo: 'zenika-open-source/hygie',
     docsDir: 'docs',
     docsBranch: 'develop',
     editLinks: true,
@@ -23,7 +23,7 @@ module.exports = {
       },
       {
         text: 'Doc',
-        link: 'https://dx-developerexperience.github.io/hygie/tsdoc/',
+        link: 'https://zenika-open-source.github.io/hygie/tsdoc/',
       },
     ],
     sidebar: [

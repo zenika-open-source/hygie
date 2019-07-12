@@ -89,10 +89,10 @@ describe('remote-config', () => {
         httpService,
         githubService,
         gitlabService,
-        'https://github.com/DX-DeveloperExperience/hygie',
+        'https://github.com/zenika-open-source/hygie',
         Constants.rulesExtension,
       );
-      expect(result).toBe('remote-rules/DX-DeveloperExperience/hygie/.hygie');
+      expect(result).toBe('remote-rules/zenika-open-source/hygie/.hygie');
     });
   });
   describe('downloadRulesFile', () => {
@@ -129,7 +129,7 @@ describe('remote-config', () => {
       const configEnv = {
         gitApi: 'https://gitapi.com',
         gitToken: 'azertyuiop',
-        gitRepo: 'https://github.com/DX-DeveloperExperience/hygie',
+        gitRepo: 'https://github.com/zenika-open-source/hygie',
       };
 
       await RemoteConfigUtils.registerConfigEnv(
@@ -142,11 +142,11 @@ describe('remote-config', () => {
       );
 
       expect(dataAccessService.checkIfEnvExist).toHaveBeenCalledWith(
-        'remote-envs/DX-DeveloperExperience/hygie/config.env',
+        'remote-envs/zenika-open-source/hygie/config.env',
       );
 
       expect(dataAccessService.writeEnv).toHaveBeenCalledWith(
-        'remote-envs/DX-DeveloperExperience/hygie/config.env',
+        'remote-envs/zenika-open-source/hygie/config.env',
         {
           gitApi: 'https://gitapi.com',
           gitToken: 'azertyuiop',
@@ -161,11 +161,11 @@ describe('remote-config', () => {
       expect(
         RemoteConfigUtils.getGitRawPath(
           GitTypeEnum.Github,
-          'https://github.com/DX-DeveloperExperience/hygie',
+          'https://github.com/zenika-open-source/hygie',
           'package.json',
         ),
       ).toBe(
-        'https://raw.githubusercontent.com/DX-DeveloperExperience/hygie/master/package.json',
+        'https://raw.githubusercontent.com/zenika-open-source/hygie/master/package.json',
       );
     });
   });
@@ -222,7 +222,7 @@ describe('remote-config', () => {
     it('should return a Github', () => {
       expect(
         RemoteConfigUtils.getGitType(
-          'https://github.com/DX-DeveloperExperience/hygie',
+          'https://github.com/zenika-open-source/hygie',
         ),
       ).toBe(GitTypeEnum.Github);
     });

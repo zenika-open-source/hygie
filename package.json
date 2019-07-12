@@ -120,10 +120,10 @@
     "FaaS"
   ],
   "bugs": {
-    "url": "https://github.com/DX-DeveloperExperience/hygie/issues"
+    "url": "https://github.com/zenika-open-source/hygie/issues"
   },
-  "homepage": "https://dx-developerexperience.github.io/hygie/",
-  "repository": "github:DX-DeveloperExperience/hygie",
+  "homepage": "https://zenika-open-source.github.io/hygie/",
+  "repository": "github:zenika-open-source/hygie",
   "author": "Bastien Terrier <bastien.terrier@gmail.com>",
   "contributors": [
     "Emmanuel Demey <emmanuel.demey@zenika.com>",

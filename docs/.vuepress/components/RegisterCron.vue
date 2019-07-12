@@ -50,7 +50,7 @@ export default {
       isCorrectJSON: true,
       jsonData: JSON.stringify(
         JSON.parse(
-          '{"filename": "cron-*.rulesrc", "projectURL": "https://github.com/DX-DeveloperExperience/hygie", "expression": "0 0 6-20/1 * * *"}',
+          '{"filename": "cron-*.rulesrc", "projectURL": "https://github.com/zenika-open-source/hygie", "expression": "0 0 6-20/1 * * *"}',
         ),
         undefined,
         4,
