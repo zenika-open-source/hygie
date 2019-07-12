@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "copyfiles": "cpx src/rules/.rulesrc dist/rules && cpx \"src/rules/*.rule.ts\" dist/rules && cpx src/rules/rules.options.ts dist/rules && cpx \"src/runnables/*.runnable.ts\" dist/runnables && cpx \"src/views/*\" dist/views",
-    "build": "tsc -p tsconfig.build.json && npm run copyfiles",
+    "build": "rimraf dist && tsc -p tsconfig.build.json && npm run copyfiles",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "prettier-test": "prettier -l \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "ts-node --transpile-only -r tsconfig-paths/register src/main.ts",
@@ -50,6 +50,7 @@
     "fs-extra": "8.1.0",
     "github-release-notes": "0.17.0",
     "googleapis": "27.0.0",
+    "handlebars": "4.1.2",
     "js-yaml": "3.13.1",
     "prom-client": "11.5.3",
     "reflect-metadata": "0.1.13",
