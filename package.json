@@ -70,7 +70,7 @@
     "@types/supertest": "2.0.8",
     "@types/universal-analytics": "0.4.2",
     "@types/handlebars": "4.1.0",
-    "coveralls": "3.0.4",
+    "coveralls": "3.0.5",
     "cpx": "1.5.0",
     "husky": "3.0.0",
     "jest": "24.8.0",
