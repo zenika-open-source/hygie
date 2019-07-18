@@ -4,7 +4,7 @@
   "description": "Hygie is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJS API expose a set of customizable rules to automate your project's life cycle.",
   "license": "MIT",
   "scripts": {
-    "copyfiles": "cpx public dist/public && cpx src/rules/.rulesrc dist/rules && cpx \"src/rules/*.rule.ts\" dist/rules && cpx src/rules/rules.options.ts dist/rules && cpx \"src/runnables/*.runnable.ts\" dist/runnables && cpx \"src/views/*\" dist/views",
+    "copyfiles": "cpx src/rules/.rulesrc dist/rules && cpx \"src/rules/*.rule.ts\" dist/rules && cpx src/rules/rules.options.ts dist/rules && cpx \"src/runnables/*.runnable.ts\" dist/runnables && cpx \"src/views/*\" dist/views && cpx \"public/**/*\" dist/public",
     "build": "rimraf dist && tsc -p tsconfig.build.json && npm run copyfiles",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "prettier-test": "prettier -l \"src/**/*.ts\" \"test/**/*.ts\"",
