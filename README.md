@@ -1,16 +1,22 @@
-[![Coverage Status](https://coveralls.io/repos/github/zenika-open-source/hygie/badge.svg?branch=master)](https://coveralls.io/github/zenika-open-source/hygie?branch=master)
-[![CircleCI branch](https://img.shields.io/circleci/project/github/zenika-open-source/hygie/master.svg)](https://circleci.com/gh/zenika-open-source/hygie)
-[![npm](https://img.shields.io/npm/v/@dxdeveloperexperience/hygie.svg)](https://www.npmjs.com/package/@dxdeveloperexperience/hygie)
-![GitHub release](https://img.shields.io/github/release/zenika-open-source/hygie.svg)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/zenika-open-source/hygie.svg)
-[![Website](https://img.shields.io/website/https/zenika-open-source.github.io/hygie.svg)](https://zenika-open-source.github.io/hygie/)
-[![Discord](https://img.shields.io/badge/discord-online-brightgreen.svg)](https://discord.gg/w5AE8vS)
-
-![Hygie](hygie.png)
+<p align="center">
+  <a href="https://zenika-open-source.github.io/hygie" target="blank"><img src="public/hygie/hygie-horizontal-medium.png" alt="Hygie Logo" /></a>
+</p>
+<p align="center">
+    An easy-to-use Open-Source API to manage and automate your project's life cycle.
+</p>
+<p align="center">
+    <a href="https://coveralls.io/github/zenika-open-source/hygie?branch=master" target="blank"><img src="https://coveralls.io/repos/github/zenika-open-source/hygie/badge.svg?branch=master" alt="Coverage Status" /></a>
+    <a href="https://circleci.com/gh/zenika-open-source/hygie" target="blank"><img src="https://img.shields.io/circleci/project/github/zenika-open-source/hygie/master.svg" alt="CircleCI Build" /></a>
+    <a href="https://www.npmjs.com/package/@dxdeveloperexperience/hygie" target="blank"><img src="https://img.shields.io/npm/v/@dxdeveloperexperience/hygie.svg" alt="NPM" /></a>
+    <a href="https://github.com/zenika-open-source/hygie/releases" target="blank"><img src="https://img.shields.io/github/release/zenika-open-source/hygie.svg" alt="GitHub release" /></a>
+    <a href="#" target="blank"><img src="https://img.shields.io/github/languages/code-size/zenika-open-source/hygie.svg" alt="GitHub code size in bytes" /></a>
+    <a href="https://zenika-open-source.github.io/hygie/" target="blank"><img src="https://img.shields.io/website/https/zenika-open-source.github.io/hygie.svg" alt="Website" /></a>
+    <a href="https://discord.gg/w5AE8vS" target="blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord" /></a>
+</p>
 
 ## Motivation
 
-Tired to add and configure a lot of apps like stale, lock, WIP or trafico to manage your GIT project?
+Tired to add and configure a lot of apps like [stale](https://github.com/marketplace/stale), [lock](https://github.com/apps/lock), [WIP](https://github.com/marketplace/wip) or [trafico](https://github.com/marketplace/trafico-pull-request-labeler) to manage your GIT project?
 
 With **_Hygie_** you can do all these stuff and much more, with only one app and configuration file!
 

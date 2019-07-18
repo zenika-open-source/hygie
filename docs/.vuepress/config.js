@@ -148,7 +148,6 @@ module.exports = {
       },
     ],
     sidebar: [
-      '/',
       {
         title: 'Guide',
         collapsable: false,
