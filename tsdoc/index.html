@@ -1,0 +1,918 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@dxdeveloperexperience/hygie</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@dxdeveloperexperience/hygie</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> @dxdeveloperexperience/hygie</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<p align="center">
+					<a href="https://zenika-open-source.github.io/hygie" target="blank"><img src="public/hygie/hygie-horizontal-medium.png" alt="Hygie Logo" /></a>
+				</p>
+				<p align="center">
+					An easy-to-use Open-Source API to manage and automate your project's life cycle.
+				</p>
+				<p align="center">
+					<a href="https://coveralls.io/github/zenika-open-source/hygie?branch=master" target="blank"><img src="https://coveralls.io/repos/github/zenika-open-source/hygie/badge.svg?branch=master" alt="Coverage Status" /></a>
+					<a href="https://circleci.com/gh/zenika-open-source/hygie" target="blank"><img src="https://img.shields.io/circleci/project/github/zenika-open-source/hygie/master.svg" alt="CircleCI Build" /></a>
+					<a href="https://www.npmjs.com/package/@dxdeveloperexperience/hygie" target="blank"><img src="https://img.shields.io/npm/v/@dxdeveloperexperience/hygie.svg" alt="NPM" /></a>
+					<a href="https://github.com/zenika-open-source/hygie/releases" target="blank"><img src="https://img.shields.io/github/release/zenika-open-source/hygie.svg" alt="GitHub release" /></a>
+					<a href="#" target="blank"><img src="https://img.shields.io/github/languages/code-size/zenika-open-source/hygie.svg" alt="GitHub code size in bytes" /></a>
+					<a href="https://zenika-open-source.github.io/hygie/" target="blank"><img src="https://img.shields.io/website/https/zenika-open-source.github.io/hygie.svg" alt="Website" /></a>
+					<a href="https://discord.gg/w5AE8vS" target="blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord" /></a>
+				</p>
+				<h2 id="motivation">Motivation</h2>
+				<p>Tired to add and configure a lot of apps like <a href="https://github.com/marketplace/stale">stale</a>, <a href="https://github.com/apps/lock">lock</a>, <a href="https://github.com/marketplace/wip">WIP</a> or <a href="https://github.com/marketplace/trafico-pull-request-labeler">trafico</a> to manage your GIT project?</p>
+				<p>With <strong><em>Hygie</em></strong> you can do all these stuff and much more, with only one app and configuration file!</p>
+				<p>Updating commit status, creating <em>work in progress</em> pull request, auto-closing outdated issues or pull requests, interacting with external API, deploying your documentation, creating CRON jobs... all these things you can do with <strong><em>Hygie</em></strong>.</p>
+				<p><strong><em>Hygie</em></strong> is an easy-to-use Open-Source REST API allowing you to interact with GIT events. It expose a set of customizable Rules to automate your project&#39;s life cycle.</p>
+				<h2 id="quick-getting-started">Quick Getting Started</h2>
+				<p>To use our solution, just <a href="https://zenika-open-source.github.io/hygie/guide/registerToken.html">register your application</a>: this will create a <em>webhook</em> in your repository and an <code>Connected to Hygie!</code> issue, to ensure that everything worked fine.</p>
+				<p>You can now create your configuration file to fit your needs, or continue working on your project without any changes and using our default configuration file, with our <em>good practices</em>.</p>
+				<p>For more informations, read the <a href="https://zenika-open-source.github.io/hygie/guide/gettingStarted.html">Getting Started section</a>.</p>
+				<h2 id="documentation">Documentation</h2>
+				<p>Check-out our <a href="https://zenika-open-source.github.io/hygie/">documentation website</a> for more informations about the configuration file and the workflow you can create.</p>
+				<h2 id="wanna-host-your-own-hygie-app-">Wanna host your own <em>Hygie</em> app?</h2>
+				<p>Have a look at the <a href="https://zenika-open-source.github.io/hygie/guide/selfHosted.html">dedicated section</a> if you want to host your own instance of our <strong><em>Hygie</em></strong> app.</p>
+				<h2 id="keywords">Keywords</h2>
+				<p><a href="">#NestJS</a>, <a href="">#Node.js</a>, <a href="">#TypeScript</a>, <a href="">#Docker</a>, <a href="">#Webhooks</a>, <a href="">#FaaS</a>, <a href="">#Github</a>, <a href="">#GitLab</a>, <a href="">#CI</a>, <a href="">#Open-Source</a>...</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-enum">
+						<a href="enums/callbacktype.html" class="tsd-kind-icon">Callback<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/commitstatusenum.html" class="tsd-kind-icon">Commit<wbr>Status<wbr>Enum</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/coverageprovider.html" class="tsd-kind-icon">Coverage<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/giteventenum.html" class="tsd-kind-icon">Git<wbr>Event<wbr>Enum</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/gittypeenum.html" class="tsd-kind-icon">Git<wbr>Type<wbr>Enum</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/issueprstateenum.html" class="tsd-kind-icon">IssuePRState<wbr>Enum</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/issuesortenum.html" class="tsd-kind-icon">Issue<wbr>Sort<wbr>Enum</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/prmethodsenum.html" class="tsd-kind-icon">PRMethods<wbr>Enum</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/sourceenum.html" class="tsd-kind-icon">Source<wbr>Enum</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/allexceptionsfilter.html" class="tsd-kind-icon">All<wbr>Exceptions<wbr>Filter</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/appmodule.html" class="tsd-kind-icon">App<wbr>Module</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/applicationcontroller.html" class="tsd-kind-icon">Application<wbr>Controller</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/branchnamerule.html" class="tsd-kind-icon">Branch<wbr>Name<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/check.html" class="tsd-kind-icon">Check</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/checkaddedfilesrule.html" class="tsd-kind-icon">Check<wbr>Added<wbr>Files<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/checkcoveragerule.html" class="tsd-kind-icon">Check<wbr>Coverage<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/checkissuesrule.html" class="tsd-kind-icon">Check<wbr>Issues<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/checkpullrequeststatusrule.html" class="tsd-kind-icon">Check<wbr>Pull<wbr>Request<wbr>Status<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/checkpullrequestsrule.html" class="tsd-kind-icon">Check<wbr>Pull<wbr>Requests<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/checkvulnerabilitiesrule.html" class="tsd-kind-icon">Check<wbr>Vulnerabilities<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/commentissuerunnable.html" class="tsd-kind-icon">Comment<wbr>Issue<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/commentpullrequestrunnable.html" class="tsd-kind-icon">Comment<wbr>Pull<wbr>Request<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/commitmatches.html" class="tsd-kind-icon">Commit<wbr>Matches</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/commitmessagerule.html" class="tsd-kind-icon">Commit<wbr>Message<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/constants.html" class="tsd-kind-icon">Constants</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/createissuerunnable.html" class="tsd-kind-icon">Create<wbr>Issue<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/createpullrequestrunnable.html" class="tsd-kind-icon">Create<wbr>Pull<wbr>Request<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/createreleaserunnable.html" class="tsd-kind-icon">Create<wbr>Release<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/createtagrunnable.html" class="tsd-kind-icon">Create<wbr>Tag<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/croncontroller.html" class="tsd-kind-icon">Cron<wbr>Controller</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/cronstandardclass.html" class="tsd-kind-icon">Cron<wbr>Standard<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/dataaccessmodule.html" class="tsd-kind-icon">Data<wbr>Access<wbr>Module</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/dataaccessservice.html" class="tsd-kind-icon">Data<wbr>Access<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/databaseaccess.html" class="tsd-kind-icon">Database<wbr>Access</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/deletebranchrunnable.html" class="tsd-kind-icon">Delete<wbr>Branch<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/deletefilesrunnable.html" class="tsd-kind-icon">Delete<wbr>Files<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/deployfolderrunnable.html" class="tsd-kind-icon">Deploy<wbr>Folder<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/documentationcontroller.html" class="tsd-kind-icon">Documentation<wbr>Controller</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/envvaraccessor.html" class="tsd-kind-icon">Env<wbr>Var<wbr>Accessor</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/envvarcontroller.html" class="tsd-kind-icon">Env<wbr>Var<wbr>Controller</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/envvarinterceptor.html" class="tsd-kind-icon">Env<wbr>Var<wbr>Interceptor</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/envvarmodule.html" class="tsd-kind-icon">Env<wbr>Var<wbr>Module</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/envvarservice.html" class="tsd-kind-icon">Env<wbr>Var<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/fileaccess.html" class="tsd-kind-icon">File<wbr>Access</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitapiinfos.html" class="tsd-kind-icon">Git<wbr>Api<wbr>Infos</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitbranchcommit.html" class="tsd-kind-icon">Git<wbr>Branch<wbr>Commit</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitcommentprinfos.html" class="tsd-kind-icon">Git<wbr>CommentPRInfos</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitcommit.html" class="tsd-kind-icon">Git<wbr>Commit</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitcommitstatusinfos.html" class="tsd-kind-icon">Git<wbr>Commit<wbr>Status<wbr>Infos</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitcontent.html" class="tsd-kind-icon">Git<wbr>Content</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitfileinfos.html" class="tsd-kind-icon">Git<wbr>File<wbr>Infos</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitissueinfos.html" class="tsd-kind-icon">Git<wbr>Issue<wbr>Infos</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitissueprsearch.html" class="tsd-kind-icon">Git<wbr>IssuePRSearch</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitmergeprinfos.html" class="tsd-kind-icon">Git<wbr>MergePRInfos</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitmodule.html" class="tsd-kind-icon">Git<wbr>Module</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitprinfos.html" class="tsd-kind-icon">GitPRInfos</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitref.html" class="tsd-kind-icon">Git<wbr>Ref</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitrelease.html" class="tsd-kind-icon">Git<wbr>Release</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gittag.html" class="tsd-kind-icon">Git<wbr>Tag</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/githubservice.html" class="tsd-kind-icon">Github<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/gitlabservice.html" class="tsd-kind-icon">Gitlab<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/group.html" class="tsd-kind-icon">Group</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/groupresult.html" class="tsd-kind-icon">Group<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/httpresponse.html" class="tsd-kind-icon">Http<wbr>Response</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/issuecommentrule.html" class="tsd-kind-icon">Issue<wbr>Comment<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/issuesearchresult.html" class="tsd-kind-icon">Issue<wbr>Search<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/issuetitlerule.html" class="tsd-kind-icon">Issue<wbr>Title<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/loggerrunnable.html" class="tsd-kind-icon">Logger<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/logginginterceptor.html" class="tsd-kind-icon">Logging<wbr>Interceptor</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/mergepullrequestrunnable.html" class="tsd-kind-icon">Merge<wbr>Pull<wbr>Request<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/onecommitperprrule.html" class="tsd-kind-icon">One<wbr>Commit<wbr>PerPRRule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/prsearchresult.html" class="tsd-kind-icon">PRSearch<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/preconditionexception.html" class="tsd-kind-icon">Precondition<wbr>Exception</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/prometheusservice.html" class="tsd-kind-icon">Prometheus<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/pullrequestcommentrule.html" class="tsd-kind-icon">Pull<wbr>Request<wbr>Comment<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/pullrequesttitlerule.html" class="tsd-kind-icon">Pull<wbr>Request<wbr>Title<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/registercontroller.html" class="tsd-kind-icon">Register<wbr>Controller</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/remoteconfigutils.html" class="tsd-kind-icon">Remote<wbr>Config<wbr>Utils</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/rule.html" class="tsd-kind-icon">Rule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/ruleresult.html" class="tsd-kind-icon">Rule<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/rulesmodule.html" class="tsd-kind-icon">Rules<wbr>Module</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/rulesoptions.html" class="tsd-kind-icon">Rules<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/rulesservice.html" class="tsd-kind-icon">Rules<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/runnable.html" class="tsd-kind-icon">Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/runnablemodule.html" class="tsd-kind-icon">Runnable<wbr>Module</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/runnablesservice.html" class="tsd-kind-icon">Runnables<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/schedule.html" class="tsd-kind-icon">Schedule</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/scheduleservice.html" class="tsd-kind-icon">Schedule<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/sendemailrunnable.html" class="tsd-kind-icon">Send<wbr>Email<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/timedoutexception.html" class="tsd-kind-icon">Timed<wbr>Out<wbr>Exception</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/updatecommitstatusrunnable.html" class="tsd-kind-icon">Update<wbr>Commit<wbr>Status<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/updateissuerunnable.html" class="tsd-kind-icon">Update<wbr>Issue<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/updatepullrequestrunnable.html" class="tsd-kind-icon">Update<wbr>Pull<wbr>Request<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/utils.html" class="tsd-kind-icon">Utils</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/webhook.html" class="tsd-kind-icon">Webhook</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/webhookcomment.html" class="tsd-kind-icon">Webhook<wbr>Comment</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/webhookcommit.html" class="tsd-kind-icon">Webhook<wbr>Commit</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/webhookcontroller.html" class="tsd-kind-icon">Webhook<wbr>Controller</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/webhookinterceptor.html" class="tsd-kind-icon">Webhook<wbr>Interceptor</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/webhookissue.html" class="tsd-kind-icon">Webhook<wbr>Issue</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/webhookpr.html" class="tsd-kind-icon">WebhookPR</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/webhookrepository.html" class="tsd-kind-icon">Webhook<wbr>Repository</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/webhookrunnable.html" class="tsd-kind-icon">Webhook<wbr>Runnable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/webhookuser.html" class="tsd-kind-icon">Webhook<wbr>User</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/whitelistinterceptor.html" class="tsd-kind-icon">White<wbr>List<wbr>Interceptor</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/branchnameoptions.html" class="tsd-kind-icon">Branch<wbr>Name<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/branchesoptions.html" class="tsd-kind-icon">Branches<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/checkaddedfilesoptions.html" class="tsd-kind-icon">Check<wbr>Added<wbr>Files<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/checkcoverageoptions.html" class="tsd-kind-icon">Check<wbr>Coverage<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/checkissuesoptions.html" class="tsd-kind-icon">Check<wbr>Issues<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/checkpullrequeststatusoptions.html" class="tsd-kind-icon">Check<wbr>Pull<wbr>Request<wbr>Status<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/checkpullrequestsoptions.html" class="tsd-kind-icon">Check<wbr>Pull<wbr>Requests<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/checkvulnerabilitiesoptions.html" class="tsd-kind-icon">Check<wbr>Vulnerabilities<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/commentissueargs.html" class="tsd-kind-icon">Comment<wbr>Issue<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/commentprargs.html" class="tsd-kind-icon">CommentPRArgs</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/commitmessageoptions.html" class="tsd-kind-icon">Commit<wbr>Message<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/configenv.html" class="tsd-kind-icon">Config<wbr>Env</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/createissueargs.html" class="tsd-kind-icon">Create<wbr>Issue<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/createpullrequestargs.html" class="tsd-kind-icon">Create<wbr>Pull<wbr>Request<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/createreleaseargs.html" class="tsd-kind-icon">Create<wbr>Release<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/createtagargs.html" class="tsd-kind-icon">Create<wbr>Tag<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/croninterface.html" class="tsd-kind-icon">Cron<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/dataaccessinterface.html" class="tsd-kind-icon">Data<wbr>Access<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/deletebranchargs.html" class="tsd-kind-icon">Delete<wbr>Branch<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/deletefilesargs.html" class="tsd-kind-icon">Delete<wbr>Files<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/deployfolderargs.html" class="tsd-kind-icon">Deploy<wbr>Folder<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/envfileinterface.html" class="tsd-kind-icon">Env<wbr>File<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitenv.html" class="tsd-kind-icon">Git<wbr>Env</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitfiledata.html" class="tsd-kind-icon">Git<wbr>File<wbr>Data</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitserviceinterface.html" class="tsd-kind-icon">Git<wbr>Service<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubbasepr.html" class="tsd-kind-icon">Github<wbr>BasePR</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubbranchevent.html" class="tsd-kind-icon">Github<wbr>Branch<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubcomment.html" class="tsd-kind-icon">Github<wbr>Comment</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubcommit.html" class="tsd-kind-icon">Github<wbr>Commit</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubheadpr.html" class="tsd-kind-icon">Github<wbr>HeadPR</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubissue.html" class="tsd-kind-icon">Github<wbr>Issue</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubissueevent.html" class="tsd-kind-icon">Github<wbr>Issue<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubissueprcommentevent.html" class="tsd-kind-icon">Github<wbr>IssuePRComment<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubnewrepoevent.html" class="tsd-kind-icon">Github<wbr>New<wbr>Repo<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubprevent.html" class="tsd-kind-icon">GithubPREvent</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubpullrequest.html" class="tsd-kind-icon">Github<wbr>Pull<wbr>Request</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubpushevent.html" class="tsd-kind-icon">Github<wbr>Push<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubrepository.html" class="tsd-kind-icon">Github<wbr>Repository</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/githubsender.html" class="tsd-kind-icon">Github<wbr>Sender</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitlabcomment.html" class="tsd-kind-icon">Gitlab<wbr>Comment</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitlabcommit.html" class="tsd-kind-icon">Gitlab<wbr>Commit</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitlabissue.html" class="tsd-kind-icon">Gitlab<wbr>Issue</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitlabissuecommentevent.html" class="tsd-kind-icon">Gitlab<wbr>Issue<wbr>Comment<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitlabissueevent.html" class="tsd-kind-icon">Gitlab<wbr>Issue<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitlabpr.html" class="tsd-kind-icon">GitlabPR</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitlabprcommentevent.html" class="tsd-kind-icon">GitlabPRComment<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitlabprevent.html" class="tsd-kind-icon">GitlabPREvent</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitlabproject.html" class="tsd-kind-icon">Gitlab<wbr>Project</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitlabpushevent.html" class="tsd-kind-icon">Gitlab<wbr>Push<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/gitlabuser.html" class="tsd-kind-icon">Gitlab<wbr>User</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/issuecommentoptions.html" class="tsd-kind-icon">Issue<wbr>Comment<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/issuetitleoptions.html" class="tsd-kind-icon">Issue<wbr>Title<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/keyvalueenvfileinterface.html" class="tsd-kind-icon">Key<wbr>Value<wbr>Env<wbr>File<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/loggerargs.html" class="tsd-kind-icon">Logger<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/mergepullrequestargs.html" class="tsd-kind-icon">Merge<wbr>Pull<wbr>Request<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/onsuccesserror.html" class="tsd-kind-icon">On<wbr>Success<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/onecommitperproptions.html" class="tsd-kind-icon">One<wbr>Commit<wbr>PerPROptions</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/projectenvfileinterface.html" class="tsd-kind-icon">Project<wbr>Env<wbr>File<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/pullrequestcommentoptions.html" class="tsd-kind-icon">Pull<wbr>Request<wbr>Comment<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/pullrequesttitleoptions.html" class="tsd-kind-icon">Pull<wbr>Request<wbr>Title<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/sendemailargs.html" class="tsd-kind-icon">Send<wbr>Email<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/splitteddirectory.html" class="tsd-kind-icon">Splitted<wbr>Directory</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/updatecommitstatusargs.html" class="tsd-kind-icon">Update<wbr>Commit<wbr>Status<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/updateissueargs.html" class="tsd-kind-icon">Update<wbr>Issue<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/updatepullrequestargs.html" class="tsd-kind-icon">Update<wbr>Pull<wbr>Request<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/usersoptions.html" class="tsd-kind-icon">Users<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/webhookargs.html" class="tsd-kind-icon">Webhook<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#crontype" class="tsd-kind-icon">Cron<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#githubevent" class="tsd-kind-icon">Github<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#gitlabevent" class="tsd-kind-icon">Gitlab<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#rulesproviders" class="tsd-kind-icon">Rules<wbr>Providers</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#rulesvalues" class="tsd-kind-icon">Rules<wbr>Values</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#runnablesproviders" class="tsd-kind-icon">Runnables<wbr>Providers</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#runnablesvalues" class="tsd-kind-icon">Runnables<wbr>Values</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#analytics" class="tsd-kind-icon">analytics</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#app" class="tsd-kind-icon">app</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#cron1" class="tsd-kind-icon">cron1</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#cron2" class="tsd-kind-icon">cron2</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#dataaccessservice" class="tsd-kind-icon">data<wbr>Access<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#fs" class="tsd-kind-icon">fs</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#githubservice" class="tsd-kind-icon">github<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#gitlabservice" class="tsd-kind-icon">gitlab<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#isproduction" class="tsd-kind-icon">is<wbr>Production</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#logger" class="tsd-kind-icon">logger</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#loggerconstformat" class="tsd-kind-icon">logger<wbr>Const<wbr>Format</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#loggerformat" class="tsd-kind-icon">logger<wbr>Format</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#path" class="tsd-kind-icon">path</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#verboselogger" class="tsd-kind-icon">verbose<wbr>Logger</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#webhook" class="tsd-kind-icon">webhook</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#cronexpressionexception" class="tsd-kind-icon">Cron<wbr>Expression<wbr>Exception</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#cronfilenameexception" class="tsd-kind-icon">Cron<wbr>Filename<wbr>Exception</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#filesizeexception" class="tsd-kind-icon">File<wbr>Size<wbr>Exception</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#ruledecorator" class="tsd-kind-icon">Rule<wbr>Decorator</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#runnabledecorator" class="tsd-kind-icon">Runnable<wbr>Decorator</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#schedulerexception" class="tsd-kind-icon">Scheduler<wbr>Exception</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#bootstrap" class="tsd-kind-icon">bootstrap</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#checkcronexpression" class="tsd-kind-icon">check<wbr>Cron<wbr>Expression</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#checkcronfilename" class="tsd-kind-icon">check<wbr>Cron<wbr>Filename</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#convertcommitstatus" class="tsd-kind-icon">convert<wbr>Commit<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#convertcrontype" class="tsd-kind-icon">convert<wbr>Cron<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#convertissueprsearchstate" class="tsd-kind-icon">convert<wbr>IssuePRSearch<wbr>State</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#convertissuestate" class="tsd-kind-icon">convert<wbr>Issue<wbr>State</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getallcomments" class="tsd-kind-icon">get<wbr>All<wbr>Comments</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getalloptions" class="tsd-kind-icon">get<wbr>All<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getallrules" class="tsd-kind-icon">get<wbr>All<wbr>Rules</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getallrunnables" class="tsd-kind-icon">get<wbr>All<wbr>Runnables</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getallyamloptions" class="tsd-kind-icon">get<wbr>AllYAMLOptions</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getallyamlrulesname" class="tsd-kind-icon">get<wbr>AllYAMLRules<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getallyamlrulesoptions" class="tsd-kind-icon">get<wbr>AllYAMLRules<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getallyamlrunnablesargs" class="tsd-kind-icon">get<wbr>AllYAMLRunnables<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getallyamlrunnablesname" class="tsd-kind-icon">get<wbr>AllYAMLRunnables<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getcronfilename" class="tsd-kind-icon">get<wbr>Cron<wbr>File<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getmatchingfiles" class="tsd-kind-icon">get<wbr>Matching<wbr>Files</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getyamlschema" class="tsd-kind-icon">getYAMLSchema</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#iscroninterface" class="tsd-kind-icon">is<wbr>Cron<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#iscroninterfacearray" class="tsd-kind-icon">is<wbr>Cron<wbr>Interface<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgithubclosedprevent" class="tsd-kind-icon">is<wbr>Github<wbr>ClosedPREvent</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgithubdeletedbranchevent" class="tsd-kind-icon">is<wbr>Github<wbr>Deleted<wbr>Branch<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgithubissuecommentevent" class="tsd-kind-icon">is<wbr>Github<wbr>Issue<wbr>Comment<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgithubissueevent" class="tsd-kind-icon">is<wbr>Github<wbr>Issue<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgithubmergedprevent" class="tsd-kind-icon">is<wbr>Github<wbr>MergedPREvent</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgithubnewbranchevent" class="tsd-kind-icon">is<wbr>Github<wbr>New<wbr>Branch<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgithubnewprevent" class="tsd-kind-icon">is<wbr>Github<wbr>NewPREvent</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgithubnewrepoevent" class="tsd-kind-icon">is<wbr>Github<wbr>New<wbr>Repo<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgithubprcommentevent" class="tsd-kind-icon">is<wbr>GithubPRComment<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgithubpushevent" class="tsd-kind-icon">is<wbr>Github<wbr>Push<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgithubreopenedprevent" class="tsd-kind-icon">is<wbr>Github<wbr>ReopenedPREvent</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgitlabclosedprevent" class="tsd-kind-icon">is<wbr>Gitlab<wbr>ClosedPREvent</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgitlabdeletedbranchevent" class="tsd-kind-icon">is<wbr>Gitlab<wbr>Deleted<wbr>Branch<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgitlabissuecommentevent" class="tsd-kind-icon">is<wbr>Gitlab<wbr>Issue<wbr>Comment<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgitlabissueevent" class="tsd-kind-icon">is<wbr>Gitlab<wbr>Issue<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgitlabmergedprevent" class="tsd-kind-icon">is<wbr>Gitlab<wbr>MergedPREvent</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgitlabnewbranchevent" class="tsd-kind-icon">is<wbr>Gitlab<wbr>New<wbr>Branch<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgitlabnewprevent" class="tsd-kind-icon">is<wbr>Gitlab<wbr>NewPREvent</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgitlabprcommentevent" class="tsd-kind-icon">is<wbr>GitlabPRComment<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgitlabpushevent" class="tsd-kind-icon">is<wbr>Gitlab<wbr>Push<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#isgitlabreopenedprevent" class="tsd-kind-icon">is<wbr>Gitlab<wbr>ReopenedPREvent</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#makebody" class="tsd-kind-icon">make<wbr>Body</a>
+					</li>
+					<li class=" tsd-kind-object-literal tsd-is-not-exported">
+						<a href="globals.html#cron3" class="tsd-kind-icon">cron3</a>
+					</li>
+					<li class=" tsd-kind-object-literal tsd-is-not-exported">
+						<a href="globals.html#cron4" class="tsd-kind-icon">cron4</a>
+					</li>
+					<li class=" tsd-kind-object-literal tsd-is-not-exported">
+						<a href="globals.html#cron5" class="tsd-kind-icon">cron5</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

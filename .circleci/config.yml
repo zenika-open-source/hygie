@@ -1,0 +1,69 @@
+version: 2
+jobs:
+  install-dependencies:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}
+            - dependencies-
+      - run:
+          name: Download dependencies
+          command: npm install --quiet
+      - save_cache:
+          paths: [node_modules]
+          key: dependencies-{{ checksum "package.json" }}
+      - persist_to_workspace:
+          root: ./
+          paths: [node_modules]
+  build:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - setup_remote_docker
+      - checkout
+      - attach_workspace:
+          at: ./
+      - run:
+          name: npm run ci tests
+          command: npm run ci
+      - run:
+          name: coveralls test
+          command: npm run test:cov && (cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js)
+  deploy:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ./
+      - add_ssh_keys:
+          fingerprints:
+            - "06:fa:21:e0:f0:79:14:03:85:08:b9:48:a3:ef:c6:8c"
+      - setup_remote_docker
+      - run:
+          name: chmod +x scripts
+          command: chmod +x .circleci/scripts/*.sh
+      - run:
+          name: run all scripts
+          command: .circleci/scripts/run_all.sh
+workflows:
+  version: 2
+  dependencies-build-and-deploy:
+    jobs:
+      - install-dependencies:
+          filters:
+            branches:
+              ignore: gh-pages
+      - build:
+          requires: [install-dependencies]
+          filters:
+            branches:
+              ignore: gh-pages
+      - deploy:
+          requires: [build]
+          filters:
+            branches:
+              only: master
