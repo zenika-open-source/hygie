@@ -13,8 +13,6 @@ WORKDIR /app
 RUN npm install --production
 COPY --from=node /src/app/dist /app/src
 RUN mkdir /app/packages
-RUN mkdir /app/remote-envs
-RUN mkdir /app/remote-rules
 RUN ls /app
 RUN ls /app/src
 EXPOSE 3000
