@@ -1,4 +1,4 @@
-import { Module, HttpModule } from '@nestjs/common';
+import { Module, HttpModule, Logger } from '@nestjs/common';
 import { RulesModule } from '../rules/rules.module';
 import { RunnableModule } from '../runnables/runnable.module';
 import { GitModule } from '../git/git.module';
@@ -20,6 +20,7 @@ import { DataAccessService } from '../data_access/dataAccess.service';
 import { EnvVarModule } from '../env-var/env-var.module';
 import { CommonModule } from '../common/common.module';
 import { WebhookSecretWhiteListChecker } from '../interceptors/whiteList/webhookSecretWhiteListChecker.service';
+import { LoggerService } from '../common/providers/logger/logger.service';
 
 @Module({
   imports: [
@@ -39,6 +40,8 @@ import { WebhookSecretWhiteListChecker } from '../interceptors/whiteList/webhook
     MockEnvVarController,
   ],
   providers: [
+    Logger,
+    LoggerService,
     {
       provide: 'WhiteListChecker',
       useClass: WebhookSecretWhiteListChecker,
