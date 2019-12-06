@@ -61,7 +61,7 @@ describe('DeployFolderRunnable', () => {
   });
   describe('Run method', () => {
     it('should call Github methods', async () => {
-      myGitApiInfos.git = GitTypeEnum.Github;
+      ruleResult.gitApiInfos.git = GitTypeEnum.Github;
       await deployFolderRunnable.run(CallbackType.Both, ruleResult, args);
       expect(githubService.getTree).toBeCalledWith('docs', 'develop');
       expect(githubService.getLastCommit).toBeCalledWith('gh-pages');
