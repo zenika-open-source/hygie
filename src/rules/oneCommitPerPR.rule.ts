@@ -33,10 +33,7 @@ export class OneCommitPerPRRule extends Rule {
     ruleConfig: OneCommitPerPRRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     this.googleAnalytics
       .event('Rule', 'oneCommitPerPR', webhook.getCloneURL())
       .send();

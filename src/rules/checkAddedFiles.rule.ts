@@ -35,10 +35,7 @@ export class CheckAddedFilesRule extends Rule {
     ruleConfig: CheckAddedFilesRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     const commits: WebhookCommit[] = webhook.getAllCommits();
     const addedRegExp = RegExp(ruleConfig.options.regexp);
 

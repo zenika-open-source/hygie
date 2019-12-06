@@ -1,4 +1,5 @@
 import { GitApiInfos } from '../git/gitApiInfos';
+import { Webhook } from '../webhook/webhook';
 
 /**
  * Contains the result of the rule `validate()` method.
@@ -11,7 +12,7 @@ export class RuleResult {
   /**
    * Contains meta-data that can be used by `Runnable` (in the `args` object)
    */
-  data: object;
+  data: any;
   /**
    * Provide informations to `Runnable` to interact with Git API
    */
@@ -26,8 +27,9 @@ export class RuleResult {
    */
   env: object;
 
-  constructor(gitApiInfos: GitApiInfos, url: string = '') {
-    this.gitApiInfos = gitApiInfos;
-    this.projectURL = url;
+  constructor(webhook: Webhook) {
+    this.gitApiInfos = webhook.getGitApiInfos();
+    this.projectURL = webhook.getCloneURL();
+    this.data = webhook;
   }
 }

@@ -45,10 +45,7 @@ export class CheckVulnerabilitiesRule extends Rule {
     ruleConfig: CheckVulnerabilitiesRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     this.googleAnalytics
       .event('Rule', 'checkVulnerabilities', webhook.getCloneURL())
       .send();

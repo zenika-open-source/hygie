@@ -34,10 +34,7 @@ export class PullRequestTitleRule extends Rule {
     ruleConfig: PullRequestTitleRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     this.googleAnalytics
       .event('Rule', 'pullRequestTitle', webhook.getCloneURL())
       .send();

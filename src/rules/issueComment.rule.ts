@@ -34,10 +34,7 @@ export class IssueCommentRule extends Rule {
     ruleConfig: IssueCommentRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     const commentDescription = webhook.getCommentDescription();
     const commentRegExp = RegExp(ruleConfig.options.regexp);
 

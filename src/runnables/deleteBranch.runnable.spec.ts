@@ -4,7 +4,6 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
 import {
   MockGitlabService,
   MockGithubService,
@@ -13,6 +12,7 @@ import {
 import { DeleteBranchRunnable } from './deleteBranch.runnable';
 import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
 
 describe('DeleteBranchRunnable', () => {
   let app: TestingModule;
@@ -40,20 +40,16 @@ describe('DeleteBranchRunnable', () => {
     gitlabService = app.get(GitlabService);
     deleteBranchRunnable = app.get(DeleteBranchRunnable);
 
-    const myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    const webhook = new Webhook(gitlabService, githubService);
+    webhook.branchName = 'test/webhook';
 
     args = {
-      branchName: '{{data.branch}}',
+      branchName: '{{data.branchName}}',
     };
     // ruleResultBranchName initialisation
-    ruleResultBranchName = new RuleResult(myGitApiInfos);
+    ruleResultBranchName = new RuleResult(webhook);
     ruleResultBranchName.validated = false;
-    ruleResultBranchName.data = {
-      branch: 'test/webhook',
-      branchSplit: ['test', 'webhook'],
-    };
+    ruleResultBranchName.data.branchSplit = ['test', 'webhook'];
   });
 
   beforeEach(() => {

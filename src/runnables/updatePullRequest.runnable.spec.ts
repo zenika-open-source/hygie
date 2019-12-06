@@ -4,7 +4,6 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
 import {
   MockGitlabService,
   MockGithubService,
@@ -13,6 +12,7 @@ import {
 import { UpdatePullRequestRunnable } from '.';
 import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
 
 describe('UpdatePullRequestRunnable', () => {
   let app: TestingModule;
@@ -40,24 +40,18 @@ describe('UpdatePullRequestRunnable', () => {
     gitlabService = app.get(GitlabService);
     updatePullRequestRunnable = app.get(UpdatePullRequestRunnable);
 
-    const myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    const webhook = new Webhook(gitlabService, githubService);
+    webhook.pullRequest.title = 'Bad title';
+    webhook.pullRequest.number = 22;
+    webhook.pullRequest.description = 'my desc';
 
     args = {
       title: 'Default title',
     };
 
     // ruleResultPullRequestTitle initialisation
-    ruleResultPullRequestTitle = new RuleResult(myGitApiInfos);
+    ruleResultPullRequestTitle = new RuleResult(webhook);
     ruleResultPullRequestTitle.validated = false;
-    ruleResultPullRequestTitle.data = {
-      pullRequest: {
-        title: 'Bad title',
-        number: 22,
-        description: 'my desc',
-      },
-    };
   });
 
   beforeEach(() => {
@@ -81,7 +75,7 @@ describe('UpdatePullRequestRunnable', () => {
       updatePullRequestRunnable
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
         .catch(err => logger.error(err));
-      expect(githubService.updatePullRequest).toBeCalled();
+      expect(githubService.updatePullRequest).toBeCalledWith({number: 22, title: 'Default title'});
       expect(gitlabService.updatePullRequest).not.toBeCalled();
     });
   });
@@ -92,7 +86,7 @@ describe('UpdatePullRequestRunnable', () => {
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
         .catch(err => logger.error(err));
       expect(githubService.updatePullRequest).not.toBeCalled();
-      expect(gitlabService.updatePullRequest).toBeCalled();
+      expect(gitlabService.updatePullRequest).toBeCalledWith({number: 22, title: 'Default title'});
     });
   });
 });

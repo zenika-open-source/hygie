@@ -37,10 +37,7 @@ export class CheckPullRequestsRule extends Rule {
     ruleConfig: CheckPullRequestsRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     this.googleAnalytics
       .event('Rule', 'checkPullRequests', webhook.getCloneURL())
       .send();

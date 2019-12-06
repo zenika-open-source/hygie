@@ -41,7 +41,7 @@ export class DeployFolderRunnable extends Runnable {
     ruleResult.env = this.envVarAccessor.getAllEnvVar();
 
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
-    const sourceBranch: string = (ruleResult.data as any).branch;
+    const sourceBranch: string = (ruleResult.data as any).branchName;
 
     this.googleAnalytics
       .event('Runnable', 'deployFolder', ruleResult.projectURL)

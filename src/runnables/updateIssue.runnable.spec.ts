@@ -4,7 +4,6 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
 import {
   MockGitlabService,
   MockGithubService,
@@ -13,6 +12,7 @@ import {
 import { UpdateIssueRunnable } from './updateIssue.runnable';
 import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
 
 describe('UpdateIssueRunnable', () => {
   let app: TestingModule;
@@ -40,18 +40,14 @@ describe('UpdateIssueRunnable', () => {
     gitlabService = app.get(GitlabService);
     updateIssueRunnable = app.get(UpdateIssueRunnable);
 
-    const myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    const webhook = new Webhook(gitlabService, githubService);
+    webhook.issue.number = 22;
 
     args = { state: 'close' };
 
     // ruleResultIssueTitle initialisation
-    ruleResultIssueTitle = new RuleResult(myGitApiInfos);
+    ruleResultIssueTitle = new RuleResult(webhook);
     ruleResultIssueTitle.validated = false;
-    ruleResultIssueTitle.data = {
-      issue: { number: 22 },
-    };
   });
 
   beforeEach(() => {
@@ -74,7 +70,7 @@ describe('UpdateIssueRunnable', () => {
         .run(CallbackType.Both, ruleResultIssueTitle, args)
         .catch(err => logger.error(err));
 
-      expect(githubService.updateIssue).toBeCalled();
+      expect(githubService.updateIssue).toBeCalledWith({number: '22', state: 'Close'});
       expect(gitlabService.updateIssue).not.toBeCalled();
     });
   });
@@ -86,7 +82,7 @@ describe('UpdateIssueRunnable', () => {
         .catch(err => logger.error(err));
 
       expect(githubService.updateIssue).not.toBeCalled();
-      expect(gitlabService.updateIssue).toBeCalled();
+      expect(gitlabService.updateIssue).toBeCalledWith({number: '22', state: 'Close'});
     });
   });
 });

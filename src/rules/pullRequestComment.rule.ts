@@ -33,10 +33,7 @@ export class PullRequestCommentRule extends Rule {
     webhook: Webhook,
     ruleConfig: PullRequestCommentRule,
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     this.googleAnalytics
       .event('Rule', 'pullRequestComment', webhook.getCloneURL())
       .send();

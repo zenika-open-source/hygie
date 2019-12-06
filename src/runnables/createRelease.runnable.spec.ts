@@ -4,7 +4,6 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
 import {
   MockGitlabService,
   MockGithubService,
@@ -13,6 +12,7 @@ import {
 import { CreateReleaseRunnable } from './createRelease.runnable';
 import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
 
 describe('createRelease Runnable', () => {
   let app: TestingModule;
@@ -40,17 +40,13 @@ describe('createRelease Runnable', () => {
     gitlabService = app.get(GitlabService);
     createReleaseRunnable = app.get(CreateReleaseRunnable);
 
-    const myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    const webhook = new Webhook(gitlabService, githubService);
 
     args = { tag: 'v0.0.1' };
 
-    ruleResult = new RuleResult(myGitApiInfos);
+    ruleResult = new RuleResult(webhook);
     ruleResult.validated = false;
-    ruleResult.data = {
-      some: 'data',
-    };
+
   });
 
   beforeEach(() => {
@@ -73,7 +69,7 @@ describe('createRelease Runnable', () => {
       createReleaseRunnable
         .run(CallbackType.Both, ruleResult, args)
         .catch(err => logger.error(err));
-      expect(githubService.createRelease).toBeCalled();
+      expect(githubService.createRelease).toBeCalledWith({tag: 'v0.0.1'});
       expect(gitlabService.createRelease).not.toBeCalled();
     });
   });
@@ -85,7 +81,7 @@ describe('createRelease Runnable', () => {
         .run(CallbackType.Both, ruleResult, args)
         .catch(err => logger.error(err));
       expect(githubService.createRelease).not.toBeCalled();
-      expect(gitlabService.createRelease).toBeCalled();
+      expect(gitlabService.createRelease).toBeCalledWith({tag: 'v0.0.1'});
     });
   });
 });

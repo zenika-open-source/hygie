@@ -4,15 +4,21 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { GitApiInfos } from '../git/gitApiInfos';
-import { MockHttpService, MockAnalytics } from '../__mocks__/mocks';
+import { MockHttpService, MockAnalytics, MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 import { WebhookRunnable } from './webhook.runnable';
 import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
+import { GitlabService } from '../gitlab/gitlab.service';
+import { GithubService } from '../github/github.service';
 
 describe('WebhookRunnable', () => {
   let app: TestingModule;
 
   let httpService: HttpService;
+
+  let githubService: GithubService;
+  let gitlabService: GitlabService;
 
   let webhookRunnable: WebhookRunnable;
 
@@ -23,42 +29,34 @@ describe('WebhookRunnable', () => {
     app = await Test.createTestingModule({
       providers: [
         WebhookRunnable,
+        { provide: GitlabService, useClass: MockGitlabService },
+        { provide: GithubService, useClass: MockGithubService },
         { provide: HttpService, useClass: MockHttpService },
         { provide: 'GoogleAnalytics', useValue: MockAnalytics },
         EnvVarAccessor,
       ],
     }).compile();
 
+    githubService = app.get(GithubService);
+    gitlabService = app.get(GitlabService);
     httpService = app.get(HttpService);
     webhookRunnable = app.get(WebhookRunnable);
 
-    const myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    const webhook = new Webhook(gitlabService, githubService);
+    webhook.branchName = 'test_webhook';
 
     args = {
       url: 'https://webhook.site/abcdef',
       data: {
         user: 'my name',
         content: 'my content',
+        branch: '{{data.branchName}}',
       },
     };
 
     // ruleResultBranchName initialisation
-    ruleResultCommitMessage = new RuleResult(myGitApiInfos);
+    ruleResultCommitMessage = new RuleResult(webhook);
     ruleResultCommitMessage.validated = true;
-    ruleResultCommitMessage.data = {
-      branch: 'test_webhook',
-      commits: [
-        {
-          status: 'Success',
-          success: true,
-          sha: '1',
-          message: 'fix: readme (#12)',
-          matches: ['fix: readme (#12)', 'fix', null, '(#12)'],
-        },
-      ],
-    };
   });
 
   beforeEach(() => {
@@ -76,6 +74,7 @@ describe('WebhookRunnable', () => {
         JSON.stringify({
           user: 'my name',
           content: 'my content',
+          branch: 'test_webhook',
         }),
         {},
       );

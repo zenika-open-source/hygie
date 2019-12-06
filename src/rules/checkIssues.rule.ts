@@ -40,10 +40,7 @@ export class CheckIssuesRule extends Rule {
     ruleConfig: CheckIssuesRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     this.googleAnalytics
       .event('Rule', 'checkIssues', webhook.getCloneURL())
       .send();

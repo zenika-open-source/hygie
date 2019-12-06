@@ -46,10 +46,7 @@ export class CommitMessageRule extends Rule {
     ruleConfig: CommitMessageRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     const commits: WebhookCommit[] = webhook.getAllCommits();
     if (commits.length === 0) {
       return null;

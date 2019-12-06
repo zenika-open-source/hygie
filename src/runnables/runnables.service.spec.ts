@@ -1,38 +1,44 @@
 import { TestingModule, Test } from '@nestjs/testing';
 import { RunnablesService } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
-import { GitTypeEnum } from '../webhook/utils.enum';
 import { IssueTitleRule } from '../rules';
 import {
   MockRunnableModule,
   MockRunnable,
 } from '../__mocks__/mock.runnables.module';
-import { MockAnalytics } from '../__mocks__/mocks';
+import { MockAnalytics, MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import { Webhook } from '../webhook/webhook';
+import { GitlabService } from '../gitlab/gitlab.service';
+import { GithubService } from '../github/github.service';
 
 describe('Runnables Service', () => {
   let app: TestingModule;
   let runnablesService: RunnablesService;
-  let myGitApiInfos: GitApiInfos;
   let ruleResultIssueTitle: RuleResult;
   let issueTitleRule: IssueTitleRule;
 
+  let githubService: GithubService;
+  let gitlabService: GitlabService;
+
   beforeAll(async () => {
     app = await Test.createTestingModule({
+      providers: [
+        { provide: GitlabService, useClass: MockGitlabService },
+        { provide: GithubService, useClass: MockGithubService },
+      ],
       imports: [MockRunnableModule],
     }).compile();
+
+    githubService = app.get(GithubService);
+    gitlabService = app.get(GitlabService);
     runnablesService = app.get(RunnablesService);
 
-    myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    const webhook = new Webhook(gitlabService, githubService);
+    webhook.issue.number = 22;
 
     // ruleResultIssueTitle initialisation
-    ruleResultIssueTitle = new RuleResult(myGitApiInfos);
+    ruleResultIssueTitle = new RuleResult(webhook);
     ruleResultIssueTitle.validated = false;
-    ruleResultIssueTitle.data = {
-      issue: { number: 22 },
-    };
 
     issueTitleRule = new IssueTitleRule(MockAnalytics);
     issueTitleRule.onBoth = [
