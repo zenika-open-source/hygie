@@ -20,7 +20,7 @@ import { GithubService } from '../github/github.service';
 import { RemoteConfigUtils } from '../remote-config/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { Constants } from '../utils/constants';
-import { WhiteListInterceptor } from '../interceptors/whiteList.interceptor';
+import { WhiteListInterceptor } from '../interceptors/whiteList/whiteList.interceptor';
 import { ScheduleService } from '../scheduler/scheduler.service';
 import { EnvVarService } from '../env-var/env-var.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';

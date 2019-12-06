@@ -8,7 +8,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { AllExceptionsFilter } from '../exceptions/allExceptionFilter';
-import { WhiteListInterceptor } from '../interceptors/whiteList.interceptor';
+import { WhiteListInterceptor } from '../interceptors/whiteList/whiteList.interceptor';
 import { WebhookInterceptor } from '../interceptors/webhook.interceptor';
 import { Webhook } from '../webhook/webhook';
 import { logger } from '../logger/logger.service';
