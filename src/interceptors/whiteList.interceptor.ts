@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   CallHandler,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { Observable, of } from 'rxjs';
 import { logger } from '../logger/logger.service';
@@ -11,6 +12,13 @@ import { logger } from '../logger/logger.service';
 @Injectable()
 export class WhiteListInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    if (process.env.ENABLE_WHITELIST !== 'true') {
+      Logger.log('The WhiteListInterceptor is deactivated.');
+      return next.handle();
+    } else {
+      Logger.log('The WhiteListInterceptor is activated.');
+    }
+
     const CryptoJS = require('crypto-js');
     const Compare = require('secure-compare');
 
