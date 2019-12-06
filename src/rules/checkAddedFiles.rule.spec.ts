@@ -77,12 +77,8 @@ describe('RulesService', () => {
         webhook,
         checkAddedFilesRule,
       );
-      const expectedResult = {
-        addedFiles: [],
-        branch: 'test_branch',
-      };
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.addedFiles).toEqual([]);
     });
   });
 
@@ -115,12 +111,16 @@ describe('RulesService', () => {
         webhook,
         checkAddedFilesRule,
       );
-      const expectedResult = {
-        addedFiles: ['a.md', 'b.md', 'e.md', 'aa.md', 'bb.md', 'ee.md'],
-        branch: 'test_branch',
-      };
+
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.addedFiles).toEqual([
+        'a.md',
+        'b.md',
+        'e.md',
+        'aa.md',
+        'bb.md',
+        'ee.md',
+      ]);
     });
   });
 });

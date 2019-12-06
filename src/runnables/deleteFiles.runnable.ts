@@ -78,8 +78,8 @@ export class DeleteFilesRunnable extends Runnable {
         gitFileInfos.fileBranch = Utils.render(args.branch, ruleResult);
       } else {
         // Default
-        if (typeof (ruleResult as any).data.branch !== 'undefined') {
-          gitFileInfos.fileBranch = (ruleResult as any).data.branch;
+        if (typeof (ruleResult as any).data.branchName !== 'undefined') {
+          gitFileInfos.fileBranch = (ruleResult as any).data.branchName;
         } else {
           gitFileInfos.fileBranch = 'master';
         }

@@ -4,7 +4,6 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
 import {
   MockGitlabService,
   MockGithubService,
@@ -13,6 +12,7 @@ import {
 import { CreateIssueRunnable } from './createIssue.runnable';
 import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
 
 describe('CreateIssueRunnable', () => {
   let app: TestingModule;
@@ -40,44 +40,42 @@ describe('CreateIssueRunnable', () => {
     gitlabService = app.get(GitlabService);
     createIssueRunnable = app.get(CreateIssueRunnable);
 
-    const myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    const webhook = new Webhook(gitlabService, githubService);
+    webhook.branchName = 'test_webhook';
 
     args = {
       title: 'new issue',
-      description: '{{data.branch}} as a new commit which failed, find why.',
+      description:
+        '{{data.branchName}} as a new commit which failed, find why.',
       labels: ['bug', 'urgent'],
     };
+
     // ruleResultIssueTitle initialisation
-    ruleResultCommitMessage = new RuleResult(myGitApiInfos);
+    ruleResultCommitMessage = new RuleResult(webhook);
     ruleResultCommitMessage.validated = true;
-    ruleResultCommitMessage.data = {
-      branch: 'test_webhook',
-      commits: [
-        {
-          status: 'Success',
-          success: true,
-          sha: '1',
-          message: 'fix: readme (#12)',
-          matches: ['fix: readme (#12)', 'fix', null, '(#12)'],
-        },
-        {
-          status: 'Success',
-          success: true,
-          sha: '2',
-          message: 'feat(test): tdd (#34)',
-          matches: ['feat(test): tdd (#34)', 'feat', '(test)', '(#34)'],
-        },
-        {
-          status: 'Success',
-          success: true,
-          sha: '3',
-          message: 'docs: gh-pages',
-          matches: ['docs: gh-pages', 'docs', null, null],
-        },
-      ],
-    };
+    ruleResultCommitMessage.data.commits = [
+      {
+        status: 'Success',
+        success: true,
+        sha: '1',
+        message: 'fix: readme (#12)',
+        matches: ['fix: readme (#12)', 'fix', null, '(#12)'],
+      },
+      {
+        status: 'Success',
+        success: true,
+        sha: '2',
+        message: 'feat(test): tdd (#34)',
+        matches: ['feat(test): tdd (#34)', 'feat', '(test)', '(#34)'],
+      },
+      {
+        status: 'Success',
+        success: true,
+        sha: '3',
+        message: 'docs: gh-pages',
+        matches: ['docs: gh-pages', 'docs', null, null],
+      },
+    ];
   });
 
   beforeEach(() => {

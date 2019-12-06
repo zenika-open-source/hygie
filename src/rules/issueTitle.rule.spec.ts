@@ -62,16 +62,11 @@ describe('RulesService', () => {
       jest.spyOn(issueTitle, 'validate');
 
       const result: RuleResult = await issueTitle.validate(webhook, issueTitle);
-      const expectedResult = {
-        issue: {
-          matches: ['add rules documentation', 'add'],
-          number: 22,
-          title: 'add rules documentation',
-          description: 'please consider adding a Rules section',
-        },
-      };
+
       expect(result.validated).toBe(true);
-      expect(JSON.parse(JSON.stringify(result.data))).toEqual(expectedResult);
+      expect(JSON.stringify(result.data.issue.matches)).toEqual(
+        JSON.stringify(['add rules documentation', 'add']),
+      );
       expect(result.gitApiInfos).toEqual({
         git: 'Github',
         repositoryFullName: 'bastienterrier/test_webhook',
@@ -92,16 +87,10 @@ describe('RulesService', () => {
       jest.spyOn(issueTitle, 'validate');
 
       const result: RuleResult = await issueTitle.validate(webhook, issueTitle);
-      const expectedResult = {
-        issue: {
-          description: 'please consider adding a Rules section',
-          matches: null,
-          number: 22,
-          title: 'update rules documentation',
-        },
-      };
+
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.issue.matches).toEqual(null);
+
       expect(result.gitApiInfos).toEqual({
         git: 'Gitlab',
         projectId: '7657',

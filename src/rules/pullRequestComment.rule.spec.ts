@@ -60,18 +60,7 @@ describe('RulesService', () => {
         pullRequestComment,
       );
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual({
-        pullRequest: {
-          title: webhook.pullRequest.title,
-          number: webhook.pullRequest.number,
-          description: webhook.pullRequest.description,
-        },
-        comment: {
-          id: webhook.comment.id,
-          description: webhook.comment.description,
-          matches: null,
-        },
-      });
+      expect(result.data.comment.matches).toEqual(null);
     });
 
     it('should return true', async () => {
@@ -81,18 +70,9 @@ describe('RulesService', () => {
         pullRequestComment,
       );
       expect(result.validated).toBe(true);
-      expect(JSON.parse(JSON.stringify(result.data))).toEqual({
-        pullRequest: {
-          title: webhook.pullRequest.title,
-          number: webhook.pullRequest.number,
-          description: webhook.pullRequest.description,
-        },
-        comment: {
-          id: webhook.comment.id,
-          description: webhook.comment.description,
-          matches: ['@pong'],
-        },
-      });
+      expect(JSON.parse(JSON.stringify(result.data.comment.matches))).toEqual([
+        '@pong',
+      ]);
     });
   });
 });

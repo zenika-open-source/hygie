@@ -15,7 +15,7 @@ rules:
     onSuccess:
       - callback: CreatePullRequestRunnable
         args:
-          title: 'WIP: {{data.branch}}'
+          title: 'WIP: {{data.branchName}}'
           description: 'Work in Progress Pull Request'
           draft: true
 

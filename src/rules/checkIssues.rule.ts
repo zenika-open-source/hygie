@@ -40,10 +40,7 @@ export class CheckIssuesRule extends Rule {
     ruleConfig: CheckIssuesRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     this.googleAnalytics
       .event('Rule', 'checkIssues', webhook.getCloneURL())
       .send();
@@ -84,11 +81,7 @@ export class CheckIssuesRule extends Rule {
     ruleResult.validated = issuesToUpdate.length > 0;
 
     if (ruleResult.validated) {
-      ruleResult.data = {
-        issue: { number: issuesToUpdate },
-      };
-    } else {
-      ruleResult.data = {};
+      ruleResult.data.issue.number = issuesToUpdate;
     }
 
     return ruleResult;

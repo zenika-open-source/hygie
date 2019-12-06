@@ -34,10 +34,7 @@ export class IssueTitleRule extends Rule {
     ruleConfig: IssueTitleRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     const titleIssue = webhook.getIssueTitle();
     const issueRegExp = RegExp(ruleConfig.options.regexp);
 
@@ -51,15 +48,8 @@ export class IssueTitleRule extends Rule {
     }
 
     ruleResult.validated = issueRegExp.test(titleIssue);
+    ruleResult.data.issue.matches = titleIssue.match(issueRegExp);
 
-    ruleResult.data = {
-      issue: {
-        title: titleIssue,
-        number: webhook.getIssueNumber(),
-        description: webhook.getIssueDescription(),
-        matches: titleIssue.match(issueRegExp),
-      },
-    };
     return ruleResult;
   }
 }

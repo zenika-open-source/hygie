@@ -34,10 +34,7 @@ export class IssueCommentRule extends Rule {
     ruleConfig: IssueCommentRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     const commentDescription = webhook.getCommentDescription();
     const commentRegExp = RegExp(ruleConfig.options.regexp);
 
@@ -51,19 +48,8 @@ export class IssueCommentRule extends Rule {
     }
 
     ruleResult.validated = commentRegExp.test(commentDescription);
+    ruleResult.data.comment.matches = commentDescription.match(commentRegExp);
 
-    ruleResult.data = {
-      issue: {
-        title: webhook.getIssueTitle(),
-        number: webhook.getIssueNumber(),
-        description: webhook.getIssueDescription(),
-      },
-      comment: {
-        id: webhook.getCommentId(),
-        description: commentDescription,
-        matches: commentDescription.match(commentRegExp),
-      },
-    };
     return ruleResult;
   }
 }

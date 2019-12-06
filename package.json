@@ -7,7 +7,7 @@
     "copyfiles": "cpx src/rules/.rulesrc dist/rules && cpx \"src/rules/*.rule.ts\" dist/rules && cpx src/rules/rules.options.ts dist/rules && cpx \"src/runnables/*.runnable.ts\" dist/runnables && cpx \"src/views/*\" dist/views && cpx \"src/public/**/*\" dist/public",
     "build": "rimraf dist && tsc -p tsconfig.build.json && npm run copyfiles",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "prettier-test": "prettier -l \"src/**/*.ts\" \"test/**/*.ts\"",
+    "prettier-test": "prettier -c \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "ts-node --transpile-only -r tsconfig-paths/register src/main.ts",
     "start:dev": "nodemon",
     "start:debug": "nodemon --config nodemon-debug.json",

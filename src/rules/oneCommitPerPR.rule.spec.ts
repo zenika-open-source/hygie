@@ -61,8 +61,7 @@ describe('RulesService', () => {
         oneCommitPerPR,
       );
       expect(result.validated).toBe(false);
-      expect((result.data as any).commits).toEqual(webhook.commits);
-      expect((result.data as any).branch).toEqual(webhook.branchName);
+      expect(result.data.commits).toEqual(webhook.commits);
     });
   });
   describe('oneCommitPerPR Rule', () => {
@@ -83,8 +82,7 @@ describe('RulesService', () => {
         oneCommitPerPR,
       );
       expect(result.validated).toBe(true);
-      expect((result.data as any).commits).toEqual(webhook.commits);
-      expect((result.data as any).branch).toEqual(webhook.branchName);
+      expect(result.data.commits).toEqual(webhook.commits);
     });
   });
 });
