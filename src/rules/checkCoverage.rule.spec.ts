@@ -110,7 +110,7 @@ describe('RulesService', () => {
         webhook,
         checkCoverageRule,
       );
-      const expectedResult =  [
+      const expectedResult = [
         {
           branch: 'develop',
           coverage_change: -0.2,

@@ -64,7 +64,9 @@ describe('RulesService', () => {
       const result: RuleResult = await issueTitle.validate(webhook, issueTitle);
 
       expect(result.validated).toBe(true);
-      expect(JSON.stringify(result.data.issue.matches)).toEqual(JSON.stringify(['add rules documentation', 'add']));
+      expect(JSON.stringify(result.data.issue.matches)).toEqual(
+        JSON.stringify(['add rules documentation', 'add']),
+      );
       expect(result.gitApiInfos).toEqual({
         git: 'Github',
         repositoryFullName: 'bastienterrier/test_webhook',

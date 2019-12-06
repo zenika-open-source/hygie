@@ -70,7 +70,10 @@ describe('UpdateIssueRunnable', () => {
         .run(CallbackType.Both, ruleResultIssueTitle, args)
         .catch(err => logger.error(err));
 
-      expect(githubService.updateIssue).toBeCalledWith({number: '22', state: 'Close'});
+      expect(githubService.updateIssue).toBeCalledWith({
+        number: '22',
+        state: 'Close',
+      });
       expect(gitlabService.updateIssue).not.toBeCalled();
     });
   });
@@ -82,7 +85,10 @@ describe('UpdateIssueRunnable', () => {
         .catch(err => logger.error(err));
 
       expect(githubService.updateIssue).not.toBeCalled();
-      expect(gitlabService.updateIssue).toBeCalledWith({number: '22', state: 'Close'});
+      expect(gitlabService.updateIssue).toBeCalledWith({
+        number: '22',
+        state: 'Close',
+      });
     });
   });
 });

@@ -74,7 +74,11 @@ describe('MergePullRequestRunnable', () => {
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
         .catch(err => logger.error(err));
 
-      expect(githubService.mergePullRequest).toBeCalledWith({commitTitle: 'merging the PR...', method: 'Merge', number: 22});
+      expect(githubService.mergePullRequest).toBeCalledWith({
+        commitTitle: 'merging the PR...',
+        method: 'Merge',
+        number: 22,
+      });
       expect(gitlabService.mergePullRequest).not.toBeCalled();
     });
   });
@@ -86,7 +90,11 @@ describe('MergePullRequestRunnable', () => {
         .catch(err => logger.error(err));
 
       expect(githubService.mergePullRequest).not.toBeCalled();
-      expect(gitlabService.mergePullRequest).toBeCalledWith({commitTitle: 'merging the PR...', method: 'Merge', number: 22});
+      expect(gitlabService.mergePullRequest).toBeCalledWith({
+        commitTitle: 'merging the PR...',
+        method: 'Merge',
+        number: 22,
+      });
     });
   });
 });

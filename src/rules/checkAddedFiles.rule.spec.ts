@@ -113,7 +113,14 @@ describe('RulesService', () => {
       );
 
       expect(result.validated).toBe(true);
-      expect(result.data.addedFiles).toEqual(['a.md', 'b.md', 'e.md', 'aa.md', 'bb.md', 'ee.md']);
+      expect(result.data.addedFiles).toEqual([
+        'a.md',
+        'b.md',
+        'e.md',
+        'aa.md',
+        'bb.md',
+        'ee.md',
+      ]);
     });
   });
 });

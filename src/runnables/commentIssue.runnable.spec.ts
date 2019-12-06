@@ -70,7 +70,10 @@ describe('CommentIssueRunnable', () => {
         .run(CallbackType.Both, ruleResultIssueTitle, args)
         .catch(err => logger.error(err));
 
-      expect(githubService.addIssueComment).toBeCalledWith({comment: 'ping @bastienterrier', number: 22});
+      expect(githubService.addIssueComment).toBeCalledWith({
+        comment: 'ping @bastienterrier',
+        number: 22,
+      });
       expect(gitlabService.addIssueComment).not.toBeCalled();
     });
   });
@@ -82,7 +85,10 @@ describe('CommentIssueRunnable', () => {
         .catch(err => logger.error(err));
 
       expect(githubService.addIssueComment).not.toBeCalled();
-      expect(gitlabService.addIssueComment).toBeCalledWith({comment: 'ping @bastienterrier', number: 22});
+      expect(gitlabService.addIssueComment).toBeCalledWith({
+        comment: 'ping @bastienterrier',
+        number: 22,
+      });
     });
   });
 });

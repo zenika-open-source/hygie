@@ -1,10 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpService } from '@nestjs/common';
-import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
-import { MockHttpService, MockAnalytics, MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import {
+  MockHttpService,
+  MockAnalytics,
+  MockGitlabService,
+  MockGithubService,
+} from '../__mocks__/mocks';
 import { WebhookRunnable } from './webhook.runnable';
 import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';

@@ -80,7 +80,9 @@ describe('RulesService', () => {
         pullRequestTitle,
       );
       expect(result.validated).toBe(true);
-      expect(JSON.parse(JSON.stringify(result.data.pullRequest.matches))).toEqual(['WIP: webhook', 'WIP']);
+      expect(
+        JSON.parse(JSON.stringify(result.data.pullRequest.matches)),
+      ).toEqual(['WIP: webhook', 'WIP']);
     });
   });
 });

@@ -49,7 +49,7 @@ export class BranchNameRule extends Rule {
 
     ruleResult.validated = branchRegExp.test(branchName);
 
-    ruleResult.data.branchSplit =  branchName.split('/');
+    ruleResult.data.branchSplit = branchName.split('/');
     ruleResult.data.matches = branchName.match(branchRegExp);
 
     return ruleResult;

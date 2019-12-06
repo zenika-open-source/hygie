@@ -3,7 +3,11 @@ import { CallbackType } from './runnables.service';
 import { logger } from '../logger/logger.service';
 import { RuleResult } from '../rules/ruleResult';
 import { LoggerRunnable } from './logger.runnable';
-import { MockAnalytics, MockGithubService, MockGitlabService } from '../__mocks__/mocks';
+import {
+  MockAnalytics,
+  MockGithubService,
+  MockGitlabService,
+} from '../__mocks__/mocks';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
 import { GithubService } from '../github/github.service';

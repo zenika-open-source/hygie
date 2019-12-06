@@ -69,7 +69,9 @@ describe('RulesService', () => {
         issueComment,
       );
       expect(result.validated).toBe(true);
-      expect(JSON.stringify(result.data.comment.matches)).toEqual(JSON.stringify(['@ping']));
+      expect(JSON.stringify(result.data.comment.matches)).toEqual(
+        JSON.stringify(['@ping']),
+      );
     });
   });
 });

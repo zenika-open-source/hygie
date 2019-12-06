@@ -6,7 +6,11 @@ import {
   MockRunnableModule,
   MockRunnable,
 } from '../__mocks__/mock.runnables.module';
-import { MockAnalytics, MockGitlabService, MockGithubService } from '../__mocks__/mocks';
+import {
+  MockAnalytics,
+  MockGitlabService,
+  MockGithubService,
+} from '../__mocks__/mocks';
 import { Webhook } from '../webhook/webhook';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';

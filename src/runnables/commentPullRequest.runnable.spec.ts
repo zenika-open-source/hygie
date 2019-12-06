@@ -48,7 +48,6 @@ describe('CommentPullRequestRunnable', () => {
     // ruleResultPullRequestTitle initialisation
     ruleResultPullRequestTitle = new RuleResult(webhook);
     ruleResultPullRequestTitle.validated = true;
-
   });
 
   beforeEach(() => {
@@ -72,7 +71,10 @@ describe('CommentPullRequestRunnable', () => {
       commentPullRequestRunnable
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
         .catch(err => logger.error(err));
-      expect(githubService.addPRComment).toBeCalledWith({comment: 'ping @bastienterrier', number: 22});
+      expect(githubService.addPRComment).toBeCalledWith({
+        comment: 'ping @bastienterrier',
+        number: 22,
+      });
       expect(gitlabService.addPRComment).not.toBeCalled();
     });
   });
@@ -83,7 +85,10 @@ describe('CommentPullRequestRunnable', () => {
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
         .catch(err => logger.error(err));
       expect(githubService.addPRComment).not.toBeCalled();
-      expect(gitlabService.addPRComment).toBeCalledWith({comment: 'ping @bastienterrier', number: 22});
+      expect(gitlabService.addPRComment).toBeCalledWith({
+        comment: 'ping @bastienterrier',
+        number: 22,
+      });
     });
   });
 });

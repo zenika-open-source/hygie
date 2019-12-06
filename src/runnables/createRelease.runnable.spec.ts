@@ -46,7 +46,6 @@ describe('createRelease Runnable', () => {
 
     ruleResult = new RuleResult(webhook);
     ruleResult.validated = false;
-
   });
 
   beforeEach(() => {
@@ -69,7 +68,7 @@ describe('createRelease Runnable', () => {
       createReleaseRunnable
         .run(CallbackType.Both, ruleResult, args)
         .catch(err => logger.error(err));
-      expect(githubService.createRelease).toBeCalledWith({tag: 'v0.0.1'});
+      expect(githubService.createRelease).toBeCalledWith({ tag: 'v0.0.1' });
       expect(gitlabService.createRelease).not.toBeCalled();
     });
   });
@@ -81,7 +80,7 @@ describe('createRelease Runnable', () => {
         .run(CallbackType.Both, ruleResult, args)
         .catch(err => logger.error(err));
       expect(githubService.createRelease).not.toBeCalled();
-      expect(gitlabService.createRelease).toBeCalledWith({tag: 'v0.0.1'});
+      expect(gitlabService.createRelease).toBeCalledWith({ tag: 'v0.0.1' });
     });
   });
 });

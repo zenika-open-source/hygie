@@ -48,7 +48,9 @@ export class PullRequestTitleRule extends Rule {
     const pullRequestRegExp = RegExp(ruleConfig.options.regexp);
 
     ruleResult.validated = pullRequestRegExp.test(titlePullRequest);
-    ruleResult.data.pullRequest.matches = titlePullRequest.match(pullRequestRegExp);
+    ruleResult.data.pullRequest.matches = titlePullRequest.match(
+      pullRequestRegExp,
+    );
 
     return ruleResult;
   }

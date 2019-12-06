@@ -75,7 +75,10 @@ describe('UpdatePullRequestRunnable', () => {
       updatePullRequestRunnable
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
         .catch(err => logger.error(err));
-      expect(githubService.updatePullRequest).toBeCalledWith({number: 22, title: 'Default title'});
+      expect(githubService.updatePullRequest).toBeCalledWith({
+        number: 22,
+        title: 'Default title',
+      });
       expect(gitlabService.updatePullRequest).not.toBeCalled();
     });
   });
@@ -86,7 +89,10 @@ describe('UpdatePullRequestRunnable', () => {
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
         .catch(err => logger.error(err));
       expect(githubService.updatePullRequest).not.toBeCalled();
-      expect(gitlabService.updatePullRequest).toBeCalledWith({number: 22, title: 'Default title'});
+      expect(gitlabService.updatePullRequest).toBeCalledWith({
+        number: 22,
+        title: 'Default title',
+      });
     });
   });
 });

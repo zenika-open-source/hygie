@@ -46,7 +46,6 @@ describe('DeployFolderRunnable', () => {
 
     ruleResult = new RuleResult(webhook);
     ruleResult.validated = false;
-
   });
 
   beforeEach(() => {

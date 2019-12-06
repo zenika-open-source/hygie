@@ -70,7 +70,9 @@ describe('RulesService', () => {
         pullRequestComment,
       );
       expect(result.validated).toBe(true);
-      expect(JSON.parse(JSON.stringify(result.data.comment.matches))).toEqual(['@pong']);
+      expect(JSON.parse(JSON.stringify(result.data.comment.matches))).toEqual([
+        '@pong',
+      ]);
     });
   });
 });
