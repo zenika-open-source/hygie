@@ -15,6 +15,9 @@ import { PrometheusService } from './logger/prometheus.service';
 import { DataAccessModule } from './data_access/dataAccess.module';
 import { EnvVarController } from './controllers/env-var.controller';
 import { EnvVarModule } from './env-var/env-var.module';
+import { CommonModule } from './common/common.module';
+import { WebhookSecretWhiteListChecker } from './interceptors/whiteList/webhookSecretWhiteListChecker.service';
+
 @Module({
   imports: [
     HttpModule,
@@ -23,6 +26,7 @@ import { EnvVarModule } from './env-var/env-var.module';
     RunnableModule.forRoot(analytics),
     GitModule,
     EnvVarModule,
+    CommonModule,
   ],
   controllers: [
     ApplicationController,
@@ -33,6 +37,10 @@ import { EnvVarModule } from './env-var/env-var.module';
     EnvVarController,
   ],
   providers: [
+    {
+      provide: 'WhiteListChecker',
+      useClass: WebhookSecretWhiteListChecker,
+    },
     PrometheusService,
     ScheduleService,
     {

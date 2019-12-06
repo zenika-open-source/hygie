@@ -2,7 +2,7 @@ import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { INestApplication, HttpStatus } from '@nestjs/common';
 import { MockAppModule } from '../__mocks__/mock.app.module';
-import { WhiteListInterceptor } from './whiteList.interceptor';
+import { WhiteListInterceptor } from './whiteList/whiteList.interceptor';
 import { MockWhiteListInterceptorNext } from '../__mocks__/mock.whiteList.interceptor';
 
 describe('/webhook (POST) - In WhiteList', () => {

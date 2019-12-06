@@ -17,8 +17,9 @@ import { ApplicationController } from '../controllers/application.controller';
 import { PrometheusService } from '../logger/prometheus.service';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { DataAccessService } from '../data_access/dataAccess.service';
-import { EnvVarService } from '../env-var/env-var.service';
 import { EnvVarModule } from '../env-var/env-var.module';
+import { CommonModule } from '../common/common.module';
+import { WebhookSecretWhiteListChecker } from '../interceptors/whiteList/webhookSecretWhiteListChecker.service';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { EnvVarModule } from '../env-var/env-var.module';
     RunnableModule.forRoot(MockAnalytics),
     GitModule,
     EnvVarModule,
+    CommonModule,
   ],
   controllers: [
     ApplicationController,
@@ -37,6 +39,10 @@ import { EnvVarModule } from '../env-var/env-var.module';
     MockEnvVarController,
   ],
   providers: [
+    {
+      provide: 'WhiteListChecker',
+      useClass: WebhookSecretWhiteListChecker,
+    },
     {
       provide: DataAccessService,
       useFactory() {
