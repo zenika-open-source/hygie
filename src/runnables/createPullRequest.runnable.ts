@@ -60,7 +60,7 @@ export class CreatePullRequestRunnable extends Runnable {
       args.description = '';
     }
     if (typeof args.source === 'undefined') {
-      args.source = '{{data.branch}}';
+      args.source = '{{data.branchBranch}}';
     }
     if (typeof args.target === 'undefined') {
       args.target = 'master';

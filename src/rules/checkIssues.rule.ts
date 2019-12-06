@@ -81,11 +81,7 @@ export class CheckIssuesRule extends Rule {
     ruleResult.validated = issuesToUpdate.length > 0;
 
     if (ruleResult.validated) {
-      ruleResult.data = {
-        issue: { number: issuesToUpdate },
-      };
-    } else {
-      ruleResult.data = {};
+      ruleResult.data.issue.number = issuesToUpdate;
     }
 
     return ruleResult;

@@ -50,7 +50,7 @@ export class DeleteBranchRunnable extends Runnable {
       typeof args === 'undefined' ||
       (typeof args !== 'undefined' && typeof args.branchName === 'undefined')
     ) {
-      branchName = (ruleResult as any).data.branch;
+      branchName = (ruleResult as any).data.branchBranch;
     } else {
       branchName = Utils.render(args.branchName, ruleResult);
     }

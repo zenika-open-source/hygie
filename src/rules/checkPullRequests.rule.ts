@@ -78,11 +78,7 @@ export class CheckPullRequestsRule extends Rule {
     ruleResult.validated = PRToUpdate.length > 0;
 
     if (ruleResult.validated) {
-      ruleResult.data = {
-        pullRequest: { number: PRToUpdate },
-      };
-    } else {
-      ruleResult.data = {};
+      ruleResult.data.pullRequest.number = PRToUpdate;
     }
 
     return ruleResult;

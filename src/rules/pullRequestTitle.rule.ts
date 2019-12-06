@@ -46,16 +46,10 @@ export class PullRequestTitleRule extends Rule {
 
     const titlePullRequest = webhook.getPullRequestTitle();
     const pullRequestRegExp = RegExp(ruleConfig.options.regexp);
-    ruleResult.validated = pullRequestRegExp.test(titlePullRequest);
 
-    ruleResult.data = {
-      pullRequest: {
-        title: titlePullRequest,
-        number: webhook.getPullRequestNumber(),
-        description: webhook.getPullRequestDescription(),
-        matches: titlePullRequest.match(pullRequestRegExp),
-      },
-    };
+    ruleResult.validated = pullRequestRegExp.test(titlePullRequest);
+    ruleResult.data.pullRequest.matches = titlePullRequest.match(pullRequestRegExp);
+
     return ruleResult;
   }
 }

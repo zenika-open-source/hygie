@@ -64,10 +64,7 @@ export class CheckAddedFilesRule extends Rule {
       });
 
     ruleResult.validated = allMatchingAddedFiles.length > 0;
-    ruleResult.data = {
-      addedFiles: allMatchingAddedFiles,
-      branch: webhook.getBranchName(),
-    };
+    ruleResult.data.addedFiles = allMatchingAddedFiles;
 
     return ruleResult;
   }

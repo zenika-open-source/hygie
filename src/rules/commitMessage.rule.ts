@@ -100,10 +100,7 @@ export class CommitMessageRule extends Rule {
     });
 
     ruleResult.validated = allRegExpSuccessed;
-    ruleResult.data = {
-      branch: webhook.getBranchName(),
-      commits: commitsMatches,
-    };
+    ruleResult.data.commits = commitsMatches;
 
     return ruleResult;
   }

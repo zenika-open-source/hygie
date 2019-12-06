@@ -48,15 +48,8 @@ export class IssueTitleRule extends Rule {
     }
 
     ruleResult.validated = issueRegExp.test(titleIssue);
+    ruleResult.data.issue.matches = titleIssue.match(issueRegExp);
 
-    ruleResult.data = {
-      issue: {
-        title: titleIssue,
-        number: webhook.getIssueNumber(),
-        description: webhook.getIssueDescription(),
-        matches: titleIssue.match(issueRegExp),
-      },
-    };
     return ruleResult;
   }
 }

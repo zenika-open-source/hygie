@@ -47,10 +47,6 @@ export class OneCommitPerPRRule extends Rule {
     }
 
     ruleResult.validated = webhook.getAllCommits().length === 1 ? true : false;
-    ruleResult.data = {
-      branch: webhook.getBranchName(),
-      commits: webhook.getAllCommits(),
-    };
     return ruleResult;
   }
 }
