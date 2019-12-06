@@ -64,10 +64,8 @@ describe('RulesService', () => {
       );
       jest.fn().mockReset();
 
-      const expectedResult = {};
-
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.issue.number).toEqual(undefined);
     });
   });
   describe('checkIssues Rule', () => {
@@ -104,10 +102,8 @@ describe('RulesService', () => {
 
       jest.fn().mockReset();
 
-      const expectedResult = { issue: { number: [1, 2, 3] } };
-
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.issue.number).toEqual([1, 2, 3]);
     });
   });
   describe('checkIssues Rule', () => {
@@ -144,10 +140,8 @@ describe('RulesService', () => {
 
       jest.fn().mockReset();
 
-      const expectedResult = { issue: { number: [1, 2, 3] } };
-
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.issue.number).toEqual([1, 2, 3]);
     });
   });
 });

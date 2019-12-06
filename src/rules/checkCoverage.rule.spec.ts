@@ -110,23 +110,21 @@ describe('RulesService', () => {
         webhook,
         checkCoverageRule,
       );
-      const expectedResult = {
-        coverage: [
-          {
-            branch: 'develop',
-            coverage_change: -0.2,
-            covered_percent: 77.985285795133,
-          },
-          {
-            branch: 'master',
-            coverage_change: 0.2,
-            covered_percent: 79.985285795133,
-          },
-        ],
-      };
+      const expectedResult = [
+        {
+          branch: 'develop',
+          coverage_change: -0.2,
+          covered_percent: 77.985285795133,
+        },
+        {
+          branch: 'master',
+          coverage_change: 0.2,
+          covered_percent: 79.985285795133,
+        },
+      ];
 
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.coverage).toEqual(expectedResult);
     });
   });
 
@@ -199,23 +197,21 @@ describe('RulesService', () => {
         webhook,
         checkCoverageRule,
       );
-      const expectedResult = {
-        coverage: [
-          {
-            branch: 'develop',
-            coverage_change: -0.2,
-            covered_percent: 77.985285795133,
-          },
-          {
-            branch: 'master',
-            coverage_change: 0.2,
-            covered_percent: 79.985285795133,
-          },
-        ],
-      };
+      const expectedResult = [
+        {
+          branch: 'develop',
+          coverage_change: -0.2,
+          covered_percent: 77.985285795133,
+        },
+        {
+          branch: 'master',
+          coverage_change: 0.2,
+          covered_percent: 79.985285795133,
+        },
+      ];
 
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.coverage).toEqual(expectedResult);
     });
   });
 
@@ -288,23 +284,21 @@ describe('RulesService', () => {
         webhook,
         checkCoverageRule,
       );
-      const expectedResult = {
-        coverage: [
-          {
-            branch: 'develop',
-            coverage_change: 0.2,
-            covered_percent: 67.985285795133,
-          },
-          {
-            branch: 'master',
-            coverage_change: 0.2,
-            covered_percent: 79.985285795133,
-          },
-        ],
-      };
+      const expectedResult = [
+        {
+          branch: 'develop',
+          coverage_change: 0.2,
+          covered_percent: 67.985285795133,
+        },
+        {
+          branch: 'master',
+          coverage_change: 0.2,
+          covered_percent: 79.985285795133,
+        },
+      ];
 
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.coverage).toEqual(expectedResult);
     });
   });
 });

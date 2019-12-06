@@ -165,9 +165,7 @@ export class RulesService {
           // If all rules have been tested, we can execute runnable functions with the result of previous rules
           if (rulesOptions.allRuleResultInOne) {
             if (groupResults.length > 0) {
-              const ruleResult: RuleResult = new RuleResult(
-                webhook.getGitApiInfos(),
-              );
+              const ruleResult: RuleResult = new RuleResult(webhook);
               ruleResult.data = groupResults;
               this.runnableService
                 .executeRunnableFunctions(ruleResult, g)

@@ -57,14 +57,7 @@ describe('RulesService', () => {
         checkPullRequestStatus,
       );
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual({
-        pullRequest: {
-          description: 'my desc',
-          event: 'closed',
-          number: 22,
-          title: 'my PR for webhook',
-        },
-      });
+      expect(result.data.pullRequest.event).toEqual('closed');
     });
   });
   describe('checkPullRequestStatus Rule', () => {
@@ -77,14 +70,7 @@ describe('RulesService', () => {
         checkPullRequestStatus,
       );
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual({
-        pullRequest: {
-          description: 'my desc',
-          event: 'closed',
-          number: 22,
-          title: 'my PR for webhook',
-        },
-      });
+      expect(result.data.pullRequest.event).toEqual('closed');
     });
   });
 

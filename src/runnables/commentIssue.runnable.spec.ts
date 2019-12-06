@@ -4,7 +4,6 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
 import {
   MockGitlabService,
   MockGithubService,
@@ -13,6 +12,7 @@ import {
 import { CommentIssueRunnable } from './commentIssue.runnable';
 import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
 
 describe('CommentIssueRunnable', () => {
   let app: TestingModule;
@@ -40,18 +40,14 @@ describe('CommentIssueRunnable', () => {
     gitlabService = app.get(GitlabService);
     commentIssueRunnable = app.get(CommentIssueRunnable);
 
-    const myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    const webhook = new Webhook(gitlabService, githubService);
+    webhook.issue.number = 22;
 
     args = { comment: 'ping @bastienterrier' };
 
     // ruleResultIssueTitle initialisation
-    ruleResultIssueTitle = new RuleResult(myGitApiInfos);
+    ruleResultIssueTitle = new RuleResult(webhook);
     ruleResultIssueTitle.validated = true;
-    ruleResultIssueTitle.data = {
-      issue: { number: 22 },
-    };
   });
 
   beforeEach(() => {
@@ -74,7 +70,10 @@ describe('CommentIssueRunnable', () => {
         .run(CallbackType.Both, ruleResultIssueTitle, args)
         .catch(err => logger.error(err));
 
-      expect(githubService.addIssueComment).toBeCalled();
+      expect(githubService.addIssueComment).toBeCalledWith({
+        comment: 'ping @bastienterrier',
+        number: 22,
+      });
       expect(gitlabService.addIssueComment).not.toBeCalled();
     });
   });
@@ -86,7 +85,10 @@ describe('CommentIssueRunnable', () => {
         .catch(err => logger.error(err));
 
       expect(githubService.addIssueComment).not.toBeCalled();
-      expect(gitlabService.addIssueComment).toBeCalled();
+      expect(gitlabService.addIssueComment).toBeCalledWith({
+        comment: 'ping @bastienterrier',
+        number: 22,
+      });
     });
   });
 });

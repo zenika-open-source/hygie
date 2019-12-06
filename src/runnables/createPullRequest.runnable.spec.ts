@@ -4,7 +4,6 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
 import {
   MockGitlabService,
   MockGithubService,
@@ -13,6 +12,7 @@ import {
 import { CreatePullRequestRunnable } from './createPullRequest.runnable';
 import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
 
 describe('CreatePullRequestRunnable', () => {
   let app: TestingModule;
@@ -40,9 +40,8 @@ describe('CreatePullRequestRunnable', () => {
     gitlabService = app.get(GitlabService);
     createPullRequestRunnable = app.get(CreatePullRequestRunnable);
 
-    const myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    const webhook = new Webhook(gitlabService, githubService);
+    webhook.branchName = 'feature/webhook';
 
     args = {
       title: 'WIP: {{data.branchSplit.[1]}}',
@@ -50,12 +49,9 @@ describe('CreatePullRequestRunnable', () => {
     };
 
     // ruleResultBranchName initialisation
-    ruleResultBranchName = new RuleResult(myGitApiInfos);
+    ruleResultBranchName = new RuleResult(webhook);
     ruleResultBranchName.validated = true;
-    ruleResultBranchName.data = {
-      branch: 'feature/webhook',
-      branchSplit: ['feature', 'webhook'],
-    };
+    ruleResultBranchName.data.branchSplit = ['feature', 'webhook'];
   });
 
   beforeEach(() => {
@@ -81,7 +77,12 @@ describe('CreatePullRequestRunnable', () => {
         .run(CallbackType.Both, ruleResultBranchName, args)
         .catch(err => logger.error(err));
 
-      expect(githubService.createPullRequest).toBeCalled();
+      expect(githubService.createPullRequest).toBeCalledWith({
+        description: 'this is the description',
+        source: '',
+        target: 'master',
+        title: 'WIP: webhook',
+      });
       expect(gitlabService.createPullRequest).not.toBeCalled();
     });
   });
@@ -93,7 +94,12 @@ describe('CreatePullRequestRunnable', () => {
         .catch(err => logger.error(err));
 
       expect(githubService.createPullRequest).not.toBeCalled();
-      expect(gitlabService.createPullRequest).toBeCalled();
+      expect(gitlabService.createPullRequest).toBeCalledWith({
+        description: 'this is the description',
+        source: '',
+        target: 'master',
+        title: 'WIP: webhook',
+      });
     });
   });
 });

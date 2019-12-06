@@ -34,10 +34,7 @@ export class BranchNameRule extends Rule {
     ruleConfig: BranchNameRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     const branchName = webhook.getBranchName();
     const branchRegExp = RegExp(ruleConfig.options.regexp);
 
@@ -51,11 +48,9 @@ export class BranchNameRule extends Rule {
     }
 
     ruleResult.validated = branchRegExp.test(branchName);
-    ruleResult.data = {
-      branch: branchName,
-      branchSplit: branchName.split('/'),
-      matches: branchName.match(branchRegExp),
-    };
+
+    ruleResult.data.branchSplit = branchName.split('/');
+    ruleResult.data.matches = branchName.match(branchRegExp);
 
     return ruleResult;
   }

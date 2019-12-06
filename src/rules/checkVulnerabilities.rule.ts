@@ -45,10 +45,7 @@ export class CheckVulnerabilitiesRule extends Rule {
     ruleConfig: CheckVulnerabilitiesRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     this.googleAnalytics
       .event('Rule', 'checkVulnerabilities', webhook.getCloneURL())
       .send();
@@ -92,16 +89,12 @@ export class CheckVulnerabilitiesRule extends Rule {
         `cd packages/${webhook.getRemoteDirectory()} & npm audit --json`,
       );
 
-      ruleResult.data = {
-        vulnerabilities: JSON.parse(audit.stdout),
-      };
+      ruleResult.data.vulnerabilities = JSON.parse(audit.stdout);
       ruleResult.validated = true;
     } catch (e) {
       const data = JSON.parse(e.stdout);
-      ruleResult.data = {
-        number: this.getNumberOfVulnerabilities(data),
-        vulnerabilities: JSON.stringify(data),
-      };
+      ruleResult.data.number = this.getNumberOfVulnerabilities(data);
+      ruleResult.data.vulnerabilities = JSON.stringify(data);
       ruleResult.validated = false;
     }
 

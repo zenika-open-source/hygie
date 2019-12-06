@@ -96,7 +96,7 @@ This Post-Action need the following args:
   :::
 - `target`: the target branch _[optional]_.
   ::: tip
-  current branch return by the `data.branch` attribute of the previous `RuleResult`.
+  current branch return by the `data.branchBranch` attribute of the previous `RuleResult`.
   :::
 
 To use the `CreatePullRequestRunnable`, add the `callback` on your `.rulesrc` config file.
@@ -122,7 +122,7 @@ This Post-Action has one optionnal arg:
 
 - `branchName`: the branch to delete _[optional]_.
   ::: tip
-  If no branch name is provide, it will be set to `data.branch` returned by the previous rule.
+  If no branch name is provide, it will be set to `data.branchBranch` returned by the previous rule.
   :::
 
 To use the `DeleteBranchRunnable`, simply add the `callback` on your `.rulesrc` config file.
@@ -152,7 +152,7 @@ This Post-Action need the following args:
   :::
 - branch: the branch on which it will delete the files _[optional]_.
   ::: tip
-  If no branch name is provide, it will be set to `data.branch` returned by the previous rule if exist, `master` otherwise.
+  If no branch name is provide, it will be set to `data.branchBranch` returned by the previous rule if exist, `master` otherwise.
   :::
 
 To use the `DeleteFilesRunnable`, simply add the `callback` on your `.rulesrc` config file.
@@ -236,7 +236,7 @@ To use the `MergePullRequestRunnable`, simply add the `callback` on your `.rules
 onSuccess:
   - callback: MergePullRequestRunnable
     args:
-      commitTitle: 'merging {{data.branch}} PR'
+      commitTitle: 'merging {{data.branchBranch}} PR'
       commitMessage: 'extra informations...'
       sha: 6dcb09b5b57875f334f61aebed695e2e4193db5e
       method: squash

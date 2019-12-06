@@ -4,7 +4,6 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
 import {
   MockGitlabService,
   MockGithubService,
@@ -12,6 +11,7 @@ import {
 } from '../__mocks__/mocks';
 import { CreateTagRunnable } from './createTag.runnable';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
 
 describe('CreateTagRunnable', () => {
   let app: TestingModule;
@@ -20,7 +20,6 @@ describe('CreateTagRunnable', () => {
   let gitlabService: GitlabService;
 
   let createTagRunnable: CreateTagRunnable;
-  let myGitApiInfos: GitApiInfos;
 
   let args: any;
   let ruleResult: RuleResult;
@@ -40,26 +39,21 @@ describe('CreateTagRunnable', () => {
     gitlabService = app.get(GitlabService);
     createTagRunnable = app.get(CreateTagRunnable);
 
-    myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    const webhook = new Webhook(gitlabService, githubService);
 
     args = { tag: '{{data.commits.[0].matches.[1]}}' };
 
-    ruleResult = new RuleResult(myGitApiInfos);
+    ruleResult = new RuleResult(webhook);
     ruleResult.validated = false;
-    ruleResult.data = {
-      branch: 'test_webhook',
-      commits: [
-        {
-          status: 'Success',
-          success: true,
-          sha: '1',
-          message: 'fix(): #v0.0.1#',
-          matches: ['fix(): #v0.0.1#', 'v0.0.1'],
-        },
-      ],
-    };
+    ruleResult.data.commits = [
+      {
+        status: 'Success',
+        success: true,
+        sha: '1',
+        message: 'fix(): #v0.0.1#',
+        matches: ['fix(): #v0.0.1#', 'v0.0.1'],
+      },
+    ];
   });
 
   beforeEach(() => {
@@ -75,7 +69,7 @@ describe('CreateTagRunnable', () => {
   });
   describe('Run method', () => {
     it('should call Github methods', async () => {
-      myGitApiInfos.git = GitTypeEnum.Github;
+      ruleResult.gitApiInfos.git = GitTypeEnum.Github;
       await createTagRunnable.run(CallbackType.Both, ruleResult, args);
       expect(githubService.createTag).toBeCalledWith({
         message: 'version v0.0.1',
@@ -91,7 +85,7 @@ describe('CreateTagRunnable', () => {
   });
   describe('Run method', () => {
     it('should call Gitlab createTag method', async () => {
-      myGitApiInfos.git = GitTypeEnum.Gitlab;
+      ruleResult.gitApiInfos.git = GitTypeEnum.Gitlab;
       await createTagRunnable.run(CallbackType.Both, ruleResult, args);
       expect(gitlabService.createTag).toBeCalledWith({
         message: 'version v0.0.1',

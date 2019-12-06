@@ -44,10 +44,7 @@ export class CheckPullRequestStatusRule extends Rule {
     ruleConfig: CheckPullRequestStatusRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     const gitEvent = this.getEvent(webhook.gitEvent);
 
     this.googleAnalytics
@@ -62,14 +59,7 @@ export class CheckPullRequestStatusRule extends Rule {
     ruleResult.validated =
       gitEvent === ruleConfig.options.status.toLocaleLowerCase() ? true : false;
 
-    ruleResult.data = {
-      pullRequest: {
-        event: gitEvent,
-        title: webhook.getPullRequestTitle(),
-        number: webhook.getPullRequestNumber(),
-        description: webhook.getPullRequestDescription(),
-      },
-    };
+    ruleResult.data.pullRequest.event = gitEvent;
 
     return ruleResult;
   }

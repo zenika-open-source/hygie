@@ -277,7 +277,7 @@ describe('Utils', () => {
           callback: LoggerRunnable
         onSuccess:
         - args:
-            message: 'pattern match: branch: {{data.branch}} {{#data.commits}}{{sha}} =
+            message: 'pattern match: branch: {{data.branchBranch}} {{#data.commits}}{{sha}} =
               {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}'
           callback: LoggerRunnable
         - args:
@@ -366,7 +366,7 @@ describe('Utils', () => {
               {
                 args: {
                   message:
-                    'pattern match: branch: {{data.branch}} {{#data.commits}}{{sha}} = {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}',
+                    'pattern match: branch: {{data.branchBranch}} {{#data.commits}}{{sha}} = {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}',
                 },
                 callback: 'LoggerRunnable',
               },
@@ -414,7 +414,7 @@ describe('Utils', () => {
               {
                 "callback": "LoggerRunnable",
                 "args": {
-                  "message": "pattern match: branch: {{data.branch}} {{#data.commits}}{{sha}} = {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}"
+                  "message": "pattern match: branch: {{data.branchBranch}} {{#data.commits}}{{sha}} = {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}"
                 }
               },
               {
@@ -565,7 +565,7 @@ describe('Utils', () => {
               {
                 args: {
                   message:
-                    'pattern match: branch: {{data.branch}} {{#data.commits}}{{sha}} = {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}',
+                    'pattern match: branch: {{data.branchBranch}} {{#data.commits}}{{sha}} = {{matches.1}} | Scope: {{matches.2}} | Issue: {{matches.3}} {{/data.commits}}',
                 },
                 callback: 'LoggerRunnable',
               },
