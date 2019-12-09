@@ -16,16 +16,19 @@ export class LoggerService {
     const IS_VERBOSE_LOGGER =
       this.processEnvService.get('VERBOSE_LOGGER') === 'true';
 
-    let project = '';
-    let location = '';
+    let finalMessage = '';
     if (IS_VERBOSE_LOGGER && context.project !== undefined) {
-      project = `[${context.project}]`;
+      finalMessage += `[${context.project}]`;
     }
     if (IS_VERBOSE_LOGGER && context.location !== undefined) {
-      location = `[${context.location}]`;
+      finalMessage += `[${context.location}]`;
     }
+    if (finalMessage !== '') {
+      finalMessage += ': ';
+    }
+    finalMessage += message;
 
-    return `${project}${location}: ${message}`;
+    return finalMessage;
   }
 
   error(message: string, context: Context) {
