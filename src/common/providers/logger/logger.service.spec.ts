@@ -12,15 +12,17 @@ describe('LoggerService', () => {
     jest.resetAllMocks();
   });
 
-  ['error', 'log', 'warn', 'debug', 'verbose'].forEach(level => {
-    it(`should call the ${level} method of the Nest Logger`, () => {
+  it.each(['error', 'log', 'warn', 'debug', 'verbose'])(
+    `should call the %s method of the Nest Logger`,
+    level => {
       const logger = new LoggerService(nestLoggerMock as any, {
         get: () => 'true',
       });
       logger[level]('message', {});
       expect(nestLoggerMock[level]).toHaveBeenCalledWith('message');
-    });
-  });
+    },
+  );
+
   it(`should add context to the generated message if VERBOSE_LOGGER is true`, () => {
     const logger = new LoggerService(nestLoggerMock as any, {
       get: () => 'true',
