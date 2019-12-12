@@ -1,5 +1,5 @@
 import { WhiteListCheckerI } from './whiteListChecker.interface';
-import { ProcessEnvService } from '../../common/providers/processEnv.service';
+import { ProcessEnvService } from '~common/providers/processEnv.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
