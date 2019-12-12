@@ -15,7 +15,7 @@ import { PrometheusService } from './logger/prometheus.service';
 import { DataAccessModule } from './data_access/dataAccess.module';
 import { EnvVarController } from './controllers/env-var.controller';
 import { EnvVarModule } from './env-var/env-var.module';
-import { CommonModule } from './common/common.module';
+import { CommonModule } from '~common/common.module';
 import { WebhookSecretWhiteListChecker } from './interceptors/whiteList/webhookSecretWhiteListChecker.service';
 
 @Module({

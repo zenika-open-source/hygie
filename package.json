@@ -89,6 +89,9 @@
     "vuetify": "1.5.16"
   },
   "jest": {
+    "moduleNameMapper": {
+      "~common/(.*)": "<rootDir>/common/$1"
+    },
     "moduleFileExtensions": [
       "js",
       "json",

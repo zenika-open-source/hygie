@@ -18,7 +18,7 @@ import { PrometheusService } from '../logger/prometheus.service';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { EnvVarModule } from '../env-var/env-var.module';
-import { CommonModule } from '../common/common.module';
+import { CommonModule } from '~common/common.module';
 import { WebhookSecretWhiteListChecker } from '../interceptors/whiteList/webhookSecretWhiteListChecker.service';
 
 @Module({
