@@ -1,6 +1,5 @@
 import { existsSync } from 'fs-extra';
-import { logger } from '../logger/logger.service';
-import { HttpService } from '@nestjs/common';
+import { HttpService, Logger } from '@nestjs/common';
 
 export class Check {
   /**
@@ -11,7 +10,7 @@ export class Check {
    */
   static checkIfFileExist(filename: string): boolean {
     if (!existsSync(filename)) {
-      logger.error(
+      Logger.error(
         `${filename} do not exist! Please refer to the documentation: https://zenika-open-source.github.io/hygie/`,
       );
       return false;

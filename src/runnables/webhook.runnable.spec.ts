@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpService } from '@nestjs/common';
+import { HttpService, Logger } from '@nestjs/common';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import {
@@ -9,7 +9,6 @@ import {
   MockGithubService,
 } from '../__mocks__/mocks';
 import { WebhookRunnable } from './webhook.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
 import { GitlabService } from '../gitlab/gitlab.service';
@@ -70,7 +69,7 @@ describe('WebhookRunnable', () => {
     it('should send a post request with specific url and data ', () => {
       webhookRunnable
         .run(CallbackType.Both, ruleResultCommitMessage, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(httpService.post).toBeCalledWith(
         'https://webhook.site/abcdef',

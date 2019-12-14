@@ -5,14 +5,13 @@ import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { Utils } from '../rules/utils';
 import { Utils as UtilsGeneral } from '../utils/utils';
-import { logger } from '../logger/logger.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
 import { GitTag } from '../git/gitTag';
 import { GitRef } from '../git/gitRef';
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
@@ -67,9 +66,7 @@ export class CreateTagRunnable extends Runnable {
     );
 
     if (!semVerRegexp.test(tag)) {
-      logger.error(`${tag} is not a correct tag name!`, {
-        location: 'CreateTagRunnable',
-      });
+      Logger.error(`${tag} is not a correct tag name!`, 'CreateTagRunnable');
       return;
     }
 

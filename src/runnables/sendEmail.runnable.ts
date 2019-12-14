@@ -4,13 +4,13 @@ import { RuleResult } from '../rules/ruleResult';
 import { readFile, writeFile } from 'fs-extra';
 import { createInterface } from 'readline';
 import { google } from 'googleapis';
-import { logger } from '../logger/logger.service';
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Utils } from '../utils/utils';
+import { LoggerService } from '../common/providers/logger/logger.service';
 
 function makeBody(to: string, subject: string, message: string): string {
   const str = [
@@ -83,7 +83,9 @@ export class SendEmailRunnable extends Runnable {
         },
       },
       err => {
-        err ? logger.error(err) : logger.info('mail sent!');
+        err
+          ? this.loggerService.error(err, { location: 'sendMessage' })
+          : this.loggerService.log('mail sent!', { location: 'sendMessage' });
       },
     );
   }
@@ -111,7 +113,10 @@ export class SendEmailRunnable extends Runnable {
       access_type: 'offline',
       scope: this.SCOPES,
     });
-    logger.warn(`Authorize this app by visiting this url: ${authUrl}`);
+    this.loggerService.warn(
+      `Authorize this app by visiting this url: ${authUrl}`,
+      { location: 'SendEmail - getNewToken' },
+    );
     const rl = createInterface({
       input: process.stdin,
       output: process.stdout,
@@ -120,16 +125,23 @@ export class SendEmailRunnable extends Runnable {
       rl.close();
       oAuth2Client.getToken(code, (err, token) => {
         if (err) {
-          return logger.error('Error retrieving access token', err);
+          return this.loggerService.error(
+            `Error retrieving access token: ${err}`,
+            { location: 'SendEmail - getNewToken' },
+          );
         }
         oAuth2Client.setCredentials(token);
         // Store the token to disk for later program executions
         // tslint:disable-next-line:no-shadowed-variable
         writeFile(this.TOKEN_PATH, JSON.stringify(token), err => {
           if (err) {
-            return logger.error(err);
+            return this.loggerService.error(`${err}`, {
+              location: 'SendEmail - writeFile',
+            });
           }
-          logger.info('Token stored to', this.TOKEN_PATH);
+          this.loggerService.log(`Token stored to ${this.TOKEN_PATH}`, {
+            location: 'SendEmail - writeFile',
+          });
         });
         callback(oAuth2Client);
       });
@@ -140,6 +152,7 @@ export class SendEmailRunnable extends Runnable {
     @Inject('GoogleAnalytics')
     private readonly googleAnalytics: Visitor,
     private readonly envVarAccessor: EnvVarAccessor,
+    private readonly loggerService: LoggerService,
   ) {
     super();
   }
@@ -174,7 +187,9 @@ export class SendEmailRunnable extends Runnable {
         );
       })
       .catch(err => {
-        logger.error('Error loading credentials.json:', err);
+        this.loggerService.error(`Error loading credentials.json:  ${err}`, {
+          location: 'SendEmail - readFile',
+        });
       });
   }
 }

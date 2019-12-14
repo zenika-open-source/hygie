@@ -19,7 +19,6 @@ import {
   PRMethodsEnum,
   PRSearchResult,
 } from '../git/gitPRInfos';
-import { logger } from '../logger/logger.service';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { Utils } from '../utils/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
@@ -29,6 +28,7 @@ import { GitRelease } from '../git/gitRelease';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
 import { GitFileData } from '../git/gitFileData';
+import { LoggerService } from '../common/providers/logger/logger.service';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository
@@ -39,7 +39,10 @@ export class GitlabService implements GitServiceInterface {
   urlApi: string;
   projectId: string;
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly loggerService: LoggerService,
+  ) {}
 
   setToken(token: string) {
     this.token = token;
@@ -100,7 +103,7 @@ export class GitlabService implements GitServiceInterface {
         configGitLab,
       )
       .subscribe(null, err =>
-        logger.error(err, { location: 'updateCommitStatus' }),
+        this.loggerService.error(err, { location: 'updateCommitStatus' }),
       );
   }
 
@@ -127,7 +130,7 @@ export class GitlabService implements GitServiceInterface {
         configGitLab,
       )
       .subscribe(null, err =>
-        logger.error(err, { location: 'addIssueComment' }),
+        this.loggerService.error(err, { location: 'addIssueComment' }),
       );
   }
 
@@ -153,7 +156,9 @@ export class GitlabService implements GitServiceInterface {
         dataGitLab,
         configGitLab,
       )
-      .subscribe(null, err => logger.error(err, { location: 'addPRComment' }));
+      .subscribe(null, err =>
+        this.loggerService.error(err, { location: 'addPRComment' }),
+      );
   }
 
   createPullRequest(gitCreatePRInfos: GitPRInfos): void {
@@ -180,7 +185,7 @@ export class GitlabService implements GitServiceInterface {
         configGitLab,
       )
       .subscribe(null, err =>
-        logger.error(err, { location: 'createPullRequest' }),
+        this.loggerService.error(err, { location: 'createPullRequest' }),
       );
   }
 
@@ -198,7 +203,9 @@ export class GitlabService implements GitServiceInterface {
         }/repository/branches/${encodeURIComponent(branchName)}`,
         configGitLab,
       )
-      .subscribe(null, err => logger.error(err, { location: 'deleteBranch' }));
+      .subscribe(null, err =>
+        this.loggerService.error(err, { location: 'deleteBranch' }),
+      );
   }
 
   updateIssue(gitIssueInfos: GitIssueInfos): void {
@@ -230,7 +237,9 @@ export class GitlabService implements GitServiceInterface {
         dataGitLab,
         configGitLab,
       )
-      .subscribe(null, err => logger.error(err, { location: 'updateIssue' }));
+      .subscribe(null, err =>
+        this.loggerService.error(err, { location: 'updateIssue' }),
+      );
   }
 
   async createIssue(gitIssueInfos: GitIssueInfos): Promise<number> {
@@ -266,7 +275,7 @@ export class GitlabService implements GitServiceInterface {
       )
       .toPromise()
       .then(response => response.data.iid)
-      .catch(err => logger.error(err, { location: 'createIssue' }));
+      .catch(err => this.loggerService.error(err, { location: 'createIssue' }));
   }
 
   async deleteFile(gitFileInfos: GitFileInfos): Promise<void> {
@@ -292,7 +301,7 @@ export class GitlabService implements GitServiceInterface {
           return;
         },
         err => {
-          logger.error(err, { location: 'deleteFile' });
+          this.loggerService.error(err, { location: 'deleteFile' });
           throw err;
         },
       );
@@ -329,7 +338,7 @@ export class GitlabService implements GitServiceInterface {
         configGitLab,
       )
       .subscribe(null, err =>
-        logger.error(err, { location: 'mergePullRequest' }),
+        this.loggerService.error(err, { location: 'mergePullRequest' }),
       );
   }
 
@@ -369,7 +378,7 @@ export class GitlabService implements GitServiceInterface {
         configGitLab,
       )
       .subscribe(null, err =>
-        logger.error(err, { location: 'updatePullRequest' }),
+        this.loggerService.error(err, { location: 'updatePullRequest' }),
       );
   }
 
@@ -402,7 +411,9 @@ export class GitlabService implements GitServiceInterface {
         dataGitLab,
         configGitLab,
       )
-      .subscribe(null, err => logger.error(err, { location: 'createWebhook' }));
+      .subscribe(null, err =>
+        this.loggerService.error(err, { location: 'createWebhook' }),
+      );
   }
 
   async getIssues(
@@ -435,7 +446,7 @@ export class GitlabService implements GitServiceInterface {
           return issueSearchResult;
         });
       })
-      .catch(err => logger.error(err, { location: 'getIssues' }));
+      .catch(err => this.loggerService.error(err, { location: 'getIssues' }));
   }
 
   async getPullRequests(
@@ -471,7 +482,9 @@ export class GitlabService implements GitServiceInterface {
           return prSearchResult;
         });
       })
-      .catch(err => logger.error(err, { location: 'getPullRequests' }));
+      .catch(err =>
+        this.loggerService.error(err, { location: 'getPullRequests' }),
+      );
   }
 
   createRelease(gitRelease: GitRelease): void {
@@ -499,7 +512,9 @@ export class GitlabService implements GitServiceInterface {
         {},
         configGitLab,
       )
-      .subscribe(null, err => logger.error(err, { location: 'createRelease' }));
+      .subscribe(null, err =>
+        this.loggerService.error(err, { location: 'createRelease' }),
+      );
   }
 
   createTag(gitTag: GitTag): void {
@@ -520,7 +535,9 @@ export class GitlabService implements GitServiceInterface {
         {},
         configGitLab,
       )
-      .subscribe(null, err => logger.error(err, { location: 'createTag' }));
+      .subscribe(null, err =>
+        this.loggerService.error(err, { location: 'createTag' }),
+      );
   }
 
   async getLastCommit(branch: string = 'master'): Promise<string> {
@@ -539,7 +556,9 @@ export class GitlabService implements GitServiceInterface {
       )
       .toPromise()
       .then(response => response.data.commit.id)
-      .catch(err => logger.error(err, { location: 'getLastCommit' }));
+      .catch(err =>
+        this.loggerService.error(err, { location: 'getLastCommit' }),
+      );
   }
 
   async getLastBranchesCommitSha(): Promise<GitBranchCommit[]> {
@@ -561,7 +580,7 @@ export class GitlabService implements GitServiceInterface {
         }),
       )
       .catch(err => {
-        logger.error(err, { location: 'getLastBranchesCommitSha' });
+        this.loggerService.error(err, { location: 'getLastBranchesCommitSha' });
         return [];
       });
   }

@@ -22,9 +22,9 @@ import { HttpResponse } from '../utils/httpResponse';
 import { Utils } from '../utils/utils';
 import { RemoteConfigUtils } from '../remote-config/utils';
 import { Constants } from '../utils/constants';
-import { logger } from '../logger/logger.service';
 import { Webhook, WebhookCommit } from '../webhook/webhook';
 import { GitEventEnum } from '../webhook/utils.enum';
+import { LoggerService } from '../common/providers/logger/logger.service';
 
 @Injectable()
 export class ScheduleService {
@@ -37,6 +37,7 @@ export class ScheduleService {
     private readonly rulesService: RulesService,
     private readonly httpService: HttpService,
     private readonly dataAccessService: DataAccessService,
+    private readonly loggerService: LoggerService,
   ) {}
 
   /**
@@ -57,7 +58,7 @@ export class ScheduleService {
           throw e;
         });
       } catch (e) {
-        logger.error(e, {
+        this.loggerService.error(e, {
           project: cron.projectURL,
           location: 'ScheduleService',
         });
@@ -97,6 +98,7 @@ export class ScheduleService {
         this.rulesService,
         this.httpService,
         this.dataAccessService,
+        this.loggerService,
         cron,
       );
 
@@ -166,7 +168,7 @@ export class ScheduleService {
         };
       });
       this.createCronJobs(addOrUpdateCrons).catch(err =>
-        logger.error(err, {
+        this.loggerService.error(err, {
           location: 'processCronFiles',
           project: webhook.getCloneURL(),
         }),
@@ -179,9 +181,8 @@ export class ScheduleService {
         const cron: string = `remote-crons/${Utils.getRepositoryFullName(
           webhook.getCloneURL(),
         )}/${filename}`;
-        logger.info('Removing ' + cron);
         this.dataAccessService.deleteCron(cron).catch(err =>
-          logger.error(err, {
+          this.loggerService.error(err, {
             location: 'processCronFiles',
             project: webhook.getCloneURL(),
           }),

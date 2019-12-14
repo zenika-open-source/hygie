@@ -7,7 +7,6 @@ import { BranchesOptions, UsersOptions } from './common.interface';
 import { Utils } from './utils';
 import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
-import { logger } from '../logger/logger.service';
 
 interface CommitMessageOptions {
   regexp: string;

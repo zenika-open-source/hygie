@@ -8,7 +8,6 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Observable, of } from 'rxjs';
-import { logger } from '../../logger/logger.service';
 import { ProcessEnvService } from '../../common/providers/processEnv.service';
 import { WhiteListCheckerI } from './whiteListChecker.interface';
 
@@ -40,9 +39,7 @@ export class WhiteListInterceptor implements NestInterceptor {
         return next.handle();
       }
     } catch (e) {
-      logger.error(e, {
-        location: 'WhiteListInterceptor',
-      });
+      Logger.error(e, 'WhiteListInterceptor');
       return of([]);
     }
   }

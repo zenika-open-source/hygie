@@ -3,9 +3,8 @@ import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
-import { logger } from '../logger/logger.service';
 import { RemoteConfigUtils } from '../remote-config/utils';
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 
 interface CheckVulnerabilitiesOptions {
@@ -101,7 +100,7 @@ export class CheckVulnerabilitiesRule extends Rule {
     // Delete folder
     fs.remove(`packages/${webhook.getRemoteDirectory().split('/')[0]}`).catch(
       err => {
-        logger.error(err, { location: 'checkVulnerabilities' });
+        Logger.error(err, 'checkVulnerabilities');
       },
     );
 

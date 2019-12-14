@@ -10,9 +10,9 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { UpdateCommitStatusRunnable } from './updateCommitStatus.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
+import { Logger } from '@nestjs/common';
 
 describe('UpdateCommitStatusRunnable', () => {
   let app: TestingModule;
@@ -84,7 +84,7 @@ describe('UpdateCommitStatusRunnable', () => {
     it('should not call the updateCommitStatus Github nor Gitlab service', () => {
       updateCommitStatus
         .run(CallbackType.Both, ruleResultCommitMessage, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       expect(githubService.updateCommitStatus).not.toBeCalled();
       expect(gitlabService.updateCommitStatus).not.toBeCalled();
     });
@@ -94,7 +94,7 @@ describe('UpdateCommitStatusRunnable', () => {
       ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Github;
       updateCommitStatus
         .run(CallbackType.Both, ruleResultCommitMessage, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.updateCommitStatus).toBeCalledTimes(3);
       expect(gitlabService.updateCommitStatus).not.toBeCalled();
@@ -105,7 +105,7 @@ describe('UpdateCommitStatusRunnable', () => {
       ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Gitlab;
       updateCommitStatus
         .run(CallbackType.Both, ruleResultCommitMessage, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.updateCommitStatus).not.toBeCalled();
       expect(gitlabService.updateCommitStatus).toBeCalledTimes(3);

@@ -60,10 +60,10 @@ Just have a look at the `LoggerRunnable` implementation:
 run(ruleResult: RuleResult, args: LoggerArgs): void {
     switch (args.type) {
         case 'info':
-            logger.info(render(args.message, ruleResult));
+            this.loggerService.log(render(args.message, ruleResult));
         break;
         case 'warn':
-            logger.warn(render(args.message, ruleResult));
+            this.loggerService.warn(render(args.message, ruleResult));
         break;
     }
 }

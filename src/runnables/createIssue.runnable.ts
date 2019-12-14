@@ -1,6 +1,5 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { GithubService } from '../github/github.service';
@@ -9,9 +8,8 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 
 interface CreateIssueArgs {
@@ -68,11 +66,11 @@ export class CreateIssueRunnable extends Runnable {
     if (gitApiInfos.git === GitTypeEnum.Github) {
       this.githubService
         .createIssue(gitIssueInfos)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
       this.gitlabService
         .createIssue(gitIssueInfos)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
     }
   }
 }

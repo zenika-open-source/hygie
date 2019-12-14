@@ -4,6 +4,8 @@ import { RunnablesService } from './runnables.service';
 import { Runnable } from './runnable.class';
 import { Visitor } from 'universal-analytics';
 import { EnvVarModule } from '../env-var/env-var.module';
+import { CommonModule } from '../common/common.module';
+import { LoggerService } from '../common/providers/logger/logger.service';
 
 export const RunnablesValues = Object.values(require('./index')).map(
   runnable => runnable as Runnable,
@@ -15,7 +17,7 @@ const RunnablesProviders: any = RunnablesValues.map(runnable => ({
 }));
 
 @Module({
-  imports: [HttpModule, GitModule, EnvVarModule],
+  imports: [HttpModule, GitModule, EnvVarModule, CommonModule],
   providers: [
     {
       provide: RunnablesService,
@@ -32,6 +34,7 @@ export class RunnableModule {
   static forRoot(analytics: Visitor): DynamicModule {
     return {
       module: RunnableModule,
+      imports: [CommonModule],
       providers: [{ provide: 'GoogleAnalytics', useValue: analytics }],
     };
   }

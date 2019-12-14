@@ -2,11 +2,11 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import 'array-flat-polyfill';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitEnv } from '../git/gitEnv.interface';
-import { logger } from '../logger/logger.service';
 
 import * as Handlebars from 'handlebars';
 import { PreconditionException } from '../exceptions/precondition.exception';
 import { join } from 'path';
+import { Logger } from '@nestjs/common';
 Handlebars.registerHelper('foreach', (items, options) => {
   return items.map(item => options.fn(item)).join(',');
 });
@@ -58,7 +58,7 @@ export class Utils {
     const envData: GitEnv = await dataAccessService
       .readEnv(filePath)
       .catch(err => {
-        logger.error(err, { location: 'getGitEnv' });
+        Logger.error(err, 'getGitEnv');
         throw new PreconditionException();
       });
 
@@ -181,7 +181,7 @@ export class Utils {
         CryptoJS.enc.Utf8,
       );
     } catch (err) {
-      logger.error(err, { location: 'decryptToken' });
+      Logger.error(err, 'decryptToken');
       return '';
     }
   }
