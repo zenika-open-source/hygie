@@ -7,7 +7,7 @@ import { Inject } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Utils } from '../utils/utils';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 interface LoggerArgs {
   type: string;

@@ -2,8 +2,8 @@ import { Module, DynamicModule } from '@nestjs/common';
 import { DataAccessService } from './dataAccess.service';
 import { FileAccess } from './providers/fileAccess';
 import { DatabaseAccess } from './providers/databaseAccess';
-import { CommonModule } from '../common/common.module';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { CommonModule } from '~common/common.module';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Module({
   imports: [CommonModule],

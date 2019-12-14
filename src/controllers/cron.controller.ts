@@ -3,7 +3,7 @@ import { ScheduleService } from '../scheduler/scheduler.service';
 import { CronType } from '../scheduler/cron.interface';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { HttpResponse } from '../utils/httpResponse';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Controller('cron')
 export class CronController {

@@ -11,8 +11,8 @@ import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
-import { CommonModule } from '../common/common.module';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { CommonModule } from '~common/common.module';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 describe('LoggerRunnable', () => {
   let app: TestingModule;

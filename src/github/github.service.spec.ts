@@ -29,7 +29,7 @@ import { GitRef } from '../git/gitRef';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
 import { Utils } from '../utils/utils';
-import { CommonModule } from '../common/common.module';
+import { CommonModule } from '~common/common.module';
 
 describe('Github Service', () => {
   let app: TestingModule;

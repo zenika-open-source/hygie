@@ -9,7 +9,7 @@ import { RulesService } from '../rules/rules.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { Constants } from '../utils/constants';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Injectable()
 export class Schedule extends NestSchedule {

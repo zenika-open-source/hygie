@@ -8,7 +8,7 @@ import { Group } from './group.class';
 import { GroupResult } from './groupResult';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { Utils } from '../utils/utils';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Injectable()
 export class RulesService {

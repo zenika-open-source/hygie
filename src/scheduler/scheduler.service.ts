@@ -24,7 +24,7 @@ import { RemoteConfigUtils } from '../remote-config/utils';
 import { Constants } from '../utils/constants';
 import { Webhook, WebhookCommit } from '../webhook/webhook';
 import { GitEventEnum } from '../webhook/utils.enum';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Injectable()
 export class ScheduleService {

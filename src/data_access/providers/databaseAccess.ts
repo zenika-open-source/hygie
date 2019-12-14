@@ -1,7 +1,7 @@
 import { DataAccessInterface, SourceEnum } from '../dataAccess.interface';
 import { Injectable } from '@nestjs/common';
 import * as Database from '@dxdeveloperexperience/hygie-database';
-import { LoggerService } from '../../common/providers/logger/logger.service';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Injectable()
 export class DatabaseAccess implements DataAccessInterface {

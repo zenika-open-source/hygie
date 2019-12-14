@@ -6,7 +6,7 @@ import {
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { Utils } from '../utils/utils';
 import { EnvVarAccessor } from './env-var.accessor';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Injectable()
 export class EnvVarService {

@@ -4,8 +4,7 @@ import { RunnablesService } from './runnables.service';
 import { Runnable } from './runnable.class';
 import { Visitor } from 'universal-analytics';
 import { EnvVarModule } from '../env-var/env-var.module';
-import { CommonModule } from '../common/common.module';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { CommonModule } from '~common/common.module';
 
 export const RunnablesValues = Object.values(require('./index')).map(
   runnable => runnable as Runnable,

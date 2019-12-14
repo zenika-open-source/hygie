@@ -20,7 +20,7 @@ import { DataAccessService } from '../data_access/dataAccess.service';
 import { EnvVarModule } from '../env-var/env-var.module';
 import { CommonModule } from '~common/common.module';
 import { WebhookSecretWhiteListChecker } from '../interceptors/whiteList/webhookSecretWhiteListChecker.service';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Module({
   imports: [

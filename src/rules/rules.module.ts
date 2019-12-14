@@ -6,8 +6,8 @@ import { RunnableModule } from '../runnables/runnable.module';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { DataAccessModule } from '../data_access/dataAccess.module';
 import { Visitor } from 'universal-analytics';
-import { CommonModule } from '../common/common.module';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { CommonModule } from '~common/common.module';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 export const RulesValues = Object.values(require('./index')).map(
   rule => rule as Rule,

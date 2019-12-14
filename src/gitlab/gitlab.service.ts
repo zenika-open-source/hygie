@@ -28,7 +28,7 @@ import { GitRelease } from '../git/gitRelease';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
 import { GitFileData } from '../git/gitFileData';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 /**
  * Implement `GitServiceInterface` to interact this a Gitlab repository

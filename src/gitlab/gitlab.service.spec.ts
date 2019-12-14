@@ -27,7 +27,7 @@ import { GitRelease } from '../git/gitRelease';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
 import { Utils } from '../utils/utils';
-import { CommonModule } from '../common/common.module';
+import { CommonModule } from '~common/common.module';
 
 describe('Gitlab Service', () => {
   let app: TestingModule;

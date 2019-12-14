@@ -16,7 +16,7 @@ import { DataAccessService } from '../data_access/dataAccess.service';
 import { PreconditionException } from '../exceptions/precondition.exception';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { EnvVarService } from '../env-var/env-var.service';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { LoggerService } from '~common/providers/logger/logger.service';
 @Controller('env-var')
 export class EnvVarController {
   constructor(

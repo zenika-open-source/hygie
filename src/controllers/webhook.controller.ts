@@ -22,8 +22,7 @@ import { Constants } from '../utils/constants';
 import { WhiteListInterceptor } from '../interceptors/whiteList/whiteList.interceptor';
 import { ScheduleService } from '../scheduler/scheduler.service';
 import { EnvVarService } from '../env-var/env-var.service';
-import { EnvVarAccessor } from '../env-var/env-var.accessor';
-import { LoggerService } from '../common/providers/logger/logger.service';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Controller('webhook')
 export class WebhookController {
