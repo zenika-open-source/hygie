@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Observable, of } from 'rxjs';
 import { logger } from '../../logger/logger.service';
-import { ProcessEnvService } from '../../common/providers/processEnv.service';
+import { ProcessEnvService } from '~common/providers/processEnv.service';
 import { WhiteListCheckerI } from './whiteListChecker.interface';
 
 @Injectable()
