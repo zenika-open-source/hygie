@@ -3,8 +3,7 @@ import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
-import { HttpService, Inject } from '@nestjs/common';
-import { logger } from '../logger/logger.service';
+import { HttpService, Inject, Logger } from '@nestjs/common';
 import { GitBranchCommit } from '../git/gitBranchSha';
 import { Visitor } from 'universal-analytics';
 
@@ -86,7 +85,7 @@ export class CheckCoverageRule extends Rule {
           covered_percent,
         });
       } catch (e) {
-        logger.error(e);
+        Logger.error(e);
       }
     }
 

@@ -10,9 +10,9 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { MergePullRequestRunnable } from './mergePullRequest.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
+import { Logger } from '@nestjs/common';
 
 describe('MergePullRequestRunnable', () => {
   let app: TestingModule;
@@ -61,7 +61,7 @@ describe('MergePullRequestRunnable', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Undefined;
       mergePullRequestRunnable
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.mergePullRequest).not.toBeCalled();
       expect(gitlabService.mergePullRequest).not.toBeCalled();
@@ -72,7 +72,7 @@ describe('MergePullRequestRunnable', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Github;
       mergePullRequestRunnable
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.mergePullRequest).toBeCalledWith({
         commitTitle: 'merging the PR...',
@@ -87,7 +87,7 @@ describe('MergePullRequestRunnable', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
       mergePullRequestRunnable
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.mergePullRequest).not.toBeCalled();
       expect(gitlabService.mergePullRequest).toBeCalledWith({

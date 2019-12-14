@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { logger } from '../logger/logger.service';
 import { PrometheusService } from '../logger/prometheus.service';
 
 @Injectable()

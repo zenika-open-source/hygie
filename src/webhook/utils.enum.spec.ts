@@ -3,15 +3,29 @@ import { CommitStatusEnum, GitTypeEnum, GitEventEnum } from './utils.enum';
 import { IssuePRStateEnum } from '../git/gitIssueInfos';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
-import { HttpService } from '@nestjs/common';
 import { Webhook } from './webhook';
-
-// INIT
-const gitlabService: GitlabService = new GitlabService(new HttpService());
-const githubService: GithubService = new GithubService(new HttpService());
-let webhook = new Webhook(gitlabService, githubService);
+import { TestingModule, Test } from '@nestjs/testing';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 
 describe('Utils Enum', () => {
+  let app: TestingModule;
+  let githubService: GithubService;
+  let gitlabService: GitlabService;
+  let webhook: Webhook;
+
+  beforeAll(async () => {
+    app = await Test.createTestingModule({
+      providers: [
+        { provide: GitlabService, useClass: MockGitlabService },
+        { provide: GithubService, useClass: MockGithubService },
+      ],
+    }).compile();
+
+    githubService = app.get(GithubService);
+    gitlabService = app.get(GitlabService);
+    webhook = new Webhook(gitlabService, githubService);
+  });
+
   describe('convertCommitStatus', () => {
     it('should equal "failure"', () => {
       const res: string = utils.convertCommitStatus(

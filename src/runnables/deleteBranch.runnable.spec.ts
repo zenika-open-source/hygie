@@ -10,9 +10,9 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { DeleteBranchRunnable } from './deleteBranch.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
+import { Logger } from '@nestjs/common';
 
 describe('DeleteBranchRunnable', () => {
   let app: TestingModule;
@@ -62,7 +62,7 @@ describe('DeleteBranchRunnable', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Undefined;
       deleteBranchRunnable
         .run(CallbackType.Both, ruleResultBranchName, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.deleteBranch).not.toBeCalled();
       expect(gitlabService.deleteBranch).not.toBeCalled();
@@ -73,7 +73,7 @@ describe('DeleteBranchRunnable', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Github;
       deleteBranchRunnable
         .run(CallbackType.Both, ruleResultBranchName, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.deleteBranch).toBeCalledWith('test/webhook');
       expect(gitlabService.deleteBranch).not.toBeCalled();
@@ -84,7 +84,7 @@ describe('DeleteBranchRunnable', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Gitlab;
       deleteBranchRunnable
         .run(CallbackType.Both, ruleResultBranchName, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.deleteBranch).not.toBeCalled();
       expect(gitlabService.deleteBranch).toBeCalledWith('test/webhook');

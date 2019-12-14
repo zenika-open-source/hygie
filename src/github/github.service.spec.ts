@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GithubService } from '../github/github.service';
-import { HttpService } from '@nestjs/common';
+import { HttpService, Logger } from '@nestjs/common';
 import {
   MockHttpService,
   MockObservable,
@@ -28,8 +28,8 @@ import { GitCommit } from '../git/gitCommit';
 import { GitRef } from '../git/gitRef';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
-import { logger } from '../logger/logger.service';
 import { Utils } from '../utils/utils';
+import { CommonModule } from '~common/common.module';
 
 describe('Github Service', () => {
   let app: TestingModule;
@@ -43,6 +43,7 @@ describe('Github Service', () => {
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
+      imports: [CommonModule],
       providers: [
         { provide: HttpService, useClass: MockHttpService },
         { provide: Observable, useClass: MockObservable },
@@ -274,7 +275,7 @@ describe('Github Service', () => {
         });
       });
 
-      githubService.deleteFile(gitFileInfos).catch(err => logger.error(err));
+      githubService.deleteFile(gitFileInfos).catch(err => Logger.error(err));
 
       const expectedUrl1 = `https://api.github.com/repos/bastienterrier/test/contents/file/to/remove.txt`;
       const expectedUrl2 = `https://api.github.com/repos/bastienterrier/test/contents/file/to/remove.txt`;
@@ -388,7 +389,7 @@ describe('Github Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      githubService.getIssues(gitIssueSearch).catch(err => logger.error(err));
+      githubService.getIssues(gitIssueSearch).catch(err => Logger.error(err));
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/issues`;
 
       const expectedConfig2 = JSON.parse(JSON.stringify(expectedConfig));
@@ -413,7 +414,7 @@ describe('Github Service', () => {
 
       githubService
         .getPullRequests(gitIssueSearch)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/pulls`;
 
       const expectedConfig2 = JSON.parse(JSON.stringify(expectedConfig));
@@ -458,7 +459,7 @@ describe('Github Service', () => {
           data: [{ name: 'path', sha: 'sha' }],
         });
       });
-      githubService.getTree('your/folder/path').catch(err => logger.error(err));
+      githubService.getTree('your/folder/path').catch(err => Logger.error(err));
 
       const customConfig = JSON.parse(JSON.stringify(expectedConfig));
       customConfig.params = { ref: 'master' };
@@ -493,7 +494,7 @@ describe('Github Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      githubService.createCommit(gitCommit).catch(err => logger.error(err));
+      githubService.createCommit(gitCommit).catch(err => Logger.error(err));
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/commits`;
 
@@ -570,7 +571,7 @@ describe('Github Service', () => {
       gitTag.type = 'commit';
       gitTag.message = 'new tag';
 
-      githubService.createTag(gitTag).catch(err => logger.error(err));
+      githubService.createTag(gitTag).catch(err => Logger.error(err));
 
       const expectedUrl = `https://api.github.com/repos/bastienterrier/test/git/tags`;
 

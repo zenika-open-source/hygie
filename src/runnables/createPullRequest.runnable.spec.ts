@@ -10,9 +10,9 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { CreatePullRequestRunnable } from './createPullRequest.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
+import { Logger } from '@nestjs/common';
 
 describe('CreatePullRequestRunnable', () => {
   let app: TestingModule;
@@ -64,7 +64,7 @@ describe('CreatePullRequestRunnable', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Undefined;
       createPullRequestRunnable
         .run(CallbackType.Both, ruleResultBranchName, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.createPullRequest).not.toBeCalled();
       expect(gitlabService.createPullRequest).not.toBeCalled();
@@ -75,7 +75,7 @@ describe('CreatePullRequestRunnable', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Github;
       createPullRequestRunnable
         .run(CallbackType.Both, ruleResultBranchName, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.createPullRequest).toBeCalledWith({
         description: 'this is the description',
@@ -91,7 +91,7 @@ describe('CreatePullRequestRunnable', () => {
       ruleResultBranchName.gitApiInfos.git = GitTypeEnum.Gitlab;
       createPullRequestRunnable
         .run(CallbackType.Both, ruleResultBranchName, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.createPullRequest).not.toBeCalled();
       expect(gitlabService.createPullRequest).toBeCalledWith({

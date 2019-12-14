@@ -10,9 +10,9 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { CreateIssueRunnable } from './createIssue.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
+import { Logger } from '@nestjs/common';
 
 describe('CreateIssueRunnable', () => {
   let app: TestingModule;
@@ -86,7 +86,7 @@ describe('CreateIssueRunnable', () => {
     it('should not call the createIssue Github nor Gitlab service', () => {
       createIssueRunnable
         .run(CallbackType.Both, ruleResultCommitMessage, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       expect(githubService.createIssue).not.toBeCalled();
       expect(gitlabService.createIssue).not.toBeCalled();
     });
@@ -97,7 +97,7 @@ describe('CreateIssueRunnable', () => {
 
       createIssueRunnable
         .run(CallbackType.Both, ruleResultCommitMessage, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.createIssue).toBeCalledWith({
         description: 'test_webhook as a new commit which failed, find why.',
@@ -112,7 +112,7 @@ describe('CreateIssueRunnable', () => {
       ruleResultCommitMessage.gitApiInfos.git = GitTypeEnum.Gitlab;
       createIssueRunnable
         .run(CallbackType.Both, ruleResultCommitMessage, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.createIssue).not.toBeCalled();
       expect(gitlabService.createIssue).toBeCalledWith({

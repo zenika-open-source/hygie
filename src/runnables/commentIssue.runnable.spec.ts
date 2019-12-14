@@ -10,9 +10,9 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { CommentIssueRunnable } from './commentIssue.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
+import { Logger } from '@nestjs/common';
 
 describe('CommentIssueRunnable', () => {
   let app: TestingModule;
@@ -58,7 +58,7 @@ describe('CommentIssueRunnable', () => {
     it('should not call the addIssueComment Github nor Gitlab service', () => {
       commentIssueRunnable
         .run(CallbackType.Both, ruleResultIssueTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       expect(githubService.addIssueComment).not.toBeCalled();
       expect(gitlabService.addIssueComment).not.toBeCalled();
     });
@@ -68,7 +68,7 @@ describe('CommentIssueRunnable', () => {
       ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Github;
       commentIssueRunnable
         .run(CallbackType.Both, ruleResultIssueTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.addIssueComment).toBeCalledWith({
         comment: 'ping @bastienterrier',
@@ -82,7 +82,7 @@ describe('CommentIssueRunnable', () => {
       ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
       commentIssueRunnable
         .run(CallbackType.Both, ruleResultIssueTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.addIssueComment).not.toBeCalled();
       expect(gitlabService.addIssueComment).toBeCalledWith({

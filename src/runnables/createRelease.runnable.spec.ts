@@ -10,9 +10,9 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { CreateReleaseRunnable } from './createRelease.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
+import { Logger } from '@nestjs/common';
 
 describe('createRelease Runnable', () => {
   let app: TestingModule;
@@ -56,7 +56,7 @@ describe('createRelease Runnable', () => {
     it('should not call the createRelease Github nor Gitlab service', () => {
       createReleaseRunnable
         .run(CallbackType.Both, ruleResult, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       expect(githubService.createRelease).not.toBeCalled();
       expect(gitlabService.createRelease).not.toBeCalled();
     });
@@ -67,7 +67,7 @@ describe('createRelease Runnable', () => {
 
       createReleaseRunnable
         .run(CallbackType.Both, ruleResult, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       expect(githubService.createRelease).toBeCalledWith({ tag: 'v0.0.1' });
       expect(gitlabService.createRelease).not.toBeCalled();
     });
@@ -78,7 +78,7 @@ describe('createRelease Runnable', () => {
 
       createReleaseRunnable
         .run(CallbackType.Both, ruleResult, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       expect(githubService.createRelease).not.toBeCalled();
       expect(gitlabService.createRelease).toBeCalledWith({ tag: 'v0.0.1' });
     });

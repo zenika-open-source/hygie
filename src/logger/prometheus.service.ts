@@ -1,17 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { logger } from './logger.service';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class PrometheusService {
   checkoutsTotal;
   httpRequestDurationMicroseconds;
   Prometheus;
+
   constructor() {
     this.Prometheus = require('prom-client');
     try {
       this.Prometheus.collectDefaultMetrics();
     } catch (err) {
-      logger.error(err, { location: 'Prometheus 1' });
+      Logger.error(err, 'collectDefaultMetrics');
     }
 
     try {
@@ -22,7 +22,7 @@ export class PrometheusService {
         buckets: [50, 100, 200, 300, 400, 500, 750, 1000], // buckets for response time from 50ms to 1000ms
       });
     } catch (e) {
-      logger.error(e, { location: 'Prometheus 2' });
+      Logger.error(e, 'Prometheus.Histogram');
     }
   }
 }

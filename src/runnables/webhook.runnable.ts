@@ -1,9 +1,8 @@
 import { Runnable } from './runnable.class';
-import { HttpService, Inject } from '@nestjs/common';
+import { HttpService, Inject, Logger } from '@nestjs/common';
 import { RuleResult } from '../rules/ruleResult';
 
 import { CallbackType } from './runnables.service';
-import { logger } from '../logger/logger.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { Utils } from '../utils/utils';
 import { Visitor } from 'universal-analytics';
@@ -58,15 +57,11 @@ export class WebhookRunnable extends Runnable {
         );
       }
     } catch (err) {
-      logger.error(err, {
-        location: 'WebhookRunnable',
-      });
+      Logger.error(err, 'WebhookRunnable');
     }
 
-    this.httpService.post(url, data, config).subscribe(null, err =>
-      logger.error(err, {
-        location: 'WebhookRunnable',
-      }),
-    );
+    this.httpService
+      .post(url, data, config)
+      .subscribe(null, err => Logger.error(err, 'WebhookRunnable - post'));
   }
 }

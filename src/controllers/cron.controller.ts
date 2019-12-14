@@ -2,16 +2,19 @@ import { Controller, Body, Post, Res } from '@nestjs/common';
 import { ScheduleService } from '../scheduler/scheduler.service';
 import { CronType } from '../scheduler/cron.interface';
 import { DataAccessService } from '../data_access/dataAccess.service';
-import { logger } from '../logger/logger.service';
 import { HttpResponse } from '../utils/httpResponse';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Controller('cron')
 export class CronController {
   constructor(
     private readonly scheduleService: ScheduleService,
     private readonly dataAccessService: DataAccessService,
+    private readonly loggerService: LoggerService,
   ) {
-    this.loadCronJobs().catch(err => logger.error(err));
+    this.loadCronJobs().catch(err =>
+      this.loggerService.error(err, { location: 'CronController' }),
+    );
   }
 
   /**
@@ -21,12 +24,12 @@ export class CronController {
     const CronStandardClassArray: CronType = await this.dataAccessService.getAllCrons();
     if (this.dataAccessService.removeAllCrons()) {
       this.scheduleService.createCronJobs(CronStandardClassArray).catch(err =>
-        logger.error(err, {
+        this.loggerService.error(err, {
           location: 'CronController',
         }),
       );
     } else {
-      logger.error('Can not remove old cron jobs', {
+      this.loggerService.error('Can not remove old cron jobs', {
         location: 'CronController',
       });
     }

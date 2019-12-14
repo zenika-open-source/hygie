@@ -1,6 +1,5 @@
 import { Webhook } from '../webhook/webhook';
 import { GitEventEnum } from '../webhook/utils.enum';
-import { logger } from '../logger/logger.service';
 import { RuleResult } from './ruleResult';
 
 export interface OnSuccessError {
@@ -22,20 +21,6 @@ export abstract class Rule {
 
   constructor() {
     this.enabled = true;
-  }
-
-  /**
-   * Display each rule's properties
-   */
-  displayRule(): void {
-    logger.info('Display rule');
-    logger.info('name:' + this.name);
-    logger.info('enabled:' + this.enabled);
-    logger.info('events:' + this.events);
-    logger.info('onSuccess:' + this.onSuccess);
-    logger.info('onError:' + this.onError);
-    logger.info('onBoth:' + this.onBoth);
-    logger.info('options:' + this.options);
   }
 
   /**
