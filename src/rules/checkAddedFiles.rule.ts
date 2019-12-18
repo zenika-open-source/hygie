@@ -2,7 +2,7 @@ import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook, WebhookCommit } from '../webhook/webhook';
-import { RuleDecorator } from './rule.decorator';
+import { RuleDecorator, analyticsDecorator } from './rule.decorator';
 import 'array-flat-polyfill';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
@@ -25,11 +25,12 @@ export class CheckAddedFilesRule extends Rule {
 
   constructor(
     @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
+    readonly googleAnalytics: Visitor,
   ) {
     super();
   }
 
+  @analyticsDecorator
   async validate(
     webhook: Webhook,
     ruleConfig: CheckAddedFilesRule,
@@ -38,10 +39,6 @@ export class CheckAddedFilesRule extends Rule {
     const ruleResult: RuleResult = new RuleResult(webhook);
     const commits: WebhookCommit[] = webhook.getAllCommits();
     const addedRegExp = RegExp(ruleConfig.options.regexp);
-
-    this.googleAnalytics
-      .event('Rule', 'checkAddedFiles', webhook.getCloneURL())
-      .send();
 
     // First, check if rule need to be processed
     if (!Utils.checkUser(webhook, ruleConfig.options.users)) {

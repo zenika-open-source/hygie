@@ -2,7 +2,7 @@ import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
-import { RuleDecorator } from './rule.decorator';
+import { RuleDecorator, analyticsDecorator } from './rule.decorator';
 import { GitIssuePRSearch, IssuePRStateEnum } from '../git/gitIssueInfos';
 import { PRSearchResult } from '../git/gitPRInfos';
 import { Utils } from './utils';
@@ -27,20 +27,18 @@ export class CheckPullRequestsRule extends Rule {
 
   constructor(
     @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
+    readonly googleAnalytics: Visitor,
   ) {
     super();
   }
 
+  @analyticsDecorator
   async validate(
     webhook: Webhook,
     ruleConfig: CheckPullRequestsRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook);
-    this.googleAnalytics
-      .event('Rule', 'checkPullRequests', webhook.getCloneURL())
-      .send();
 
     const gitPRSearch: GitIssuePRSearch = new GitIssuePRSearch();
     if (typeof ruleConfig.options.state !== 'undefined') {

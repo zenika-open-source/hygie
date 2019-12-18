@@ -2,7 +2,7 @@ import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
-import { RuleDecorator } from './rule.decorator';
+import { RuleDecorator, analyticsDecorator } from './rule.decorator';
 import { HttpService, Inject, Logger } from '@nestjs/common';
 import { GitBranchCommit } from '../git/gitBranchSha';
 import { Visitor } from 'universal-analytics';
@@ -29,11 +29,12 @@ export class CheckCoverageRule extends Rule {
   constructor(
     private readonly httpService: HttpService,
     @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
+    readonly googleAnalytics: Visitor,
   ) {
     super();
   }
 
+  @analyticsDecorator
   async validate(
     webhook: Webhook,
     ruleConfig: CheckCoverageRule,
@@ -43,10 +44,6 @@ export class CheckCoverageRule extends Rule {
     ruleResult.data = { coverage: [] };
     let allBranchesPassed: boolean = true;
     let coverageURL: string;
-
-    this.googleAnalytics
-      .event('Rule', 'checkCoverage', webhook.getCloneURL())
-      .send();
 
     const lastBranchesCommitSha: GitBranchCommit[] = await webhook.gitService.getLastBranchesCommitSha();
 

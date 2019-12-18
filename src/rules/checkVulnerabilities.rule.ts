@@ -2,7 +2,7 @@ import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
-import { RuleDecorator } from './rule.decorator';
+import { RuleDecorator, analyticsDecorator } from './rule.decorator';
 import { RemoteConfigUtils } from '../remote-config/utils';
 import { Inject, Logger } from '@nestjs/common';
 import { Visitor } from 'universal-analytics';
@@ -23,7 +23,7 @@ export class CheckVulnerabilitiesRule extends Rule {
 
   constructor(
     @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
+    readonly googleAnalytics: Visitor,
   ) {
     super();
   }
@@ -39,15 +39,13 @@ export class CheckVulnerabilitiesRule extends Rule {
     );
   }
 
+  @analyticsDecorator
   async validate(
     webhook: Webhook,
     ruleConfig: CheckVulnerabilitiesRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook);
-    this.googleAnalytics
-      .event('Rule', 'checkVulnerabilities', webhook.getCloneURL())
-      .send();
 
     const execa = require('execa');
     const download = require('download');
