@@ -169,6 +169,7 @@ describe('Webhook', () => {
       ).toEqual({
         commitSha: '22',
         commitStatus: 'Success',
+        context: '/commit',
       });
     });
   });
