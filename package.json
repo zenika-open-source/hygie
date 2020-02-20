@@ -52,7 +52,6 @@
     "googleapis": "27.0.0",
     "handlebars": "4.1.2",
     "js-yaml": "3.13.1",
-    "module-alias": "^2.2.2",
     "prom-client": "11.5.3",
     "reflect-metadata": "0.1.13",
     "rimraf": "2.6.3",
@@ -112,10 +111,7 @@
       "ts-jest": {
         "tsConfig": "tsconfig.json"
       }
-    }
-  },
-  "_moduleAliases": {
-    "~common": "dist/common"
+    } 
   },
   "keywords": [
     "webhook",
