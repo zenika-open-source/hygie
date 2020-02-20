@@ -27,6 +27,9 @@ describe('RulesService', () => {
     title: 'my PR for webhook',
     description: 'my desc',
     number: 22,
+    user: {
+      login: 'someone',
+    },
   };
 
   const checkPullRequestStatus = new CheckPullRequestStatusRule();

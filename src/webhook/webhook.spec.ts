@@ -54,6 +54,9 @@ describe('Webhook', () => {
       title: 'my PR for webhook',
       description: 'my desc',
       number: 22,
+      user: {
+        login: 'someone',
+      },
     };
     webhook.issue = {
       number: 43,

@@ -44,6 +44,9 @@ describe('RulesService', () => {
         title: 'my PR for webhook',
         description: 'my desc',
         number: 22,
+        user: {
+          login: 'someone',
+        },
       };
 
       const pullRequestTitle = new PullRequestTitleRule();
@@ -68,6 +71,9 @@ describe('RulesService', () => {
         title: 'WIP: webhook',
         description: 'my desc',
         number: 22,
+        user: {
+          login: 'someone',
+        },
       };
 
       const pullRequestTitle = new PullRequestTitleRule();
