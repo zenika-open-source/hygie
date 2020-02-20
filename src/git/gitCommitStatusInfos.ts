@@ -8,4 +8,5 @@ export class GitCommitStatusInfos {
   commitSha: string;
   targetUrl: string;
   descriptionMessage: string;
+  context: string = '/commit';
 }
