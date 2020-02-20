@@ -595,9 +595,9 @@ export class GitlabService implements GitServiceInterface {
 
     return await this.httpService
       .get(
-        `${this.urlApi}/projects/${this.projectId}/repository/files/${
-          encodeURIComponent(gitFileInfos.filePath)
-        }/raw`,
+        `${this.urlApi}/projects/${
+          this.projectId
+        }/repository/files/${encodeURIComponent(gitFileInfos.filePath)}/raw`,
         configGitLab,
       )
       .toPromise()
