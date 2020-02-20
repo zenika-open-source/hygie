@@ -2,10 +2,11 @@ import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
-import { RuleDecorator, analyticsDecorator } from './rule.decorator';
+import { RuleDecorator } from './rule.decorator';
 import { RemoteConfigUtils } from '../remote-config/utils';
-import { Inject, Logger } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
+import { Logger } from '@nestjs/common';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface CheckVulnerabilitiesOptions {
   packageUrl: string;
@@ -21,13 +22,6 @@ export class CheckVulnerabilitiesRule extends Rule {
   options: CheckVulnerabilitiesOptions;
   events = [GitEventEnum.Push, GitEventEnum.Cron];
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
   getNumberOfVulnerabilities(data: any): number {
     const vulnerabilities = data.metadata.vulnerabilities;
     return (
@@ -39,7 +33,7 @@ export class CheckVulnerabilitiesRule extends Rule {
     );
   }
 
-  @analyticsDecorator
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: CheckVulnerabilitiesRule,

@@ -2,11 +2,11 @@ import { Rule } from './rule.class';
 import { GitEventEnum, CommitStatusEnum } from '../webhook/utils.enum';
 import { WebhookCommit, Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
-import { RuleDecorator, analyticsDecorator } from './rule.decorator';
+import { RuleDecorator } from './rule.decorator';
 import { BranchesOptions, UsersOptions } from './common.interface';
 import { Utils } from './utils';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface CommitMessageOptions {
   regexp: string;
@@ -33,14 +33,7 @@ export class CommitMessageRule extends Rule {
 
   events = [GitEventEnum.Push];
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
-  @analyticsDecorator
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: CommitMessageRule,

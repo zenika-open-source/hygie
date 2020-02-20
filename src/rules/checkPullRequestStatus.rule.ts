@@ -2,11 +2,11 @@ import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
-import { RuleDecorator, analyticsDecorator } from './rule.decorator';
+import { RuleDecorator } from './rule.decorator';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
-import { Visitor } from 'universal-analytics';
-import { Inject } from '@nestjs/common';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface CheckPullRequestStatusOptions {
   status: string;
@@ -28,18 +28,11 @@ export class CheckPullRequestStatusRule extends Rule {
     GitEventEnum.ReopenedPR,
   ];
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
   getEvent(event: GitEventEnum): string {
     return event.toLowerCase().substring(0, event.length - 2);
   }
 
-  @analyticsDecorator
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: CheckPullRequestStatusRule,

@@ -9,8 +9,9 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -39,7 +40,7 @@ describe('RulesService', () => {
     it('should return true', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.branchName = 'features/tdd';
-      const branchName = new BranchNameRule(MockAnalytics);
+      const branchName = new BranchNameRule();
       branchName.options = {
         regexp: '(features|fix)\\/.*',
       };
@@ -58,7 +59,7 @@ describe('RulesService', () => {
     it('should return false', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.branchName = 'testing/tdd';
-      const branchName = new BranchNameRule(MockAnalytics);
+      const branchName = new BranchNameRule();
       branchName.options = {
         regexp: '(features|fix)\\/.*',
       };

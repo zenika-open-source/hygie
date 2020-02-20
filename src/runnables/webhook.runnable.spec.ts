@@ -4,7 +4,6 @@ import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import {
   MockHttpService,
-  MockAnalytics,
   MockGitlabService,
   MockGithubService,
 } from '../__mocks__/mocks';
@@ -13,6 +12,8 @@ import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('WebhookRunnable', () => {
   let app: TestingModule;
@@ -34,7 +35,6 @@ describe('WebhookRunnable', () => {
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
         { provide: HttpService, useClass: MockHttpService },
-        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
         EnvVarAccessor,
       ],
     }).compile();

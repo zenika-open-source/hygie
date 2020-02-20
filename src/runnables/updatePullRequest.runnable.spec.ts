@@ -4,15 +4,13 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import {
-  MockGitlabService,
-  MockGithubService,
-  MockAnalytics,
-} from '../__mocks__/mocks';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 import { UpdatePullRequestRunnable } from '.';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
 import { Logger } from '@nestjs/common';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('UpdatePullRequestRunnable', () => {
   let app: TestingModule;
@@ -31,7 +29,6 @@ describe('UpdatePullRequestRunnable', () => {
         UpdatePullRequestRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
-        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
         EnvVarAccessor,
       ],
     }).compile();

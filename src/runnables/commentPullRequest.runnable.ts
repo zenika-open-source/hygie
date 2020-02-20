@@ -7,11 +7,10 @@ import { GitCommentPRInfos } from '../git/gitPRInfos';
 import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { RunnableDecorator } from './runnable.decorator';
-
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Utils } from '../utils/utils';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface CommentPRArgs {
   comment: string;
@@ -26,12 +25,12 @@ export class CommentPullRequestRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
     private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
+
+  @AnalyticsDecorator(HYGIE_TYPE.RUNNABLE)
   async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
@@ -44,10 +43,6 @@ export class CommentPullRequestRunnable extends Runnable {
     gitPRInfos.number = data.pullRequest.number;
     gitPRInfos.comment = Utils.render(args.comment, ruleResult);
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
-
-    this.googleAnalytics
-      .event('Runnable', 'commentPullRequest', ruleResult.projectURL)
-      .send();
 
     if (gitApiInfos.git === GitTypeEnum.Github) {
       this.githubService.addPRComment(gitPRInfos);

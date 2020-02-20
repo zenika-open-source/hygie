@@ -8,11 +8,12 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { CheckIssuesRule } from './checkIssues.rule';
 import { Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -51,7 +52,7 @@ describe('RulesService', () => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkIssuesRule = new CheckIssuesRule(MockAnalytics);
+      const checkIssuesRule = new CheckIssuesRule();
       checkIssuesRule.options = {
         notUpdatedSinceXDays: 7,
         state: 'open',
@@ -88,7 +89,7 @@ describe('RulesService', () => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkIssuesRule = new CheckIssuesRule(MockAnalytics);
+      const checkIssuesRule = new CheckIssuesRule();
       checkIssuesRule.options = {
         notUpdatedSinceXDays: 0, // for testing
         state: 'close',
@@ -126,7 +127,7 @@ describe('RulesService', () => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkIssuesRule = new CheckIssuesRule(MockAnalytics);
+      const checkIssuesRule = new CheckIssuesRule();
       checkIssuesRule.options = {
         notUpdatedSinceXDays: 0, // for testing
         state: 'all',

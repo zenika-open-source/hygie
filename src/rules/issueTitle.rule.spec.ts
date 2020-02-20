@@ -8,10 +8,11 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { IssueTitleRule } from './issueTitle.rule';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -54,7 +55,7 @@ describe('RulesService', () => {
   // IssueTitle Rule
   describe('issueTitle Rule', () => {
     it('should return true + an object with issue infos and gitApiInfos', async () => {
-      const issueTitle = new IssueTitleRule(MockAnalytics);
+      const issueTitle = new IssueTitleRule();
       issueTitle.options = {
         regexp: '(add|fix)\\s.*',
       };
@@ -79,7 +80,7 @@ describe('RulesService', () => {
       webhook.issue.title = 'update rules documentation';
       webhook.projectId = 7657;
 
-      const issueTitle = new IssueTitleRule(MockAnalytics);
+      const issueTitle = new IssueTitleRule();
       issueTitle.options = {
         regexp: '(add|fix)\\s.*',
       };

@@ -9,9 +9,9 @@ import { GitTypeEnum } from '../webhook/utils.enum';
 import { IssuePRStateEnum, GitIssueInfos } from '../git/gitIssueInfos';
 
 import { Utils } from '../utils/utils';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface UpdateIssueArgs {
   state: string;
@@ -27,13 +27,12 @@ export class UpdateIssueRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
     private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
 
+  @AnalyticsDecorator(HYGIE_TYPE.RUNNABLE)
   async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
@@ -45,10 +44,6 @@ export class UpdateIssueRunnable extends Runnable {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     let arrayOfIssueNumber: number[] = new Array();
-
-    this.googleAnalytics
-      .event('Runnable', 'updateIssue', ruleResult.projectURL)
-      .send();
 
     if (typeof data.issue.number === 'number') {
       arrayOfIssueNumber.push(data.issue.number);

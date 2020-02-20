@@ -8,9 +8,10 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { IssueCommentRule } from './issueComment.rule';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -30,7 +31,7 @@ describe('RulesService', () => {
     description: 'comment on issue',
   };
 
-  const issueComment = new IssueCommentRule(MockAnalytics);
+  const issueComment = new IssueCommentRule();
   issueComment.options = {
     regexp: '^@ping$',
   };

@@ -2,11 +2,11 @@ import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
-import { RuleDecorator, analyticsDecorator } from './rule.decorator';
+import { RuleDecorator } from './rule.decorator';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface OneCommitPerPROptions {
   users?: UsersOptions;
@@ -21,14 +21,7 @@ export class OneCommitPerPRRule extends Rule {
   events = [GitEventEnum.Push];
   options: OneCommitPerPROptions;
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
-  @analyticsDecorator
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: OneCommitPerPRRule,
