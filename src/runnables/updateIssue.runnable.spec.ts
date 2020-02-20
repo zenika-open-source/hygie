@@ -10,9 +10,9 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { UpdateIssueRunnable } from './updateIssue.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
+import { Logger } from '@nestjs/common';
 
 describe('UpdateIssueRunnable', () => {
   let app: TestingModule;
@@ -58,7 +58,7 @@ describe('UpdateIssueRunnable', () => {
     it('should not call the updateIssue Github nor Gitlab service', () => {
       updateIssueRunnable
         .run(CallbackType.Both, ruleResultIssueTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       expect(githubService.updateIssue).not.toBeCalled();
       expect(gitlabService.updateIssue).not.toBeCalled();
     });
@@ -68,7 +68,7 @@ describe('UpdateIssueRunnable', () => {
       ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Github;
       updateIssueRunnable
         .run(CallbackType.Both, ruleResultIssueTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.updateIssue).toBeCalledWith({
         number: '22',
@@ -82,7 +82,7 @@ describe('UpdateIssueRunnable', () => {
       ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
       updateIssueRunnable
         .run(CallbackType.Both, ruleResultIssueTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.updateIssue).not.toBeCalled();
       expect(gitlabService.updateIssue).toBeCalledWith({

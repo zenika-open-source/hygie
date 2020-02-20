@@ -5,6 +5,8 @@ import { Runnable } from '../runnables/runnable.class';
 import { RuleResult } from '../rules/ruleResult';
 import { CallbackType } from '../runnables/runnables.service';
 import { RunnableDecorator } from '../runnables/runnable.decorator';
+import { CommonModule } from '~common/common.module';
+import { EnvVarModule } from '../env-var/env-var.module';
 
 @RunnableDecorator('MockRunnable')
 export class MockRunnable extends Runnable {
@@ -18,7 +20,7 @@ export class MockRunnable extends Runnable {
 }
 
 @Module({
-  imports: [HttpModule, GitModule],
+  imports: [HttpModule, GitModule, EnvVarModule, CommonModule],
   providers: [
     {
       provide: RunnablesService,

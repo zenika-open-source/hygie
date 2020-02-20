@@ -10,9 +10,9 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { DeleteFilesRunnable } from './deleteFiles.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
+import { Logger } from '@nestjs/common';
 
 describe('DeleteFilesRunnable', () => {
   let app: TestingModule;
@@ -62,7 +62,7 @@ describe('DeleteFilesRunnable', () => {
       ruleResultCheckAddedFiles.gitApiInfos.git = GitTypeEnum.Undefined;
       deleteFilesRunnable
         .run(CallbackType.Both, ruleResultCheckAddedFiles, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.deleteFile).not.toBeCalled();
       expect(gitlabService.deleteFile).not.toBeCalled();

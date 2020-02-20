@@ -2,9 +2,26 @@ import { Utils } from './utils';
 import { Webhook } from '../webhook/webhook';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
-import { HttpService } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 
 describe('Rules Utils', () => {
+  let app: TestingModule;
+  let githubService: GithubService;
+  let gitlabService: GitlabService;
+
+  beforeAll(async () => {
+    app = await Test.createTestingModule({
+      providers: [
+        { provide: GitlabService, useClass: MockGitlabService },
+        { provide: GithubService, useClass: MockGithubService },
+      ],
+    }).compile();
+
+    githubService = app.get(GithubService);
+    gitlabService = app.get(GitlabService);
+  });
+
   describe('checkTime', () => {
     it('should return true', () => {
       const nowBack5 = new Date();
@@ -33,11 +50,7 @@ describe('Rules Utils', () => {
   });
 
   describe('checkUser', () => {
-    const httpService = new HttpService();
-    const webhook = new Webhook(
-      new GitlabService(httpService),
-      new GithubService(httpService),
-    );
+    const webhook = new Webhook(gitlabService, githubService);
     webhook.user.login = 'bastienterrier';
     it('should return true', () => {
       expect(
@@ -65,11 +78,7 @@ describe('Rules Utils', () => {
     });
   });
   describe('checkBranch', () => {
-    const httpService = new HttpService();
-    const webhook = new Webhook(
-      new GitlabService(httpService),
-      new GithubService(httpService),
-    );
+    const webhook = new Webhook(gitlabService, githubService);
     webhook.branchName = 'master';
     webhook.repository.defaultBranchName = 'master';
     it('should return true', () => {

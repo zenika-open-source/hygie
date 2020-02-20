@@ -1,5 +1,6 @@
 import { Rule } from './rule.class';
 import { RuleResult } from './ruleResult';
+
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';

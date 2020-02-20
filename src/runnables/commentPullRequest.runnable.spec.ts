@@ -10,9 +10,9 @@ import {
   MockAnalytics,
 } from '../__mocks__/mocks';
 import { CommentPullRequestRunnable } from './commentPullRequest.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
+import { Logger } from '@nestjs/common';
 
 describe('CommentPullRequestRunnable', () => {
   let app: TestingModule;
@@ -59,7 +59,7 @@ describe('CommentPullRequestRunnable', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Undefined;
       commentPullRequestRunnable
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.addPRComment).not.toBeCalled();
       expect(gitlabService.addPRComment).not.toBeCalled();
@@ -70,7 +70,7 @@ describe('CommentPullRequestRunnable', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Github;
       commentPullRequestRunnable
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       expect(githubService.addPRComment).toBeCalledWith({
         comment: 'ping @bastienterrier',
         number: 22,
@@ -83,7 +83,7 @@ describe('CommentPullRequestRunnable', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
       commentPullRequestRunnable
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       expect(githubService.addPRComment).not.toBeCalled();
       expect(gitlabService.addPRComment).toBeCalledWith({
         comment: 'ping @bastienterrier',

@@ -1,7 +1,5 @@
 import { Controller, Get, Res, Header, HttpStatus } from '@nestjs/common';
 import { PrometheusService } from '../logger/prometheus.service';
-import { logger } from '../logger/logger.service';
-import { join } from 'path';
 import { Utils } from '../utils/utils';
 
 @Controller()

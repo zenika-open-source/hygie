@@ -29,6 +29,7 @@ describe('Runnables Service', () => {
       providers: [
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
+        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
       ],
       imports: [MockRunnableModule],
     }).compile();
