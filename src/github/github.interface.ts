@@ -14,7 +14,7 @@ export interface GithubRepository {
   full_name: string;
   name: string;
   description: string;
-  clone_url: string;
+  html_url: string;
   default_branch: string;
 }
 /**
@@ -49,6 +49,13 @@ export interface GithubBasePR {
 }
 
 /**
+ * GithubUserPR dto
+ */
+export interface GithubUserPR {
+  login: string;
+}
+
+/**
  * GithubPullRequest dto
  */
 export interface GithubPullRequest {
@@ -58,6 +65,7 @@ export interface GithubPullRequest {
   merged: boolean;
   head: GithubHeadPR;
   base: GithubBasePR;
+  user: GithubUserPR;
 }
 
 /**
