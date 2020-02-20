@@ -111,7 +111,7 @@
       "ts-jest": {
         "tsConfig": "tsconfig.json"
       }
-    }
+    } 
   },
   "keywords": [
     "webhook",

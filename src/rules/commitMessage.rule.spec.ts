@@ -13,6 +13,8 @@ import {
 import { CommitMessageRule } from './commitMessage.rule';
 import { GitEventEnum, GitTypeEnum } from '../webhook/utils.enum';
 
+jest.mock('../analytics/analytics.decorator');
+
 describe('RulesService', () => {
   let app: TestingModule;
   let githubService: GithubService;
@@ -65,7 +67,7 @@ describe('RulesService', () => {
           sha: '3',
         },
       ];
-      const commitMessage = new CommitMessageRule(MockAnalytics);
+      const commitMessage = new CommitMessageRule();
       commitMessage.options = {
         regexp:
           '(feat|fix|docs)(\\([a-z]+\\))?:\\s[^(]*(\\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\\))?$',
@@ -136,7 +138,7 @@ describe('RulesService', () => {
           sha: '3',
         },
       ];
-      const commitMessage = new CommitMessageRule(MockAnalytics);
+      const commitMessage = new CommitMessageRule();
       commitMessage.options = {
         regexp:
           '(feat|fix|docs)(\\([a-z]+\\))?:\\s[^(]*(\\(#[1-9][0-9]*(?:, #[1-9][0-9]*)*\\))?$',

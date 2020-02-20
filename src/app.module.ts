@@ -8,7 +8,6 @@ import { DocumentationController } from './controllers/documentation.controller'
 import { RegisterController } from './controllers/register.controller';
 import { WebhookController } from './controllers/webhook.controller';
 import { ApplicationController } from './controllers/application.controller';
-import { analytics } from './analytics/analytics.service';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { PrometheusService } from './logger/prometheus.service';
@@ -22,8 +21,8 @@ import { WebhookSecretWhiteListChecker } from './interceptors/whiteList/webhookS
   imports: [
     HttpModule,
     DataAccessModule.forRoot(),
-    RulesModule.forRoot(analytics),
-    RunnableModule.forRoot(analytics),
+    RulesModule.forRoot(),
+    RunnableModule,
     GitModule,
     EnvVarModule,
     CommonModule,

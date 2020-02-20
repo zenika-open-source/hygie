@@ -8,10 +8,10 @@ import { GithubService } from '../github/github.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommit } from '../git/gitCommit';
 import { GitRef } from '../git/gitRef';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Utils } from '../utils/utils';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface DeployFolderArgs {
   folder: string;
@@ -27,12 +27,12 @@ interface DeployFolderArgs {
 export class DeployFolderRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
     private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
+
+  @AnalyticsDecorator(HYGIE_TYPE.RUNNABLE)
   async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
@@ -42,10 +42,6 @@ export class DeployFolderRunnable extends Runnable {
 
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const sourceBranch: string = (ruleResult.data as any).branchName;
-
-    this.googleAnalytics
-      .event('Runnable', 'deployFolder', ruleResult.projectURL)
-      .send();
 
     if (
       gitApiInfos.git === GitTypeEnum.Github &&

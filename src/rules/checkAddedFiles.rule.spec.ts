@@ -8,10 +8,11 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { GitEventEnum, GitTypeEnum } from '../webhook/utils.enum';
 import { CheckAddedFilesRule } from './checkAddedFiles.rule';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -66,7 +67,7 @@ describe('RulesService', () => {
           sha: '3',
         },
       ];
-      const checkAddedFilesRule = new CheckAddedFilesRule(MockAnalytics);
+      const checkAddedFilesRule = new CheckAddedFilesRule();
       checkAddedFilesRule.options = {
         regexp: '.*\\.md$',
       };
@@ -100,7 +101,7 @@ describe('RulesService', () => {
           added: ['aa.md', 'bb.md', 'cc.exe', 'dd.bat', 'ee.md'],
         },
       ];
-      const checkAddedFilesRule = new CheckAddedFilesRule(MockAnalytics);
+      const checkAddedFilesRule = new CheckAddedFilesRule();
       checkAddedFilesRule.options = {
         regexp: '.*\\.md$',
       };

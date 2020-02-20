@@ -1,12 +1,13 @@
 import { Runnable } from './runnable.class';
-import { HttpService, Inject, Logger } from '@nestjs/common';
+import { HttpService, Logger } from '@nestjs/common';
 import { RuleResult } from '../rules/ruleResult';
 
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { Utils } from '../utils/utils';
-import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface WebhookArgs {
   url: string;
@@ -21,23 +22,18 @@ interface WebhookArgs {
 export class WebhookRunnable extends Runnable {
   constructor(
     private readonly httpService: HttpService,
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
     private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
 
+  @AnalyticsDecorator(HYGIE_TYPE.RUNNABLE)
   async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: WebhookArgs,
   ): Promise<void> {
     ruleResult.env = this.envVarAccessor.getAllEnvVar();
-
-    this.googleAnalytics
-      .event('Runnable', 'webhook', ruleResult.projectURL)
-      .send();
 
     const url: string = Utils.render(args.url, ruleResult);
     let config: any = {};

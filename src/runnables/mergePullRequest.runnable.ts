@@ -8,10 +8,10 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitMergePRInfos, PRMethodsEnum } from '../git/gitPRInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Utils } from '../utils/utils';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface MergePullRequestArgs {
   commitTitle: string;
@@ -29,13 +29,12 @@ export class MergePullRequestRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
     private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
 
+  @AnalyticsDecorator(HYGIE_TYPE.RUNNABLE)
   async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
@@ -46,10 +45,6 @@ export class MergePullRequestRunnable extends Runnable {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const data = ruleResult.data as any;
     const gitMergePRInfos = new GitMergePRInfos();
-
-    this.googleAnalytics
-      .event('Runnable', 'mergePullRequest', ruleResult.projectURL)
-      .send();
 
     gitMergePRInfos.number = data.pullRequest.number;
 
