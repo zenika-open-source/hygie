@@ -45,7 +45,7 @@ describe('Runnables Service', () => {
     ruleResultIssueTitle = new RuleResult(webhook);
     ruleResultIssueTitle.validated = false;
 
-    issueTitleRule = new IssueTitleRule(MockAnalytics);
+    issueTitleRule = new IssueTitleRule();
     issueTitleRule.onBoth = [
       {
         callback: 'MockRunnable',

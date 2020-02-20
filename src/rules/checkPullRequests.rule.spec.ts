@@ -8,11 +8,12 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { CheckPullRequestsRule } from './checkPullRequests.rule';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -51,7 +52,7 @@ describe('RulesService', () => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkPullRequestsRule = new CheckPullRequestsRule(MockAnalytics);
+      const checkPullRequestsRule = new CheckPullRequestsRule();
       checkPullRequestsRule.options = {
         notUpdatedSinceXDays: 7,
         state: 'open',
@@ -90,7 +91,7 @@ describe('RulesService', () => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkPullRequestsRule = new CheckPullRequestsRule(MockAnalytics);
+      const checkPullRequestsRule = new CheckPullRequestsRule();
       checkPullRequestsRule.options = {
         notUpdatedSinceXDays: 0, // for testing
         state: 'close',
@@ -130,7 +131,7 @@ describe('RulesService', () => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkPullRequestsRule = new CheckPullRequestsRule(MockAnalytics);
+      const checkPullRequestsRule = new CheckPullRequestsRule();
       checkPullRequestsRule.options = {
         notUpdatedSinceXDays: 0, // for testing
         state: 'all',

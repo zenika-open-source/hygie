@@ -11,9 +11,10 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
 import { GitTag } from '../git/gitTag';
 import { GitRef } from '../git/gitRef';
-import { Inject, Logger } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
+import { Logger } from '@nestjs/common';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface CreateTagArgs {
   tag: string;
@@ -29,13 +30,12 @@ export class CreateTagRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
     private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
 
+  @AnalyticsDecorator(HYGIE_TYPE.RUNNABLE)
   async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
@@ -45,10 +45,6 @@ export class CreateTagRunnable extends Runnable {
     ruleResult.env = this.envVarAccessor.getAllEnvVar();
 
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
-
-    this.googleAnalytics
-      .event('Runnable', 'createTag', ruleResult.projectURL)
-      .send();
 
     const lastItem = Utils.getLastItem(data.commits);
 

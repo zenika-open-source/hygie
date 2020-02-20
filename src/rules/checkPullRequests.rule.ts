@@ -6,8 +6,8 @@ import { RuleDecorator } from './rule.decorator';
 import { GitIssuePRSearch, IssuePRStateEnum } from '../git/gitIssueInfos';
 import { PRSearchResult } from '../git/gitPRInfos';
 import { Utils } from './utils';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface CheckPullRequestsOptions {
   updatedWithinXDays?: number;
@@ -25,22 +25,13 @@ export class CheckPullRequestsRule extends Rule {
   options: CheckPullRequestsOptions;
   events = [GitEventEnum.Cron];
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: CheckPullRequestsRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook);
-    this.googleAnalytics
-      .event('Rule', 'checkPullRequests', webhook.getCloneURL())
-      .send();
 
     const gitPRSearch: GitIssuePRSearch = new GitIssuePRSearch();
     if (typeof ruleConfig.options.state !== 'undefined') {

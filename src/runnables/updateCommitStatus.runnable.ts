@@ -8,10 +8,9 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { RunnableDecorator } from './runnable.decorator';
 import { Utils } from '../utils/utils';
-
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface UpdateCommitStatusArgs {
   successTargetUrl: string;
@@ -30,22 +29,18 @@ export class UpdateCommitStatusRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
     private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
+
+  @AnalyticsDecorator(HYGIE_TYPE.RUNNABLE)
   async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: UpdateCommitStatusArgs,
   ): Promise<void> {
     ruleResult.env = this.envVarAccessor.getAllEnvVar();
-
-    this.googleAnalytics
-      .event('Runnable', 'updateCommitStatus', ruleResult.projectURL)
-      .send();
 
     const data = ruleResult.data as any;
     const gitCommitStatusInfos: GitCommitStatusInfos = new GitCommitStatusInfos();

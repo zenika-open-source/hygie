@@ -5,8 +5,8 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface BranchNameOptions {
   regexp: string;
@@ -22,13 +22,7 @@ export class BranchNameRule extends Rule {
   options: BranchNameOptions;
   events = [GitEventEnum.NewBranch];
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: BranchNameRule,
@@ -37,10 +31,6 @@ export class BranchNameRule extends Rule {
     const ruleResult: RuleResult = new RuleResult(webhook);
     const branchName = webhook.getBranchName();
     const branchRegExp = RegExp(ruleConfig.options.regexp);
-
-    this.googleAnalytics
-      .event('Rule', 'branchName', webhook.getCloneURL())
-      .send();
 
     // First, check if rule need to be processed
     if (!Utils.checkUser(webhook, ruleConfig.options.users)) {

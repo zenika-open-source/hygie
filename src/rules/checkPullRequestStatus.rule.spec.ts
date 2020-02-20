@@ -8,10 +8,11 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { CheckPullRequestStatusRule } from './checkPullRequestStatus.rule';
 import { GitEventEnum } from '../webhook/utils.enum';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -28,7 +29,7 @@ describe('RulesService', () => {
     number: 22,
   };
 
-  const checkPullRequestStatus = new CheckPullRequestStatusRule(MockAnalytics);
+  const checkPullRequestStatus = new CheckPullRequestStatusRule();
 
   beforeAll(async () => {
     app = await Test.createTestingModule({

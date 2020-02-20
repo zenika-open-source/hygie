@@ -7,10 +7,11 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { IssueTitleRule } from './issueTitle.rule';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('Rule', () => {
   let app: TestingModule;
@@ -38,21 +39,21 @@ describe('Rule', () => {
     it('should return true', () => {
       const webhook: Webhook = new Webhook(gitlabService, githubService);
       webhook.gitEvent = GitEventEnum.NewIssue;
-      const issueTitleRule: IssueTitleRule = new IssueTitleRule(MockAnalytics);
+      const issueTitleRule: IssueTitleRule = new IssueTitleRule();
       // By default, IssueTitleRule.events = NewIssue
       expect(issueTitleRule.isEnabled(webhook, issueTitleRule)).toBe(true);
     });
     it('should return false', () => {
       const webhook: Webhook = new Webhook(gitlabService, githubService);
       webhook.gitEvent = GitEventEnum.NewBranch;
-      const issueTitleRule: IssueTitleRule = new IssueTitleRule(MockAnalytics);
+      const issueTitleRule: IssueTitleRule = new IssueTitleRule();
       // By default, IssueTitleRule.events = NewIssue
       expect(issueTitleRule.isEnabled(webhook, issueTitleRule)).toBe(false);
     });
     it('should return false', () => {
       const webhook: Webhook = new Webhook(gitlabService, githubService);
       webhook.gitEvent = GitEventEnum.NewIssue;
-      const issueTitleRule: IssueTitleRule = new IssueTitleRule(MockAnalytics);
+      const issueTitleRule: IssueTitleRule = new IssueTitleRule();
       // By default, IssueTitleRule.events = NewIssue
       issueTitleRule.enabled = false;
       expect(issueTitleRule.isEnabled(webhook, issueTitleRule)).toBe(false);

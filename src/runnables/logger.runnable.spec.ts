@@ -2,17 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
 import { LoggerRunnable } from './logger.runnable';
-import {
-  MockAnalytics,
-  MockGithubService,
-  MockGitlabService,
-} from '../__mocks__/mocks';
+import { MockGithubService, MockGitlabService } from '../__mocks__/mocks';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { CommonModule } from '~common/common.module';
 import { LoggerService } from '~common/providers/logger/logger.service';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('LoggerRunnable', () => {
   let app: TestingModule;
@@ -33,7 +31,6 @@ describe('LoggerRunnable', () => {
         LoggerRunnable,
         { provide: GithubService, useClass: MockGithubService },
         { provide: GitlabService, useClass: MockGitlabService },
-        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
         EnvVarAccessor,
       ],
     }).compile();

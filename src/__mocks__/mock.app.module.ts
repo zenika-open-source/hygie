@@ -5,7 +5,6 @@ import { GitModule } from '../git/git.module';
 import { ScheduleService } from '../scheduler/scheduler.service';
 import {
   MockDataAccess,
-  MockAnalytics,
   MockCronController,
   MockLoggingInterceptor,
   MockEnvVarController,
@@ -25,8 +24,8 @@ import { LoggerService } from '~common/providers/logger/logger.service';
 @Module({
   imports: [
     HttpModule,
-    RulesModule.forRoot(MockAnalytics, MockDataAccess),
-    RunnableModule.forRoot(MockAnalytics),
+    RulesModule.forRoot(MockDataAccess),
+    RunnableModule,
     GitModule,
     EnvVarModule,
     CommonModule,

@@ -8,9 +8,10 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { PullRequestTitleRule } from './pullRequestTitle.rule';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -45,7 +46,7 @@ describe('RulesService', () => {
         number: 22,
       };
 
-      const pullRequestTitle = new PullRequestTitleRule(MockAnalytics);
+      const pullRequestTitle = new PullRequestTitleRule();
       pullRequestTitle.options = {
         regexp: '(WIP|FIX):\\s.*',
       };
@@ -69,7 +70,7 @@ describe('RulesService', () => {
         number: 22,
       };
 
-      const pullRequestTitle = new PullRequestTitleRule(MockAnalytics);
+      const pullRequestTitle = new PullRequestTitleRule();
       pullRequestTitle.options = {
         regexp: '(WIP|FIX):\\s.*',
       };

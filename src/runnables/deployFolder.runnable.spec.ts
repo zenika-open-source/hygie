@@ -4,14 +4,12 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import {
-  MockGitlabService,
-  MockGithubService,
-  MockAnalytics,
-} from '../__mocks__/mocks';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 import { DeployFolderRunnable } from './deployFolder.runnable';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Webhook } from '../webhook/webhook';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('DeployFolderRunnable', () => {
   let app: TestingModule;
@@ -30,7 +28,6 @@ describe('DeployFolderRunnable', () => {
         DeployFolderRunnable,
         { provide: GithubService, useClass: MockGithubService },
         { provide: GitlabService, useClass: MockGitlabService },
-        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
         EnvVarAccessor,
       ],
     }).compile();

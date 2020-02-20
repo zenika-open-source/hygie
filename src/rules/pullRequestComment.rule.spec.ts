@@ -8,9 +8,10 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { PullRequestCommentRule } from './pullRequestComment.rule';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -30,7 +31,7 @@ describe('RulesService', () => {
     description: 'comment on PR',
   };
 
-  const pullRequestComment = new PullRequestCommentRule(MockAnalytics);
+  const pullRequestComment = new PullRequestCommentRule();
   pullRequestComment.options = {
     regexp: '^@pong$',
   };

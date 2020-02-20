@@ -2,12 +2,11 @@ import { Module, HttpModule, DynamicModule } from '@nestjs/common';
 import { Rule } from './rule.class';
 import { RulesService } from './rules.service';
 import { RunnablesService } from '../runnables/runnables.service';
-import { RunnableModule } from '../runnables/runnable.module';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { DataAccessModule } from '../data_access/dataAccess.module';
-import { Visitor } from 'universal-analytics';
 import { CommonModule } from '~common/common.module';
 import { LoggerService } from '~common/providers/logger/logger.service';
+import { RunnableModule } from '../runnables/runnable.module';
 
 export const RulesValues = Object.values(require('./index')).map(
   rule => rule as Rule,
@@ -42,14 +41,10 @@ const RulesProviders: any = RulesValues.map(rule => ({
   ],
 })
 export class RulesModule {
-  static forRoot(analytics: Visitor, entity: any = null): DynamicModule {
+  static forRoot(entity: any = null): DynamicModule {
     return {
       module: RulesModule,
-      imports: [
-        DataAccessModule.forRoot(entity),
-        RunnableModule.forRoot(analytics),
-      ],
-      providers: [{ provide: 'GoogleAnalytics', useValue: analytics }],
+      imports: [DataAccessModule.forRoot(entity), RunnableModule],
     };
   }
 }

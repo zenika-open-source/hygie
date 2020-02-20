@@ -4,8 +4,9 @@ import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { RemoteConfigUtils } from '../remote-config/utils';
-import { Inject, Logger } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
+import { Logger } from '@nestjs/common';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface CheckVulnerabilitiesOptions {
   packageUrl: string;
@@ -21,13 +22,6 @@ export class CheckVulnerabilitiesRule extends Rule {
   options: CheckVulnerabilitiesOptions;
   events = [GitEventEnum.Push, GitEventEnum.Cron];
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
   getNumberOfVulnerabilities(data: any): number {
     const vulnerabilities = data.metadata.vulnerabilities;
     return (
@@ -39,15 +33,13 @@ export class CheckVulnerabilitiesRule extends Rule {
     );
   }
 
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: CheckVulnerabilitiesRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
     const ruleResult: RuleResult = new RuleResult(webhook);
-    this.googleAnalytics
-      .event('Rule', 'checkVulnerabilities', webhook.getCloneURL())
-      .send();
 
     const execa = require('execa');
     const download = require('download');
