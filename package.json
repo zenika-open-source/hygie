@@ -50,7 +50,7 @@
     "fs-extra": "8.1.0",
     "github-release-notes": "0.17.0",
     "googleapis": "27.0.0",
-    "handlebars": "4.1.2",
+    "handlebars": "4.3.0",
     "js-yaml": "3.13.1",
     "module-alias": "^2.2.2",
     "prom-client": "11.5.3",
