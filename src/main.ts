@@ -1,3 +1,5 @@
+import 'module-alias/register';
+
 import '~common/config/index';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
