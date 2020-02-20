@@ -64,11 +64,15 @@ export class WebhookRepository {
 }
 
 export class WebhookPR {
+  constructor() {
+    this.user = new WebhookUser();
+  }
   title: string;
   description: string;
   number: number;
   sourceBranch?: string;
   targetBranch?: string;
+  user: WebhookUser;
 }
 
 export class WebhookComment {
@@ -192,7 +196,7 @@ export class Webhook {
         this.commits.push(commit);
       });
       this.branchName = git.ref.substring(11);
-      this.repository.cloneURL = git.project.git_http_url;
+      this.repository.cloneURL = git.project.web_url;
       this.repository.defaultBranchName = git.project.default_branch;
       this.user.login = git.user_username;
     } else if (isGitlabNewBranchEvent(git)) {
@@ -201,7 +205,7 @@ export class Webhook {
       this.gitService = this.gitlabService;
       this.branchName = git.ref.substring(11);
       this.projectId = git.project_id;
-      this.repository.cloneURL = git.project.git_http_url;
+      this.repository.cloneURL = git.project.web_url;
       this.repository.defaultBranchName = git.project.default_branch;
       this.user.login = git.user_username;
     } else if (isGitlabDeletedBranchEvent(git)) {
@@ -210,7 +214,7 @@ export class Webhook {
       this.gitService = this.gitlabService;
       this.branchName = git.ref.substring(11);
       this.projectId = git.project_id;
-      this.repository.cloneURL = git.project.git_http_url;
+      this.repository.cloneURL = git.project.web_url;
       this.repository.defaultBranchName = git.project.default_branch;
       this.user.login = git.user_username;
     } else if (isGithubPushEvent(git)) {
@@ -226,7 +230,7 @@ export class Webhook {
         this.commits.push(commit);
       });
       this.branchName = git.ref.substring(11);
-      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.cloneURL = git.repository.html_url;
       this.repository.defaultBranchName = git.repository.default_branch;
       this.user.login = git.sender.login;
     } else if (isGithubNewBranchEvent(git)) {
@@ -234,7 +238,7 @@ export class Webhook {
       this.gitEvent = GitEventEnum.NewBranch;
       this.gitService = this.githubService;
       this.branchName = git.ref;
-      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.cloneURL = git.repository.html_url;
       this.repository.fullName = git.repository.full_name;
       this.repository.defaultBranchName = git.repository.default_branch;
       this.user.login = git.sender.login;
@@ -243,7 +247,7 @@ export class Webhook {
       this.gitEvent = GitEventEnum.DeletedBranch;
       this.gitService = this.githubService;
       this.branchName = git.ref;
-      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.cloneURL = git.repository.html_url;
       this.repository.fullName = git.repository.full_name;
       this.repository.defaultBranchName = git.repository.default_branch;
       this.user.login = git.sender.login;
@@ -255,7 +259,7 @@ export class Webhook {
       this.issue.title = git.issue.title;
       this.issue.description = git.issue.body;
       this.repository.fullName = git.repository.full_name;
-      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.cloneURL = git.repository.html_url;
       this.repository.defaultBranchName = git.repository.default_branch;
       this.user.login = git.sender.login;
     } else if (isGitlabIssueEvent(git)) {
@@ -266,7 +270,7 @@ export class Webhook {
       this.issue.title = git.object_attributes.title;
       this.issue.description = git.object_attributes.description;
       this.projectId = git.object_attributes.project_id;
-      this.repository.cloneURL = git.project.git_http_url;
+      this.repository.cloneURL = git.project.web_url;
       this.repository.defaultBranchName = git.project.default_branch;
       this.user.login = git.user.username;
     } else if (isGithubNewPREvent(git)) {
@@ -277,9 +281,10 @@ export class Webhook {
       this.pullRequest.description = git.pull_request.body;
       this.pullRequest.number = git.number;
       this.repository.fullName = git.repository.full_name;
-      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.cloneURL = git.repository.html_url;
       this.pullRequest.sourceBranch = git.pull_request.head.ref;
       this.pullRequest.targetBranch = git.pull_request.base.ref;
+      this.pullRequest.user.login = git.pull_request.user.login;
       this.repository.defaultBranchName = git.repository.default_branch;
       this.user.login = git.sender.login;
     } else if (isGitlabNewPREvent(git)) {
@@ -290,9 +295,10 @@ export class Webhook {
       this.pullRequest.title = git.object_attributes.title;
       this.pullRequest.description = git.object_attributes.description;
       this.pullRequest.number = git.object_attributes.iid;
-      this.repository.cloneURL = git.project.git_http_url;
+      this.repository.cloneURL = git.project.web_url;
       this.pullRequest.sourceBranch = git.object_attributes.source_branch;
       this.pullRequest.targetBranch = git.object_attributes.target_branch;
+      this.pullRequest.user.login = git.object_attributes.source.namespace;
       this.repository.defaultBranchName = git.project.default_branch;
       this.user.login = git.user.username;
     } else if (isGithubIssueCommentEvent(git)) {
@@ -300,7 +306,7 @@ export class Webhook {
       this.gitEvent = GitEventEnum.NewIssueComment;
       this.gitService = this.githubService;
       this.repository.fullName = git.repository.full_name;
-      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.cloneURL = git.repository.html_url;
       this.comment.id = git.comment.id;
       this.comment.description = git.comment.body;
       this.issue.title = git.issue.title;
@@ -313,7 +319,7 @@ export class Webhook {
       this.gitEvent = GitEventEnum.NewPRComment;
       this.gitService = this.githubService;
       this.repository.fullName = git.repository.full_name;
-      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.cloneURL = git.repository.html_url;
       this.comment.id = git.comment.id;
       this.comment.description = git.comment.body;
       this.pullRequest.description = git.issue.body;
@@ -330,7 +336,7 @@ export class Webhook {
       this.gitEvent = GitEventEnum.NewIssueComment;
       this.gitService = this.gitlabService;
       this.projectId = git.project.id;
-      this.repository.cloneURL = git.project.git_http_url;
+      this.repository.cloneURL = git.project.web_url;
       this.comment.id = git.object_attributes.id;
       this.comment.description = git.object_attributes.description;
       this.issue.title = git.issue.title;
@@ -343,7 +349,7 @@ export class Webhook {
       this.gitEvent = GitEventEnum.NewPRComment;
       this.gitService = this.gitlabService;
       this.projectId = git.project.id;
-      this.repository.cloneURL = git.project.git_http_url;
+      this.repository.cloneURL = git.project.web_url;
       this.comment.id = git.object_attributes.id;
       this.comment.description = git.object_attributes.description;
       this.pullRequest.title = git.merge_request.title;
@@ -361,9 +367,10 @@ export class Webhook {
       this.pullRequest.description = git.pull_request.body;
       this.pullRequest.number = git.number;
       this.repository.fullName = git.repository.full_name;
-      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.cloneURL = git.repository.html_url;
       this.pullRequest.sourceBranch = git.pull_request.head.ref;
       this.pullRequest.targetBranch = git.pull_request.base.ref;
+      this.pullRequest.user.login = git.pull_request.user.login;
       this.repository.defaultBranchName = git.repository.default_branch;
       this.user.login = git.sender.login;
     } else if (isGithubMergedPREvent(git)) {
@@ -374,9 +381,10 @@ export class Webhook {
       this.pullRequest.description = git.pull_request.body;
       this.pullRequest.number = git.number;
       this.repository.fullName = git.repository.full_name;
-      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.cloneURL = git.repository.html_url;
       this.pullRequest.sourceBranch = git.pull_request.head.ref;
       this.pullRequest.targetBranch = git.pull_request.base.ref;
+      this.pullRequest.user.login = git.pull_request.user.login;
       this.repository.defaultBranchName = git.repository.default_branch;
       this.user.login = git.sender.login;
     } else if (isGithubReopenedPREvent(git)) {
@@ -387,9 +395,10 @@ export class Webhook {
       this.pullRequest.description = git.pull_request.body;
       this.pullRequest.number = git.number;
       this.repository.fullName = git.repository.full_name;
-      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.cloneURL = git.repository.html_url;
       this.pullRequest.sourceBranch = git.pull_request.head.ref;
       this.pullRequest.targetBranch = git.pull_request.base.ref;
+      this.pullRequest.user.login = git.pull_request.user.login;
       this.repository.defaultBranchName = git.repository.default_branch;
       this.user.login = git.sender.login;
     } else if (isGitlabMergedPREvent(git)) {
@@ -400,9 +409,10 @@ export class Webhook {
       this.pullRequest.title = git.object_attributes.title;
       this.pullRequest.description = git.object_attributes.description;
       this.pullRequest.number = git.object_attributes.iid;
-      this.repository.cloneURL = git.project.git_http_url;
+      this.repository.cloneURL = git.project.web_url;
       this.pullRequest.sourceBranch = git.object_attributes.source_branch;
       this.pullRequest.targetBranch = git.object_attributes.target_branch;
+      this.pullRequest.user.login = git.object_attributes.source.namespace;
       this.repository.defaultBranchName = git.project.default_branch;
       this.user.login = git.user.username;
     } else if (isGitlabClosedPREvent(git)) {
@@ -413,9 +423,10 @@ export class Webhook {
       this.pullRequest.title = git.object_attributes.title;
       this.pullRequest.description = git.object_attributes.description;
       this.pullRequest.number = git.object_attributes.iid;
-      this.repository.cloneURL = git.project.git_http_url;
+      this.repository.cloneURL = git.project.web_url;
       this.pullRequest.sourceBranch = git.object_attributes.source_branch;
       this.pullRequest.targetBranch = git.object_attributes.target_branch;
+      this.pullRequest.user.login = git.object_attributes.source.namespace;
       this.repository.defaultBranchName = git.project.default_branch;
       this.user.login = git.user.username;
     } else if (isGitlabReopenedPREvent(git)) {
@@ -426,9 +437,10 @@ export class Webhook {
       this.pullRequest.title = git.object_attributes.title;
       this.pullRequest.description = git.object_attributes.description;
       this.pullRequest.number = git.object_attributes.iid;
-      this.repository.cloneURL = git.project.git_http_url;
+      this.repository.cloneURL = git.project.web_url;
       this.pullRequest.sourceBranch = git.object_attributes.source_branch;
       this.pullRequest.targetBranch = git.object_attributes.target_branch;
+      this.pullRequest.user.login = git.object_attributes.source.namespace;
       this.repository.defaultBranchName = git.project.default_branch;
       this.user.login = git.user.username;
     } else if (isGithubNewRepoEvent(git)) {
@@ -439,7 +451,7 @@ export class Webhook {
       this.repository.fullName = git.repository.full_name;
       this.repository.name = git.repository.name;
       this.repository.description = git.repository.description;
-      this.repository.cloneURL = git.repository.clone_url;
+      this.repository.cloneURL = git.repository.html_url;
       this.repository.defaultBranchName = git.repository.default_branch;
       this.user.login = git.sender.login;
     }

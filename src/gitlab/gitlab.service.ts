@@ -595,13 +595,13 @@ export class GitlabService implements GitServiceInterface {
 
     return await this.httpService
       .get(
-        `${this.urlApi}/projects/${this.projectId}/repository/files/${
-          gitFileInfos.filePath
-        }/raw`,
+        `${this.urlApi}/projects/${
+          this.projectId
+        }/repository/files/${encodeURIComponent(gitFileInfos.filePath)}/raw`,
         configGitLab,
       )
       .toPromise()
-      .then(response => response.data)
+      .then(response => response)
       .catch(err => {
         throw new Error(
           `${err}: ${gitFileInfos.filePath} do not exist on branch ${
