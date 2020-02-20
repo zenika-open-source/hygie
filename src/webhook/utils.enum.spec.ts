@@ -58,6 +58,21 @@ describe('Utils Enum', () => {
       );
       expect(res).toBe('success');
     });
+    it('should equal "pending"', () => {
+      const res: string = utils.convertCommitStatus(
+        utils.GitTypeEnum.Gitlab,
+        CommitStatusEnum.Pending,
+      );
+      expect(res).toBe('pending');
+    });
+
+    it('should equal "pending"', () => {
+      const res: string = utils.convertCommitStatus(
+        utils.GitTypeEnum.Gitlab,
+        CommitStatusEnum.Pending,
+      );
+      expect(res).toBe('pending');
+    });
   });
 
   describe('convertIssueState', () => {

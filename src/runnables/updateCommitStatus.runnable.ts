@@ -2,7 +2,7 @@ import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
-import { GitTypeEnum } from '../webhook/utils.enum';
+import { GitTypeEnum, CommitStatusEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
@@ -18,6 +18,7 @@ interface UpdateCommitStatusArgs {
   failTargetUrl: string;
   successDescriptionMessage: string;
   failDescriptionMessage: string;
+  status: string;
 }
 
 /**
@@ -50,6 +51,12 @@ export class UpdateCommitStatusRunnable extends Runnable {
     const gitCommitStatusInfos: GitCommitStatusInfos = new GitCommitStatusInfos();
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
 
+    if (args.status === CommitStatusEnum.Pending) {
+      gitCommitStatusInfos.context = '/wip';
+      this.updateCommitStatus(gitApiInfos, gitCommitStatusInfos);
+      return;
+    }
+
     data.commits.map(c => {
       gitCommitStatusInfos.commitSha = c.sha;
       gitCommitStatusInfos.commitStatus = c.status;
@@ -68,11 +75,18 @@ export class UpdateCommitStatusRunnable extends Runnable {
         ruleResult,
       );
 
-      if (gitApiInfos.git === GitTypeEnum.Github) {
-        this.githubService.updateCommitStatus(gitCommitStatusInfos);
-      } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-        this.gitlabService.updateCommitStatus(gitCommitStatusInfos);
-      }
+      this.updateCommitStatus(gitApiInfos, gitCommitStatusInfos);
     });
+  }
+
+  private updateCommitStatus(
+    gitApiInfos: GitApiInfos,
+    gitCommitStatusInfos: GitCommitStatusInfos,
+  ) {
+    if (gitApiInfos.git === GitTypeEnum.Github) {
+      this.githubService.updateCommitStatus(gitCommitStatusInfos);
+    } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
+      this.gitlabService.updateCommitStatus(gitCommitStatusInfos);
+    }
   }
 }

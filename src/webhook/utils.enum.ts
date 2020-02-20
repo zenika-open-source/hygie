@@ -22,6 +22,7 @@ export enum GitTypeEnum {
 export enum CommitStatusEnum {
   Success = 'Success',
   Failure = 'Failure',
+  Pending = 'Pending',
 }
 
 export enum GitEventEnum {
@@ -49,10 +50,12 @@ export function convertCommitStatus(
     [GitTypeEnum.Github]: {
       [CommitStatusEnum.Success]: 'success',
       [CommitStatusEnum.Failure]: 'failure',
+      [CommitStatusEnum.Pending]: 'pending',
     },
     [GitTypeEnum.Gitlab]: {
       [CommitStatusEnum.Success]: 'success',
       [CommitStatusEnum.Failure]: 'failed',
+      [CommitStatusEnum.Pending]: 'pending',
     },
   };
 
