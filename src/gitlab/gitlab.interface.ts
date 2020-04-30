@@ -18,6 +18,12 @@ export interface GitlabCommit {
   removed: string[];
 }
 /**
+ * GitlabSourcePR dto
+ */
+export interface GitlabSourcePR {
+  namespace: string;
+}
+/**
  * GitlabPR dto
  */
 export interface GitlabPR {
@@ -27,6 +33,7 @@ export interface GitlabPR {
   description: string;
   source_branch: string;
   target_branch: string;
+  source: GitlabSourcePR;
 }
 /**
  * GitlabProject dto
@@ -34,7 +41,7 @@ export interface GitlabPR {
 export interface GitlabProject {
   id: number;
   name: string;
-  git_http_url: string;
+  web_url: string;
   default_branch: string;
 }
 /**

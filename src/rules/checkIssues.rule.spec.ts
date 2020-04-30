@@ -8,11 +8,12 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { CheckIssuesRule } from './checkIssues.rule';
 import { Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -51,7 +52,7 @@ describe('RulesService', () => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkIssuesRule = new CheckIssuesRule(MockAnalytics);
+      const checkIssuesRule = new CheckIssuesRule();
       checkIssuesRule.options = {
         notUpdatedSinceXDays: 7,
         state: 'open',
@@ -64,10 +65,8 @@ describe('RulesService', () => {
       );
       jest.fn().mockReset();
 
-      const expectedResult = {};
-
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.issue.number).toEqual(undefined);
     });
   });
   describe('checkIssues Rule', () => {
@@ -90,7 +89,7 @@ describe('RulesService', () => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkIssuesRule = new CheckIssuesRule(MockAnalytics);
+      const checkIssuesRule = new CheckIssuesRule();
       checkIssuesRule.options = {
         notUpdatedSinceXDays: 0, // for testing
         state: 'close',
@@ -104,10 +103,8 @@ describe('RulesService', () => {
 
       jest.fn().mockReset();
 
-      const expectedResult = { issue: { number: [1, 2, 3] } };
-
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.issue.number).toEqual([1, 2, 3]);
     });
   });
   describe('checkIssues Rule', () => {
@@ -130,7 +127,7 @@ describe('RulesService', () => {
         return new Observable<AxiosResponse<any>>();
       });
 
-      const checkIssuesRule = new CheckIssuesRule(MockAnalytics);
+      const checkIssuesRule = new CheckIssuesRule();
       checkIssuesRule.options = {
         notUpdatedSinceXDays: 0, // for testing
         state: 'all',
@@ -144,10 +141,8 @@ describe('RulesService', () => {
 
       jest.fn().mockReset();
 
-      const expectedResult = { issue: { number: [1, 2, 3] } };
-
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.issue.number).toEqual([1, 2, 3]);
     });
   });
 });

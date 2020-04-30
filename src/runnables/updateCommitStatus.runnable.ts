@@ -2,22 +2,22 @@ import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
 import { GithubService } from '../github/github.service';
 import { GitlabService } from '../gitlab/gitlab.service';
-import { GitTypeEnum } from '../webhook/utils.enum';
+import { GitTypeEnum, CommitStatusEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { RunnableDecorator } from './runnable.decorator';
 import { Utils } from '../utils/utils';
-
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface UpdateCommitStatusArgs {
   successTargetUrl: string;
   failTargetUrl: string;
   successDescriptionMessage: string;
   failDescriptionMessage: string;
+  status: string;
 }
 
 /**
@@ -29,12 +29,12 @@ export class UpdateCommitStatusRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
     private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
+
+  @AnalyticsDecorator(HYGIE_TYPE.RUNNABLE)
   async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
@@ -42,13 +42,15 @@ export class UpdateCommitStatusRunnable extends Runnable {
   ): Promise<void> {
     ruleResult.env = this.envVarAccessor.getAllEnvVar();
 
-    this.googleAnalytics
-      .event('Runnable', 'updateCommitStatus', ruleResult.projectURL)
-      .send();
-
     const data = ruleResult.data as any;
     const gitCommitStatusInfos: GitCommitStatusInfos = new GitCommitStatusInfos();
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
+
+    if (args.status === CommitStatusEnum.Pending) {
+      gitCommitStatusInfos.context = '/wip';
+      this.updateCommitStatus(gitApiInfos, gitCommitStatusInfos);
+      return;
+    }
 
     data.commits.map(c => {
       gitCommitStatusInfos.commitSha = c.sha;
@@ -68,11 +70,18 @@ export class UpdateCommitStatusRunnable extends Runnable {
         ruleResult,
       );
 
-      if (gitApiInfos.git === GitTypeEnum.Github) {
-        this.githubService.updateCommitStatus(gitCommitStatusInfos);
-      } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
-        this.gitlabService.updateCommitStatus(gitCommitStatusInfos);
-      }
+      this.updateCommitStatus(gitApiInfos, gitCommitStatusInfos);
     });
+  }
+
+  private updateCommitStatus(
+    gitApiInfos: GitApiInfos,
+    gitCommitStatusInfos: GitCommitStatusInfos,
+  ) {
+    if (gitApiInfos.git === GitTypeEnum.Github) {
+      this.githubService.updateCommitStatus(gitCommitStatusInfos);
+    } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
+      this.gitlabService.updateCommitStatus(gitCommitStatusInfos);
+    }
   }
 }

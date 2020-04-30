@@ -8,10 +8,12 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { CheckCoverageRule, CoverageProvider } from './checkCoverage.rule';
 import { of } from 'rxjs';
+
+jest.mock('../analytics/analytics.decorator');
+
 describe('RulesService', () => {
   let app: TestingModule;
   let githubService: GithubService;
@@ -95,10 +97,7 @@ describe('RulesService', () => {
           ];
         });
 
-      const checkCoverageRule = new CheckCoverageRule(
-        httpService,
-        MockAnalytics,
-      );
+      const checkCoverageRule = new CheckCoverageRule(httpService);
       checkCoverageRule.options = {
         allowDecrease: true,
         provider: CoverageProvider.Coveralls,
@@ -110,23 +109,21 @@ describe('RulesService', () => {
         webhook,
         checkCoverageRule,
       );
-      const expectedResult = {
-        coverage: [
-          {
-            branch: 'develop',
-            coverage_change: -0.2,
-            covered_percent: 77.985285795133,
-          },
-          {
-            branch: 'master',
-            coverage_change: 0.2,
-            covered_percent: 79.985285795133,
-          },
-        ],
-      };
+      const expectedResult = [
+        {
+          branch: 'develop',
+          coverage_change: -0.2,
+          covered_percent: 77.985285795133,
+        },
+        {
+          branch: 'master',
+          coverage_change: 0.2,
+          covered_percent: 79.985285795133,
+        },
+      ];
 
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.coverage).toEqual(expectedResult);
     });
   });
 
@@ -184,10 +181,7 @@ describe('RulesService', () => {
             },
           ];
         });
-      const checkCoverageRule = new CheckCoverageRule(
-        httpService,
-        MockAnalytics,
-      );
+      const checkCoverageRule = new CheckCoverageRule(httpService);
       checkCoverageRule.options = {
         allowDecrease: false,
         provider: CoverageProvider.Coveralls,
@@ -199,23 +193,21 @@ describe('RulesService', () => {
         webhook,
         checkCoverageRule,
       );
-      const expectedResult = {
-        coverage: [
-          {
-            branch: 'develop',
-            coverage_change: -0.2,
-            covered_percent: 77.985285795133,
-          },
-          {
-            branch: 'master',
-            coverage_change: 0.2,
-            covered_percent: 79.985285795133,
-          },
-        ],
-      };
+      const expectedResult = [
+        {
+          branch: 'develop',
+          coverage_change: -0.2,
+          covered_percent: 77.985285795133,
+        },
+        {
+          branch: 'master',
+          coverage_change: 0.2,
+          covered_percent: 79.985285795133,
+        },
+      ];
 
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.coverage).toEqual(expectedResult);
     });
   });
 
@@ -273,10 +265,7 @@ describe('RulesService', () => {
             },
           ];
         });
-      const checkCoverageRule = new CheckCoverageRule(
-        httpService,
-        MockAnalytics,
-      );
+      const checkCoverageRule = new CheckCoverageRule(httpService);
       checkCoverageRule.options = {
         allowDecrease: false,
         provider: CoverageProvider.Coveralls,
@@ -288,23 +277,21 @@ describe('RulesService', () => {
         webhook,
         checkCoverageRule,
       );
-      const expectedResult = {
-        coverage: [
-          {
-            branch: 'develop',
-            coverage_change: 0.2,
-            covered_percent: 67.985285795133,
-          },
-          {
-            branch: 'master',
-            coverage_change: 0.2,
-            covered_percent: 79.985285795133,
-          },
-        ],
-      };
+      const expectedResult = [
+        {
+          branch: 'develop',
+          coverage_change: 0.2,
+          covered_percent: 67.985285795133,
+        },
+        {
+          branch: 'master',
+          coverage_change: 0.2,
+          covered_percent: 79.985285795133,
+        },
+      ];
 
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.coverage).toEqual(expectedResult);
     });
   });
 });

@@ -8,9 +8,10 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { PullRequestCommentRule } from './pullRequestComment.rule';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -24,13 +25,16 @@ describe('RulesService', () => {
     title: 'my PR for webhook',
     description: 'my desc',
     number: 22,
+    user: {
+      login: 'someone',
+    },
   };
   webhook.comment = {
     id: 123,
     description: 'comment on PR',
   };
 
-  const pullRequestComment = new PullRequestCommentRule(MockAnalytics);
+  const pullRequestComment = new PullRequestCommentRule();
   pullRequestComment.options = {
     regexp: '^@pong$',
   };
@@ -60,18 +64,7 @@ describe('RulesService', () => {
         pullRequestComment,
       );
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual({
-        pullRequest: {
-          title: webhook.pullRequest.title,
-          number: webhook.pullRequest.number,
-          description: webhook.pullRequest.description,
-        },
-        comment: {
-          id: webhook.comment.id,
-          description: webhook.comment.description,
-          matches: null,
-        },
-      });
+      expect(result.data.comment.matches).toEqual(null);
     });
 
     it('should return true', async () => {
@@ -81,18 +74,9 @@ describe('RulesService', () => {
         pullRequestComment,
       );
       expect(result.validated).toBe(true);
-      expect(JSON.parse(JSON.stringify(result.data))).toEqual({
-        pullRequest: {
-          title: webhook.pullRequest.title,
-          number: webhook.pullRequest.number,
-          description: webhook.pullRequest.description,
-        },
-        comment: {
-          id: webhook.comment.id,
-          description: webhook.comment.description,
-          matches: ['@pong'],
-        },
-      });
+      expect(JSON.parse(JSON.stringify(result.data.comment.matches))).toEqual([
+        '@pong',
+      ]);
     });
   });
 });

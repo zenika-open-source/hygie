@@ -5,14 +5,15 @@ import {
 } from './envFile.interface';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { Utils } from '../utils/utils';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from './env-var.accessor';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Injectable()
 export class EnvVarService {
   constructor(
     private readonly dataAccessService: DataAccessService,
     private readonly envVarAccessor: EnvVarAccessor,
+    private readonly loggerService: LoggerService,
   ) {}
 
   encryptDatas(envs: KeyValueEnvFileInterface): KeyValueEnvFileInterface {
@@ -40,7 +41,7 @@ export class EnvVarService {
     const encryptEnvs = this.encryptDatas(envs);
     this.dataAccessService
       .writeEnvsVar(path, encryptEnvs)
-      .catch(err => logger.error(err, { location: 'saveEnvs' }));
+      .catch(err => this.loggerService.error(err, { location: 'saveEnvs' }));
   }
 
   async setEnvs(repositoryName: string) {
@@ -54,7 +55,10 @@ export class EnvVarService {
         this.envVarAccessor.setAllEnvVar(decryptedEnv);
       }
     } catch (e) {
-      logger.error(e, { location: 'setEnvs', project: repositoryName });
+      this.loggerService.error(e, {
+        location: 'setEnvs',
+        project: repositoryName,
+      });
     }
   }
 

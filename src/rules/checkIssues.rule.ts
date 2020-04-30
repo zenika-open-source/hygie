@@ -9,8 +9,8 @@ import {
   IssueSearchResult,
 } from '../git/gitIssueInfos';
 import { Utils } from './utils';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface CheckIssuesOptions {
   updatedWithinXDays?: number;
@@ -28,25 +28,13 @@ export class CheckIssuesRule extends Rule {
   options: CheckIssuesOptions;
   events = [GitEventEnum.Cron];
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: CheckIssuesRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
-    this.googleAnalytics
-      .event('Rule', 'checkIssues', webhook.getCloneURL())
-      .send();
+    const ruleResult: RuleResult = new RuleResult(webhook);
 
     const gitIssueSearch: GitIssuePRSearch = new GitIssuePRSearch();
     if (typeof ruleConfig.options.state !== 'undefined') {
@@ -84,11 +72,7 @@ export class CheckIssuesRule extends Rule {
     ruleResult.validated = issuesToUpdate.length > 0;
 
     if (ruleResult.validated) {
-      ruleResult.data = {
-        issue: { number: issuesToUpdate },
-      };
-    } else {
-      ruleResult.data = {};
+      ruleResult.data.issue.number = issuesToUpdate;
     }
 
     return ruleResult;

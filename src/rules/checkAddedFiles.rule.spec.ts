@@ -8,10 +8,11 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { GitEventEnum, GitTypeEnum } from '../webhook/utils.enum';
 import { CheckAddedFilesRule } from './checkAddedFiles.rule';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -66,7 +67,7 @@ describe('RulesService', () => {
           sha: '3',
         },
       ];
-      const checkAddedFilesRule = new CheckAddedFilesRule(MockAnalytics);
+      const checkAddedFilesRule = new CheckAddedFilesRule();
       checkAddedFilesRule.options = {
         regexp: '.*\\.md$',
       };
@@ -77,12 +78,8 @@ describe('RulesService', () => {
         webhook,
         checkAddedFilesRule,
       );
-      const expectedResult = {
-        addedFiles: [],
-        branch: 'test_branch',
-      };
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.addedFiles).toEqual([]);
     });
   });
 
@@ -104,7 +101,7 @@ describe('RulesService', () => {
           added: ['aa.md', 'bb.md', 'cc.exe', 'dd.bat', 'ee.md'],
         },
       ];
-      const checkAddedFilesRule = new CheckAddedFilesRule(MockAnalytics);
+      const checkAddedFilesRule = new CheckAddedFilesRule();
       checkAddedFilesRule.options = {
         regexp: '.*\\.md$',
       };
@@ -115,12 +112,16 @@ describe('RulesService', () => {
         webhook,
         checkAddedFilesRule,
       );
-      const expectedResult = {
-        addedFiles: ['a.md', 'b.md', 'e.md', 'aa.md', 'bb.md', 'ee.md'],
-        branch: 'test_branch',
-      };
+
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual(expectedResult);
+      expect(result.data.addedFiles).toEqual([
+        'a.md',
+        'b.md',
+        'e.md',
+        'aa.md',
+        'bb.md',
+        'ee.md',
+      ]);
     });
   });
 });

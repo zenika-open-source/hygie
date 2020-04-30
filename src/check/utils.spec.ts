@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpService } from '@nestjs/common';
+import { HttpService, Logger } from '@nestjs/common';
 import { MockHttpService } from '../__mocks__/mocks';
 import { throwError } from 'rxjs';
-import { logger } from '../logger/logger.service';
 import { Check } from './utils';
 
 describe('Check Utils', () => {
@@ -38,19 +37,19 @@ describe('Check Utils', () => {
       const fs = require('fs-extra');
       fs.existsSync = jest.fn().mockReturnValue(true);
 
-      logger.error = jest.fn().mockName('logger.error');
+      Logger.error = jest.fn().mockName('Logger.error');
 
       expect(Check.checkIfFileExist('some/file.ext')).toBe(true);
-      expect(logger.error).not.toBeCalled();
+      expect(Logger.error).not.toBeCalled();
     });
     it('Should return false', async () => {
       const fs = require('fs-extra');
       fs.existsSync = jest.fn().mockReturnValue(false);
 
-      logger.error = jest.fn().mockName('logger.error');
+      Logger.error = jest.fn().mockName('Logger.error');
 
       expect(Check.checkIfFileExist('some/file.ext')).toBe(false);
-      expect(logger.error).toBeCalled();
+      expect(Logger.error).toBeCalled();
     });
   });
 

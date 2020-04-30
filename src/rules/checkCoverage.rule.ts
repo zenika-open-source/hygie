@@ -3,10 +3,10 @@ import { RuleResult } from './ruleResult';
 import { GitEventEnum } from '../webhook/utils.enum';
 import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
-import { HttpService, Inject } from '@nestjs/common';
-import { logger } from '../logger/logger.service';
+import { HttpService, Logger } from '@nestjs/common';
 import { GitBranchCommit } from '../git/gitBranchSha';
-import { Visitor } from 'universal-analytics';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 export enum CoverageProvider {
   Coveralls = 'Coveralls',
@@ -27,30 +27,20 @@ export class CheckCoverageRule extends Rule {
   options: CheckCoverageOptions;
   events = [GitEventEnum.Cron];
 
-  constructor(
-    private readonly httpService: HttpService,
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
-  ) {
+  constructor(private readonly httpService: HttpService) {
     super();
   }
 
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: CheckCoverageRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     ruleResult.data = { coverage: [] };
     let allBranchesPassed: boolean = true;
     let coverageURL: string;
-
-    this.googleAnalytics
-      .event('Rule', 'checkCoverage', webhook.getCloneURL())
-      .send();
 
     const lastBranchesCommitSha: GitBranchCommit[] = await webhook.gitService.getLastBranchesCommitSha();
 
@@ -89,7 +79,7 @@ export class CheckCoverageRule extends Rule {
           covered_percent,
         });
       } catch (e) {
-        logger.error(e);
+        Logger.error(e);
       }
     }
 

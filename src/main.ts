@@ -1,7 +1,9 @@
+import 'module-alias/register';
+
+import '~common/config/index';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { HttpService } from '@nestjs/common';
-import { logger } from './logger/logger.service';
+import { HttpService, Logger } from '@nestjs/common';
 import { Constants } from './utils/constants';
 import { DataAccessService } from './data_access/dataAccess.service';
 import { Check } from './check/utils';
@@ -13,7 +15,7 @@ require('dotenv').config();
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.useStaticAssets(join(__dirname, 'public'));
 
   // Handle every exceptions
   app.useGlobalFilters(new AllExceptionsFilter());
@@ -33,7 +35,7 @@ async function bootstrap() {
       await app.listen(port);
     }
   } else {
-    logger.error('No internet connection');
+    Logger.error('No internet connection');
   }
 }
-bootstrap().catch(err => logger.error(err));
+bootstrap().catch(err => Logger.error(err));

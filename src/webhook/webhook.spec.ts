@@ -1,56 +1,74 @@
 import { Webhook, WebhookCommit } from './webhook';
 import { GitlabService } from '../gitlab/gitlab.service';
 import { GithubService } from '../github/github.service';
-import { HttpService } from '@nestjs/common';
 import { GitEventEnum, GitTypeEnum, CommitStatusEnum } from './utils.enum';
 import { CronInterface } from '../scheduler/cron.interface';
-
-// INIT
-const gitlabService: GitlabService = new GitlabService(new HttpService());
-const githubService: GithubService = new GithubService(new HttpService());
-const webhook = new Webhook(gitlabService, githubService);
-webhook.branchName = 'features/fix';
-webhook.commits = [
-  {
-    message: 'fix: readme (#12)',
-    sha: '1',
-  },
-  {
-    message: 'feat(test): tdd (#34)',
-    sha: '2',
-  },
-  {
-    message: 'docs: gh-pages',
-    sha: '3',
-  },
-];
-webhook.gitEvent = GitEventEnum.NewBranch;
-webhook.gitService = githubService;
-webhook.gitType = GitTypeEnum.Github;
-webhook.projectId = 1;
-webhook.repository = {
-  fullName: 'bastienterrier/test_webhook',
-  name: 'test_webhook',
-  description: 'amazing project',
-  cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
-  defaultBranchName: 'master',
-};
-webhook.pullRequest = {
-  title: 'my PR for webhook',
-  description: 'my desc',
-  number: 22,
-};
-webhook.issue = {
-  number: 43,
-  title: 'add rules documentation',
-  description: 'please consider adding a Rules section',
-};
-webhook.comment = {
-  id: 22,
-  description: 'my comment',
-};
+import { TestingModule, Test } from '@nestjs/testing';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 
 describe('Webhook', () => {
+  let app: TestingModule;
+  let githubService: GithubService;
+  let gitlabService: GitlabService;
+  let webhook: Webhook;
+
+  beforeAll(async () => {
+    app = await Test.createTestingModule({
+      providers: [
+        { provide: GitlabService, useClass: MockGitlabService },
+        { provide: GithubService, useClass: MockGithubService },
+      ],
+    }).compile();
+
+    githubService = app.get(GithubService);
+    gitlabService = app.get(GitlabService);
+    webhook = new Webhook(gitlabService, githubService);
+
+    webhook.branchName = 'features/fix';
+    webhook.commits = [
+      {
+        message: 'fix: readme (#12)',
+        sha: '1',
+      },
+      {
+        message: 'feat(test): tdd (#34)',
+        sha: '2',
+      },
+      {
+        message: 'docs: gh-pages',
+        sha: '3',
+      },
+    ];
+    webhook.gitEvent = GitEventEnum.NewBranch;
+    webhook.gitService = githubService;
+    webhook.gitType = GitTypeEnum.Github;
+    webhook.projectId = 1;
+    webhook.repository = {
+      fullName: 'bastienterrier/test_webhook',
+      name: 'test_webhook',
+      description: 'amazing project',
+      cloneURL: 'https://github.com/bastienterrier/test-webhook.git',
+      defaultBranchName: 'master',
+    };
+    webhook.pullRequest = {
+      title: 'my PR for webhook',
+      description: 'my desc',
+      number: 22,
+      user: {
+        login: 'someone',
+      },
+    };
+    webhook.issue = {
+      number: 43,
+      title: 'add rules documentation',
+      description: 'please consider adding a Rules section',
+    };
+    webhook.comment = {
+      id: 22,
+      description: 'my comment',
+    };
+  });
+
   describe('getAllCommits', () => {
     it('should return an array of 3 commits', () => {
       const commits: WebhookCommit[] = webhook.getAllCommits();
@@ -154,6 +172,7 @@ describe('Webhook', () => {
       ).toEqual({
         commitSha: '22',
         commitStatus: 'Success',
+        context: '/commit',
       });
     });
   });

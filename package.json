@@ -4,10 +4,10 @@
   "description": "Hygie is an easy-to-use Open-Source REST API allowing you to interact with GIT events. This NestJS API expose a set of customizable rules to automate your project's life cycle.",
   "license": "MIT",
   "scripts": {
-    "copyfiles": "cpx src/rules/.rulesrc dist/rules && cpx \"src/rules/*.rule.ts\" dist/rules && cpx src/rules/rules.options.ts dist/rules && cpx \"src/runnables/*.runnable.ts\" dist/runnables && cpx \"src/views/*\" dist/views",
+    "copyfiles": "cpx src/rules/.rulesrc dist/rules && cpx \"src/rules/*.rule.ts\" dist/rules && cpx src/rules/rules.options.ts dist/rules && cpx \"src/runnables/*.runnable.ts\" dist/runnables && cpx \"src/views/*\" dist/views && cpx \"src/public/**/*\" dist/public",
     "build": "rimraf dist && tsc -p tsconfig.build.json && npm run copyfiles",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "prettier-test": "prettier -l \"src/**/*.ts\" \"test/**/*.ts\"",
+    "prettier-test": "prettier -c \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "ts-node --transpile-only -r tsconfig-paths/register src/main.ts",
     "start:dev": "nodemon",
     "start:debug": "nodemon --config nodemon-debug.json",
@@ -52,6 +52,7 @@
     "googleapis": "27.0.0",
     "handlebars": "^4.4.0",
     "js-yaml": "3.13.1",
+    "module-alias": "^2.2.2",
     "prom-client": "11.5.3",
     "reflect-metadata": "0.1.13",
     "rimraf": "2.6.3",
@@ -89,6 +90,9 @@
     "vuetify": "1.5.16"
   },
   "jest": {
+    "moduleNameMapper": {
+      "~common/(.*)": "<rootDir>/common/$1"
+    },
     "moduleFileExtensions": [
       "js",
       "json",
@@ -109,6 +113,9 @@
         "tsConfig": "tsconfig.json"
       }
     }
+  },
+  "_moduleAliases": {
+    "~common": "dist/common"
   },
   "keywords": [
     "webhook",

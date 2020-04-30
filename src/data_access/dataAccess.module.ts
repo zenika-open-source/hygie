@@ -2,8 +2,11 @@ import { Module, DynamicModule } from '@nestjs/common';
 import { DataAccessService } from './dataAccess.service';
 import { FileAccess } from './providers/fileAccess';
 import { DatabaseAccess } from './providers/databaseAccess';
+import { CommonModule } from '~common/common.module';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Module({
+  imports: [CommonModule],
   providers: [DataAccessService],
   exports: [DataAccessService],
 })
@@ -14,7 +17,7 @@ export class DataAccessModule {
       providers: [
         {
           provide: 'DataAccessInterface',
-          useFactory() {
+          useFactory(loggerService: LoggerService) {
             // Use custom DataAccessInterface
             if (entity !== null) {
               return new entity();
@@ -22,8 +25,9 @@ export class DataAccessModule {
             // Defaults
             return process.env.DATA_ACCESS === 'file'
               ? new FileAccess()
-              : new DatabaseAccess();
+              : new DatabaseAccess(loggerService);
           },
+          inject: [LoggerService],
         },
       ],
     };

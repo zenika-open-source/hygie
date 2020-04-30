@@ -7,11 +7,12 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { GitEventEnum, GitTypeEnum } from '../webhook/utils.enum';
 import { CheckVulnerabilitiesRule } from './checkVulnerabilities.rule';
 import { RuleResult } from './ruleResult';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -65,7 +66,7 @@ describe('RulesService', () => {
         sha: '3',
       },
     ];
-    checkVulnerabilitiesRule = new CheckVulnerabilitiesRule(MockAnalytics);
+    checkVulnerabilitiesRule = new CheckVulnerabilitiesRule();
     checkVulnerabilitiesRule.options = {
       packageUrl:
         'https://raw.githubusercontent.com/zenika-open-source/hygie/master/package.json',
@@ -96,7 +97,7 @@ describe('RulesService', () => {
 
       expect(download).toBeCalledTimes(2);
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual({ vulnerabilities: {} });
+      expect(result.data.vulnerabilities).toEqual({});
     });
   });
 

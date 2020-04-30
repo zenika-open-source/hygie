@@ -9,8 +9,9 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -39,7 +40,7 @@ describe('RulesService', () => {
     it('should return true', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.branchName = 'features/tdd';
-      const branchName = new BranchNameRule(MockAnalytics);
+      const branchName = new BranchNameRule();
       branchName.options = {
         regexp: '(features|fix)\\/.*',
       };
@@ -47,19 +48,18 @@ describe('RulesService', () => {
 
       const result: RuleResult = await branchName.validate(webhook, branchName);
       expect(result.validated).toBe(true);
-
-      expect(JSON.parse(JSON.stringify(result.data))).toEqual({
-        branch: 'features/tdd',
-        branchSplit: ['features', 'tdd'],
-        matches: ['features/tdd', 'features'],
-      });
+      expect((result.data as any).branchSplit).toEqual(['features', 'tdd']);
+      expect(JSON.parse(JSON.stringify((result.data as any).matches))).toEqual([
+        'features/tdd',
+        'features',
+      ]);
     });
   });
   describe('branchName Rule', () => {
     it('should return false', async () => {
       const webhook = new Webhook(gitlabService, githubService);
       webhook.branchName = 'testing/tdd';
-      const branchName = new BranchNameRule(MockAnalytics);
+      const branchName = new BranchNameRule();
       branchName.options = {
         regexp: '(features|fix)\\/.*',
       };
@@ -67,7 +67,6 @@ describe('RulesService', () => {
 
       const result: RuleResult = await branchName.validate(webhook, branchName);
       expect(result.validated).toBe(false);
-      expect((result.data as any).branch).toEqual('testing/tdd');
       expect((result.data as any).branchSplit).toEqual(['testing', 'tdd']);
       expect((result.data as any).matches).toEqual(null);
     });

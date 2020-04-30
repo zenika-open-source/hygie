@@ -8,9 +8,10 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { PullRequestTitleRule } from './pullRequestTitle.rule';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -43,9 +44,12 @@ describe('RulesService', () => {
         title: 'my PR for webhook',
         description: 'my desc',
         number: 22,
+        user: {
+          login: 'someone',
+        },
       };
 
-      const pullRequestTitle = new PullRequestTitleRule(MockAnalytics);
+      const pullRequestTitle = new PullRequestTitleRule();
       pullRequestTitle.options = {
         regexp: '(WIP|FIX):\\s.*',
       };
@@ -56,14 +60,7 @@ describe('RulesService', () => {
         pullRequestTitle,
       );
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual({
-        pullRequest: {
-          title: webhook.pullRequest.title,
-          number: webhook.pullRequest.number,
-          description: webhook.pullRequest.description,
-          matches: null,
-        },
-      });
+      expect(result.data.pullRequest.matches).toEqual(null);
     });
   });
   describe('pullRequestTitle Rule', () => {
@@ -74,9 +71,12 @@ describe('RulesService', () => {
         title: 'WIP: webhook',
         description: 'my desc',
         number: 22,
+        user: {
+          login: 'someone',
+        },
       };
 
-      const pullRequestTitle = new PullRequestTitleRule(MockAnalytics);
+      const pullRequestTitle = new PullRequestTitleRule();
       pullRequestTitle.options = {
         regexp: '(WIP|FIX):\\s.*',
       };
@@ -87,14 +87,9 @@ describe('RulesService', () => {
         pullRequestTitle,
       );
       expect(result.validated).toBe(true);
-      expect(JSON.parse(JSON.stringify(result.data))).toEqual({
-        pullRequest: {
-          title: webhook.pullRequest.title,
-          number: webhook.pullRequest.number,
-          description: webhook.pullRequest.description,
-          matches: ['WIP: webhook', 'WIP'],
-        },
-      });
+      expect(
+        JSON.parse(JSON.stringify(result.data.pullRequest.matches)),
+      ).toEqual(['WIP: webhook', 'WIP']);
     });
   });
 });

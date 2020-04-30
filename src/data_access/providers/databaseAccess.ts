@@ -1,7 +1,7 @@
 import { DataAccessInterface, SourceEnum } from '../dataAccess.interface';
-import { logger } from '../../logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import * as Database from '@dxdeveloperexperience/hygie-database';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Injectable()
 export class DatabaseAccess implements DataAccessInterface {
@@ -10,7 +10,7 @@ export class DatabaseAccess implements DataAccessInterface {
   private readonly remoteCrons;
   private readonly remoteEnvsVar;
 
-  constructor() {
+  constructor(private readonly loggerService: LoggerService) {
     this.remoteRules = Database.models.remoteRules;
     this.remoteEnvs = Database.models.remoteEnvs;
     this.remoteCrons = Database.models.remoteCrons;
@@ -36,13 +36,13 @@ export class DatabaseAccess implements DataAccessInterface {
     return await Database.localdb
       .connection(process.env.MONGODB_CONNECTION_STRING)
       .then(_ => {
-        logger.info('Connected to Mongodb!', {
+        this.loggerService.log('Connected to Mongodb!', {
           location: 'databaseAccess',
         });
         return true;
       })
       .catch(err => {
-        logger.error(err, { location: 'databaseAccess' });
+        this.loggerService.error(err, { location: 'databaseAccess' });
         return false;
       });
   }

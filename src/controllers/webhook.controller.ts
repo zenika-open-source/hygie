@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { Webhook } from '../webhook/webhook';
 import { WebhookInterceptor } from '../interceptors/webhook.interceptor';
-import { logger } from '../logger/logger.service';
 import { RulesService } from '../rules/rules.service';
 import { GitTypeEnum, GitEventEnum } from '../webhook/utils.enum';
 import { AllExceptionsFilter } from '../exceptions/allExceptionFilter';
@@ -20,10 +19,10 @@ import { GithubService } from '../github/github.service';
 import { RemoteConfigUtils } from '../remote-config/utils';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { Constants } from '../utils/constants';
-import { WhiteListInterceptor } from '../interceptors/whiteList.interceptor';
+import { WhiteListInterceptor } from '../interceptors/whiteList/whiteList.interceptor';
 import { ScheduleService } from '../scheduler/scheduler.service';
 import { EnvVarService } from '../env-var/env-var.service';
-import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Controller('webhook')
 export class WebhookController {
@@ -35,6 +34,7 @@ export class WebhookController {
     private readonly dataAccessService: DataAccessService,
     private readonly scheduleService: ScheduleService,
     private readonly envVarService: EnvVarService,
+    private readonly loggerService: LoggerService,
   ) {}
 
   @Post('/')
@@ -51,7 +51,7 @@ export class WebhookController {
     ) {
       throw new PreconditionException();
     } else {
-      logger.info(
+      this.loggerService.log(
         `=== ${webhook.getGitType()} - ${webhook.getGitEvent()} ===`,
         { project: webhook.getCloneURL(), location: 'processWebhook' },
       );
@@ -85,7 +85,7 @@ export class WebhookController {
           defaultBranch,
         );
       } catch (e) {
-        logger.error(e, {
+        this.loggerService.error(e, {
           project: webhook.getCloneURL(),
           location: 'processWebhook',
         });
@@ -98,7 +98,7 @@ export class WebhookController {
           remoteEnvs,
         );
       } catch (e) {
-        logger.error(
+        this.loggerService.error(
           'There is no config.env file for the current git project',
           { project: webhook.getCloneURL(), location: 'processWebhook' },
         );

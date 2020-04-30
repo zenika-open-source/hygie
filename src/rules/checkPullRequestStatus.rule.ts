@@ -5,8 +5,8 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
-import { Visitor } from 'universal-analytics';
-import { Inject } from '@nestjs/common';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface CheckPullRequestStatusOptions {
   status: string;
@@ -28,31 +28,18 @@ export class CheckPullRequestStatusRule extends Rule {
     GitEventEnum.ReopenedPR,
   ];
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
   getEvent(event: GitEventEnum): string {
     return event.toLowerCase().substring(0, event.length - 2);
   }
 
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: CheckPullRequestStatusRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     const gitEvent = this.getEvent(webhook.gitEvent);
-
-    this.googleAnalytics
-      .event('Rule', 'checkPullRequestStatus', webhook.getCloneURL())
-      .send();
 
     // First, check if rule need to be processed
     if (!Utils.checkUser(webhook, ruleConfig.options.users)) {
@@ -62,14 +49,7 @@ export class CheckPullRequestStatusRule extends Rule {
     ruleResult.validated =
       gitEvent === ruleConfig.options.status.toLocaleLowerCase() ? true : false;
 
-    ruleResult.data = {
-      pullRequest: {
-        event: gitEvent,
-        title: webhook.getPullRequestTitle(),
-        number: webhook.getPullRequestNumber(),
-        description: webhook.getPullRequestDescription(),
-      },
-    };
+    ruleResult.data.pullRequest.event = gitEvent;
 
     return ruleResult;
   }

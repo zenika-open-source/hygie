@@ -5,8 +5,8 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface PullRequestCommentOptions {
   regexp: string;
@@ -22,24 +22,12 @@ export class PullRequestCommentRule extends Rule {
   options: PullRequestCommentOptions;
   events = [GitEventEnum.NewPRComment];
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: PullRequestCommentRule,
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
-    this.googleAnalytics
-      .event('Rule', 'pullRequestComment', webhook.getCloneURL())
-      .send();
+    const ruleResult: RuleResult = new RuleResult(webhook);
 
     // First, check if rule need to be processed
     if (!Utils.checkUser(webhook, ruleConfig.options.users)) {
@@ -50,18 +38,7 @@ export class PullRequestCommentRule extends Rule {
     const commentRegExp = RegExp(ruleConfig.options.regexp);
     ruleResult.validated = commentRegExp.test(commentDescription);
 
-    ruleResult.data = {
-      pullRequest: {
-        title: webhook.getPullRequestTitle(),
-        number: webhook.getPullRequestNumber(),
-        description: webhook.getPullRequestDescription(),
-      },
-      comment: {
-        id: webhook.getCommentId(),
-        description: commentDescription,
-        matches: commentDescription.match(commentRegExp),
-      },
-    };
+    ruleResult.data.comment.matches = commentDescription.match(commentRegExp);
 
     return ruleResult;
   }

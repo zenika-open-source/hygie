@@ -4,15 +4,13 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockGitlabService,
-  MockGithubService,
-  MockAnalytics,
-} from '../__mocks__/mocks';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 import { CreateReleaseRunnable } from './createRelease.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
+import { Logger } from '@nestjs/common';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('createRelease Runnable', () => {
   let app: TestingModule;
@@ -31,7 +29,6 @@ describe('createRelease Runnable', () => {
         CreateReleaseRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
-        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
         EnvVarAccessor,
       ],
     }).compile();
@@ -40,17 +37,12 @@ describe('createRelease Runnable', () => {
     gitlabService = app.get(GitlabService);
     createReleaseRunnable = app.get(CreateReleaseRunnable);
 
-    const myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    const webhook = new Webhook(gitlabService, githubService);
 
     args = { tag: 'v0.0.1' };
 
-    ruleResult = new RuleResult(myGitApiInfos);
+    ruleResult = new RuleResult(webhook);
     ruleResult.validated = false;
-    ruleResult.data = {
-      some: 'data',
-    };
   });
 
   beforeEach(() => {
@@ -61,7 +53,7 @@ describe('createRelease Runnable', () => {
     it('should not call the createRelease Github nor Gitlab service', () => {
       createReleaseRunnable
         .run(CallbackType.Both, ruleResult, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       expect(githubService.createRelease).not.toBeCalled();
       expect(gitlabService.createRelease).not.toBeCalled();
     });
@@ -72,8 +64,8 @@ describe('createRelease Runnable', () => {
 
       createReleaseRunnable
         .run(CallbackType.Both, ruleResult, args)
-        .catch(err => logger.error(err));
-      expect(githubService.createRelease).toBeCalled();
+        .catch(err => Logger.error(err));
+      expect(githubService.createRelease).toBeCalledWith({ tag: 'v0.0.1' });
       expect(gitlabService.createRelease).not.toBeCalled();
     });
   });
@@ -83,9 +75,9 @@ describe('createRelease Runnable', () => {
 
       createReleaseRunnable
         .run(CallbackType.Both, ruleResult, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       expect(githubService.createRelease).not.toBeCalled();
-      expect(gitlabService.createRelease).toBeCalled();
+      expect(gitlabService.createRelease).toBeCalledWith({ tag: 'v0.0.1' });
     });
   });
 });

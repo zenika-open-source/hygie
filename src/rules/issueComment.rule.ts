@@ -5,8 +5,8 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface IssueCommentOptions {
   regexp: string;
@@ -22,28 +22,15 @@ export class IssueCommentRule extends Rule {
   options: IssueCommentOptions;
   events = [GitEventEnum.NewIssueComment];
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: IssueCommentRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     const commentDescription = webhook.getCommentDescription();
     const commentRegExp = RegExp(ruleConfig.options.regexp);
-
-    this.googleAnalytics
-      .event('Rule', 'issueComment', webhook.getCloneURL())
-      .send();
 
     // First, check if rule need to be processed
     if (!Utils.checkUser(webhook, ruleConfig.options.users)) {
@@ -51,19 +38,8 @@ export class IssueCommentRule extends Rule {
     }
 
     ruleResult.validated = commentRegExp.test(commentDescription);
+    ruleResult.data.comment.matches = commentDescription.match(commentRegExp);
 
-    ruleResult.data = {
-      issue: {
-        title: webhook.getIssueTitle(),
-        number: webhook.getIssueNumber(),
-        description: webhook.getIssueDescription(),
-      },
-      comment: {
-        id: webhook.getCommentId(),
-        description: commentDescription,
-        matches: commentDescription.match(commentRegExp),
-      },
-    };
     return ruleResult;
   }
 }

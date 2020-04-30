@@ -8,10 +8,11 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { CheckPullRequestStatusRule } from './checkPullRequestStatus.rule';
 import { GitEventEnum } from '../webhook/utils.enum';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -26,9 +27,12 @@ describe('RulesService', () => {
     title: 'my PR for webhook',
     description: 'my desc',
     number: 22,
+    user: {
+      login: 'someone',
+    },
   };
 
-  const checkPullRequestStatus = new CheckPullRequestStatusRule(MockAnalytics);
+  const checkPullRequestStatus = new CheckPullRequestStatusRule();
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -57,14 +61,7 @@ describe('RulesService', () => {
         checkPullRequestStatus,
       );
       expect(result.validated).toBe(false);
-      expect(result.data).toEqual({
-        pullRequest: {
-          description: 'my desc',
-          event: 'closed',
-          number: 22,
-          title: 'my PR for webhook',
-        },
-      });
+      expect(result.data.pullRequest.event).toEqual('closed');
     });
   });
   describe('checkPullRequestStatus Rule', () => {
@@ -77,14 +74,7 @@ describe('RulesService', () => {
         checkPullRequestStatus,
       );
       expect(result.validated).toBe(true);
-      expect(result.data).toEqual({
-        pullRequest: {
-          description: 'my desc',
-          event: 'closed',
-          number: 22,
-          title: 'my PR for webhook',
-        },
-      });
+      expect(result.data.pullRequest.event).toEqual('closed');
     });
   });
 

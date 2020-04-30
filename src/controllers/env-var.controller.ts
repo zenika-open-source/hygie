@@ -8,20 +8,21 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { AllExceptionsFilter } from '../exceptions/allExceptionFilter';
-import { WhiteListInterceptor } from '../interceptors/whiteList.interceptor';
+import { WhiteListInterceptor } from '../interceptors/whiteList/whiteList.interceptor';
 import { WebhookInterceptor } from '../interceptors/webhook.interceptor';
 import { Webhook } from '../webhook/webhook';
-import { logger } from '../logger/logger.service';
 import { EnvVarInterceptor } from '../interceptors/env-var.interceptor';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { PreconditionException } from '../exceptions/precondition.exception';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { EnvVarService } from '../env-var/env-var.service';
+import { LoggerService } from '~common/providers/logger/logger.service';
 @Controller('env-var')
 export class EnvVarController {
   constructor(
     private readonly dataAccessService: DataAccessService,
     private readonly envVarService: EnvVarService,
+    private readonly loggerService: LoggerService,
   ) {}
 
   @Post('/')
@@ -41,10 +42,13 @@ export class EnvVarController {
         remoteEnvs,
       );
     } catch (e) {
-      logger.error('There is no config.env file for the current git project', {
-        project: webhook.getCloneURL(),
-        location: 'processWebhook',
-      });
+      this.loggerService.error(
+        'There is no config.env file for the current git project',
+        {
+          project: webhook.getCloneURL(),
+          location: 'postEnvVar',
+        },
+      );
       throw new PreconditionException();
     }
 
@@ -61,13 +65,15 @@ export class EnvVarController {
           throw err;
         });
     } catch (err) {
-      logger.error(err);
-      return;
+      return this.loggerService.error(err, {
+        project: webhook.getCloneURL(),
+        location: 'postEnvVar',
+      });
     }
 
     this.envVarService
       .processEnvFile(remoteEnvs.split('/')[0], envFile)
-      .catch(err => logger.error(err, { location: 'postEnvVar' }));
+      .catch(err => this.loggerService.error(err, { location: 'postEnvVar' }));
 
     return httpResponse.status(HttpStatus.OK).send('Ok');
   }

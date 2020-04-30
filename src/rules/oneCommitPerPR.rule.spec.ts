@@ -8,9 +8,10 @@ import {
   MockHttpService,
   MockGitlabService,
   MockGithubService,
-  MockAnalytics,
 } from '../__mocks__/mocks';
 import { OneCommitPerPRRule } from './oneCommitPerPR.rule';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('RulesService', () => {
   let app: TestingModule;
@@ -53,7 +54,7 @@ describe('RulesService', () => {
           sha: '3',
         },
       ];
-      const oneCommitPerPR = new OneCommitPerPRRule(MockAnalytics);
+      const oneCommitPerPR = new OneCommitPerPRRule();
       jest.spyOn(oneCommitPerPR, 'validate');
 
       const result: RuleResult = await oneCommitPerPR.validate(
@@ -61,8 +62,7 @@ describe('RulesService', () => {
         oneCommitPerPR,
       );
       expect(result.validated).toBe(false);
-      expect((result.data as any).commits).toEqual(webhook.commits);
-      expect((result.data as any).branch).toEqual(webhook.branchName);
+      expect(result.data.commits).toEqual(webhook.commits);
     });
   });
   describe('oneCommitPerPR Rule', () => {
@@ -75,7 +75,7 @@ describe('RulesService', () => {
           sha: '1',
         },
       ];
-      const oneCommitPerPR = new OneCommitPerPRRule(MockAnalytics);
+      const oneCommitPerPR = new OneCommitPerPRRule();
       jest.spyOn(oneCommitPerPR, 'validate');
 
       const result: RuleResult = await oneCommitPerPR.validate(
@@ -83,8 +83,7 @@ describe('RulesService', () => {
         oneCommitPerPR,
       );
       expect(result.validated).toBe(true);
-      expect((result.data as any).commits).toEqual(webhook.commits);
-      expect((result.data as any).branch).toEqual(webhook.branchName);
+      expect(result.data.commits).toEqual(webhook.commits);
     });
   });
 });

@@ -5,16 +5,17 @@ import { Webhook } from '../webhook/webhook';
 import { RuleResult } from './ruleResult';
 import { RulesOptions } from './rules.options';
 import { Group } from './group.class';
-import { logger } from '../logger/logger.service';
 import { GroupResult } from './groupResult';
 import { DataAccessService } from '../data_access/dataAccess.service';
 import { Utils } from '../utils/utils';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 @Injectable()
 export class RulesService {
   constructor(
     private readonly runnableService: RunnablesService,
     private readonly dataAccessService: DataAccessService,
+    private readonly loggerService: LoggerService,
     private readonly rulesClasses: Rule[] = [],
   ) {}
 
@@ -72,7 +73,7 @@ export class RulesService {
     // Individual rules
     if (rulesOptions.enableRules) {
       try {
-        logger.info('### TRY RULES ###', {
+        this.loggerService.log('### TRY RULES ###', {
           project: webhook.getCloneURL(),
         });
 
@@ -94,7 +95,7 @@ export class RulesService {
 
               this.runnableService
                 .executeRunnableFunctions(ruleResult, ruleConfig)
-                .catch(err => logger.error(err));
+                .catch(err => this.loggerService.error(err, {}));
               if (!rulesOptions.executeAllRules && !ruleResult.validated) {
                 throw BreakException;
               }
@@ -103,7 +104,7 @@ export class RulesService {
         }
       } catch (e) {
         if (e !== BreakException) {
-          logger.error(e, {
+          this.loggerService.error(e, {
             project: webhook.getCloneURL(),
             location: 'RulesService',
           });
@@ -114,7 +115,7 @@ export class RulesService {
     // Grouped rules
     if (rulesOptions.enableGroups) {
       try {
-        logger.info('### TRY GROUPS ###', {
+        this.loggerService.log('### TRY GROUPS ###', {
           project: webhook.getCloneURL(),
         });
 
@@ -148,7 +149,7 @@ export class RulesService {
                 } else {
                   this.runnableService
                     .executeRunnableFunctions(ruleResult, g)
-                    .catch(err => logger.error(err));
+                    .catch(err => this.loggerService.error(err, {}));
                 }
 
                 if (
@@ -165,18 +166,16 @@ export class RulesService {
           // If all rules have been tested, we can execute runnable functions with the result of previous rules
           if (rulesOptions.allRuleResultInOne) {
             if (groupResults.length > 0) {
-              const ruleResult: RuleResult = new RuleResult(
-                webhook.getGitApiInfos(),
-              );
+              const ruleResult: RuleResult = new RuleResult(webhook);
               ruleResult.data = groupResults;
               this.runnableService
                 .executeRunnableFunctions(ruleResult, g)
-                .catch(err => logger.error(err));
+                .catch(err => this.loggerService.error(err, {}));
             }
           }
         }
       } catch (e) {
-        logger.error(e, {
+        this.loggerService.error(e, {
           project: webhook.getCloneURL(),
           location: 'RulesService',
         });

@@ -4,15 +4,13 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockGitlabService,
-  MockGithubService,
-  MockAnalytics,
-} from '../__mocks__/mocks';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 import { CommentPullRequestRunnable } from './commentPullRequest.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
+import { Logger } from '@nestjs/common';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('CommentPullRequestRunnable', () => {
   let app: TestingModule;
@@ -31,7 +29,6 @@ describe('CommentPullRequestRunnable', () => {
         CommentPullRequestRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
-        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
         EnvVarAccessor,
       ],
     }).compile();
@@ -40,22 +37,14 @@ describe('CommentPullRequestRunnable', () => {
     gitlabService = app.get(GitlabService);
     commentPullRequestRunnable = app.get(CommentPullRequestRunnable);
 
-    const myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
-
     args = { comment: 'ping @bastienterrier' };
 
+    const webhook = new Webhook(gitlabService, githubService);
+    webhook.pullRequest.number = 22;
+
     // ruleResultPullRequestTitle initialisation
-    ruleResultPullRequestTitle = new RuleResult(myGitApiInfos);
+    ruleResultPullRequestTitle = new RuleResult(webhook);
     ruleResultPullRequestTitle.validated = true;
-    ruleResultPullRequestTitle.data = {
-      pullRequest: {
-        title: 'WIP: webhook',
-        number: 22,
-        description: 'my desc',
-      },
-    };
   });
 
   beforeEach(() => {
@@ -67,7 +56,7 @@ describe('CommentPullRequestRunnable', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Undefined;
       commentPullRequestRunnable
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.addPRComment).not.toBeCalled();
       expect(gitlabService.addPRComment).not.toBeCalled();
@@ -78,8 +67,11 @@ describe('CommentPullRequestRunnable', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Github;
       commentPullRequestRunnable
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
-        .catch(err => logger.error(err));
-      expect(githubService.addPRComment).toBeCalled();
+        .catch(err => Logger.error(err));
+      expect(githubService.addPRComment).toBeCalledWith({
+        comment: 'ping @bastienterrier',
+        number: 22,
+      });
       expect(gitlabService.addPRComment).not.toBeCalled();
     });
   });
@@ -88,9 +80,12 @@ describe('CommentPullRequestRunnable', () => {
       ruleResultPullRequestTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
       commentPullRequestRunnable
         .run(CallbackType.Both, ruleResultPullRequestTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       expect(githubService.addPRComment).not.toBeCalled();
-      expect(gitlabService.addPRComment).toBeCalled();
+      expect(gitlabService.addPRComment).toBeCalledWith({
+        comment: 'ping @bastienterrier',
+        number: 22,
+      });
     });
   });
 });

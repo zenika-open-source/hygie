@@ -1,6 +1,5 @@
 import { Runnable } from './runnable.class';
 import { RuleResult } from '../rules/ruleResult';
-
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
 import { GithubService } from '../github/github.service';
@@ -9,10 +8,10 @@ import { GitApiInfos } from '../git/gitApiInfos';
 import { GitIssueInfos } from '../git/gitIssueInfos';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
-import { logger } from '../logger/logger.service';
+import { Logger } from '@nestjs/common';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface CreateIssueArgs {
   title: string;
@@ -29,12 +28,12 @@ export class CreateIssueRunnable extends Runnable {
   constructor(
     private readonly githubService: GithubService,
     private readonly gitlabService: GitlabService,
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
     private readonly envVarAccessor: EnvVarAccessor,
   ) {
     super();
   }
+
+  @AnalyticsDecorator(HYGIE_TYPE.RUNNABLE)
   async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
@@ -45,10 +44,6 @@ export class CreateIssueRunnable extends Runnable {
     const gitApiInfos: GitApiInfos = ruleResult.gitApiInfos;
     const gitIssueInfos: GitIssueInfos = new GitIssueInfos();
     gitIssueInfos.title = Utils.render(args.title, ruleResult);
-
-    this.googleAnalytics
-      .event('Runnable', 'createIssue', ruleResult.projectURL)
-      .send();
 
     if (typeof args.description !== 'undefined') {
       gitIssueInfos.description = Utils.render(args.description, ruleResult);
@@ -68,11 +63,11 @@ export class CreateIssueRunnable extends Runnable {
     if (gitApiInfos.git === GitTypeEnum.Github) {
       this.githubService
         .createIssue(gitIssueInfos)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
     } else if (gitApiInfos.git === GitTypeEnum.Gitlab) {
       this.gitlabService
         .createIssue(gitIssueInfos)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
     }
   }
 }

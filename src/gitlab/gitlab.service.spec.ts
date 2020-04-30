@@ -1,11 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpService } from '@nestjs/common';
+import { HttpService, Logger } from '@nestjs/common';
 import {
   MockHttpService,
   MockObservable,
   MockDataAccessService,
 } from '../__mocks__/mocks';
-import { GitApiInfos } from '../git/gitApiInfos';
 import { GitCommitStatusInfos } from '../git/gitCommitStatusInfos';
 import { CommitStatusEnum } from '../webhook/utils.enum';
 import {
@@ -27,14 +26,13 @@ import { DataAccessService } from '../data_access/dataAccess.service';
 import { GitRelease } from '../git/gitRelease';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
-import { logger } from '../logger/logger.service';
 import { Utils } from '../utils/utils';
+import { CommonModule } from '~common/common.module';
 
 describe('Gitlab Service', () => {
   let app: TestingModule;
   let gitlabService: GitlabService;
   let httpService: HttpService;
-  let observable: Observable<any>;
   let dataAccessService: DataAccessService;
 
   let gitCommitStatusInfos: GitCommitStatusInfos;
@@ -43,6 +41,7 @@ describe('Gitlab Service', () => {
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
+      imports: [CommonModule],
       providers: [
         { provide: HttpService, useClass: MockHttpService },
         { provide: Observable, useClass: MockObservable },
@@ -54,7 +53,6 @@ describe('Gitlab Service', () => {
 
     gitlabService = app.get(GitlabService);
     httpService = app.get(HttpService);
-    observable = app.get(Observable);
     dataAccessService = app.get(DataAccessService);
 
     gitlabService.setToken('0123456789abcdef');
@@ -240,7 +238,7 @@ describe('Gitlab Service', () => {
       gitFileInfos.fileBranch = 'master';
       gitFileInfos.filePath = 'file/to/delete.txt';
       gitFileInfos.commitMessage = 'delete file';
-      gitlabService.deleteFile(gitFileInfos).catch(err => logger.error(err));
+      gitlabService.deleteFile(gitFileInfos).catch(err => Logger.error(err));
 
       const expectedUrl = `${
         gitlabService.urlApi
@@ -342,7 +340,7 @@ describe('Gitlab Service', () => {
         return new Observable(observer => observer.next({ data: [] }));
       });
 
-      gitlabService.getIssues(gitIssueSearch).catch(err => logger.error(err));
+      gitlabService.getIssues(gitIssueSearch).catch(err => Logger.error(err));
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/issues`;
 
@@ -367,7 +365,7 @@ describe('Gitlab Service', () => {
 
       gitlabService
         .getPullRequests(gitIssueSearch)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       const expectedUrl = `${gitlabService.urlApi}/projects/1/merge_requests`;
 

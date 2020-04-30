@@ -1,5 +1,4 @@
-import { logger } from '../logger/logger.service';
-import { HttpService } from '@nestjs/common';
+import { HttpService, Logger } from '@nestjs/common';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { Utils } from '../utils/utils';
 import { catchError } from 'rxjs/operators';
@@ -116,7 +115,7 @@ export class RemoteConfigUtils {
 
     // If we don't allow fetching remote .rulesrc file
     if (disableRemoteConfig && filename === Constants.rulesExtension) {
-      logger.warn('Not allowed to fetch remote file!');
+      Logger.warn('Not allowed to fetch remote file!');
       // Get default configuration
       const data = fs.readFileSync(
         path.join(__dirname, `../rules/${Constants.rulesExtension}`),
@@ -163,11 +162,11 @@ export class RemoteConfigUtils {
 
             return getDefaultBranchConfigFile.pipe(
               catchError(() => {
-                logger.warn(
+                Logger.warn(
                   `No ${
                     Constants.rulesExtension
                   } file founded. Using the default one.`,
-                  { project: projectURL, location: 'downloadRulesFile' },
+                  projectURL,
                 );
 
                 // return default REMOTE file

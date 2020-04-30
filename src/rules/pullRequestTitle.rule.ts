@@ -5,8 +5,8 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface PullRequestTitleOptions {
   regexp: string;
@@ -22,25 +22,13 @@ export class PullRequestTitleRule extends Rule {
   options: PullRequestTitleOptions;
   events = [GitEventEnum.NewPR];
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: PullRequestTitleRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
-    this.googleAnalytics
-      .event('Rule', 'pullRequestTitle', webhook.getCloneURL())
-      .send();
+    const ruleResult: RuleResult = new RuleResult(webhook);
 
     // First, check if rule need to be processed
     if (!Utils.checkUser(webhook, ruleConfig.options.users)) {
@@ -49,16 +37,12 @@ export class PullRequestTitleRule extends Rule {
 
     const titlePullRequest = webhook.getPullRequestTitle();
     const pullRequestRegExp = RegExp(ruleConfig.options.regexp);
-    ruleResult.validated = pullRequestRegExp.test(titlePullRequest);
 
-    ruleResult.data = {
-      pullRequest: {
-        title: titlePullRequest,
-        number: webhook.getPullRequestNumber(),
-        description: webhook.getPullRequestDescription(),
-        matches: titlePullRequest.match(pullRequestRegExp),
-      },
-    };
+    ruleResult.validated = pullRequestRegExp.test(titlePullRequest);
+    ruleResult.data.pullRequest.matches = titlePullRequest.match(
+      pullRequestRegExp,
+    );
+
     return ruleResult;
   }
 }

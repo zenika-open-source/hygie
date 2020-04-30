@@ -6,8 +6,8 @@ import { RuleDecorator } from './rule.decorator';
 import 'array-flat-polyfill';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
-import { Visitor } from 'universal-analytics';
-import { Inject } from '@nestjs/common';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface CheckAddedFilesOptions {
   regexp: string;
@@ -23,28 +23,15 @@ export class CheckAddedFilesRule extends Rule {
   options: CheckAddedFilesOptions;
   events = [GitEventEnum.Push];
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: CheckAddedFilesRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
+    const ruleResult: RuleResult = new RuleResult(webhook);
     const commits: WebhookCommit[] = webhook.getAllCommits();
     const addedRegExp = RegExp(ruleConfig.options.regexp);
-
-    this.googleAnalytics
-      .event('Rule', 'checkAddedFiles', webhook.getCloneURL())
-      .send();
 
     // First, check if rule need to be processed
     if (!Utils.checkUser(webhook, ruleConfig.options.users)) {
@@ -67,10 +54,7 @@ export class CheckAddedFilesRule extends Rule {
       });
 
     ruleResult.validated = allMatchingAddedFiles.length > 0;
-    ruleResult.data = {
-      addedFiles: allMatchingAddedFiles,
-      branch: webhook.getBranchName(),
-    };
+    ruleResult.data.addedFiles = allMatchingAddedFiles;
 
     return ruleResult;
   }

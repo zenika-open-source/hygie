@@ -15,11 +15,11 @@ rules:
     onError:
       - callback: LoggerRunnable
         args:
-          message: 'Branch {{data.branch}} does not begin with fix or feature.'
+          message: 'Branch {{data.branchBranch}} does not begin with fix or feature.'
     onSuccess:
       - callback: CreatePullRequestRunnable
         args:
-          title: 'WIP: {{data.branch}}'
+          title: 'WIP: {{data.branchBranch}}'
           description: 'Work in Progress Pull Request'
           draft: true
 

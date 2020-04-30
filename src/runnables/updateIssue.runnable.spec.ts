@@ -4,15 +4,13 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockGitlabService,
-  MockGithubService,
-  MockAnalytics,
-} from '../__mocks__/mocks';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 import { UpdateIssueRunnable } from './updateIssue.runnable';
-import { logger } from '../logger/logger.service';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
+import { Logger } from '@nestjs/common';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('UpdateIssueRunnable', () => {
   let app: TestingModule;
@@ -31,7 +29,6 @@ describe('UpdateIssueRunnable', () => {
         UpdateIssueRunnable,
         { provide: GitlabService, useClass: MockGitlabService },
         { provide: GithubService, useClass: MockGithubService },
-        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
         EnvVarAccessor,
       ],
     }).compile();
@@ -40,18 +37,14 @@ describe('UpdateIssueRunnable', () => {
     gitlabService = app.get(GitlabService);
     updateIssueRunnable = app.get(UpdateIssueRunnable);
 
-    const myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    const webhook = new Webhook(gitlabService, githubService);
+    webhook.issue.number = 22;
 
     args = { state: 'close' };
 
     // ruleResultIssueTitle initialisation
-    ruleResultIssueTitle = new RuleResult(myGitApiInfos);
+    ruleResultIssueTitle = new RuleResult(webhook);
     ruleResultIssueTitle.validated = false;
-    ruleResultIssueTitle.data = {
-      issue: { number: 22 },
-    };
   });
 
   beforeEach(() => {
@@ -62,7 +55,7 @@ describe('UpdateIssueRunnable', () => {
     it('should not call the updateIssue Github nor Gitlab service', () => {
       updateIssueRunnable
         .run(CallbackType.Both, ruleResultIssueTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
       expect(githubService.updateIssue).not.toBeCalled();
       expect(gitlabService.updateIssue).not.toBeCalled();
     });
@@ -72,9 +65,12 @@ describe('UpdateIssueRunnable', () => {
       ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Github;
       updateIssueRunnable
         .run(CallbackType.Both, ruleResultIssueTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
-      expect(githubService.updateIssue).toBeCalled();
+      expect(githubService.updateIssue).toBeCalledWith({
+        number: '22',
+        state: 'Close',
+      });
       expect(gitlabService.updateIssue).not.toBeCalled();
     });
   });
@@ -83,10 +79,13 @@ describe('UpdateIssueRunnable', () => {
       ruleResultIssueTitle.gitApiInfos.git = GitTypeEnum.Gitlab;
       updateIssueRunnable
         .run(CallbackType.Both, ruleResultIssueTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => Logger.error(err));
 
       expect(githubService.updateIssue).not.toBeCalled();
-      expect(gitlabService.updateIssue).toBeCalled();
+      expect(gitlabService.updateIssue).toBeCalledWith({
+        number: '22',
+        state: 'Close',
+      });
     });
   });
 });

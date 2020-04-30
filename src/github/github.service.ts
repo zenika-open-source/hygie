@@ -19,7 +19,6 @@ import {
   PRMethodsEnum,
   PRSearchResult,
 } from '../git/gitPRInfos';
-import { logger } from '../logger/logger.service';
 import { PreconditionException } from '../exceptions/precondition.exception';
 import { GitFileInfos } from '../git/gitFileInfos';
 import { Utils } from '../utils/utils';
@@ -31,6 +30,7 @@ import { GitRef } from '../git/gitRef';
 import { GitTag } from '../git/gitTag';
 import { GitBranchCommit } from '../git/gitBranchSha';
 import { GitFileData } from '../git/gitFileData';
+import { LoggerService } from '~common/providers/logger/logger.service';
 
 /**
  * Implement `GitServiceInterface` to interact this a Github repository
@@ -45,7 +45,10 @@ export class GithubService implements GitServiceInterface {
 
   configGitHub: object;
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly loggerService: LoggerService,
+  ) {}
 
   setToken(token: string) {
     this.token = token;
@@ -97,7 +100,7 @@ export class GithubService implements GitServiceInterface {
       ),
       target_url: gitCommitStatusInfos.targetUrl,
       description: gitCommitStatusInfos.descriptionMessage,
-      context: process.env.APPLICATION_NAME + '/commit',
+      context: process.env.APPLICATION_NAME + gitCommitStatusInfos.context,
     };
 
     this.httpService
@@ -109,7 +112,7 @@ export class GithubService implements GitServiceInterface {
         this.configGitHub,
       )
       .subscribe(null, err =>
-        logger.error(err, { location: 'updateCommitStatus' }),
+        this.loggerService.error(err, { location: 'updateCommitStatus' }),
       );
   }
 
@@ -127,7 +130,7 @@ export class GithubService implements GitServiceInterface {
         this.configGitHub,
       )
       .subscribe(null, err =>
-        logger.error(err, { location: 'addIssueComment' }),
+        this.loggerService.error(err, { location: 'addIssueComment' }),
       );
   }
 
@@ -161,7 +164,7 @@ export class GithubService implements GitServiceInterface {
         customConfig,
       )
       .subscribe(null, err =>
-        logger.error(err, { location: 'createPullRequest' }),
+        this.loggerService.error(err, { location: 'createPullRequest' }),
       );
   }
 
@@ -173,7 +176,9 @@ export class GithubService implements GitServiceInterface {
         }/git/refs/heads/${encodeURIComponent(branchName)}`,
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err, { location: 'deleteBranch' }));
+      .subscribe(null, err =>
+        this.loggerService.error(err, { location: 'deleteBranch' }),
+      );
   }
 
   updateIssue(gitIssueInfos: GitIssueInfos): void {
@@ -197,7 +202,9 @@ export class GithubService implements GitServiceInterface {
         dataGitHub,
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err, { location: 'updateIssue' }));
+      .subscribe(null, err =>
+        this.loggerService.error(err, { location: 'updateIssue' }),
+      );
   }
 
   async createIssue(gitIssueInfos: GitIssueInfos): Promise<number> {
@@ -227,7 +234,7 @@ export class GithubService implements GitServiceInterface {
       )
       .toPromise()
       .then(response => response.data.number)
-      .catch(err => logger.error(err, { location: 'createIssue' }));
+      .catch(err => this.loggerService.error(err, { location: 'createIssue' }));
   }
 
   async deleteFile(gitFileInfos: GitFileInfos): Promise<void> {
@@ -261,13 +268,13 @@ export class GithubService implements GitServiceInterface {
                 return;
               },
               err2 => {
-                logger.error(err2, { location: 'deleteFile/blob' });
+                this.loggerService.error(err2, { location: 'deleteFile/blob' });
                 throw err2;
               },
             );
         },
         err => {
-          logger.error(err, { location: 'deleteFile' });
+          this.loggerService.error(err, { location: 'deleteFile' });
           throw err;
         },
       );
@@ -299,7 +306,7 @@ export class GithubService implements GitServiceInterface {
         this.configGitHub,
       )
       .subscribe(null, err =>
-        logger.error(err, { location: 'mergePullRequest' }),
+        this.loggerService.error(err, { location: 'mergePullRequest' }),
       );
   }
 
@@ -331,7 +338,7 @@ export class GithubService implements GitServiceInterface {
         this.configGitHub,
       )
       .subscribe(null, err =>
-        logger.error(err, { location: 'updatePullRequest' }),
+        this.loggerService.error(err, { location: 'updatePullRequest' }),
       );
   }
 
@@ -350,7 +357,9 @@ export class GithubService implements GitServiceInterface {
         },
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err, { location: 'createWebhook' }));
+      .subscribe(null, err =>
+        this.loggerService.error(err, { location: 'createWebhook' }),
+      );
   }
 
   async getIssues(
@@ -385,7 +394,7 @@ export class GithubService implements GitServiceInterface {
           }
         });
       })
-      .catch(err => logger.error(err, { location: 'getIssues' }));
+      .catch(err => this.loggerService.error(err, { location: 'getIssues' }));
   }
 
   async getPullRequests(
@@ -417,7 +426,9 @@ export class GithubService implements GitServiceInterface {
           return prSearchResult;
         });
       })
-      .catch(err => logger.error(err, { location: 'getPullRequests' }));
+      .catch(err =>
+        this.loggerService.error(err, { location: 'getPullRequests' }),
+      );
   }
 
   createRelease(gitRelease: GitRelease): void {
@@ -438,7 +449,9 @@ export class GithubService implements GitServiceInterface {
         dataGithub,
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err, { location: 'createRelease' }));
+      .subscribe(null, err =>
+        this.loggerService.error(err, { location: 'createRelease' }),
+      );
   }
 
   async getTree(
@@ -459,7 +472,7 @@ export class GithubService implements GitServiceInterface {
       .then(response => {
         return response.data.find(e => e.name === name).sha;
       })
-      .catch(err => logger.error(err, { location: 'getTree' }));
+      .catch(err => this.loggerService.error(err, { location: 'getTree' }));
   }
 
   async getLastCommit(branch: string = 'master'): Promise<string> {
@@ -472,7 +485,7 @@ export class GithubService implements GitServiceInterface {
       )
       .toPromise()
       .then(response => response.data.object.sha)
-      .catch(err => logger.error(err, { location: 'updateRef' }));
+      .catch(err => this.loggerService.error(err, { location: 'updateRef' }));
   }
 
   async createCommit(gitCommit: GitCommit): Promise<string> {
@@ -486,7 +499,9 @@ export class GithubService implements GitServiceInterface {
       .then(response => {
         return response.data.sha;
       })
-      .catch(err => logger.error(err, { location: 'createCommit' }));
+      .catch(err =>
+        this.loggerService.error(err, { location: 'createCommit' }),
+      );
   }
 
   updateRef(gitRef: GitRef): void {
@@ -499,7 +514,9 @@ export class GithubService implements GitServiceInterface {
         },
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err, { location: 'updateRef' }));
+      .subscribe(null, err =>
+        this.loggerService.error(err, { location: 'updateRef' }),
+      );
   }
 
   createRef(gitRef: GitRef): void {
@@ -512,7 +529,9 @@ export class GithubService implements GitServiceInterface {
         },
         this.configGitHub,
       )
-      .subscribe(null, err => logger.error(err, { location: 'createRef' }));
+      .subscribe(null, err =>
+        this.loggerService.error(err, { location: 'createRef' }),
+      );
   }
 
   async createTag(gitTag: GitTag): Promise<string> {
@@ -529,7 +548,7 @@ export class GithubService implements GitServiceInterface {
       )
       .toPromise()
       .then(response => response.data.sha)
-      .catch(err => logger.error(err, { location: 'createTag' }));
+      .catch(err => this.loggerService.error(err, { location: 'createTag' }));
   }
 
   async getLastBranchesCommitSha(): Promise<GitBranchCommit[]> {
@@ -545,7 +564,7 @@ export class GithubService implements GitServiceInterface {
         }),
       )
       .catch(err => {
-        logger.error(err, { location: 'getLastBranchesCommitSha' });
+        this.loggerService.error(err, { location: 'getLastBranchesCommitSha' });
         return [];
       });
   }

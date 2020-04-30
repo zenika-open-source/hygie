@@ -1,13 +1,13 @@
 import { Runnable } from './runnable.class';
-import { logger } from '../logger/logger.service';
 import { RuleResult } from '../rules/ruleResult';
 
 import { CallbackType } from './runnables.service';
 import { RunnableDecorator } from './runnable.decorator';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
 import { Utils } from '../utils/utils';
+import { LoggerService } from '~common/providers/logger/logger.service';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface LoggerArgs {
   type: string;
@@ -20,23 +20,19 @@ interface LoggerArgs {
 @RunnableDecorator('LoggerRunnable')
 export class LoggerRunnable extends Runnable {
   constructor(
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
     private readonly envVarAccessor: EnvVarAccessor,
+    private readonly loggerService: LoggerService,
   ) {
     super();
   }
 
+  @AnalyticsDecorator(HYGIE_TYPE.RUNNABLE)
   async run(
     callbackType: CallbackType,
     ruleResult: RuleResult,
     args: LoggerArgs,
   ): Promise<void> {
     ruleResult.env = this.envVarAccessor.getAllEnvVar();
-
-    this.googleAnalytics
-      .event('Runnable', 'logger', ruleResult.projectURL)
-      .send();
 
     // Defaults
     if (
@@ -50,13 +46,13 @@ export class LoggerRunnable extends Runnable {
 
     switch (args.type) {
       case 'info':
-        logger.info(Utils.render(args.message, ruleResult));
+        this.loggerService.log(Utils.render(args.message, ruleResult), {});
         break;
       case 'warn':
-        logger.warn(Utils.render(args.message, ruleResult));
+        this.loggerService.warn(Utils.render(args.message, ruleResult), {});
         break;
       case 'error':
-        logger.error(Utils.render(args.message, ruleResult));
+        this.loggerService.error(Utils.render(args.message, ruleResult), {});
         break;
     }
   }

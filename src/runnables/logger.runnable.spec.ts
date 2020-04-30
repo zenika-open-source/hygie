@@ -1,50 +1,58 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CallbackType } from './runnables.service';
-import { logger } from '../logger/logger.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
-import { GitTypeEnum } from '../webhook/utils.enum';
 import { LoggerRunnable } from './logger.runnable';
-import { MockAnalytics } from '../__mocks__/mocks';
+import { MockGithubService, MockGitlabService } from '../__mocks__/mocks';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
+import { GithubService } from '../github/github.service';
+import { GitlabService } from '../gitlab/gitlab.service';
+import { CommonModule } from '~common/common.module';
+import { LoggerService } from '~common/providers/logger/logger.service';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('LoggerRunnable', () => {
   let app: TestingModule;
   let loggerRunnable: LoggerRunnable;
+
+  let loggerService: LoggerService;
+
+  let githubService: GithubService;
+  let gitlabService: GitlabService;
 
   let args: any;
   let ruleResultIssueTitle: RuleResult;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
+      imports: [CommonModule],
       providers: [
         LoggerRunnable,
-        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+        { provide: GithubService, useClass: MockGithubService },
+        { provide: GitlabService, useClass: MockGitlabService },
         EnvVarAccessor,
       ],
     }).compile();
 
-    logger.info = jest.fn().mockName('logger.info');
-    logger.warn = jest.fn().mockName('logger.warn');
-    logger.error = jest.fn().mockName('logger.error');
-
+    githubService = app.get(GithubService);
+    gitlabService = app.get(GitlabService);
     loggerRunnable = app.get(LoggerRunnable);
+    loggerService = app.get(LoggerService);
 
-    const myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    loggerService.log = jest.fn().mockName('loggerService.log');
+    loggerService.warn = jest.fn().mockName('loggerService.warn');
+    loggerService.error = jest.fn().mockName('loggerService.error');
+
+    const webhook = new Webhook(gitlabService, githubService);
+    webhook.issue.title = 'test';
+    webhook.issue.number = 22;
 
     args = { message: '{{data.issue.title}} is a correct issue title' };
 
     // ruleResultIssueTitle initialisation
-    ruleResultIssueTitle = new RuleResult(myGitApiInfos);
+    ruleResultIssueTitle = new RuleResult(webhook);
     ruleResultIssueTitle.validated = true;
-    ruleResultIssueTitle.data = {
-      issue: {
-        number: 22,
-        title: 'test',
-      },
-    };
   });
 
   beforeEach(() => {
@@ -55,11 +63,14 @@ describe('LoggerRunnable', () => {
     it('should call the info() method', () => {
       loggerRunnable
         .run(CallbackType.Both, ruleResultIssueTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => loggerService.error(err, {}));
 
-      expect(logger.info).toBeCalled();
-      expect(logger.error).not.toBeCalled();
-      expect(logger.warn).not.toBeCalled();
+      expect(loggerService.log).toBeCalledWith(
+        'test is a correct issue title',
+        {},
+      );
+      expect(loggerService.error).not.toBeCalled();
+      expect(loggerService.warn).not.toBeCalled();
     });
   });
 
@@ -69,11 +80,14 @@ describe('LoggerRunnable', () => {
       args.type = undefined;
       loggerRunnable
         .run(CallbackType.Error, ruleResultIssueTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => loggerService.error(err, {}));
 
-      expect(logger.info).not.toBeCalled();
-      expect(logger.error).toBeCalled();
-      expect(logger.warn).not.toBeCalled();
+      expect(loggerService.log).not.toBeCalled();
+      expect(loggerService.error).toBeCalledWith(
+        'test is a correct issue title',
+        {},
+      );
+      expect(loggerService.warn).not.toBeCalled();
     });
   });
 
@@ -84,11 +98,14 @@ describe('LoggerRunnable', () => {
       args.type = 'info';
       loggerRunnable
         .run(CallbackType.Both, ruleResultIssueTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => loggerService.error(err, {}));
 
-      expect(logger.info).toBeCalled();
-      expect(logger.error).not.toBeCalled();
-      expect(logger.warn).not.toBeCalled();
+      expect(loggerService.log).toBeCalledWith(
+        'test is a correct issue title',
+        {},
+      );
+      expect(loggerService.error).not.toBeCalled();
+      expect(loggerService.warn).not.toBeCalled();
     });
   });
 
@@ -99,11 +116,11 @@ describe('LoggerRunnable', () => {
       args.type = 'warn';
       loggerRunnable
         .run(CallbackType.Both, ruleResultIssueTitle, args)
-        .catch(err => logger.error(err));
+        .catch(err => loggerService.error(err, {}));
 
-      expect(logger.info).not.toBeCalled();
-      expect(logger.error).not.toBeCalled();
-      expect(logger.warn).toBeCalled();
+      expect(loggerService.log).not.toBeCalled();
+      expect(loggerService.error).not.toBeCalled();
+      expect(loggerService.warn).toBeCalled();
     });
   });
 });

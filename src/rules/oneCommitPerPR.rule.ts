@@ -5,8 +5,8 @@ import { Webhook } from '../webhook/webhook';
 import { RuleDecorator } from './rule.decorator';
 import { UsersOptions } from './common.interface';
 import { Utils } from './utils';
-import { Inject } from '@nestjs/common';
-import { Visitor } from 'universal-analytics';
+import { AnalyticsDecorator } from '../analytics/analytics.decorator';
+import { HYGIE_TYPE } from '../utils/enum';
 
 interface OneCommitPerPROptions {
   users?: UsersOptions;
@@ -21,25 +21,13 @@ export class OneCommitPerPRRule extends Rule {
   events = [GitEventEnum.Push];
   options: OneCommitPerPROptions;
 
-  constructor(
-    @Inject('GoogleAnalytics')
-    private readonly googleAnalytics: Visitor,
-  ) {
-    super();
-  }
-
+  @AnalyticsDecorator(HYGIE_TYPE.RULE)
   async validate(
     webhook: Webhook,
     ruleConfig: OneCommitPerPRRule,
     ruleResults?: RuleResult[],
   ): Promise<RuleResult> {
-    const ruleResult: RuleResult = new RuleResult(
-      webhook.getGitApiInfos(),
-      webhook.getCloneURL(),
-    );
-    this.googleAnalytics
-      .event('Rule', 'oneCommitPerPR', webhook.getCloneURL())
-      .send();
+    const ruleResult: RuleResult = new RuleResult(webhook);
 
     // First, check if rule need to be processed
     if (
@@ -50,10 +38,6 @@ export class OneCommitPerPRRule extends Rule {
     }
 
     ruleResult.validated = webhook.getAllCommits().length === 1 ? true : false;
-    ruleResult.data = {
-      branch: webhook.getBranchName(),
-      commits: webhook.getAllCommits(),
-    };
     return ruleResult;
   }
 }

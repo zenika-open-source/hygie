@@ -4,21 +4,18 @@ import { GitlabService } from '../gitlab/gitlab.service';
 import { GitTypeEnum } from '../webhook/utils.enum';
 import { CallbackType } from './runnables.service';
 import { RuleResult } from '../rules/ruleResult';
-import { GitApiInfos } from '../git/gitApiInfos';
-import {
-  MockGitlabService,
-  MockGithubService,
-  MockAnalytics,
-} from '../__mocks__/mocks';
+import { MockGitlabService, MockGithubService } from '../__mocks__/mocks';
 import { DeployFolderRunnable } from './deployFolder.runnable';
 import { EnvVarAccessor } from '../env-var/env-var.accessor';
+import { Webhook } from '../webhook/webhook';
+
+jest.mock('../analytics/analytics.decorator');
 
 describe('DeployFolderRunnable', () => {
   let app: TestingModule;
 
   let githubService: GithubService;
-
-  let myGitApiInfos;
+  let gitlabService: GitlabService;
 
   let deployFolderRunnable: DeployFolderRunnable;
 
@@ -30,25 +27,22 @@ describe('DeployFolderRunnable', () => {
       providers: [
         DeployFolderRunnable,
         { provide: GithubService, useClass: MockGithubService },
-        { provide: 'GoogleAnalytics', useValue: MockAnalytics },
+        { provide: GitlabService, useClass: MockGitlabService },
         EnvVarAccessor,
       ],
     }).compile();
 
     githubService = app.get(GithubService);
+    gitlabService = app.get(GitlabService);
     deployFolderRunnable = app.get(DeployFolderRunnable);
 
-    myGitApiInfos = new GitApiInfos();
-    myGitApiInfos.repositoryFullName = 'bastienterrier/test_webhook';
-    myGitApiInfos.git = GitTypeEnum.Undefined;
+    const webhook = new Webhook(gitlabService, githubService);
+    webhook.branchName = 'develop';
 
     args = { folder: 'docs', branch: 'gh-pages' };
 
-    ruleResult = new RuleResult(myGitApiInfos);
+    ruleResult = new RuleResult(webhook);
     ruleResult.validated = false;
-    ruleResult.data = {
-      branch: 'develop',
-    };
   });
 
   beforeEach(() => {
@@ -63,7 +57,7 @@ describe('DeployFolderRunnable', () => {
   });
   describe('Run method', () => {
     it('should call Github methods', async () => {
-      myGitApiInfos.git = GitTypeEnum.Github;
+      ruleResult.gitApiInfos.git = GitTypeEnum.Github;
       await deployFolderRunnable.run(CallbackType.Both, ruleResult, args);
       expect(githubService.getTree).toBeCalledWith('docs', 'develop');
       expect(githubService.getLastCommit).toBeCalledWith('gh-pages');

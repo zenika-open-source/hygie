@@ -36,11 +36,11 @@ Checks the branch's name according to a regular expression.
     - callback: DeleteBranchRunnable #CAUTION!
     - callback: LoggerRunnable
       args:
-        message: 'Branch {{data.branch}} has been deleted because it does not begin with fix or feature.'
+        message: 'Branch {{data.branchBranch}} has been deleted because it does not begin with fix or feature.'
   onSuccess:
     - callback: CreatePullRequestRunnable
       args:
-        title: 'WIP: {{data.branch}}'
+        title: 'WIP: {{data.branchBranch}}'
         description: 'Work in Progress Pull Request'
 ```
 
