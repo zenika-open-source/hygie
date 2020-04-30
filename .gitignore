@@ -58,7 +58,6 @@ typings/
 .next
 
 dist/*
-.vscode/*
 
 # coveralls token
 .coveralls.yml
@@ -80,3 +79,6 @@ oauthApp.json
 
 
 *.ps1
+setup.sh
+
+.env
